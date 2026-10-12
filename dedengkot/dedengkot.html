@@ -1092,21 +1092,11 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 @media(max-width:767px){.pk3-form{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;}.pk3-name,.pk3-photo-field,.pk3-add{grid-column:auto!important;}.pk3-form .pk3-field label,.pk3-form .pk3-photo-field>label:first-child{height:18px!important;line-height:18px!important;}.pk3-form .pk3-field>input,.pk3-form .pk3-field>select,.pk3-form .pk3-photo-btn,.pk3-form .pk3-add{height:40px!important;min-height:40px!important;max-height:40px!important;}}
 </style>
 
-<!-- PATCH MINIMAL V2: sembunyikan navigasi aplikasi saat Login/Daftar tampil. -->
-<style id="hide-sidebar-on-auth-pages">
-  body:has(#login-card:not(.hidden)) #sidebar,
-  body:has(#register-card:not(.hidden)) #sidebar,
-  body:has(#auth-container:not(.hidden)) #sidebar {
-    display: none !important;
-    visibility: hidden !important;
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    flex: 0 0 0 !important;
-  }
-  body:has(#login-card:not(.hidden)) > header,
-  body:has(#register-card:not(.hidden)) > header,
-  body:has(#auth-container:not(.hidden)) > header {
+<!-- PATCH AUTH FINAL: satu implementasi untuk menyembunyikan seluruh kerangka aplikasi saat Login/Daftar tampil. -->
+<style id="hide-app-shell-on-auth-pages">
+  body:has(#auth-container:not(.hidden)) > #sidebar,
+  body:has(#auth-container:not(.hidden)) > .flex-1.flex.flex-col.h-screen.overflow-hidden,
+  body:has(#auth-container:not(.hidden)) > #superadmin-root {
     display: none !important;
   }
 </style>
