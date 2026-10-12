@@ -4306,7 +4306,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
         image.addEventListener('error',()=>{image.hidden=true;});
         postPhoto.appendChild(image);
       }
-      const title=document.createElement('div');title.className='komunitas-comment-title';title.textContent='Tulis Komentar';
+      const title=document.createElement('div');title.className='komunitas-comment-title';title.textContent='Tulis Komentar :';
       const comments=document.createElement('div');comments.className='komunitas-comments';
       post.comments.forEach(c=>{
         const row=document.createElement('div');row.className='komunitas-comment';row.appendChild(avatar(supabaseProfilePhoto(c.UID||c.uid||c.UserId||c.userId)||String(c.FotoProfil||c.photo||''),true));
@@ -7607,23 +7607,68 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
   auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
   accessToken:async()=>{try{return (await auth.currentUser?.getIdToken(false))||null}catch(_){return null}}
 });
-/* Jembatan terbatas untuk fitur foto postingan Komunitas. File fisik hanya masuk Supabase Storage. */
+/* Jembatan foto postingan Komunitas. File fisik hanya masuk Supabase Storage.
+   Foto dikompres di browser sebelum upload agar ukuran file tersimpan maksimal 300 KB. */
+const COMMUNITY_POST_PHOTO_MAX_BYTES=300000;
+async function compressCommunityPostPhoto(file){
+  let source=null,fallbackUrl='';
+  try{
+    if(typeof createImageBitmap==='function'){
+      source=await createImageBitmap(file);
+    }else{
+      fallbackUrl=URL.createObjectURL(file);
+      source=await new Promise((resolve,reject)=>{
+        const image=new Image();
+        image.onload=()=>resolve(image);
+        image.onerror=()=>reject(new Error('Foto tidak dapat dibaca untuk dikompres.'));
+        image.src=fallbackUrl;
+      });
+    }
+    const originalWidth=Number(source.width||source.naturalWidth||0);
+    const originalHeight=Number(source.height||source.naturalHeight||0);
+    if(!originalWidth||!originalHeight)throw new Error('Dimensi foto tidak valid. Pilih foto lain.');
+    let scale=Math.min(1,1920/Math.max(originalWidth,originalHeight));
+    const qualities=[0.88,0.82,0.76,0.70,0.64,0.58,0.52,0.46,0.40,0.34,0.28,0.22,0.16];
+    for(let dimensionPass=0;dimensionPass<12;dimensionPass++){
+      const width=Math.max(1,Math.round(originalWidth*scale));
+      const height=Math.max(1,Math.round(originalHeight*scale));
+      const canvas=document.createElement('canvas');
+      canvas.width=width;canvas.height=height;
+      const ctx=canvas.getContext('2d',{alpha:false});
+      if(!ctx)throw new Error('Browser tidak dapat memproses foto.');
+      ctx.fillStyle='#ffffff';ctx.fillRect(0,0,width,height);
+      ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      ctx.drawImage(source,0,0,width,height);
+      for(const quality of qualities){
+        const blob=await new Promise((resolve,reject)=>canvas.toBlob(result=>result?resolve(result):reject(new Error('Kompresi foto gagal.')),'image/jpeg',quality));
+        if(blob.size<=COMMUNITY_POST_PHOTO_MAX_BYTES)return blob;
+      }
+      if(Math.max(width,height)<=240)break;
+      scale*=0.82;
+    }
+    throw new Error('Foto tidak dapat dikompres hingga maksimal 300 KB. Pilih foto lain yang lebih sederhana.');
+  }finally{
+    try{if(source&&typeof source.close==='function')source.close();}catch(_){}
+    if(fallbackUrl){try{URL.revokeObjectURL(fallbackUrl);}catch(_){}}
+  }
+}
 window.RekapinyuCommunityPhotoStorage={
   async upload(file,postId){
     const uid=String(auth.currentUser?.uid||'').trim();
     if(!uid)throw new Error('Sesi Firebase tidak ditemukan. Silakan login kembali.');
     if(!file||!['image/jpeg','image/png','image/webp'].includes(String(file.type||'').toLowerCase()))throw new Error('Pilih foto berformat JPG, PNG, atau WebP.');
-    if(Number(file.size)>5*1024*1024)throw new Error('Ukuran foto maksimal 5 MB.');
-    const ext=({'image/jpeg':'jpg','image/png':'png','image/webp':'webp'})[String(file.type).toLowerCase()];
+    if(Number(file.size)>5*1024*1024)throw new Error('Ukuran foto sumber maksimal 5 MB. Foto akan dikompres menjadi maksimal 300 KB sebelum disimpan.');
     const safeId=String(postId||'').replace(/[^A-Za-z0-9_-]/g,'');
     if(!safeId)throw new Error('ID postingan tidak valid untuk penyimpanan foto.');
-    const path=`${uid}/postingan/${safeId}.${ext}`;
-    const {error}=await supabase.storage.from(SUPABASE_PHOTO_BUCKET).upload(path,file,{contentType:file.type,upsert:false,cacheControl:'3600'});
+    const compressedPhoto=await compressCommunityPostPhoto(file);
+    if(compressedPhoto.size>COMMUNITY_POST_PHOTO_MAX_BYTES)throw new Error('Kompresi gagal: foto melebihi 300 KB.');
+    const path=`${uid}/postingan/${safeId}.jpg`;
+    const {error}=await supabase.storage.from(SUPABASE_PHOTO_BUCKET).upload(path,compressedPhoto,{contentType:'image/jpeg',upsert:false,cacheControl:'3600'});
     if(error)throw new Error(`Unggah foto ke Supabase gagal: ${error.message||'akses ditolak'}`);
     const {data}=supabase.storage.from(SUPABASE_PHOTO_BUCKET).getPublicUrl(path);
     const url=String(data?.publicUrl||'');
     if(!url){try{await supabase.storage.from(SUPABASE_PHOTO_BUCKET).remove([path]);}catch(_){}throw new Error('URL foto Supabase tidak berhasil dibuat.');}
-    return {url,path};
+    return {url,path,size:compressedPhoto.size};
   },
   async remove(path){
     const uid=String(auth.currentUser?.uid||'').trim(),normalized=String(path||'');
