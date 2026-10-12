@@ -3120,8 +3120,16 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 #view-komunitas .komunitas-notif-item.unread{
   background:#eff6ff!important;
 }
-#view-komunitas .komunitas-notif-item:hover{
-  background:#f8fafc!important;
+/* Hover biru hanya untuk notifikasi yang belum dibaca. */
+#view-komunitas .komunitas-notif-item.unread:hover,
+#view-komunitas .komunitas-notif-item.unread:focus-visible{
+  background:#dbeafe!important;
+  box-shadow:inset 3px 0 0 #2563eb!important;
+}
+#view-komunitas .komunitas-notif-item:not(.unread):hover,
+#view-komunitas .komunitas-notif-item:not(.unread):focus-visible{
+  background:#fff!important;
+  box-shadow:none!important;
 }
 #view-komunitas .komunitas-notif-avatar{
   width:40px!important;
@@ -3487,6 +3495,15 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   function readNotifIds(){try{const v=JSON.parse(localStorage.getItem(notifStorageKey())||'[]');return Array.isArray(v)?v:[];}catch(_){return [];}}
   function writeNotifIds(ids){try{localStorage.setItem(notifStorageKey(),JSON.stringify([...new Set(ids)].slice(-500)));}catch(_){}}
   function notifId(post,c,index){return String(c?.id||(`${post.docId}-comment-${index}`));}
+  function notificationTime(value){
+    if(value&&typeof value.toDate==='function'){const d=value.toDate();return Number.isNaN(d.getTime())?0:d.getTime();}
+    if(typeof value==='number')return value;
+    const raw=String(value||'').trim();if(!raw)return 0;
+    let d=new Date(raw);if(!Number.isNaN(d.getTime()))return d.getTime();
+    const m=raw.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})(?:[ ,]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/i);
+    if(m){const months={januari:0,februari:1,maret:2,april:3,mei:4,juni:5,juli:6,agustus:7,oktober:9,november:10,desember:11,sep:8,september:8};const month=months[m[2].toLowerCase()];if(month!==undefined)return new Date(+m[3],month,+m[1],+(m[4]||0),+(m[5]||0),+(m[6]||0)).getTime();}
+    return 0;
+  }
   function buildNotifications(){
     const me=String(phone()||'').replace(/\D/g,'');
     const uid=currentCommunityUid();
@@ -3524,7 +3541,9 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
         date:req.Tanggal||''
       });
     });
-    return out.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    return out.map((item,index)=>({...item,_sortTime:notificationTime(item.date),_sortIndex:index}))
+      .sort((a,b)=>b._sortTime-a._sortTime||b._sortIndex-a._sortIndex)
+      .map(({_sortTime,_sortIndex,...item})=>item);
   }
   function updateNotifBadge(){
     const badge=document.getElementById(notifBadgeId);if(!badge)return;
@@ -3554,7 +3573,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       row.className='komunitas-notif-item'+(isFriendRequest||!read.has(item.id)?' unread':'')+(isFriendRequest?' komunitas-notif-friend-request':'');
       if(!isFriendRequest){
         row.dataset.postDocId=item.docId;row.title='Buka postingan yang dikomentari';
-        row.addEventListener('click',()=>openNotificationPost(item.docId));
+        row.addEventListener('click',()=>openNotificationPost(item.docId,item.id));
       }
       const av=document.createElement('div');av.className='komunitas-notif-avatar';
       if(item.photo){const img=document.createElement('img');img.src=item.photo;img.alt='Foto profil toko';av.appendChild(img);}
@@ -3581,7 +3600,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     });
   }
 
-  function openNotificationPost(docId){
+  function openNotificationPost(docId,notificationId){
     const target=String(docId||'').trim();
     if(!target)return;
     const post=communityDocs.find(item=>String(item.docId||'')===target);
@@ -3594,7 +3613,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     document.getElementById('komunitas-profile-page')?.setAttribute('aria-hidden','true');
     document.getElementById('komunitas-bio-page')?.setAttribute('aria-hidden','true');
     renderPostList([post]);
-    writeNotifIds([...readNotifIds(),...buildNotifications().filter(n=>n.docId===target).map(n=>n.id)]);
+    if(notificationId)writeNotifIds([...readNotifIds(),notificationId]);
     updateNotifBadge();
     requestAnimationFrame(()=>{
       const card=list.querySelector('.komunitas-post-card');
@@ -4211,7 +4230,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     if(!friendRequestListenersStarted)startCommunityFriendRequestListeners();
     renderNotifList();
     refreshIncomingFriendRequestsOnce();
-    writeNotifIds(buildNotifications().filter(n=>n.type!=='friend-request').map(n=>n.id));updateNotifBadge();
+    /* Membuka halaman notifikasi tidak otomatis menandai semuanya sudah dibaca. */
+    updateNotifBadge();
   }
   function closeNotifications(){
     const page=document.getElementById('komunitas-notification-page');if(!page)return;
