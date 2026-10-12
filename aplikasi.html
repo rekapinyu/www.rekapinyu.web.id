@@ -2949,19 +2949,36 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   flex:0 0 60px!important;
   width:100%!important;
   display:flex!important;
-  align-items:center!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:center!important;
+  gap:6px!important;
   margin:0!important;
-  padding:9px 8px!important;
+  padding:8px!important;
   border-top:1px solid #e2e8f0!important;
   background:rgba(255,255,255,.98)!important;
   box-shadow:0 -8px 20px rgba(15,23,42,.06)!important;
   box-sizing:border-box!important;
 }
-#view-komunitas .komunitas-post-input{flex:1 1 auto!important;width:100%!important;min-width:0!important;height:42px!important;margin:0!important;padding:0 13px!important;border:1px solid #dbe3eb!important;border-right:0!important;border-radius:10px 0 0 10px!important;outline:none!important;background:#f8fafc!important;color:#334155!important;font-size:12px!important;box-sizing:border-box!important}
+#view-komunitas .komunitas-post-box.has-photo{flex-basis:132px!important}
+#view-komunitas .komunitas-post-controls{display:flex!important;align-items:center!important;gap:7px!important;width:100%!important;min-width:0!important;flex:0 0 42px!important;box-sizing:border-box!important}
+#view-komunitas .komunitas-post-input{flex:1 1 auto!important;width:100%!important;min-width:0!important;height:42px!important;margin:0!important;padding:0 13px!important;border:1px solid #dbe3eb!important;border-radius:10px!important;outline:none!important;background:#f8fafc!important;color:#334155!important;font-size:12px!important;box-sizing:border-box!important}
 #view-komunitas .komunitas-post-input:focus{background:#fff!important;border-color:#93c5fd!important;box-shadow:0 0 0 3px rgba(59,130,246,.10)!important}
 #view-komunitas .komunitas-post-input::placeholder{color:#94a3b8!important}
-#view-komunitas .komunitas-publish-btn{flex:0 0 auto!important;height:42px!important;padding:0 18px!important;margin:0!important;border:1px solid #2563eb!important;border-radius:0 10px 10px 0!important;background:#2563eb!important;color:#fff!important;font-size:12px!important;font-weight:800!important;cursor:pointer!important;box-sizing:border-box!important}
+#view-komunitas .komunitas-photo-pick-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 42px!important;width:42px!important;height:42px!important;padding:0!important;margin:0!important;border:1px solid #bfdbfe!important;border-radius:10px!important;background:#eff6ff!important;color:#2563eb!important;font-size:17px!important;cursor:pointer!important;box-sizing:border-box!important}
+#view-komunitas .komunitas-photo-pick-btn:hover{background:#dbeafe!important}
+#view-komunitas .komunitas-photo-pick-btn:focus-visible,#view-komunitas .komunitas-photo-remove:focus-visible{outline:2px solid #2563eb!important;outline-offset:2px!important}
+#view-komunitas .komunitas-publish-btn{flex:0 0 auto!important;height:42px!important;padding:0 16px!important;margin:0!important;border:1px solid #2563eb!important;border-radius:10px!important;background:#2563eb!important;color:#fff!important;font-size:12px!important;font-weight:800!important;cursor:pointer!important;box-sizing:border-box!important;white-space:nowrap!important}
 #view-komunitas .komunitas-publish-btn:hover{background:#1d4ed8!important}
+#view-komunitas .komunitas-publish-btn:disabled{opacity:.65!important;cursor:wait!important}
+#view-komunitas .komunitas-post-preview[hidden]{display:none!important}
+#view-komunitas .komunitas-post-preview{display:flex!important;align-items:center!important;gap:9px!important;width:100%!important;min-width:0!important;height:58px!important;flex:0 0 58px!important;padding:0 2px!important;box-sizing:border-box!important}
+#view-komunitas .komunitas-post-preview img{display:block!important;width:48px!important;height:48px!important;flex:0 0 48px!important;object-fit:cover!important;border:1px solid #dbe3eb!important;border-radius:8px!important;background:#f8fafc!important}
+#view-komunitas .komunitas-post-preview-name{flex:1 1 auto!important;min-width:0!important;color:#475569!important;font-size:11px!important;font-weight:700!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+#view-komunitas .komunitas-photo-remove{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 32px!important;width:32px!important;height:32px!important;border:1px solid #fecaca!important;border-radius:8px!important;background:#fff1f2!important;color:#dc2626!important;cursor:pointer!important}
+#view-komunitas .komunitas-post-photo-wrap{width:100%!important;margin:0!important;padding:0 16px 14px 66px!important;box-sizing:border-box!important}
+#view-komunitas .komunitas-post-photo{display:block!important;width:auto!important;max-width:100%!important;max-height:540px!important;height:auto!important;object-fit:contain!important;border:1px solid #e2e8f0!important;border-radius:12px!important;background:#f8fafc!important}
+#view-komunitas .komunitas-post-photo-wrap img[hidden]{display:none!important}
 @media(max-width:767px){
   #view-komunitas .komunitas-shell{grid-template-columns:42px minmax(0,1fr)!important}
   #view-komunitas .komunitas-rail{width:42px!important}
@@ -2981,7 +2998,13 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   #view-komunitas .komunitas-comment-box{padding:9px 12px 11px 62px!important}
   #view-komunitas .komunitas-comment-input,#view-komunitas .komunitas-comment-send{height:42px!important}
   #view-komunitas .komunitas-post-box{flex-basis:58px!important;padding:8px 6px!important}
-  #view-komunitas .komunitas-post-input,#view-komunitas .komunitas-publish-btn{height:40px!important}
+  #view-komunitas .komunitas-post-box.has-photo{flex-basis:130px!important}
+  #view-komunitas .komunitas-post-controls{gap:5px!important;flex-basis:40px!important}
+  #view-komunitas .komunitas-post-input,#view-komunitas .komunitas-publish-btn,#view-komunitas .komunitas-photo-pick-btn{height:40px!important}
+  #view-komunitas .komunitas-photo-pick-btn{width:38px!important;flex-basis:38px!important;font-size:15px!important}
+  #view-komunitas .komunitas-publish-btn{padding:0 10px!important;font-size:10px!important}
+  #view-komunitas .komunitas-post-photo-wrap{padding:0 12px 12px 62px!important}
+  #view-komunitas .komunitas-post-photo{max-height:420px!important}
 }
 
 /* COMMUNITY — HOVER ANIMATION, ICON AREA ONLY */
@@ -3384,9 +3407,18 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
         <div style="margin-top:3px;font-size:11px;font-weight:600;color:#64748b;">Postingan dan komentar dari para pengguna aplikasi.</div>
       </div>
       <div class="komunitas-post-list" id="komunitas-post-list"></div>
-      <div class="komunitas-post-box">
-        <input class="komunitas-post-input" id="komunitas-post-input" type="text" placeholder="Buat Postingan dengan Komunitas Lain....." autocomplete="off">
-        <button class="komunitas-publish-btn" id="komunitas-publish-btn" type="button">Publikasikan</button>
+      <div class="komunitas-post-box" id="komunitas-post-box">
+        <div class="komunitas-post-preview" id="komunitas-post-photo-preview" hidden>
+          <img id="komunitas-post-photo-preview-img" alt="Pratinjau foto postingan">
+          <span class="komunitas-post-preview-name" id="komunitas-post-photo-preview-name">Foto siap diposting</span>
+          <button class="komunitas-photo-remove" id="komunitas-post-photo-remove" type="button" aria-label="Batalkan foto" title="Batalkan foto"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <div class="komunitas-post-controls">
+          <input class="komunitas-post-input" id="komunitas-post-input" type="text" placeholder="Buat Postingan dengan Komunitas Lain....." autocomplete="off">
+          <input id="komunitas-post-photo-input" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+          <button class="komunitas-photo-pick-btn" id="komunitas-post-photo-pick" type="button" aria-label="Tambah foto postingan" title="Tambah foto postingan"><i class="fa-solid fa-image" aria-hidden="true"></i></button>
+          <button class="komunitas-publish-btn" id="komunitas-publish-btn" type="button">Publikasikan</button>
+        </div>
       </div>
       <div class="komunitas-profile-page" id="komunitas-profile-page" aria-hidden="true">
         <div class="komunitas-profile-main">
@@ -3480,7 +3512,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     const raw=docSnap?.data?.()||{}; const p=raw.PostinganPublik&&typeof raw.PostinganPublik==='object'?raw.PostinganPublik:raw;
     const comments=Array.isArray(p.Komentar)?p.Komentar:(typeof p.Komentar==='string'&&p.Komentar.trim()?[{id:'legacy-'+docSnap.id,UID:p.UID||p.uid||raw.UID||raw.uid||'',NamaToko:p.NamaToko||'Toko',NomorHp:p.NomorHp||'',FotoProfil:p.FotoProfil||'',Tanggal:p.Tanggal||raw.Tanggal||'',Isi:p.Komentar}]:[]);
     const uid=String(p.UID||p.uid||p.UserId||p.userId||p.userID||raw.UID||raw.uid||raw.UserId||raw.userId||raw.userID||'').trim();
-    return {docId:docSnap.id,id:String(p.id||docSnap.id),uid,store:String(p.NamaToko||p.storeName||p.namaToko||'Toko'),phone:String(p.NomorHp||p.phone||raw.NomorHp||raw.phone||''),photo:String(p.FotoProfil||p.photo||raw.FotoProfil||raw.photo||''),date:p.Tanggal||p.createdAt||raw.Tanggal||'',text:String(p.Isi||p.Konten||p.text||''),comments};
+    return {docId:docSnap.id,id:String(p.id||docSnap.id),uid,store:String(p.NamaToko||p.storeName||p.namaToko||'Toko'),phone:String(p.NomorHp||p.phone||raw.NomorHp||raw.phone||''),photo:String(p.FotoProfil||p.photo||raw.FotoProfil||raw.photo||''),postPhotoUrl:String(p.FotoPostinganURL||p.FotoPostinganUrl||p.fotoPostinganURL||'').trim(),date:p.Tanggal||p.createdAt||raw.Tanggal||'',text:String(p.Isi||p.Konten||p.text||''),comments};
   }
   function matchesSearch(post){
     const q=searchTerm.trim().toLowerCase();
@@ -4265,7 +4297,15 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
         head.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target===head){e.preventDefault();openAuthorProfile();}});
       }
       const date=document.createElement('div');date.className='komunitas-post-date';date.textContent=dateLabel(post.date);meta.append(name,date);head.append(postAvatar,meta);
-      const body=document.createElement('p');body.className='komunitas-post-text';body.textContent=post.text;
+      const body=post.text.trim()?document.createElement('p'):null;
+      if(body){body.className='komunitas-post-text';body.textContent=post.text;}
+      const postPhoto=post.postPhotoUrl?document.createElement('div'):null;
+      if(postPhoto){
+        postPhoto.className='komunitas-post-photo-wrap';
+        const image=document.createElement('img');image.className='komunitas-post-photo';image.src=post.postPhotoUrl;image.alt='Foto postingan '+post.store;image.loading='lazy';image.referrerPolicy='no-referrer';
+        image.addEventListener('error',()=>{image.hidden=true;});
+        postPhoto.appendChild(image);
+      }
       const title=document.createElement('div');title.className='komunitas-comment-title';title.textContent='Tulis Komentar :';
       const comments=document.createElement('div');comments.className='komunitas-comments';
       post.comments.forEach(c=>{
@@ -4279,7 +4319,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       const button=document.createElement('button');button.className='komunitas-comment-send';button.type='button';button.innerHTML='<i class="fa-solid fa-paper-plane" aria-hidden="true"></i><span>Kirim</span>';
       const send=()=>saveComment(post.docId,input);
       button.addEventListener('click',send);input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send();}});box.append(input,button);
-      card.append(head,body,title,comments,box);list.appendChild(card);
+      card.appendChild(head);if(body)card.appendChild(body);if(postPhoto)card.appendChild(postPhoto);card.append(title,comments,box);list.appendChild(card);
     });
   }
   function render(){
@@ -4302,7 +4342,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     const postsQuery=a.query(col,a.where('PostinganPublik.id','!=',''));
     listenerStarted=true;
     unsubscribeCommunity=a.onSnapshot(postsQuery,snap=>{
-      communityDocs=snap.docs.map(normalizePost).filter(x=>x.text.trim()).sort((a,b)=>{
+      communityDocs=snap.docs.map(normalizePost).filter(x=>x.text.trim()||x.postPhotoUrl).sort((a,b)=>{
         const da=new Date(a.date||0).getTime(),dbb=new Date(b.date||0).getTime();return dbb-da;
       });
       if(communityContent()?.classList.contains('komunitas-single-post-open')){
@@ -4328,12 +4368,37 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     incomingFriendRequests=[];outgoingFriendRequests=[];
   }
   async function savePost(){
-    const input=document.getElementById(postInputId);if(!input)return;const value=String(input.value||'').trim();if(!value){input.focus();return;}
+    const input=document.getElementById(postInputId),fileInput=document.getElementById('komunitas-post-photo-input'),publishButton=document.getElementById(publishButtonId);
+    if(!input)return;
+    const value=String(input.value||'').trim(),photoFile=fileInput?.files?.[0]||null;
+    if(!value&&!photoFile){input.focus();return;}
     if(!ready()){alert('Koneksi Komunitas ke Firestore belum siap. Silakan coba lagi.');return;}
+    if(photoFile){
+      if(!['image/jpeg','image/png','image/webp'].includes(String(photoFile.type||'').toLowerCase())){alert('Pilih foto berformat JPG, PNG, atau WebP.');return;}
+      if(photoFile.size>5*1024*1024){alert('Ukuran foto maksimal 5 MB.');return;}
+    }
     const a=api(),col=communityCollection(),id=(crypto?.randomUUID?.()||('post-'+Date.now()+'-'+Math.random().toString(36).slice(2,9)));
-    const payload={PostinganPublik:{id,UID:String(sessionUser().uid||auth.currentUser?.uid||''),NamaToko:storeName(),NomorHp:phone(),FotoProfil:profilePhoto(),Tanggal:new Date().toISOString(),Isi:value,Komentar:[]}};
-    try{await a.setDoc(a.doc(col,id),payload);input.value='';input.focus();}
-    catch(e){console.error('Komunitas posting gagal:',e);alert('Postingan gagal disimpan ke Komunitas.');}
+    const payload={PostinganPublik:{id,UID:currentCommunityUid(),NamaToko:storeName(),NomorHp:phone(),FotoProfil:profilePhoto(),Tanggal:new Date().toISOString(),Isi:value,Komentar:[]}};
+    let uploadedPhoto=null,postSaved=false;
+    const previousLabel=publishButton?.textContent||'Publikasikan';
+    if(publishButton){publishButton.disabled=true;publishButton.textContent=photoFile?'Mengunggah foto...':'Memublikasikan...';}
+    try{
+      if(photoFile){
+        const photoStorage=window.RekapinyuCommunityPhotoStorage;
+        if(!photoStorage||typeof photoStorage.upload!=='function')throw new Error('Layanan unggah foto Supabase belum siap. Muat ulang aplikasi, lalu coba lagi.');
+        uploadedPhoto=await photoStorage.upload(photoFile,id);
+        payload.PostinganPublik.FotoPostinganURL=uploadedPhoto.url;
+        if(publishButton)publishButton.textContent='Menyimpan postingan...';
+      }
+      await a.setDoc(a.doc(col,id),payload);postSaved=true;
+      input.value='';clearSelectedPostPhoto();input.focus();
+    }catch(e){
+      if(uploadedPhoto?.path&&!postSaved){try{await window.RekapinyuCommunityPhotoStorage?.remove?.(uploadedPhoto.path);}catch(cleanupError){console.warn('Foto yatim gagal dibersihkan dari Supabase:',cleanupError);}}
+      console.error('Komunitas posting gagal:',e);
+      alert(e?.message||'Postingan gagal disimpan. Periksa koneksi Supabase dan Firestore, lalu coba lagi.');
+    }finally{
+      if(publishButton){publishButton.disabled=false;publishButton.textContent=previousLabel;}
+    }
   }
   async function saveComment(docId,input){
     const value=String(input?.value||'').trim();if(!value){input?.focus();return;}
@@ -4354,11 +4419,34 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       }
     }catch(e){console.error('Komentar Komunitas gagal:',e);alert('Komentar gagal disimpan ke Komunitas.');}
   }
+  let selectedPostPhotoObjectUrl='';
+  function clearSelectedPostPhoto(){
+    const box=document.getElementById('komunitas-post-box'),fileInput=document.getElementById('komunitas-post-photo-input'),preview=document.getElementById('komunitas-post-photo-preview'),image=document.getElementById('komunitas-post-photo-preview-img'),name=document.getElementById('komunitas-post-photo-preview-name');
+    if(selectedPostPhotoObjectUrl){try{URL.revokeObjectURL(selectedPostPhotoObjectUrl);}catch(_){}selectedPostPhotoObjectUrl='';}
+    if(fileInput)fileInput.value='';
+    if(image)image.removeAttribute('src');
+    if(name)name.textContent='';
+    if(preview)preview.hidden=true;
+    box?.classList.remove('has-photo');
+  }
+  function handlePostPhotoChange(fileInput){
+    const file=fileInput?.files?.[0];if(!file)return;
+    if(!['image/jpeg','image/png','image/webp'].includes(String(file.type||'').toLowerCase())){alert('Pilih foto berformat JPG, PNG, atau WebP.');clearSelectedPostPhoto();return;}
+    if(file.size>5*1024*1024){alert('Ukuran foto maksimal 5 MB. Pilih foto yang lebih kecil.');clearSelectedPostPhoto();return;}
+    const preview=document.getElementById('komunitas-post-photo-preview'),image=document.getElementById('komunitas-post-photo-preview-img'),name=document.getElementById('komunitas-post-photo-preview-name'),box=document.getElementById('komunitas-post-box');
+    if(!preview||!image||!name||!box)return;
+    if(selectedPostPhotoObjectUrl){try{URL.revokeObjectURL(selectedPostPhotoObjectUrl);}catch(_){} }
+    selectedPostPhotoObjectUrl=URL.createObjectURL(file);image.src=selectedPostPhotoObjectUrl;name.textContent=file.name||'Foto siap diposting';preview.hidden=false;box.classList.add('has-photo');
+  }
   function init(){
     const root=document.getElementById(rootId),button=document.getElementById(publishButtonId),input=document.getElementById(postInputId),notifButton=document.getElementById('komunitas-rail-notif');
     if(!root||!button||!input)return;
     if(root.dataset.communityFirestoreReady==='1')return;root.dataset.communityFirestoreReady='1';
     button.addEventListener('click',savePost);input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();savePost();}});
+    const photoInput=document.getElementById('komunitas-post-photo-input');
+    document.getElementById('komunitas-post-photo-pick')?.addEventListener('click',()=>photoInput?.click());
+    photoInput?.addEventListener('change',()=>handlePostPhotoChange(photoInput));
+    document.getElementById('komunitas-post-photo-remove')?.addEventListener('click',clearSelectedPostPhoto);
     notifButton?.addEventListener('click',openNotifications);
     document.getElementById('komunitas-rail-profile')?.addEventListener('click',()=>{communityProfileTarget=null;openProfile();});
     document.getElementById('komunitas-rail-bio')?.addEventListener('click',openBio);
@@ -7519,6 +7607,31 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
   auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
   accessToken:async()=>{try{return (await auth.currentUser?.getIdToken(false))||null}catch(_){return null}}
 });
+/* Jembatan terbatas untuk fitur foto postingan Komunitas. File fisik hanya masuk Supabase Storage. */
+window.RekapinyuCommunityPhotoStorage={
+  async upload(file,postId){
+    const uid=String(auth.currentUser?.uid||'').trim();
+    if(!uid)throw new Error('Sesi Firebase tidak ditemukan. Silakan login kembali.');
+    if(!file||!['image/jpeg','image/png','image/webp'].includes(String(file.type||'').toLowerCase()))throw new Error('Pilih foto berformat JPG, PNG, atau WebP.');
+    if(Number(file.size)>5*1024*1024)throw new Error('Ukuran foto maksimal 5 MB.');
+    const ext=({'image/jpeg':'jpg','image/png':'png','image/webp':'webp'})[String(file.type).toLowerCase()];
+    const safeId=String(postId||'').replace(/[^A-Za-z0-9_-]/g,'');
+    if(!safeId)throw new Error('ID postingan tidak valid untuk penyimpanan foto.');
+    const path=`${uid}/postingan/${safeId}.${ext}`;
+    const {error}=await supabase.storage.from(SUPABASE_PHOTO_BUCKET).upload(path,file,{contentType:file.type,upsert:false,cacheControl:'3600'});
+    if(error)throw new Error(`Unggah foto ke Supabase gagal: ${error.message||'akses ditolak'}`);
+    const {data}=supabase.storage.from(SUPABASE_PHOTO_BUCKET).getPublicUrl(path);
+    const url=String(data?.publicUrl||'');
+    if(!url){try{await supabase.storage.from(SUPABASE_PHOTO_BUCKET).remove([path]);}catch(_){}throw new Error('URL foto Supabase tidak berhasil dibuat.');}
+    return {url,path};
+  },
+  async remove(path){
+    const uid=String(auth.currentUser?.uid||'').trim(),normalized=String(path||'');
+    if(!uid||!normalized.startsWith(`${uid}/postingan/`))throw new Error('Penghapusan foto hanya diizinkan pada folder postingan milik sendiri.');
+    const {error}=await supabase.storage.from(SUPABASE_PHOTO_BUCKET).remove([normalized]);
+    if(error)throw error;
+  }
+};
 const nativeSet=Storage.prototype.setItem,nativeRemove=Storage.prototype.removeItem;
 const COLLECTION={PENGGUNA:"Pengguna",KASIR:"Kasir",REKAP:"Rekap",AKTIFITAS:"Aktifitas"};
 const phoneOf=v=>String(v??"").replace(/\D/g,"");
