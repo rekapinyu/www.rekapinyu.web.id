@@ -12421,6 +12421,16 @@ async function initKasirViews(){
             const total = cetak_getCartTotal();
             const cashPaid = CETAK_APP_STATE.cashPaid || 0;
             const change = cashPaid - total;
+            // Gunakan data Seting Struk utama agar preview Cetak mengikuti pengaturan aplikasi.
+            const receiptSettings = window.__rekapinyuSettingData?.SettingStruk;
+            const receiptStore = receiptSettings && typeof receiptSettings === 'object'
+                ? {
+                    name: String(receiptSettings.name ?? CETAK_APP_STATE.store.name ?? ''),
+                    address: String(receiptSettings.address ?? CETAK_APP_STATE.store.address ?? ''),
+                    phone: String(receiptSettings.phone ?? CETAK_APP_STATE.store.phone ?? ''),
+                    footer: String(receiptSettings.footer ?? CETAK_APP_STATE.store.footer ?? '')
+                }
+                : CETAK_APP_STATE.store;
 
             const now = new Date();
             const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -12449,11 +12459,11 @@ async function initKasirViews(){
 
             const html = `
                 <div class="text-center font-bold text-sm tracking-tight border-b border-dashed border-slate-300 pb-1.5 mb-1.5 text-slate-900">
-                    ${cetak_escapeHtml(CETAK_APP_STATE.store.name)}
+                    ${cetak_escapeHtml(receiptStore.name)}
                 </div>
                 <div class="text-center text-[10px] text-slate-600 mb-1 leading-tight">
-                    ${cetak_escapeHtml(CETAK_APP_STATE.store.address)}<br>
-                    Telp: ${cetak_escapeHtml(CETAK_APP_STATE.store.phone)}
+                    ${cetak_escapeHtml(receiptStore.address)}<br>
+                    Telp: ${cetak_escapeHtml(receiptStore.phone)}
                 </div>
 
                 <div class="text-[9px] text-slate-600 border-t border-b border-dashed border-slate-300 py-1 my-1.5 flex justify-between">
@@ -12486,7 +12496,7 @@ async function initKasirViews(){
                 </div>
 
                 <div class="text-center text-[9px] text-slate-500 border-t border-dashed border-slate-300 pt-2 mt-3 space-y-0.5 whitespace-pre-line">
-                    ${cetak_escapeHtml(CETAK_APP_STATE.store.footer)}
+                    ${cetak_escapeHtml(receiptStore.footer)}
                 </div>
             `;
 
