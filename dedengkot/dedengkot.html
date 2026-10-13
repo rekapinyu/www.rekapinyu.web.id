@@ -6132,6 +6132,29 @@ const boot=()=>{
  };
  const bannerPendingFiles={login:null,input:null,popup:null},bannerPreviewUrls={login:'',input:'',popup:''};
  function setBannerStatus(key,message,kind=''){const el=$(bannerConfig[key].status);if(el){el.textContent=message;el.classList.toggle('is-error',kind==='error');el.classList.toggle('is-success',kind==='success')}}
+
+ async function prepareBannerUpload(file){
+  const maxBytes=275*1024;
+  let bitmap;
+  try{bitmap=await createImageBitmap(file)}catch(e){throw new Error('Gambar tidak dapat dibaca browser. Coba gunakan JPG, PNG, atau WebP.')}
+  try{
+   let width=bitmap.width,height=bitmap.height;
+   const maxDimension=2400;
+   if(Math.max(width,height)>maxDimension){const ratio=maxDimension/Math.max(width,height);width=Math.max(1,Math.round(width*ratio));height=Math.max(1,Math.round(height*ratio))}
+   const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+   if(!ctx)throw new Error('Browser tidak mendukung kompresi gambar.');
+   for(let pass=0;pass<12;pass++){
+    canvas.width=width;canvas.height=height;
+    ctx.clearRect(0,0,width,height);ctx.drawImage(bitmap,0,0,width,height);
+    for(const quality of [.86,.78,.70,.62,.54,.46,.40]){
+     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/webp',quality));
+     if(blob&&blob.size>0&&blob.size<=maxBytes)return{blob,contentType:'image/webp',extension:'webp'};
+    }
+    width=Math.max(1,Math.floor(width*.82));height=Math.max(1,Math.floor(height*.82));
+   }
+   throw new Error('Gambar masih lebih besar dari 275 KB setelah kompresi. Pilih gambar dengan resolusi lebih kecil.');
+  }finally{bitmap.close?.()}
+ }
  function setBannerPreview(key,url){const c=bannerConfig[key],img=$(c.preview),empty=$(c.empty);if(!img||!empty)return;if(url){img.src=url;img.hidden=false;empty.hidden=true;bannerPreviewUrls[key]=url}else{img.removeAttribute('src');img.hidden=true;empty.hidden=false;bannerPreviewUrls[key]=''}}
  function showBannerSettings(data={}){Object.entries(bannerConfig).forEach(([key,c])=>{const url=String(data[c.field]||'');if(url&&!bannerPendingFiles[key])setBannerPreview(key,url);else if(!url&&!bannerPendingFiles[key])setBannerPreview(key,'')})}
  window.addEventListener('rekapinyu-banner-settings-updated',e=>showBannerSettings(e.detail||{}));
@@ -6155,26 +6178,30 @@ const boot=()=>{
    if(button.dataset.busy==='1')return;
    button.dataset.busy='1';button.disabled=true;
    setBannerStatus(key,'Mengunggah file banner ke Supabase Storage…');
+   let bannerUploadStage='Menyiapkan gambar';
    try{
     const adminUid=String(auth.currentUser?.uid||'').trim();
     if(!adminUid)throw new Error('Sesi Firebase tidak ditemukan. Silakan masuk kembali sebagai Super Admin.');
-    const extMatch=String(file.name||'').match(/\.([a-z0-9]{2,6})$/i);
-    const fallbackExt=file.type==='image/png'?'png':file.type==='image/webp'?'webp':file.type==='image/gif'?'gif':'jpg';
-    const ext=(extMatch?extMatch[1]:fallbackExt).toLowerCase();
-    const path=`${adminUid}/banners/${key}-${Date.now()}.${ext}`;
-    const {error:uploadError}=await supabase.storage.from(SUPABASE_PHOTO_BUCKET).upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false,cacheControl:'3600'});
-    if(uploadError)throw new Error(`Upload Supabase gagal: ${uploadError.message||'akses ditolak'}`);
+    bannerUploadStage='Mengompres gambar';
+    setBannerStatus(key,'Mengompres gambar agar sesuai batas bucket 300 KB…');
+    const prepared=await prepareBannerUpload(file);
+    const path=`${adminUid}/banners/${key}-${Date.now()}.${prepared.extension}`;
+    bannerUploadStage='Upload ke Supabase Storage';
+    setBannerStatus(key,'Mengunggah gambar terkompresi ke Supabase Storage…');
+    const {error:uploadError}=await supabase.storage.from(SUPABASE_PHOTO_BUCKET).upload(path,prepared.blob,{contentType:prepared.contentType,upsert:false,cacheControl:'3600'});
+    if(uploadError)throw new Error(uploadError.message||'Upload Storage ditolak.');
     const {data:publicData}=supabase.storage.from(SUPABASE_PHOTO_BUCKET).getPublicUrl(path);
     const url=String(publicData?.publicUrl||'');
-    if(!url)throw new Error('URL banner Supabase tidak berhasil dibuat. Pastikan bucket bisa diakses frontend.');
+    if(!url)throw new Error('URL publik banner tidak berhasil dibuat. Pastikan bucket rekapinyu-foto bersifat Public.');
+    bannerUploadStage='Menyimpan URL konfigurasi ke Firestore';
     await setDoc(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),{[c.field]:url,[c.pathField]:path,updatedAt:serverTimestamp(),updatedBy:adminUid,storageProvider:'supabase'},{merge:true});
     bannerPendingFiles[key]=null;
     const input=$(c.file);if(input)input.value='';
     setBannerPreview(key,url);
-    setBannerStatus(key,`${c.title} berhasil diunggah ke Supabase dan diterapkan.`, 'success');
+    setBannerStatus(key,`${c.title} berhasil diunggah ke Supabase (${Math.round(prepared.blob.size/1024)} KB) dan URL tersimpan.`, 'success');
    }catch(err){
-    console.error(`Upload ${c.title}:`,err);
-    setBannerStatus(key,`Gagal menyimpan ${c.title} ke Supabase. Periksa bucket ${SUPABASE_PHOTO_BUCKET}, Storage Policies, dan izin Firestore untuk konfigurasi banner.`, 'error');
+    console.error(`Upload ${c.title} pada tahap ${bannerUploadStage}:`,err);
+    setBannerStatus(key,`${bannerUploadStage} gagal: ${err?.message||String(err)}.`, 'error');
    }finally{delete button.dataset.busy;button.disabled=false}
   });
  });
