@@ -8495,12 +8495,15 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         element.style.setProperty("background-size", "58% 100%", "important");
         element.style.setProperty("background-repeat", "no-repeat", "important");
         element.dataset[marker] = "1";
-      }else if(element.dataset[marker] === "1"){
-        element.style.removeProperty("background-image");
-        element.style.removeProperty("background-position");
-        element.style.removeProperty("background-size");
-        element.style.removeProperty("background-repeat");
-        delete element.dataset[marker];
+      }else{
+        /* Pertahankan banner Input Data meskipun pengaturan banner dari server kosong.
+           Gunakan banner bawaan agar membuka/menutup halaman paket tidak menghilangkan banner. */
+        const fallbackBannerUrl = "https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20INPUT%20DATA.jpg?raw=true";
+        element.style.setProperty("background-image", bannerCssUrl(fallbackBannerUrl), "important");
+        element.style.setProperty("background-position", "right center", "important");
+        element.style.setProperty("background-size", "58% 100%", "important");
+        element.style.setProperty("background-repeat", "no-repeat", "important");
+        element.dataset[marker] = "1";
       }
     });
   }
