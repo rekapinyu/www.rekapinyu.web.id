@@ -7004,7 +7004,8 @@ function updateUserAvatarUI() {
 #history-io-floating{
   position:fixed;
   right:18px;
-  top:92px;
+  top:50%;
+  transform:translateY(-50%);
   z-index:45;
   display:none;
   flex-direction:column;
@@ -7121,7 +7122,7 @@ function updateUserAvatarUI() {
   cursor:pointer;
 }
 @media (max-width:767px){
-  #history-io-floating{right:14px;top:82px}
+  #history-io-floating{right:14px;top:50%;transform:translateY(-50%)}
   #history-io-floating button{width:50px;height:50px;flex-basis:50px}
   #history-filter-popup{
     left:50%;
