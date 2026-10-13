@@ -8293,6 +8293,10 @@ const authSubmitGuard=e=>{if(e.target?.id!=="login-form"&&e.target?.id!=="regist
 window.handleLogout=async()=>{
   if(window.__rekapinyuLogoutBusy)return;
   window.__rekapinyuLogoutBusy=true;
+  /* Tutup gerbang paket sebelum sesi/logout berubah agar layar paket habis tidak sempat berkedip. */
+  window.__rekapinyuLoggingOut=true;
+  window.__rekapinyuHidePackageGate?.();
+  document.body.classList.remove('rk-package-expired');
   try{
     showModal("Keluar","Sedang menyimpan data dan mengakhiri sesi...","fa-solid fa-spinner fa-spin text-emerald-600");
     await window.__rekapinyuSaveLocalRekap?.();
@@ -13315,9 +13319,10 @@ async function initKasirViews(){
     return screen;
   }
   function communityIsOpen(){return !!document.getElementById('view-komunitas')&&!document.getElementById('view-komunitas').classList.contains('hidden')}
-  function show(force){const screen=getScreen();if(!force&&communityIsOpen()){screen.classList.remove('is-visible');return}screen.classList.add('is-visible')}
+  function show(force){if(window.__rekapinyuLoggingOut)return hide();const screen=getScreen();if(!force&&communityIsOpen()){screen.classList.remove('is-visible');return}screen.classList.add('is-visible')}
   function hide(){document.getElementById('rekapinyu-package-expired-screen')?.classList.remove('is-visible')}
   function update(data){
+    if(window.__rekapinyuLoggingOut){hide();document.body.classList.remove('rk-package-expired');return}
     if(!data||typeof data!=='object')return;
     packageKnown=true;
     const name=String(data.NamaPaket||data.namaPaket||data.packageName||data.paketNama||data.namaLangganan||'').trim();
@@ -13336,15 +13341,15 @@ async function initKasirViews(){
   window.__rekapinyuPackageGateActive=false;
   /* Saat paket terkunci, setiap menu sidebar selain Komunitas langsung menampilkan halaman paket habis. */
   document.addEventListener('click',event=>{
-    if(!window.__rekapinyuPackageGateActive)return;
+    if(window.__rekapinyuLoggingOut||!window.__rekapinyuPackageGateActive)return;
     const navItem=event.target?.closest?.('#sidebar nav > button, #sidebar nav > .toggle-kasbon-menu-container');
     if(!navItem||navItem.id==='nav-komunitas'||navItem.querySelector?.('#nav-komunitas'))return;
     event.preventDefault();
     event.stopImmediatePropagation();
     show(true);
   },true);
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&window.__rekapinyuPackageGateActive)show()});
-  window.addEventListener('focus',()=>{if(window.__rekapinyuPackageGateActive&&!communityIsOpen())show()});
+  document.addEventListener('visibilitychange',()=>{if(!window.__rekapinyuLoggingOut&&document.visibilityState==='visible'&&window.__rekapinyuPackageGateActive)show()});
+  window.addEventListener('focus',()=>{if(!window.__rekapinyuLoggingOut&&window.__rekapinyuPackageGateActive&&!communityIsOpen())show()});
 })();
 </script>
 
