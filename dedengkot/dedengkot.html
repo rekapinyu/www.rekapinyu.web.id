@@ -6023,10 +6023,17 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
 import { getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getFirestore, collection, collectionGroup, onSnapshot, doc, getDoc, deleteDoc, updateDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const boot=()=>{
- const app=getApp(),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app);
+ const app=getApp(),auth=getAuth(app),db=getFirestore(app);
+ const SUPABASE_URL="https://anligmzxaytnhszesxsp.supabase.co";
+ const SUPABASE_PUBLISHABLE_KEY="sb_publishable__TDKPwJYJBEZT1nP4CofJg_9213WW_Y";
+ const SUPABASE_PHOTO_BUCKET="rekapinyu-foto";
+ const supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
+  auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
+  accessToken:async()=>{try{return (await auth.currentUser?.getIdToken(false))||null}catch(_){return null}}
+ });
  const USERS='Pengguna',ACTIVITIES='Aktifitas',KASIR='Kasir',COMMUNITY='Komunitas',COMMUNITY_IDENTITIES='KomunitasIdentitas',REKAP='Rekap';
  const state={users:[],userSources:{legacy:[]},kasir:new Map(),rekap:new Map(),userRecords:[],activityRecords:[],kasirRecords:[],communityRecords:[],communityIdentityRecords:[],rekapRecords:[],nestedTransactions:[],nestedReports:[],nestedProducts:[],nestedStocks:[],nestedPosts:[],unsub:{users:null,activities:null,kasir:null,community:null,communityIdentities:null,rekap:null,nestedTransactions:null,nestedReports:null,nestedProducts:null,nestedStocks:null,nestedPosts:null},listenersStarted:false,superadmin:false};
  let selectedUserListCategory="all";
@@ -6119,9 +6126,9 @@ const boot=()=>{
  const settingsRail=$('sa-settings-page');
  const BANNER_SETTINGS_COLLECTION='PengaturanAplikasi',BANNER_SETTINGS_DOCUMENT='BannerFrontend';
  const bannerConfig={
-  login:{file:'sa-banner-file-login',preview:'sa-banner-preview-login',empty:'sa-banner-empty-login',status:'sa-banner-status-login',field:'bannerLoginUrl',title:'Banner Login',path:'superadmin/banners/banner-login'},
-  input:{file:'sa-banner-file-input',preview:'sa-banner-preview-input',empty:'sa-banner-empty-input',status:'sa-banner-status-input',field:'bannerInputDataUrl',title:'Banner Input Data',path:'superadmin/banners/banner-input-data'},
-  popup:{file:'sa-banner-file-popup',preview:'sa-banner-preview-popup',empty:'sa-banner-empty-popup',status:'sa-banner-status-popup',field:'bannerPopupUrl',title:'Banner Popup',path:'superadmin/banners/banner-popup'}
+  login:{file:'sa-banner-file-login',preview:'sa-banner-preview-login',empty:'sa-banner-empty-login',status:'sa-banner-status-login',field:'bannerLoginUrl',pathField:'bannerLoginStoragePath',title:'Banner Login'},
+  input:{file:'sa-banner-file-input',preview:'sa-banner-preview-input',empty:'sa-banner-empty-input',status:'sa-banner-status-input',field:'bannerInputDataUrl',pathField:'bannerInputDataStoragePath',title:'Banner Input Data'},
+  popup:{file:'sa-banner-file-popup',preview:'sa-banner-preview-popup',empty:'sa-banner-empty-popup',status:'sa-banner-status-popup',field:'bannerPopupUrl',pathField:'bannerPopupStoragePath',title:'Banner Popup'}
  };
  const bannerPendingFiles={login:null,input:null,popup:null},bannerPreviewUrls={login:'',input:'',popup:''};
  function setBannerStatus(key,message,kind=''){const el=$(bannerConfig[key].status);if(el){el.textContent=message;el.classList.toggle('is-error',kind==='error');el.classList.toggle('is-success',kind==='success')}}
@@ -6147,19 +6154,27 @@ const boot=()=>{
    const button=e.currentTarget;
    if(button.dataset.busy==='1')return;
    button.dataset.busy='1';button.disabled=true;
-   setBannerStatus(key,'Mengunggah gambar ke Firebase Storage…');
+   setBannerStatus(key,'Mengunggah file banner ke Supabase Storage…');
    try{
-    const target=storageRef(storage,c.path);
-    await uploadBytes(target,file,{contentType:file.type,cacheControl:'public,max-age=300'});
-    const url=await getDownloadURL(target);
-    await setDoc(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),{[c.field]:url,updatedAt:serverTimestamp(),updatedBy:auth.currentUser?.uid||''},{merge:true});
+    const adminUid=String(auth.currentUser?.uid||'').trim();
+    if(!adminUid)throw new Error('Sesi Firebase tidak ditemukan. Silakan masuk kembali sebagai Super Admin.');
+    const extMatch=String(file.name||'').match(/\.([a-z0-9]{2,6})$/i);
+    const fallbackExt=file.type==='image/png'?'png':file.type==='image/webp'?'webp':file.type==='image/gif'?'gif':'jpg';
+    const ext=(extMatch?extMatch[1]:fallbackExt).toLowerCase();
+    const path=`${adminUid}/banners/${key}-${Date.now()}.${ext}`;
+    const {error:uploadError}=await supabase.storage.from(SUPABASE_PHOTO_BUCKET).upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false,cacheControl:'3600'});
+    if(uploadError)throw new Error(`Upload Supabase gagal: ${uploadError.message||'akses ditolak'}`);
+    const {data:publicData}=supabase.storage.from(SUPABASE_PHOTO_BUCKET).getPublicUrl(path);
+    const url=String(publicData?.publicUrl||'');
+    if(!url)throw new Error('URL banner Supabase tidak berhasil dibuat. Pastikan bucket bisa diakses frontend.');
+    await setDoc(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),{[c.field]:url,[c.pathField]:path,updatedAt:serverTimestamp(),updatedBy:adminUid,storageProvider:'supabase'},{merge:true});
     bannerPendingFiles[key]=null;
     const input=$(c.file);if(input)input.value='';
     setBannerPreview(key,url);
-    setBannerStatus(key,`${c.title} berhasil disimpan dan diterapkan.`, 'success');
+    setBannerStatus(key,`${c.title} berhasil diunggah ke Supabase dan diterapkan.`, 'success');
    }catch(err){
     console.error(`Upload ${c.title}:`,err);
-    setBannerStatus(key,`Gagal menyimpan ${c.title}. Periksa izin Firebase Storage dan Firestore Rules.`, 'error');
+    setBannerStatus(key,`Gagal menyimpan ${c.title} ke Supabase. Periksa bucket ${SUPABASE_PHOTO_BUCKET}, Storage Policies, dan izin Firestore untuk konfigurasi banner.`, 'error');
    }finally{delete button.dataset.busy;button.disabled=false}
   });
  });
