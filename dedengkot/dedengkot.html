@@ -5907,6 +5907,29 @@ function initKasirViews(){
 @media(max-width:900px){.sa-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767px){#superadmin-root{width:100%;max-width:none;padding:0 8px 88px}.sa-grid{gap:8px}.sa-card{padding:11px;border-radius:13px}.sa-value{font-size:18px}.sa-panel{border-radius:13px;padding:11px}.sa-search{width:100%;max-width:none}.sa-filter-row{width:100%}.sa-users-inline-panel{padding:10px;margin-top:10px}.sa-users-grid-dialog{width:100%;max-height:none;border-radius:0}.sa-users-grid-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px 0 2px}.sa-user-grid-card{min-height:126px;padding:11px 7px}.sa-user-grid-photo{width:58px;height:58px;flex-basis:58px}}
 
+/* Menu Pengaturan Super Admin: rail untuk tiga kategori banner. */
+.sa-settings-layout{display:grid;grid-template-columns:minmax(220px,270px) minmax(0,1fr);gap:14px;align-items:stretch;margin-top:2px;min-height:340px}
+.sa-settings-rail{display:flex;flex-direction:column;gap:7px;padding:9px;background:#fff;border:1px solid #e5eaf0;border-radius:16px;box-shadow:0 7px 20px rgba(15,23,42,.045);min-width:0}
+.sa-settings-rail-item{display:flex;align-items:center;gap:11px;width:100%;min-height:62px;padding:10px;border:1px solid transparent;border-radius:12px;background:transparent;text-align:left;cursor:pointer;color:#526075;transition:background .15s,border-color .15s,color .15s}
+.sa-settings-rail-item:hover{background:#f7fafc;border-color:#edf0f3}
+.sa-settings-rail-item.is-active{background:#e9f8f4;border-color:#c8eee3;color:#087f6b}
+.sa-settings-rail-icon{display:flex;align-items:center;justify-content:center;flex:0 0 38px;width:38px;height:38px;border-radius:11px;background:#f1f5f9;color:#64748b;font-size:15px}
+.sa-settings-rail-item.is-active .sa-settings-rail-icon{background:#16a085;color:#fff}
+.sa-settings-rail-text{display:flex;flex:1;flex-direction:column;gap:3px;min-width:0}
+.sa-settings-rail-text strong{font-size:11px;font-weight:850;line-height:1.35;color:inherit}
+.sa-settings-rail-text small{font-size:9px;line-height:1.4;color:#94a3b8}
+.sa-settings-rail-arrow{font-size:10px;color:#a8b3c1}
+.sa-settings-rail-item.is-active .sa-settings-rail-arrow{color:#16a085}
+.sa-settings-content{min-width:0;min-height:220px;padding:18px;background:#fff;border:1px solid #e5eaf0;border-radius:16px;box-shadow:0 7px 20px rgba(15,23,42,.045)}
+.sa-settings-panel{display:none;min-height:180px}
+.sa-settings-panel.is-active{display:block}
+.sa-settings-panel[hidden]{display:none!important}
+.sa-settings-panel-heading{display:flex;align-items:center;gap:12px;padding:3px 0 16px;border-bottom:1px solid #edf0f3}
+.sa-settings-panel-icon{display:flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;border-radius:13px;background:#e9f8f4;color:#16a085;font-size:18px}
+.sa-settings-panel-heading h3{margin:0;font-size:15px;font-weight:900;color:#263348}
+.sa-settings-panel-heading p{margin:4px 0 0;font-size:10px;line-height:1.5;color:#8b96a6}
+@media(max-width:767px){.sa-settings-layout{grid-template-columns:minmax(0,1fr);gap:10px;min-height:0}.sa-settings-rail{flex-direction:row;gap:6px;padding:6px;overflow-x:auto;overscroll-behavior-x:contain}.sa-settings-rail-item{flex:0 0 auto;flex-direction:column;justify-content:center;gap:6px;min-width:104px;min-height:82px;padding:8px 7px;text-align:center}.sa-settings-rail-icon{width:34px;height:34px;flex-basis:34px;border-radius:10px}.sa-settings-rail-text{flex:0 0 auto;align-items:center}.sa-settings-rail-text strong{font-size:10px}.sa-settings-rail-text small,.sa-settings-rail-arrow{display:none}.sa-settings-content{padding:14px;border-radius:13px;min-height:180px}.sa-settings-panel-heading h3{font-size:13px}.sa-settings-panel-heading p{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.sa-settings-rail-item{transition:none}}
 @media(max-width:767px){
   #sa-dashboard-page.sa-active{height:calc(100dvh - 160px)}
 }
@@ -5927,7 +5950,38 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
 <section class="sa-page" id="sa-activity-page"><div class="sa-panel"><div class="sa-panel-title"><strong id="sa-activity-shop-title">Semua Toko</strong><div class="sa-filter-row"><select class="sa-select" id="sa-activity-shop-select"><option value="">Semua Toko</option></select><select class="sa-select" id="sa-activity-period"><option value="7">7 Hari</option><option value="30" selected>30 Hari</option><option value="90">90 Hari</option></select></div></div><div class="sa-chart" id="sa-activity-chart"></div><div class="sa-legend"><span><i class="sa-dot"></i> Nilai transaksi</span></div></div><div class="sa-panel"><div class="sa-panel-title"><strong>Data Transaksi</strong><span id="sa-activity-count">0 transaksi</span></div><div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Tanggal</th><th>Toko</th><th>Transaksi</th><th>Total</th></tr></thead><tbody id="sa-activity-body"></tbody></table></div></div></section>
 <section class="sa-page" id="sa-notification-page"><div class="sa-panel"><div class="sa-note">Sumber notifikasi konfirmasi pembayaran dari halaman Rekapinyu lain belum tersedia di file ini. Menu tetap disiapkan tanpa mengubah data toko.</div></div></section>
 <section class="sa-page" id="sa-package-page"><div class="sa-panel"><div class="sa-note">Struktur paket dan masa aktif belum tersimpan pada skema Firestore file ini, jadi tidak dibuat data palsu atau fungsi yang dapat mengubah paket secara keliru.</div></div></section>
-<section class="sa-page" id="sa-settings-page"><div class="sa-panel"><div class="sa-note">Gunakan pengaturan profil pada kartu akun di sidebar untuk nama, foto, dan password akun yang sedang masuk.</div></div></section>
+<section class="sa-page" id="sa-settings-page">
+  <div class="sa-settings-layout">
+    <nav class="sa-settings-rail" aria-label="Pengaturan Banner" role="tablist">
+      <button class="sa-settings-rail-item is-active" type="button" role="tab" aria-selected="true" data-sa-settings-rail="banner-login">
+        <span class="sa-settings-rail-icon"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span>
+        <span class="sa-settings-rail-text"><strong>Banner Login</strong><small>Banner halaman masuk</small></span>
+        <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
+      </button>
+      <button class="sa-settings-rail-item" type="button" role="tab" aria-selected="false" data-sa-settings-rail="banner-input">
+        <span class="sa-settings-rail-icon"><i class="fa-solid fa-file-pen" aria-hidden="true"></i></span>
+        <span class="sa-settings-rail-text"><strong>Banner Input Data</strong><small>Banner halaman input data</small></span>
+        <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
+      </button>
+      <button class="sa-settings-rail-item" type="button" role="tab" aria-selected="false" data-sa-settings-rail="banner-popup">
+        <span class="sa-settings-rail-icon"><i class="fa-solid fa-window-restore" aria-hidden="true"></i></span>
+        <span class="sa-settings-rail-text"><strong>Banner Popup</strong><small>Banner untuk popup aplikasi</small></span>
+        <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
+      </button>
+    </nav>
+    <div class="sa-settings-content">
+      <section class="sa-settings-panel is-active" data-sa-settings-panel="banner-login" role="tabpanel">
+        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span><div><h3>Banner Login</h3><p>Pengaturan banner yang digunakan pada halaman login.</p></div></div>
+      </section>
+      <section class="sa-settings-panel" data-sa-settings-panel="banner-input" role="tabpanel" hidden>
+        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-file-pen" aria-hidden="true"></i></span><div><h3>Banner Input Data</h3><p>Pengaturan banner yang digunakan pada halaman Input Data.</p></div></div>
+      </section>
+      <section class="sa-settings-panel" data-sa-settings-panel="banner-popup" role="tabpanel" hidden>
+        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-window-restore" aria-hidden="true"></i></span><div><h3>Banner Popup</h3><p>Pengaturan banner yang digunakan pada popup aplikasi.</p></div></div>
+      </section>
+    </div>
+  </div>
+</section>
 </div>
 
 <div class="sa-modal" id="sa-user-modal" aria-hidden="true"><div class="sa-modal-box"><div class="sa-modal-head"><strong id="sa-user-modal-title">Detail Pengguna</strong><button class="sa-close" id="sa-user-modal-close" type="button"><i class="fa-solid fa-xmark"></i></button></div><div id="sa-user-modal-body"></div></div></div>
@@ -6027,6 +6081,10 @@ const boot=()=>{
  function schedulePackageCountdownRefresh(){const now=new Date(),nextMidnight=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,2);setTimeout(()=>{if($('sa-users-page')?.classList.contains('sa-active'))renderUsers();schedulePackageCountdownRefresh()},Math.max(1000,nextMidnight.getTime()-Date.now()))}
  schedulePackageCountdownRefresh();
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&$('sa-users-page')?.classList.contains('sa-active'))renderUsers()});$('sa-shop-search')?.addEventListener('input',renderShops);$('sa-activity-shop-select')?.addEventListener('change',drawChart);$('sa-activity-period')?.addEventListener('change',drawChart);$('sa-user-modal-close')?.addEventListener('click',()=>$('sa-user-modal').classList.remove('is-open'));$('sa-user-modal')?.addEventListener('click',e=>{if(e.target.id==='sa-user-modal')e.currentTarget.classList.remove('is-open')});$('sa-users-body')?.addEventListener('click',e=>{const edit=e.target.closest('[data-user-edit]'),del=e.target.closest('[data-user-delete]');if(edit){editUser(edit.dataset.userEdit);return}if(del)delUser(del.dataset.userDelete)});$('sa-shops-body')?.addEventListener('click',e=>{const x=e.target.closest('[data-shop-activity]');if(x){$('sa-activity-shop-select').value=x.dataset.shopActivity;open('superadmin-aktivitas')}});
+ const settingsRail=$('sa-settings-page');
+ function selectSettingsRail(key){if(!settingsRail)return;const buttons=[...settingsRail.querySelectorAll('[data-sa-settings-rail]')],panels=[...settingsRail.querySelectorAll('[data-sa-settings-panel]')];if(!buttons.some(b=>b.dataset.saSettingsRail===key))return;buttons.forEach(b=>{const active=b.dataset.saSettingsRail===key;b.classList.toggle('is-active',active);b.setAttribute('aria-selected',active?'true':'false')});panels.forEach(p=>{const active=p.dataset.saSettingsPanel===key;p.classList.toggle('is-active',active);p.hidden=!active})}
+ settingsRail?.addEventListener('click',e=>{const b=e.target.closest('[data-sa-settings-rail]');if(b)selectSettingsRail(b.dataset.saSettingsRail)});
+ selectSettingsRail('banner-login');
  window.__superAdminOpen=open;
  onAuthStateChanged(auth,async au=>{const ok=await resolveSuperAdmin(au);if(ok)open('superadmin-dashboard');else{stopListeners();showOnly('sa-dashboard-page');$('sa-dashboard-page').innerHTML='<div class="sa-panel"><div class="sa-note"><strong>Akses Super Admin diperlukan.</strong><br>Super Admin dibaca dari koleksi <code>Pengguna</code>.</div></div>';}});
 };
