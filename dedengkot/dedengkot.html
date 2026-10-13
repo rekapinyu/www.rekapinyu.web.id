@@ -5928,6 +5928,25 @@ function initKasirViews(){
 .sa-settings-panel-icon{display:flex;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;border-radius:13px;background:#e9f8f4;color:#16a085;font-size:18px}
 .sa-settings-panel-heading h3{margin:0;font-size:15px;font-weight:900;color:#263348}
 .sa-settings-panel-heading p{margin:4px 0 0;font-size:10px;line-height:1.5;color:#8b96a6}
+
+.sa-banner-editor{display:grid;grid-template-columns:minmax(0,1fr);gap:13px;padding-top:17px}
+.sa-banner-file-label{display:flex;align-items:center;gap:10px;min-height:48px;padding:11px 13px;border:1px dashed #b8c9d6;border-radius:12px;background:#f8fafc;color:#475569;font-size:11px;font-weight:800;cursor:pointer}
+.sa-banner-file-label>i{display:flex;align-items:center;justify-content:center;width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:#e9f8f4;color:#16a085;font-size:14px}
+.sa-banner-file-label input{margin-left:auto;max-width:min(58%,360px);font-size:10px;font-weight:500;color:#64748b}
+.sa-banner-preview{position:relative;display:flex;align-items:center;justify-content:center;min-height:190px;max-height:330px;overflow:hidden;border:1px solid #e5eaf0;border-radius:13px;background:linear-gradient(135deg,#f8fafc,#edf2f7)}
+.sa-banner-preview img{display:block;width:100%;max-height:330px;min-height:190px;object-fit:contain;background:#f8fafc}
+.sa-banner-preview img[hidden]{display:none!important}
+.sa-banner-preview-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:25px;color:#94a3b8;font-size:11px;text-align:center}
+.sa-banner-preview-empty i{font-size:28px}
+.sa-banner-preview-empty[hidden]{display:none!important}
+.sa-banner-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sa-banner-upload{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:0 14px;background:#16a085!important;color:#fff!important;border:0!important}
+.sa-banner-upload:disabled{opacity:.55;cursor:wait}
+.sa-banner-status{font-size:10px;line-height:1.5;color:#7b8798;overflow-wrap:anywhere}
+.sa-banner-status.is-error{color:#dc2626}.sa-banner-status.is-success{color:#07805f}
+.sa-banner-preview-popup{min-height:150px}
+@media(max-width:767px){.sa-banner-file-label{flex-wrap:wrap}.sa-banner-file-label input{max-width:100%;width:100%;margin-left:40px}.sa-banner-preview,.sa-banner-preview img{min-height:135px}.sa-banner-actions{align-items:stretch;flex-direction:column}.sa-banner-upload{width:100%}}
+
 @media(max-width:767px){.sa-settings-layout{grid-template-columns:minmax(0,1fr);gap:10px;min-height:0}.sa-settings-rail{flex-direction:row;gap:6px;padding:6px;overflow-x:auto;overscroll-behavior-x:contain}.sa-settings-rail-item{flex:0 0 auto;flex-direction:column;justify-content:center;gap:6px;min-width:104px;min-height:82px;padding:8px 7px;text-align:center}.sa-settings-rail-icon{width:34px;height:34px;flex-basis:34px;border-radius:10px}.sa-settings-rail-text{flex:0 0 auto;align-items:center}.sa-settings-rail-text strong{font-size:10px}.sa-settings-rail-text small,.sa-settings-rail-arrow{display:none}.sa-settings-content{padding:14px;border-radius:13px;min-height:180px}.sa-settings-panel-heading h3{font-size:13px}.sa-settings-panel-heading p{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.sa-settings-rail-item{transition:none}}
 @media(max-width:767px){
@@ -5970,14 +5989,29 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
       </button>
     </nav>
     <div class="sa-settings-content">
-      <section class="sa-settings-panel is-active" data-sa-settings-panel="banner-login" role="tabpanel">
-        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span><div><h3>Banner Login</h3><p>Pengaturan banner yang digunakan pada halaman login.</p></div></div>
+            <section class="sa-settings-panel is-active" data-sa-settings-panel="banner-login" role="tabpanel">
+        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i></span><div><h3>Banner Login</h3><p>Pengaturan banner yang digunakan pada halaman login dan daftar.</p></div></div>
+        <div class="sa-banner-editor">
+          <label class="sa-banner-file-label" for="sa-banner-file-login"><i class="fa-solid fa-cloud-arrow-up"></i><span>Pilih gambar Banner Login</span><input id="sa-banner-file-login" type="file" accept="image/*"></label>
+          <div class="sa-banner-preview"><img id="sa-banner-preview-login" alt="Pratinjau Banner Login" hidden><div id="sa-banner-empty-login" class="sa-banner-preview-empty"><i class="fa-regular fa-image"></i><span>Pratinjau Banner Login</span></div></div>
+          <div class="sa-banner-actions"><button type="button" class="sa-btn sa-banner-upload" data-sa-banner-upload="login"><i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Terapkan</button><span id="sa-banner-status-login" class="sa-banner-status" role="status">Pilih gambar untuk mengganti banner login dan daftar.</span></div>
+        </div>
       </section>
-      <section class="sa-settings-panel" data-sa-settings-panel="banner-input" role="tabpanel" hidden>
+            <section class="sa-settings-panel" data-sa-settings-panel="banner-input" role="tabpanel" hidden>
         <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-file-pen" aria-hidden="true"></i></span><div><h3>Banner Input Data</h3><p>Pengaturan banner yang digunakan pada halaman Input Data.</p></div></div>
+        <div class="sa-banner-editor">
+          <label class="sa-banner-file-label" for="sa-banner-file-input"><i class="fa-solid fa-cloud-arrow-up"></i><span>Pilih gambar Banner Input Data</span><input id="sa-banner-file-input" type="file" accept="image/*"></label>
+          <div class="sa-banner-preview"><img id="sa-banner-preview-input" alt="Pratinjau Banner Input Data" hidden><div id="sa-banner-empty-input" class="sa-banner-preview-empty"><i class="fa-regular fa-image"></i><span>Pratinjau Banner Input Data</span></div></div>
+          <div class="sa-banner-actions"><button type="button" class="sa-btn sa-banner-upload" data-sa-banner-upload="input"><i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Terapkan</button><span id="sa-banner-status-input" class="sa-banner-status" role="status">Pilih gambar untuk mengganti banner Input Data.</span></div>
+        </div>
       </section>
-      <section class="sa-settings-panel" data-sa-settings-panel="banner-popup" role="tabpanel" hidden>
-        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-window-restore" aria-hidden="true"></i></span><div><h3>Banner Popup</h3><p>Pengaturan banner yang digunakan pada popup aplikasi.</p></div></div>
+            <section class="sa-settings-panel" data-sa-settings-panel="banner-popup" role="tabpanel" hidden>
+        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-window-restore" aria-hidden="true"></i></span><div><h3>Banner Popup</h3><p>Pengaturan banner yang digunakan pada popup notifikasi aplikasi.</p></div></div>
+        <div class="sa-banner-editor">
+          <label class="sa-banner-file-label" for="sa-banner-file-popup"><i class="fa-solid fa-cloud-arrow-up"></i><span>Pilih gambar Banner Popup</span><input id="sa-banner-file-popup" type="file" accept="image/*"></label>
+          <div class="sa-banner-preview sa-banner-preview-popup"><img id="sa-banner-preview-popup" alt="Pratinjau Banner Popup" hidden><div id="sa-banner-empty-popup" class="sa-banner-preview-empty"><i class="fa-regular fa-image"></i><span>Pratinjau Banner Popup</span></div></div>
+          <div class="sa-banner-actions"><button type="button" class="sa-btn sa-banner-upload" data-sa-banner-upload="popup"><i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Terapkan</button><span id="sa-banner-status-popup" class="sa-banner-status" role="status">Pilih gambar untuk mengganti banner popup aplikasi.</span></div>
+        </div>
       </section>
     </div>
   </div>
@@ -5988,10 +6022,11 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
 <script type="module" id="superadmin-dashboard-js">
 import { getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getFirestore, collection, collectionGroup, onSnapshot, doc, getDoc, deleteDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, collection, collectionGroup, onSnapshot, doc, getDoc, deleteDoc, updateDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 const boot=()=>{
- const app=getApp(),auth=getAuth(app),db=getFirestore(app);
+ const app=getApp(),auth=getAuth(app),db=getFirestore(app),storage=getStorage(app);
  const USERS='Pengguna',ACTIVITIES='Aktifitas',KASIR='Kasir',COMMUNITY='Komunitas',COMMUNITY_IDENTITIES='KomunitasIdentitas',REKAP='Rekap';
  const state={users:[],userSources:{legacy:[]},kasir:new Map(),rekap:new Map(),userRecords:[],activityRecords:[],kasirRecords:[],communityRecords:[],communityIdentityRecords:[],rekapRecords:[],nestedTransactions:[],nestedReports:[],nestedProducts:[],nestedStocks:[],nestedPosts:[],unsub:{users:null,activities:null,kasir:null,community:null,communityIdentities:null,rekap:null,nestedTransactions:null,nestedReports:null,nestedProducts:null,nestedStocks:null,nestedPosts:null},listenersStarted:false,superadmin:false};
  let selectedUserListCategory="all";
@@ -6082,6 +6117,52 @@ const boot=()=>{
  schedulePackageCountdownRefresh();
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&$('sa-users-page')?.classList.contains('sa-active'))renderUsers()});$('sa-shop-search')?.addEventListener('input',renderShops);$('sa-activity-shop-select')?.addEventListener('change',drawChart);$('sa-activity-period')?.addEventListener('change',drawChart);$('sa-user-modal-close')?.addEventListener('click',()=>$('sa-user-modal').classList.remove('is-open'));$('sa-user-modal')?.addEventListener('click',e=>{if(e.target.id==='sa-user-modal')e.currentTarget.classList.remove('is-open')});$('sa-users-body')?.addEventListener('click',e=>{const edit=e.target.closest('[data-user-edit]'),del=e.target.closest('[data-user-delete]');if(edit){editUser(edit.dataset.userEdit);return}if(del)delUser(del.dataset.userDelete)});$('sa-shops-body')?.addEventListener('click',e=>{const x=e.target.closest('[data-shop-activity]');if(x){$('sa-activity-shop-select').value=x.dataset.shopActivity;open('superadmin-aktivitas')}});
  const settingsRail=$('sa-settings-page');
+ const BANNER_SETTINGS_COLLECTION='PengaturanAplikasi',BANNER_SETTINGS_DOCUMENT='BannerFrontend';
+ const bannerConfig={
+  login:{file:'sa-banner-file-login',preview:'sa-banner-preview-login',empty:'sa-banner-empty-login',status:'sa-banner-status-login',field:'bannerLoginUrl',title:'Banner Login',path:'superadmin/banners/banner-login'},
+  input:{file:'sa-banner-file-input',preview:'sa-banner-preview-input',empty:'sa-banner-empty-input',status:'sa-banner-status-input',field:'bannerInputDataUrl',title:'Banner Input Data',path:'superadmin/banners/banner-input-data'},
+  popup:{file:'sa-banner-file-popup',preview:'sa-banner-preview-popup',empty:'sa-banner-empty-popup',status:'sa-banner-status-popup',field:'bannerPopupUrl',title:'Banner Popup',path:'superadmin/banners/banner-popup'}
+ };
+ const bannerPendingFiles={login:null,input:null,popup:null},bannerPreviewUrls={login:'',input:'',popup:''};
+ function setBannerStatus(key,message,kind=''){const el=$(bannerConfig[key].status);if(el){el.textContent=message;el.classList.toggle('is-error',kind==='error');el.classList.toggle('is-success',kind==='success')}}
+ function setBannerPreview(key,url){const c=bannerConfig[key],img=$(c.preview),empty=$(c.empty);if(!img||!empty)return;if(url){img.src=url;img.hidden=false;empty.hidden=true;bannerPreviewUrls[key]=url}else{img.removeAttribute('src');img.hidden=true;empty.hidden=false;bannerPreviewUrls[key]=''}}
+ function showBannerSettings(data={}){Object.entries(bannerConfig).forEach(([key,c])=>{const url=String(data[c.field]||'');if(url&&!bannerPendingFiles[key])setBannerPreview(key,url);else if(!url&&!bannerPendingFiles[key])setBannerPreview(key,'')})}
+ window.addEventListener('rekapinyu-banner-settings-updated',e=>showBannerSettings(e.detail||{}));
+ if(window.__rekapinyuBannerSettings)showBannerSettings(window.__rekapinyuBannerSettings);
+ Object.entries(bannerConfig).forEach(([key,c])=>{
+  $(c.file)?.addEventListener('change',e=>{
+   const file=e.target.files?.[0]||null;
+   bannerPendingFiles[key]=null;
+   if(!file){showBannerSettings(window.__rekapinyuBannerSettings||{});return}
+   if(!file.type.startsWith('image/')){e.target.value='';setBannerStatus(key,'File harus berupa gambar.','error');return}
+   if(file.size>8*1024*1024){e.target.value='';setBannerStatus(key,'Ukuran gambar maksimal 8 MB.','error');return}
+   bannerPendingFiles[key]=file;
+   const url=URL.createObjectURL(file);setBannerPreview(key,url);
+   setBannerStatus(key,`${file.name} dipilih. Klik Upload & Terapkan untuk menyimpan.`)
+  });
+  settingsRail?.querySelector(`[data-sa-banner-upload="${key}"]`)?.addEventListener('click',async e=>{
+   if(!isSuperAdmin()){setBannerStatus(key,'Akses Super Admin diperlukan.','error');return}
+   const file=bannerPendingFiles[key];
+   if(!file){setBannerStatus(key,'Pilih file gambar terlebih dahulu.','error');return}
+   const button=e.currentTarget;
+   if(button.dataset.busy==='1')return;
+   button.dataset.busy='1';button.disabled=true;
+   setBannerStatus(key,'Mengunggah gambar ke Firebase Storage…');
+   try{
+    const target=storageRef(storage,c.path);
+    await uploadBytes(target,file,{contentType:file.type,cacheControl:'public,max-age=300'});
+    const url=await getDownloadURL(target);
+    await setDoc(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),{[c.field]:url,updatedAt:serverTimestamp(),updatedBy:auth.currentUser?.uid||''},{merge:true});
+    bannerPendingFiles[key]=null;
+    const input=$(c.file);if(input)input.value='';
+    setBannerPreview(key,url);
+    setBannerStatus(key,`${c.title} berhasil disimpan dan diterapkan.`, 'success');
+   }catch(err){
+    console.error(`Upload ${c.title}:`,err);
+    setBannerStatus(key,`Gagal menyimpan ${c.title}. Periksa izin Firebase Storage dan Firestore Rules.`, 'error');
+   }finally{delete button.dataset.busy;button.disabled=false}
+  });
+ });
  function selectSettingsRail(key){if(!settingsRail)return;const buttons=[...settingsRail.querySelectorAll('[data-sa-settings-rail]')],panels=[...settingsRail.querySelectorAll('[data-sa-settings-panel]')];if(!buttons.some(b=>b.dataset.saSettingsRail===key))return;buttons.forEach(b=>{const active=b.dataset.saSettingsRail===key;b.classList.toggle('is-active',active);b.setAttribute('aria-selected',active?'true':'false')});panels.forEach(p=>{const active=p.dataset.saSettingsPanel===key;p.classList.toggle('is-active',active);p.hidden=!active})}
  settingsRail?.addEventListener('click',e=>{const b=e.target.closest('[data-sa-settings-rail]');if(b)selectSettingsRail(b.dataset.saSettingsRail)});
  selectSettingsRail('banner-login');
@@ -6090,5 +6171,29 @@ const boot=()=>{
 };
 try{boot()}catch(e){console.error('Superadmin boot:',e)}
 </script>
+
+<script type="module" id="rekapinyu-banner-settings-runtime">
+import { getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+const bannerRef=doc(getFirestore(getApp()),"PengaturanAplikasi","BannerFrontend");
+function applyBannerSettings(settings={}){
+  const loginUrl=String(settings.bannerLoginUrl||''),inputUrl=String(settings.bannerInputDataUrl||''),popupUrl=String(settings.bannerPopupUrl||'');
+  const auth=document.getElementById('auth-container');
+  if(auth&&loginUrl)auth.style.setProperty('background-image',`url("${loginUrl.replace(/"/g,'%22')}")`,'important');
+  const input=document.querySelector('#view-input > div');
+  if(input&&inputUrl)input.style.setProperty('background-image',`url("${inputUrl.replace(/"/g,'%22')}")`,'important');
+  const popup=document.querySelector('#custom-modal > div');
+  if(popup&&popupUrl){
+    popup.style.setProperty('background-image',`linear-gradient(0deg,rgba(255,255,255,.91),rgba(255,255,255,.72)),url("${popupUrl.replace(/"/g,'%22')}")`,'important');
+    popup.style.setProperty('background-position','center','important');
+    popup.style.setProperty('background-size','cover','important');
+    popup.style.setProperty('background-repeat','no-repeat','important');
+  }
+  window.__rekapinyuBannerSettings=settings;
+  window.dispatchEvent(new CustomEvent('rekapinyu-banner-settings-updated',{detail:settings}));
+}
+onSnapshot(bannerRef,snapshot=>applyBannerSettings(snapshot.exists()?(snapshot.data()||{}):{}),error=>console.warn('Pengaturan banner realtime tidak dapat dibaca. Periksa Firestore Rules.',error));
+</script>
+
 </body>
 </html>
