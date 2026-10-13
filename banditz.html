@@ -6006,41 +6006,6 @@ body>.flex-1.flex.flex-col.h-screen.overflow-hidden>main{display:none!important}
 body>#superadmin-root{position:fixed!important;top:64px!important;right:0!important;bottom:0!important;left:16rem!important;width:auto!important;height:auto!important;max-width:none!important;margin:0!important;padding:20px 28px 24px!important;box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;background:#f1f4f8!important;z-index:20!important}
 @media(max-width:767px){body>.flex-1.flex.flex-col.h-screen.overflow-hidden>header{height:60px!important;flex-basis:60px!important;padding-left:14px!important;padding-right:14px!important}body>#superadmin-root{top:60px!important;left:0!important;padding:12px 10px 88px!important}}
 </style>
-<style id="superadmin-login-isolation-css">
-/* Login Super Admin berdiri sendiri; jangan tampilkan overlay login aplikasi pada halaman ini. */
-body.sa-superadmin-page #auth-container{display:none!important;visibility:hidden!important;pointer-events:none!important}
-body.sa-superadmin-page:has(#auth-container:not(.hidden))>#superadmin-root{display:block!important}
-body.sa-superadmin-page.sa-login-mode>#sidebar,body.sa-superadmin-page.sa-login-mode>.flex-1.flex.flex-col.h-screen.overflow-hidden{display:none!important}
-#sa-login-screen{position:fixed;inset:0;z-index:999999;display:none;align-items:center;justify-content:center;padding:22px;box-sizing:border-box;background:linear-gradient(135deg,#eef4ff,#f7fafc 55%,#e8f7f1);font-family:inherit}
-#sa-login-screen.sa-login-visible{display:flex}
-#sa-login-screen .sa-login-card{width:min(100%,420px);padding:30px;background:#fff;border:1px solid #e2e8f0;border-radius:22px;box-shadow:0 24px 70px rgba(15,23,42,.14);box-sizing:border-box}
-#sa-login-screen .sa-login-mark{width:54px;height:54px;display:grid;place-items:center;margin:0 auto 14px;border-radius:16px;background:#e7f8f1;color:#07845f;font-size:23px}
-#sa-login-screen h1{margin:0;text-align:center;color:#172033;font-size:23px;font-weight:800}
-#sa-login-screen .sa-login-subtitle{margin:7px 0 24px;text-align:center;color:#64748b;font-size:13px}
-#sa-login-screen label{display:block;margin:0 0 7px;color:#475569;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-#sa-login-screen input{display:block;width:100%;height:46px;margin-bottom:17px;padding:0 13px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:11px;background:#f8fafc;color:#0f172a;font-size:14px;outline:none}
-#sa-login-screen input:focus{border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.12)}
-#sa-login-screen button{width:100%;min-height:46px;border:0;border-radius:11px;background:#059669;color:#fff;font-size:14px;font-weight:800;cursor:pointer}
-#sa-login-screen button:disabled{opacity:.65;cursor:wait}
-#sa-login-error{display:none;margin:0 0 14px;padding:10px 12px;border-radius:10px;background:#fff1f2;color:#be123c;font-size:12px;line-height:1.5}
-#sa-login-error.sa-login-error-visible{display:block}
-@media(max-width:480px){#sa-login-screen .sa-login-card{padding:24px 20px;border-radius:18px}}
-</style>
-<div id="sa-login-screen" role="main" aria-label="Login Super Admin">
-  <div class="sa-login-card">
-    <div class="sa-login-mark"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></div>
-    <h1>Login Super Admin</h1>
-    <p class="sa-login-subtitle">Masuk menggunakan akun Super Admin</p>
-    <form id="sa-login-form" autocomplete="on">
-      <label for="sa-login-phone">Nomor HP</label>
-      <input id="sa-login-phone" name="phone" type="text" inputmode="numeric" autocomplete="username" required>
-      <label for="sa-login-password">Kata Sandi</label>
-      <input id="sa-login-password" name="password" type="password" autocomplete="current-password" required>
-      <div id="sa-login-error" role="alert"></div>
-      <button id="sa-login-submit" type="submit">Masuk Super Admin</button>
-    </form>
-  </div>
-</div>
 <div id="superadmin-root">
 <section class="sa-page" id="sa-dashboard-page"><div class="sa-grid"><article class="sa-card sa-stat-card" role="button" tabindex="0" data-sa-user-list="all" aria-label="Lihat semua pengguna terdaftar"><div class="sa-kicker">Total Pengguna Terdaftar</div><div class="sa-value" id="sa-stat-users">0</div></article><article class="sa-card sa-stat-card" role="button" tabindex="0" data-sa-user-list="active" aria-label="Lihat pengguna aktif"><div class="sa-kicker">Pengguna Aktif</div><div class="sa-value" id="sa-stat-active">0</div></article><article class="sa-card sa-stat-card" role="button" tabindex="0" data-sa-user-list="inactive" aria-label="Lihat pengguna tidak aktif"><div class="sa-kicker">Pengguna Tidak Aktif</div><div class="sa-value" id="sa-stat-inactive">0</div></article><article class="sa-card sa-stat-card" role="button" tabindex="0" data-sa-user-list="packages" aria-label="Lihat pengguna dengan paket yang segera berakhir"><div class="sa-kicker">Durasi Paket</div><div class="sa-value" id="sa-stat-packages">0</div></article></div><div class="sa-users-inline-panel is-open is-default-view" id="sa-users-inline-panel" aria-hidden="false"><div class="sa-users-grid-dialog" role="region" aria-labelledby="sa-users-grid-title"><div class="sa-users-grid-head"><div><strong id="sa-users-grid-title">Daftar Pengguna</strong><span id="sa-users-grid-count">0 pengguna</span></div></div><div class="sa-users-grid-list" id="sa-users-grid-list"></div></div></div></section>
 <section class="sa-page" id="sa-users-page"><div class="sa-panel sa-users-admin-panel"><div class="sa-panel-title"><strong>Daftar Pengguna</strong><input class="sa-search" id="sa-user-search" placeholder="Cari nama toko / nomor HP..." type="search"></div><div class="sa-users-admin-grid" id="sa-users-body"></div></div></section>
@@ -6112,7 +6077,7 @@ body.sa-superadmin-page.sa-login-mode>#sidebar,body.sa-superadmin-page.sa-login-
 <div class="sa-modal" id="sa-user-modal" aria-hidden="true"><div class="sa-modal-box"><div class="sa-modal-head"><strong id="sa-user-modal-title">Detail Pengguna</strong><button class="sa-close" id="sa-user-modal-close" type="button"><i class="fa-solid fa-xmark"></i></button></div><div id="sa-user-modal-body"></div></div></div>
 <script type="module" id="superadmin-dashboard-js">
 import { getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getFirestore, collection, collectionGroup, onSnapshot, doc, getDoc, deleteDoc, updateDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -6329,12 +6294,7 @@ const boot=()=>{
  settingsRail?.addEventListener('click',e=>{const b=e.target.closest('[data-sa-settings-rail]');if(b)selectSettingsRail(b.dataset.saSettingsRail)});
  selectSettingsRail('banner-login');
  window.__superAdminOpen=open;
- const saLoginScreen=document.getElementById('sa-login-screen'),saLoginForm=document.getElementById('sa-login-form'),saLoginPhone=document.getElementById('sa-login-phone'),saLoginPassword=document.getElementById('sa-login-password'),saLoginSubmit=document.getElementById('sa-login-submit'),saLoginError=document.getElementById('sa-login-error');
- document.body.classList.add('sa-superadmin-page');
- const showSALogin=(message='')=>{document.body.classList.add('sa-login-mode');saLoginScreen?.classList.add('sa-login-visible');if(saLoginError){saLoginError.textContent=message;saLoginError.classList.toggle('sa-login-error-visible',!!message)}stopListeners();};
- const hideSALogin=()=>{saLoginScreen?.classList.remove('sa-login-visible');document.body.classList.remove('sa-login-mode');if(saLoginError){saLoginError.textContent='';saLoginError.classList.remove('sa-login-error-visible')}};
- saLoginForm?.addEventListener('submit',async e=>{e.preventDefault();const phone=String(saLoginPhone?.value||'').replace(/\D/g,'');const password=String(saLoginPassword?.value||'');if(!phone||!password){showSALogin('Masukkan nomor HP dan kata sandi.');return}if(saLoginSubmit) {saLoginSubmit.disabled=true;saLoginSubmit.textContent='Memeriksa akun...'}try{if(auth.currentUser)await signOut(auth);const credential=await signInWithEmailAndPassword(auth,`${phone}@rekapinyu.app`,password);const allowed=await resolveSuperAdmin(credential.user);if(!allowed){await signOut(auth);showSALogin('Akun ini bukan Super Admin. Gunakan akun dengan role superadmin di koleksi Pengguna.');return}hideSALogin();open('superadmin-dashboard')}catch(err){console.error('Login Super Admin:',err);showSALogin('Login Super Admin gagal. Periksa nomor HP, kata sandi, dan koneksi.')}finally{if(saLoginSubmit){saLoginSubmit.disabled=false;saLoginSubmit.textContent='Masuk Super Admin'}}});
- onAuthStateChanged(auth,async au=>{const ok=await resolveSuperAdmin(au);if(ok){hideSALogin();open('superadmin-dashboard')}else{showSALogin('');stopListeners();}});
+ onAuthStateChanged(auth,async au=>{const ok=await resolveSuperAdmin(au);if(ok)open('superadmin-dashboard');else{stopListeners();showOnly('sa-dashboard-page');$('sa-dashboard-page').innerHTML='<div class="sa-panel"><div class="sa-note"><strong>Akses Super Admin diperlukan.</strong><br>Super Admin dibaca dari koleksi <code>Pengguna</code>.</div></div>';}});
 };
 try{boot()}catch(e){console.error('Superadmin boot:',e)}
 </script>
