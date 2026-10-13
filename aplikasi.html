@@ -8815,23 +8815,23 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
             for (const key of keys) if (item[key] !== undefined && item[key] !== null && item[key] !== '') return item[key];
             return undefined;
         };
-        const rawMonth = pick('month', 'Bulan', 'bulan');
-        const rawMonthIndex = pick('monthIndex', 'MonthIndex', 'bulanIndex');
+        const rawMonth = pick('month', 'Bulan', 'bulan', 'namaBulan', 'bulanRekap');
+        const rawMonthIndex = pick('monthIndex', 'MonthIndex', 'bulanIndex', 'bulanKe');
         let monthIndex = Number(rawMonthIndex);
         if (!Number.isFinite(monthIndex) || monthIndex < 0 || monthIndex > 11) {
             monthIndex = monthNames.findIndex(m => String(rawMonth || '').trim().toLowerCase() === String(m).toLowerCase());
         }
-        const rawDate = pick('date', 'Tanggal', 'tanggal', 'dayOfMonth');
-        const rawYear = pick('year', 'Tahun', 'tahun');
+        const rawDate = pick('date', 'Tanggal', 'tanggal', 'dayOfMonth', 'tanggalRekap', 'tgl');
+        const rawYear = pick('year', 'Tahun', 'tahun', 'tahunRekap');
         const year = Number(rawYear);
         const date = Number(rawDate);
         if (!Number.isFinite(year) || year < 1 || !Number.isFinite(date) || date < 1 || date > 31 || monthIndex < 0) return null;
         const parsedId = Number(pick('id', 'ID'));
-        const rawIncome = pick('income', 'Pendapatan', 'pendapatan', 'pemasukan', 'Pemasukan');
-        const rawExpense = pick('expense', 'Total Belanja', 'Belanja', 'totalBelanja', 'belanja');
-        const rawCashout = pick('cashout', 'Pengeluaran', 'pengeluaran', 'nominalPengeluaran');
-        const rawPercentage = pick('profitPercentage', 'Profit Persen', 'Profit 10%', 'profitPersen', 'persenProfit');
-        const rawProfit = pick('profit', 'Profit', 'Keuntungan', 'keuntungan');
+        const rawIncome = pick('income', 'Pendapatan', 'pendapatan', 'pemasukan', 'Pemasukan', 'totalPendapatan', 'jumlahPendapatan', 'omzet', 'Omzet');
+        const rawExpense = pick('expense', 'Total Belanja', 'Belanja', 'totalBelanja', 'belanja', 'totalPengeluaranBarang', 'modal', 'Hpp');
+        const rawCashout = pick('cashout', 'Pengeluaran', 'pengeluaran', 'nominalPengeluaran', 'pengeluaranLain', 'totalCashout');
+        const rawPercentage = pick('profitPercentage', 'Profit Persen', 'Profit 10%', 'profitPersen', 'persenProfit', 'Set Profit Persen (%)', 'setProfitPersen');
+        const rawProfit = pick('profit', 'Profit', 'Keuntungan', 'keuntungan', 'totalProfit', 'laba');
         const toNumber = value => { if (typeof value === 'number') return Number.isFinite(value) ? value : 0; let n = String(value ?? '').replace(/[^0-9,.-]/g, '').trim(); if (!n) return 0; if (n.includes(',') && n.includes('.')) n = n.lastIndexOf(',') > n.lastIndexOf('.') ? n.replace(/\./g, '').replace(',', '.') : n.replace(/,/g, ''); else if (n.includes(',')) n = /,\d{1,2}$/.test(n) ? n.replace(',', '.') : n.replace(/,/g, ''); else if (/\.\d{3}$/.test(n)) n = n.replace(/\./g, ''); return Number(n) || 0; };
         const id = pick('id', 'ID') !== undefined && Number.isFinite(parsedId) ? parsedId : Date.now() + index;
         const income = toNumber(rawIncome);
@@ -8852,7 +8852,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
             profitPercentage,
             profit: rawProfit !== undefined ? toNumber(rawProfit) : Math.max((income - cashout) * (profitPercentage / 100), 0)
         };
-        return (result.income || result.expense || result.cashout || result.profitPercentage || result.profit) ? result : null;
+        return (result.income || result.expense || result.cashout || result.profitPercentage || result.profit || toNumber(pick('nominal', 'Nominal', 'jumlah', 'Jumlah'))) ? {...result, income: result.income || toNumber(pick('nominal', 'Nominal', 'jumlah', 'Jumlah'))} : null;
     }
 
     function sortHistoryChronological(a, b) {
@@ -8899,8 +8899,12 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
                 if (Array.isArray(payload?.InputData)) sourceItems = payload.InputData;
                 else if (Array.isArray(payload?.inputData)) sourceItems = payload.inputData;
                 else if (Array.isArray(payload?.data)) sourceItems = payload.data;
+                else if (Array.isArray(payload?.records)) sourceItems = payload.records;
+                else if (Array.isArray(payload?.items)) sourceItems = payload.items;
+                else if (Array.isArray(payload?.rekap)) sourceItems = payload.rekap;
                 else if (Array.isArray(payload)) sourceItems = payload;
-                else throw new Error('File InputData tidak berisi array InputData yang valid.');
+                else if (payload && typeof payload === 'object' && Object.values(payload).some(value => value && typeof value === 'object' && !Array.isArray(value))) sourceItems = Object.values(payload).filter(value => value && typeof value === 'object' && !Array.isArray(value));
+                else throw new Error('File InputData tidak berisi data yang dapat dibaca.');
             }
             // Jika record InputData tidak menyimpan tanggal lengkap, gunakan metadata tanggal dari nama file.
             const nameMatch = fileName.match(/^(?:BackupHistory|InputData)_([^_]+)_(\d{1,2})_([^_]+)_(\d{4})\.json$/i);
