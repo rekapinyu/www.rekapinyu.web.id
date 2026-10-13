@@ -6110,7 +6110,7 @@ const boot=()=>{
   // Nilai pendapatan mengikuti listener realtime dokumen Kasir.
   const omzet=Number(x.k?.TotalOmsetKasir)||0,profit=Number(x.k?.TotalProfitKasir)||0;
   const shop=shopName(x.u,x.k,x.r),phone=x.u.phone||x.u.nomorHp||x.u.NomorHp||x.u.noHp||x.u.NoHp||'-';
-  return `<article class="sa-shop-card"><div class="sa-shop-avatar"><i class="fa-solid fa-user"></i></div><strong class="sa-shop-name">${esc(shop)}</strong><span class="sa-shop-phone">${esc(phone)}</span><div class="sa-shop-stats"><div><span>pendapatan bulanan</span><strong>${rupiah(omzet)}</strong></div><div><span>pendapatan Profit</span><strong>${rupiah(profit)}</strong></div></div><div class="sa-shop-actions"><button type="button" data-shop-edit="${esc(x.uid)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button type="button" data-shop-delete="${esc(x.uid)}"><i class="fa-solid fa-trash"></i> Hapus</button></div></article>`;
+  return `<article class="sa-shop-card"><div class="sa-shop-avatar"><i class="fa-solid fa-user"></i></div><strong class="sa-shop-name">${esc(shop)}</strong><span class="sa-shop-phone">${esc(phone)}</span><div class="sa-shop-stats"><div><span>PENDAPATAN BULANAN</span>${rupiah(omzet)}</div><div><span>PENDAPATAN PROFIT</span>${rupiah(profit)}</div></div><div class="sa-shop-actions"><button type="button" data-shop-edit="${esc(x.uid)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button type="button" data-shop-delete="${esc(x.uid)}"><i class="fa-solid fa-trash"></i> Hapus</button></div></article>`;
  }).join(''):'<div class="sa-shop-empty">Belum ada toko yang cocok.</div>';
  }
 
