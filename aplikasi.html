@@ -8467,6 +8467,16 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     applyBannerStyle("#auth-container", "Login", settings.bannerLoginUrl, "image");
     applyBannerStyle("#view-input > div", "Input", settings.bannerInputDataUrl, "image");
     applyBannerStyle("#custom-modal > div", "Popup", settings.bannerPopupUrl, "popup");
+
+    /* Popup Panduan frontend menggunakan elemen img.rw-photo, bukan #custom-modal. */
+    const popupBannerUrl = String(settings.bannerPopupUrl || "").trim();
+    if(popupBannerUrl){
+      document.querySelectorAll("#rekapinyu-welcome-popup .rw-photo").forEach(image => {
+        if(image.getAttribute("src") !== popupBannerUrl){
+          image.setAttribute("src", popupBannerUrl);
+        }
+      });
+    }
   }
 
   onSnapshot(
