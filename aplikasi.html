@@ -8513,6 +8513,18 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     applyInputDataBanner(settings.bannerInputDataUrl);
     applyBannerStyle("#custom-modal > div", "Popup", settings.bannerPopupUrl, "popup");
 
+    /* Banner Paket: gunakan URL terbaru dari Super Admin pada layar paket habis. */
+    const packageBannerUrl = String(settings.bannerPaketUrl || "").trim();
+    document.querySelectorAll("#rekapinyu-package-expired-screen .rk-expired-promo img").forEach(image => {
+      if(packageBannerUrl){
+        if(image.getAttribute("src") !== packageBannerUrl) image.setAttribute("src", packageBannerUrl);
+        image.dataset.rekapinyuPackageBanner = "1";
+      }else if(image.dataset.rekapinyuPackageBanner === "1"){
+        image.setAttribute("src", "https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20INPUT%20DATA.jpg?raw=true");
+        delete image.dataset.rekapinyuPackageBanner;
+      }
+    });
+
     /* Popup Panduan frontend menggunakan elemen img.rw-photo, bukan #custom-modal. */
     const popupBannerUrl = String(settings.bannerPopupUrl || "").trim();
     if(popupBannerUrl){
