@@ -13261,7 +13261,10 @@ async function initKasirViews(){
   #rekapinyu-package-expired-screen .rk-expired-title{font-size:clamp(18px,1.6vw,25px);font-weight:950;line-height:1.25;color:#f5222d;margin:0 0 8px}
   #rekapinyu-package-expired-screen .rk-expired-subtitle{font-size:clamp(12px,1vw,15px);font-weight:900;line-height:1.45;color:#f5222d;margin:0 0 40px}
   #rekapinyu-package-expired-screen .rk-expired-steps-title{font-size:clamp(16px,1.4vw,22px);font-weight:950;color:#111;margin:0 0 14px}
-  #rekapinyu-package-expired-screen .rk-expired-steps{font-size:clamp(12px,1vw,15px);line-height:1.5;font-weight:800;color:#111;margin:0;padding-left:22px}
+  #rekapinyu-package-expired-screen .rk-expired-steps{font-size:clamp(11px,.85vw,13px);line-height:1.55;font-weight:400;color:#111;margin:0;padding-left:0;list-style:none}
+  #rekapinyu-package-expired-screen .rk-expired-steps li{font-weight:400;margin:0 0 3px}
+  #rekapinyu-package-expired-screen .rk-expired-steps .rk-expired-message{margin:8px 0 10px 12px;white-space:pre-line;line-height:1.65}
+  #rekapinyu-package-expired-screen .rk-expired-steps-title{text-transform:uppercase}
   #rekapinyu-package-expired-screen .rk-expired-wa{margin:auto auto 0;min-width:175px;padding:12px 22px;border:0;border-radius:14px;background:#16a34a;color:#fff;font-size:14px;font-weight:950;cursor:pointer;text-decoration:none;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 20px rgba(22,163,74,.24);box-sizing:border-box}
   #rekapinyu-package-expired-screen .rk-expired-wa:hover{background:#15803d;color:#fff}
   #rekapinyu-package-expired-screen .rk-expired-wa .rk-expired-wa-icon{width:30px;height:30px;flex:0 0 30px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;background:rgba(255,255,255,.22);color:#fff;font-size:19px;line-height:1}
@@ -13296,7 +13299,15 @@ async function initKasirViews(){
     let screen=document.getElementById('rekapinyu-package-expired-screen');
     if(screen)return screen;
     screen=document.createElement('section');screen.id='rekapinyu-package-expired-screen';screen.setAttribute('aria-live','polite');
-    screen.innerHTML=`<div class="rk-expired-info"><h1 class="rk-expired-title">PAKET ANDA HABIS NIH!</h1><p class="rk-expired-subtitle">YUK PERPANJANG PAKET ANDA SEKARANG, AGAR BISA TERUS MENGGUNAKAN FITUR DARI REKAPINYU</p><h2 class="rk-expired-steps-title">CARA PERPANJANG PAKET</h2><ul class="rk-expired-steps"><li>➤Klik Tombol WhatsApp Admin di bawah</li><li>➤Kirim Pesan ke WhatsApp Admin Dengan Format:</li><li>Perpanjang Paket</li><li>➤ Nama Paket :</li><li>➤ Nama Toko :</li><li>➤ NomorHp :</li></ul><a class="rk-expired-wa" id="rekapinyu-package-whatsapp" href="${WA_URL}" target="_blank" rel="noopener noreferrer"><span class="rk-expired-wa-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></span><span>WA ADMIN</span></a></div><div class="rk-expired-promo"><img alt="Promo berlangganan Rekapinyu" src="${PROMO_URL}"></div>`;
+    screen.innerHTML=`<div class="rk-expired-info"><h1 class="rk-expired-title">PAKET ANDA HABIS NIH!</h1><p class="rk-expired-subtitle">YUK PERPANJANG PAKET ANDA SEKARANG, AGAR BISA TERUS MENGGUNAKAN FITUR DARI REKAPINYU</p><h2 class="rk-expired-steps-title">CARA PERPANJANG PAKET</h2><ul class="rk-expired-steps"><li>- Klik Tombol WA Admin Yang ada dibawah berwara Hijau</li><li>- Kirim Pesan Ke WA Admin, Isi Pesanya Seperti ini Contoh:</li><li class="rk-expired-message">Perpanjang Paket
+
+* Nama Toko : TOKO INOYA
+
+* NomorHp : 081555444469
+
+* Nama Paket : Hemat 15K
+
+* Lalu Kirim Pesan Ke Admin Rekapinyu</li><li>Lalu Dialihkan ke Proses Pembayaran Lewat Whatsapp Admin Rekapinyu.</li><li style="margin-top:14px">Salam Hormat<br>Admin rekapinyu</li></ul><a class="rk-expired-wa" id="rekapinyu-package-whatsapp" href="${WA_URL}" target="_blank" rel="noopener noreferrer"><span class="rk-expired-wa-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></span><span>WA ADMIN</span></a></div><div class="rk-expired-promo"><img alt="Promo berlangganan Rekapinyu" src="${PROMO_URL}"></div>`;
     document.body.appendChild(screen);
     return screen;
   }
