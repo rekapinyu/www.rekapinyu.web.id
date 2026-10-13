@@ -6104,14 +6104,11 @@ const boot=()=>{
  const ids=new Set([...state.kasir.keys(),...state.rekap.keys(),...state.users.map(u=>u.uid),...state.nestedTransactions.map(t=>t.__uid),...state.nestedReports.map(t=>t.__uid)]);
  const rows=[...ids].map(uid=>{const u=state.users.find(x=>String(x.uid)===String(uid)||String(x.id)===String(uid))||{},k=state.kasir.get(uid)||{},r=state.rekap.get(uid)||{};return{uid:String(uid),u,k,r}})
  .filter(x=>`${shopName(x.u,x.k,x.r)} ${x.u.phone||x.u.nomorHp||x.u.NomorHp||x.u.noHp||x.u.NoHp||''}`.toLowerCase().includes(q));
- const now=new Date(),monthStart=new Date(now.getFullYear(),now.getMonth(),1).getTime(),nextMonth=new Date(now.getFullYear(),now.getMonth()+1,1).getTime();
  const rupiah=n=>'Rp '+(Number(n)||0).toLocaleString('id-ID');
- const profitOf=t=>Number(t?.profit??t?.laba??t?.totalProfit??t?.profitTotal??t?.keuntungan??0)||0;
- const dateOf=t=>txDate(t);
  const root=$('sa-shops-body');if(!root)return;
  root.innerHTML=rows.length?rows.map(x=>{
-  const tx=txFor(x.uid),monthly=tx.filter(t=>{const d=dateOf(t);return d>=monthStart&&d<nextMonth});
-  const omzet=monthly.reduce((a,t)=>a+txTotal(t),0),profit=monthly.reduce((a,t)=>a+profitOf(t),0);
+  // Nilai pendapatan mengikuti listener realtime dokumen Kasir.
+  const omzet=Number(x.k?.TotalOmsetKasir)||0,profit=Number(x.k?.TotalProfitKasir)||0;
   const shop=shopName(x.u,x.k,x.r),phone=x.u.phone||x.u.nomorHp||x.u.NomorHp||x.u.noHp||x.u.NoHp||'-';
   return `<article class="sa-shop-card"><div class="sa-shop-avatar"><i class="fa-solid fa-user"></i></div><strong class="sa-shop-name">${esc(shop)}</strong><span class="sa-shop-phone">${esc(phone)}</span><div class="sa-shop-stats"><div><span>pendapatan bulanan</span><strong>${rupiah(omzet)}</strong></div><div><span>pendapatan Profit</span><strong>${rupiah(profit)}</strong></div></div><div class="sa-shop-actions"><button type="button" data-shop-edit="${esc(x.uid)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button type="button" data-shop-delete="${esc(x.uid)}"><i class="fa-solid fa-trash"></i> Hapus</button></div></article>`;
  }).join(''):'<div class="sa-shop-empty">Belum ada toko yang cocok.</div>';
