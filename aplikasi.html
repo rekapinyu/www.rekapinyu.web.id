@@ -13290,7 +13290,7 @@ async function initKasirViews(){
     return screen;
   }
   function communityIsOpen(){return !!document.getElementById('view-komunitas')&&!document.getElementById('view-komunitas').classList.contains('hidden')}
-  function show(){const screen=getScreen();if(communityIsOpen()){screen.classList.remove('is-visible');return}screen.classList.add('is-visible')}
+  function show(force){const screen=getScreen();if(!force&&communityIsOpen()){screen.classList.remove('is-visible');return}screen.classList.add('is-visible')}
   function hide(){document.getElementById('rekapinyu-package-expired-screen')?.classList.remove('is-visible')}
   function update(data){
     if(!data||typeof data!=='object')return;
@@ -13308,6 +13308,15 @@ async function initKasirViews(){
   window.__rekapinyuShowPackageGate=show;
   window.__rekapinyuHidePackageGate=hide;
   window.__rekapinyuPackageGateActive=false;
+  /* Saat paket terkunci, setiap menu sidebar selain Komunitas langsung menampilkan halaman paket habis. */
+  document.addEventListener('click',event=>{
+    if(!window.__rekapinyuPackageGateActive)return;
+    const navItem=event.target?.closest?.('#sidebar nav > button, #sidebar nav > .toggle-kasbon-menu-container');
+    if(!navItem||navItem.id==='nav-komunitas'||navItem.querySelector?.('#nav-komunitas'))return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    show(true);
+  },true);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&window.__rekapinyuPackageGateActive)show()});
   window.addEventListener('focus',()=>{if(window.__rekapinyuPackageGateActive&&!communityIsOpen())show()});
 })();
