@@ -8460,12 +8460,32 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     });
   }
 
+  function applyInputDataBanner(url){
+    const bannerUrl = String(url || "").trim();
+    document.querySelectorAll("#view-input > div").forEach(element => {
+      const marker = "rekapinyuBannerInput";
+      if(bannerUrl){
+        element.style.setProperty("background-image", bannerCssUrl(bannerUrl), "important");
+        element.style.setProperty("background-position", "right center", "important");
+        element.style.setProperty("background-size", "auto 100%", "important");
+        element.style.setProperty("background-repeat", "no-repeat", "important");
+        element.dataset[marker] = "1";
+      }else if(element.dataset[marker] === "1"){
+        element.style.removeProperty("background-image");
+        element.style.removeProperty("background-position");
+        element.style.removeProperty("background-size");
+        element.style.removeProperty("background-repeat");
+        delete element.dataset[marker];
+      }
+    });
+  }
+
   function applyLatestBannerSettings(){
     if(!latestBannerSettings) return;
     const settings = latestBannerSettings;
     /* Login/Daftar selectors are applied if that shell exists in this page. */
     applyBannerStyle("#auth-container", "Login", settings.bannerLoginUrl, "image");
-    applyBannerStyle("#view-input > div", "Input", settings.bannerInputDataUrl, "image");
+    applyInputDataBanner(settings.bannerInputDataUrl);
     applyBannerStyle("#custom-modal > div", "Popup", settings.bannerPopupUrl, "popup");
 
     /* Popup Panduan frontend menggunakan elemen img.rw-photo, bukan #custom-modal. */
