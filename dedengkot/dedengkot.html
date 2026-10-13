@@ -6025,6 +6025,11 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
         <span class="sa-settings-rail-text"><strong>Banner Input Data</strong><small>Banner halaman input data</small></span>
         <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
       </button>
+      <button class="sa-settings-rail-item" type="button" role="tab" aria-selected="false" data-sa-settings-rail="banner-paket">
+        <span class="sa-settings-rail-icon"><i class="fa-solid fa-box-open" aria-hidden="true"></i></span>
+        <span class="sa-settings-rail-text"><strong>Banner Paket</strong><small>Banner saat paket habis</small></span>
+        <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
+      </button>
       <button class="sa-settings-rail-item" type="button" role="tab" aria-selected="false" data-sa-settings-rail="banner-popup">
         <span class="sa-settings-rail-icon"><i class="fa-solid fa-window-restore" aria-hidden="true"></i></span>
         <span class="sa-settings-rail-text"><strong>Banner Popup</strong><small>Banner untuk popup aplikasi</small></span>
@@ -6055,6 +6060,14 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
           <div class="sa-banner-preview sa-banner-preview-popup"><img id="sa-banner-preview-popup" alt="Pratinjau Banner Popup" hidden><div id="sa-banner-empty-popup" class="sa-banner-preview-empty"><i class="fa-regular fa-image"></i><span>Pratinjau Banner Popup</span></div></div>
           <div class="sa-banner-actions"><button type="button" class="sa-btn sa-banner-upload" data-sa-banner-upload="popup"><i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Terapkan</button><span id="sa-banner-status-popup" class="sa-banner-status" role="status">Pilih gambar untuk mengganti banner popup aplikasi.</span></div>
         </div>
+      <section class="sa-settings-panel" data-sa-settings-panel="banner-paket" role="tabpanel" hidden>
+        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-box-open" aria-hidden="true"></i></span><div><h3>Banner Paket</h3><p>Pengaturan gambar banner yang digunakan ketika paket pengguna habis.</p></div></div>
+        <div class="sa-banner-editor">
+          <label class="sa-banner-file-label" for="sa-banner-file-paket"><i class="fa-solid fa-cloud-arrow-up"></i><span>Pilih gambar Banner Paket</span><input id="sa-banner-file-paket" type="file" accept="image/*"></label>
+          <div class="sa-banner-preview"><img id="sa-banner-preview-paket" alt="Pratinjau Banner Paket" hidden><div id="sa-banner-empty-paket" class="sa-banner-preview-empty"><i class="fa-regular fa-image"></i><span>Pratinjau Banner Paket</span></div></div>
+          <div class="sa-banner-actions"><button type="button" class="sa-btn sa-banner-upload" data-sa-banner-upload="paket"><i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Terapkan</button><span id="sa-banner-status-paket" class="sa-banner-status" role="status">Pilih gambar untuk mengganti banner saat paket habis.</span></div>
+        </div>
+      </section>
       </section>
     </div>
   </div>
@@ -6198,9 +6211,10 @@ const boot=()=>{
  const bannerConfig={
   login:{file:'sa-banner-file-login',preview:'sa-banner-preview-login',empty:'sa-banner-empty-login',status:'sa-banner-status-login',field:'bannerLoginUrl',pathField:'bannerLoginStoragePath',title:'Banner Login'},
   input:{file:'sa-banner-file-input',preview:'sa-banner-preview-input',empty:'sa-banner-empty-input',status:'sa-banner-status-input',field:'bannerInputDataUrl',pathField:'bannerInputDataStoragePath',title:'Banner Input Data'},
-  popup:{file:'sa-banner-file-popup',preview:'sa-banner-preview-popup',empty:'sa-banner-empty-popup',status:'sa-banner-status-popup',field:'bannerPopupUrl',pathField:'bannerPopupStoragePath',title:'Banner Popup'}
+  popup:{file:'sa-banner-file-popup',preview:'sa-banner-preview-popup',empty:'sa-banner-empty-popup',status:'sa-banner-status-popup',field:'bannerPopupUrl',pathField:'bannerPopupStoragePath',title:'Banner Popup'},
+  paket:{file:'sa-banner-file-paket',preview:'sa-banner-preview-paket',empty:'sa-banner-empty-paket',status:'sa-banner-status-paket',field:'bannerPaketUrl',pathField:'bannerPaketStoragePath',title:'Banner Paket',bucket:'banners'}
  };
- const bannerPendingFiles={login:null,input:null,popup:null},bannerPreviewUrls={login:'',input:'',popup:''};
+ const bannerPendingFiles={login:null,input:null,popup:null,paket:null},bannerPreviewUrls={login:'',input:'',popup:'',paket:''};
  function setBannerStatus(key,message,kind=''){const el=$(bannerConfig[key].status);if(el){el.textContent=message;el.classList.toggle('is-error',kind==='error');el.classList.toggle('is-success',kind==='success')}}
 
  async function prepareBannerUpload(file){
@@ -6258,17 +6272,18 @@ const boot=()=>{
     const path=`${adminUid}/banners/${key}-${Date.now()}.${prepared.extension}`;
     bannerUploadStage='Upload ke Supabase Storage';
     setBannerStatus(key,'Mengunggah gambar terkompresi ke Supabase Storage…');
-    const {error:uploadError}=await supabase.storage.from(SUPABASE_PHOTO_BUCKET).upload(path,prepared.blob,{contentType:prepared.contentType,upsert:false,cacheControl:'3600'});
+    const storageBucket=String(c.bucket||SUPABASE_PHOTO_BUCKET);
+    const {error:uploadError}=await supabase.storage.from(storageBucket).upload(path,prepared.blob,{contentType:prepared.contentType,upsert:false,cacheControl:'3600'});
     if(uploadError)throw new Error(uploadError.message||'Upload Storage ditolak.');
-    const {data:publicData}=supabase.storage.from(SUPABASE_PHOTO_BUCKET).getPublicUrl(path);
+    const {data:publicData}=supabase.storage.from(storageBucket).getPublicUrl(path);
     const url=String(publicData?.publicUrl||'');
-    if(!url)throw new Error('URL publik banner tidak berhasil dibuat. Pastikan bucket rekapinyu-foto bersifat Public.');
+    if(!url)throw new Error('URL publik banner tidak berhasil dibuat. Pastikan bucket Supabase yang digunakan bersifat Public.');
     bannerUploadStage='Menyimpan URL konfigurasi ke Firestore';
     await setDoc(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),{[c.field]:url,[c.pathField]:path,updatedAt:serverTimestamp(),updatedBy:adminUid,storageProvider:'supabase'},{merge:true});
     bannerPendingFiles[key]=null;
     const input=$(c.file);if(input)input.value='';
     setBannerPreview(key,url);
-    setBannerStatus(key,`${c.title} berhasil diunggah ke Supabase (${Math.round(prepared.blob.size/1024)} KB) dan URL tersimpan.`, 'success');
+    setBannerStatus(key,`${c.title} berhasil diunggah ke bucket ${storageBucket} (${Math.round(prepared.blob.size/1024)} KB) dan URL tersimpan.`, 'success');
    }catch(err){
     console.error(`Upload ${c.title} pada tahap ${bannerUploadStage}:`,err);
     setBannerStatus(key,`${bannerUploadStage} gagal: ${err?.message||String(err)}.`, 'error');
