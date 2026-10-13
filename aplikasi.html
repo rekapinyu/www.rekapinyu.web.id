@@ -1791,6 +1791,11 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   }
 }
 </style>
+<style id="rekapinyu-cek-paket-sidebar-style">
+#nav-cek-paket{transition:background-color .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease}
+#nav-cek-paket:hover{transform:translateX(3px);background-color:rgba(226,232,240,.55)}
+#nav-cek-paket:active{transform:translateX(1px) scale(.99)}
+</style>
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
@@ -1859,6 +1864,10 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-komunitas" onclick="switchTab('komunitas')" title="Komunitas" type="button">
 <span aria-hidden="true" class="sidebar-icon-overlay" id="icon-komunitas"><i aria-hidden="true" class="fa-solid fa-users"></i><i aria-hidden="true" class="fa-solid fa-users"></i></span>
 <span class="sidebar-text truncate">Komunitas</span>
+</button>
+<button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-cek-paket" onclick="switchTab('cek-paket')" title="Cek Paket" type="button">
+<span aria-hidden="true" class="sidebar-icon-overlay" id="icon-cek-paket"><i aria-hidden="true" class="fa-solid fa-route"></i><i aria-hidden="true" class="fa-solid fa-route"></i></span>
+<span class="sidebar-text truncate">Cek Paket</span>
 </button>
 <div aria-hidden="true" class="sidebar-menu-placeholder">KASIR</div>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-kasir" onclick="switchTab('kasir')" title="Kasir">
@@ -3404,6 +3413,12 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 #view-komunitas .komunitas-search-wrap{display:none!important}
 #view-komunitas .komunitas-feed-heading{display:block!important}
 </style>
+<section class="hidden space-y-4" id="view-cek-paket">
+  <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-route text-emerald-600"></i> Cek Paket</h2>
+    <p class="text-sm text-slate-500 mt-2">Periksa status paket berlangganan Anda melalui informasi paket yang tersedia pada akun.</p>
+  </div>
+</section>
 <section class="hidden" id="view-komunitas">
   <div class="komunitas-shell">
     <aside class="komunitas-rail" aria-label="Navigasi komunitas">
@@ -4883,7 +4898,7 @@ function updateUserAvatarUI() {
                 document.documentElement.setAttribute('data-mobile-view', tab);
 
                 /* MOBILE SAJA: satu jalur tampilan agar view tidak saling menumpuk. */
-                const mobileViews = ['input','pengeluaran','kasbon','kasir','produk-kasir','laporan-kasir','history','report','backup','activity','settings','cetak','komunitas'];
+                const mobileViews = ['input','pengeluaran','kasbon','kasir','produk-kasir','laporan-kasir','history','report','backup','activity','settings','cetak','komunitas','cek-paket'];
                 mobileViews.forEach(v=>document.getElementById(`view-${v}`)?.classList.add('hidden'));
                 document.getElementById('mobile-home-view')?.classList.add('hidden');
                 document.getElementById('activity-main-container')?.classList.add('hidden');
@@ -4931,7 +4946,7 @@ function updateUserAvatarUI() {
                 }
                 tab = 'input';
             }
-            const views = ['input', 'pengeluaran', 'kasbon', 'kasir', 'produk-kasir', 'laporan-kasir', 'history', 'report', 'backup', 'activity', 'settings', 'cetak', 'komunitas'];
+            const views = ['input', 'pengeluaran', 'kasbon', 'kasir', 'produk-kasir', 'laporan-kasir', 'history', 'report', 'backup', 'activity', 'settings', 'cetak', 'komunitas', 'cek-paket'];
             const titles = {
                 input: { title: 'Form Input Keuangan Harian', subtitle: 'Catat pendapatan, belanja, dan pengeluaran harian dengan cepat & akurat.' },
                 pengeluaran: { title: 'Manajemen Pengeluaran', subtitle: 'Catat rincian pembayaran atau pengeluaran secara terpisah.' },
@@ -4945,7 +4960,8 @@ function updateUserAvatarUI() {
                 activity: { title: 'Aktifitas', subtitle: 'History aktifitas penggunaan aplikasi secara realtime.' },
                 settings: { title: 'Setting', subtitle: 'Atur informasi yang tampil pada struk kasir.' },
                 cetak: { title: 'Cetak', subtitle: 'Cetak struk kasir menggunakan tampilan Cetak Struk.' },
-                komunitas: { title: 'Komunitas', subtitle: 'Buat postingan dengan komunitas lain.' }
+                komunitas: { title: 'Komunitas', subtitle: 'Buat postingan dengan komunitas lain.' },
+                'cek-paket': { title: 'Cek Paket', subtitle: 'Periksa informasi paket pada akun Anda.' }
             };
 
             const icons = {
@@ -4961,7 +4977,8 @@ function updateUserAvatarUI() {
                 activity: 'fa-list-check',
                 settings: 'fa-gear',
                 cetak: 'fa-print',
-                komunitas: 'fa-users'
+                komunitas: 'fa-users',
+                'cek-paket': 'fa-route'
             };
 
             const pengeluaranStickyContainer = document.getElementById('pengeluaran-sticky-container');
