@@ -6205,32 +6205,19 @@ function updateUserAvatarUI() {
                 ? historyData.map(item => ({...item, __historySource:'local'}))
                 : [];
 
-            /* File yang benar-benar masih ada menjadi kunci prioritas.
-               Bahkan jika InputData di dalam file kosong, Firestore tetap tidak
-               boleh mengambil alih tanggal tersebut. */
-            const localFileDates = new Set(
-                Array.from(window.__rekapinyuLocalHistoryFileKeys || [])
-                    .map(v => String(v || '').trim().toLowerCase())
-                    .filter(Boolean)
-            );
-
-            /* Baris lokal juga mengunci tanggalnya sebagai lokal. */
-            localRows.forEach(item => {
-                const key = historyDateKey(item);
-                if (key) localFileDates.add(key);
-            });
+            /* ATURAN SUMBER HISTORY:
+               Jika setidaknya satu file InputData_*.json ditemukan di folder
+               lokal yang dipilih, tampilkan hanya data lokal. Jangan campur
+               atau menampilkan data Firestore, termasuk untuk tanggal lain.
+               Firestore hanya menjadi fallback saat tidak ada file JSON lokal. */
+            if (window.__rekapinyuHasLocalHistoryFiles === true) {
+                return localRows;
+            }
 
             const cloudRows = Array.isArray(window.__rekapinyuFirestoreRekap?.InputData)
                 ? window.__rekapinyuFirestoreRekap.InputData
                 : [];
-
-            /* Firestore hanya dipakai untuk tanggal yang tidak mempunyai
-               file JSON lokal. */
-            const fallbackRows = cloudRows
-                .filter(item => !localFileDates.has(historyDateKey(item)))
-                .map(item => ({...item, __historySource:'firestore'}));
-
-            return [...localRows, ...fallbackRows];
+            return cloudRows.map(item => ({...item, __historySource:'firestore'}));
         }
 
         // RENDER HISTORY DENGAN ICON (BEARISH, BULLISH, PROFIT)
@@ -7357,6 +7344,7 @@ function updateUserAvatarUI() {
      * HISTORY: SATU BLOK PEMBACAAN LOKAL
      * --------------------------------------------------------- */
     window.__rekapinyuLocalHistoryFileKeys=new Set();
+    window.__rekapinyuHasLocalHistoryFiles=false;
     const localHistoryRows=[];
 
     if(historyDir){
@@ -7370,6 +7358,8 @@ function updateUserAvatarUI() {
           try{
             const name=String(entry?.name||'');
             if(!/^InputData_.+\.json$/i.test(name))continue;
+            /* Keberadaan file saja sudah cukup untuk menonaktifkan sumber Firestore. */
+            window.__rekapinyuHasLocalHistoryFiles=true;
 
             const data=await readJsonHandle(entry.handle);
             const fileInfo=fileInfoFromData(data,name);
