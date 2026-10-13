@@ -16,6 +16,7 @@ html,body{
   background:#fff;
 }
 #auth-container{
+  --rekapinyu-login-banner-image:none;
   position:fixed!important;
   inset:0!important;
   display:flex!important;
@@ -245,16 +246,19 @@ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
  if(!authContainer)return;
  const settingsRef=doc(db,"PengaturanAplikasi","BannerFrontend");
  const fallbackBanner="https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20LOGIN.jpg?raw=true";
- onSnapshot(settingsRef,snapshot=>{
-  const settings=snapshot.exists()?(snapshot.data()||{}):{};
+ onSnapshot(settingsRef,{includeMetadataChanges:true},snapshot=>{
+  /* Abaikan cache lokal; tunggu nilai terbaru yang dikonfirmasi server. */
+  if(snapshot.metadata?.fromCache)return;
+  const settings=snapshot.exists()?(snapshot.data()||{ }):{};
   const bannerUrl=String(settings.bannerLoginUrl||"").trim();
   if(bannerUrl){
    authContainer.style.setProperty("--rekapinyu-login-banner-image",`url(${JSON.stringify(bannerUrl)})`);
   }else{
-   authContainer.style.removeProperty("--rekapinyu-login-banner-image");
+   /* Tanpa konfigurasi aktif, tetap gunakan none (jangan tampilkan banner usang). */
+   authContainer.style.setProperty("--rekapinyu-login-banner-image","none");
   }
  },error=>{
-  console.warn("Rekapinyu: banner Login/Daftar belum dapat dibaca dari Firestore.",error);
+  console.warn("Rekapinyu: menunggu banner Login/Daftar dari server Firestore.",error);
  });
 })();
 const phoneOf=v=>String(v??"").replace(/\D/g,"");
