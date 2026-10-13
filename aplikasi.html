@@ -25,6 +25,20 @@
 })();
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+
+<style id="rekapinyu-banner-no-old-flash">
+  /* Jangan lukis banner bawaan sampai konfigurasi terbaru terkonfirmasi dari Firestore server. */
+  html:not([data-rekapinyu-banner-settings-ready="1"]) #view-input > div{
+    background-image:none!important;
+  }
+  html:not([data-rekapinyu-banner-settings-ready="1"]) #custom-modal > div{
+    background-image:none!important;
+  }
+  html:not([data-rekapinyu-banner-settings-ready="1"]) #rekapinyu-welcome-popup .rw-photo{
+    visibility:hidden!important;
+  }
+</style>
+
 <title>Aplikasi Keuangan - Toko</title>
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -8501,17 +8515,22 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
 
   onSnapshot(
     BANNER_SETTINGS_REF,
+    { includeMetadataChanges: true },
     snapshot => {
+      /* Abaikan cache lokal agar banner lama tidak tampil sebelum data server terbaru datang. */
+      if(snapshot.metadata?.fromCache) return;
       latestBannerSettings = snapshot.exists() ? (snapshot.data() || {}) : {};
       window.__rekapinyuBannerSettings = latestBannerSettings;
       applyLatestBannerSettings();
+      document.documentElement.dataset.rekapinyuBannerSettingsReady = "1";
       window.dispatchEvent(new CustomEvent("rekapinyu-banner-settings-updated", {
         detail: latestBannerSettings
       }));
     },
     error => {
+      /* Jika server tidak dapat dibaca, jangan tampilkan banner lama seolah-olah terbaru. */
       console.warn(
-        "Rekapinyu: pengaturan banner realtime tidak dapat dibaca. Periksa izin baca Firestore untuk PengaturanAplikasi/BannerFrontend.",
+        "Rekapinyu: menunggu konfigurasi banner dari server Firestore. Periksa koneksi dan izin baca PengaturanAplikasi/BannerFrontend.",
         error
       );
     }
