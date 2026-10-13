@@ -13299,7 +13299,7 @@ async function initKasirViews(){
     let screen=document.getElementById('rekapinyu-package-expired-screen');
     if(screen)return screen;
     screen=document.createElement('section');screen.id='rekapinyu-package-expired-screen';screen.setAttribute('aria-live','polite');
-    screen.innerHTML=`<div class="rk-expired-info"><h1 class="rk-expired-title">PAKET ANDA HABIS NIH!</h1><p class="rk-expired-subtitle">YUK PERPANJANG PAKET ANDA SEKARANG, AGAR BISA TERUS MENGGUNAKAN FITUR DARI REKAPINYU</p><h2 class="rk-expired-steps-title">CARA PERPANJANG PAKET</h2><ul class="rk-expired-steps"><li>➤ Klik Tombol WA Admin Yang ada dibawah berwarna Hijau</li><li>➤ Kirim Pesan Ke WA Admin, Isi Pesanya Seperti ini Contoh:</li><li class="rk-expired-message">Perpanjang Paket
+    screen.innerHTML=`<div class="rk-expired-info"><h1 class="rk-expired-title">PAKET ANDA HABIS NIH!</h1><p class="rk-expired-subtitle">YUK PERPANJANG PAKET ANDA SEKARANG, AGAR BISA TERUS MENGGUNAKAN FITUR DARI REKAPINYU</p><h2 class="rk-expired-steps-title">CARA PERPANJANG PAKET</h2><ul class="rk-expired-steps"><li>- Klik Tombol WA Admin Yang ada dibawah berwara Hijau</li><li>- Kirim Pesan Ke WA Admin, Isi Pesanya Seperti ini Contoh:</li><li class="rk-expired-message">Perpanjang Paket
 
 * Nama Toko : TOKO INOYA
 
@@ -13307,7 +13307,7 @@ async function initKasirViews(){
 
 * Nama Paket : Hemat 15K
 
-* Lalu Kirim Pesan Ke Admin Rekapinyu</li><li>➤ Proses Selanjutnya Dialihkan ke Proses Pembayaran Lewat Whatsapp Admin Rekapinyu.</li><li style="margin-top:14px">Salam Hormat<br>Admin rekapinyu</li></ul><a class="rk-expired-wa" id="rekapinyu-package-whatsapp" href="${WA_URL}" target="_blank" rel="noopener noreferrer"><span class="rk-expired-wa-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></span><span>WA ADMIN</span></a></div><div class="rk-expired-promo"><img alt="Promo berlangganan Rekapinyu" src="${PROMO_URL}"></div>`;
+* Lalu Kirim Pesan Ke Admin Rekapinyu</li><li>Lalu Dialihkan ke Proses Pembayaran Lewat Whatsapp Admin Rekapinyu.</li><li style="margin-top:14px">Salam Hormat<br>Admin rekapinyu</li></ul><a class="rk-expired-wa" id="rekapinyu-package-whatsapp" href="${WA_URL}" target="_blank" rel="noopener noreferrer"><span class="rk-expired-wa-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></span><span>WA ADMIN</span></a></div><div class="rk-expired-promo"><img alt="Promo berlangganan Rekapinyu" src="${PROMO_URL}"></div>`;
     document.body.appendChild(screen);
     return screen;
   }
@@ -13319,7 +13319,8 @@ async function initKasirViews(){
     packageKnown=true;
     const name=String(data.NamaPaket||data.namaPaket||data.packageName||data.paketNama||data.namaLangganan||'').trim();
     const expiry=parseExpiry(data.packageExpiresAt||data.PackageExpiresAt||data.packageExpiry||data.tanggalBerakhirPaket||data.TanggalBerakhirPaket||data.masaAktifSampai||data.MasaAktifSampai);
-    const active=!!name&&expiry>Date.now();
+    const isLifetimePackage=/selamanya/i.test(name);
+    const active=!!name&&(isLifetimePackage||expiry>Date.now());
     window.__rekapinyuPackageGateActive=!active;
     document.body.classList.toggle('rk-package-expired',!active);
     const wa=document.getElementById('rekapinyu-package-whatsapp');
