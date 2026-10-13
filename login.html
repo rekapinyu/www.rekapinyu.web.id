@@ -55,7 +55,7 @@ html,body{
   flex:0 0 55%;
   width:55%;
   min-height:100vh;
-  background-image:url("https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20LOGIN.jpg?raw=true");
+  background-image:var(--rekapinyu-login-banner-image, url("https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20LOGIN.jpg?raw=true"));
   background-size:cover;
   background-position:center center;
   background-repeat:no-repeat;
@@ -234,10 +234,29 @@ html,body{
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig={apiKey:"AIzaSyAyzAV68m4BRtwmn0iu2vDplZaJ9r_uQVk",authDomain:"rekapinyu.firebaseapp.com",projectId:"rekapinyu",storageBucket:"rekapinyu.firebasestorage.app",messagingSenderId:"835450919713",appId:"1:835450919713:web:818f9f48c5b05330d67c60",measurementId:"G-4KSJC9ENH8"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+
+/* Sinkronisasi banner Login/Daftar dari konfigurasi yang ditetapkan Super Admin. */
+(function installLoginBannerRealtime(){
+ const authContainer=document.getElementById("auth-container");
+ if(!authContainer)return;
+ const settingsRef=doc(db,"PengaturanAplikasi","BannerFrontend");
+ const fallbackBanner="https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20LOGIN.jpg?raw=true";
+ onSnapshot(settingsRef,snapshot=>{
+  const settings=snapshot.exists()?(snapshot.data()||{}):{};
+  const bannerUrl=String(settings.bannerLoginUrl||"").trim();
+  if(bannerUrl){
+   authContainer.style.setProperty("--rekapinyu-login-banner-image",`url(${JSON.stringify(bannerUrl)})`);
+  }else{
+   authContainer.style.removeProperty("--rekapinyu-login-banner-image");
+  }
+ },error=>{
+  console.warn("Rekapinyu: banner Login/Daftar belum dapat dibaca dari Firestore.",error);
+ });
+})();
 const phoneOf=v=>String(v??"").replace(/\D/g,"");
 const emailOf=p=>`${phoneOf(p)}@rekapinyu.app`;
 const sessionKey="finance_active_session";
