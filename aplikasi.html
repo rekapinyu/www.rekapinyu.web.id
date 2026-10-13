@@ -4891,7 +4891,7 @@ function updateUserAvatarUI() {
                 window.__rekapinyuShowPackageGate?.();
                 return;
             }
-            if (tab === 'komunitas') window.__rekapinyuHidePackageGate?.();
+            if (tab === 'komunitas' || tab === 'cek-paket') window.__rekapinyuHidePackageGate?.();
             if (window.matchMedia('(max-width:767px)').matches) {
                 const mobileAllowed = ['home','history','activity','laporan-kasir','report','cek-paket'];
                 if (tab === 'home') {
@@ -13302,10 +13302,11 @@ async function initKasirViews(){
   #rekapinyu-package-expired-screen .rk-expired-wa .rk-expired-wa-icon{width:30px;height:30px;flex:0 0 30px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;background:rgba(255,255,255,.22);color:#fff;font-size:19px;line-height:1}
   #rekapinyu-package-expired-screen .rk-expired-promo{flex:1 1 58%;min-width:0;min-height:100%;background:#ecfdf5;display:flex;align-items:stretch;justify-content:center;overflow:hidden}
   #rekapinyu-package-expired-screen .rk-expired-promo img{width:100%;height:100%;min-height:100%;object-fit:cover;object-position:center;display:block}
-  body.rk-package-expired #sidebar nav > button:not(#nav-komunitas),
+  body.rk-package-expired #sidebar nav > button:not(#nav-komunitas):not(#nav-cek-paket),
   body.rk-package-expired #sidebar nav > .toggle-kasbon-menu-container{opacity:.72!important;position:relative!important}
-  body.rk-package-expired #sidebar nav > button:not(#nav-komunitas)::after{content:'🔒';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;line-height:1}
-  body.rk-package-expired #sidebar nav > button#nav-komunitas{opacity:1!important;filter:none!important}
+  body.rk-package-expired #sidebar nav > button:not(#nav-komunitas):not(#nav-cek-paket)::after{content:'🔒';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;line-height:1}
+  body.rk-package-expired #sidebar nav > button#nav-komunitas,
+  body.rk-package-expired #sidebar nav > button#nav-cek-paket{opacity:1!important;filter:none!important}
   @media(max-width:767px){
     #rekapinyu-package-expired-screen{top:60px;left:0;right:0;bottom:0;flex-direction:column;overflow:auto}
     #rekapinyu-package-expired-screen .rk-expired-info{flex:0 0 auto;width:100%;padding:24px 22px;min-height:470px;box-shadow:0 10px 25px rgba(15,23,42,.08)}
@@ -13345,7 +13346,8 @@ async function initKasirViews(){
     return screen;
   }
   function communityIsOpen(){return !!document.getElementById('view-komunitas')&&!document.getElementById('view-komunitas').classList.contains('hidden')}
-  function show(force){if(window.__rekapinyuLoggingOut)return hide();const screen=getScreen();if(!force&&communityIsOpen()){screen.classList.remove('is-visible');return}screen.classList.add('is-visible')}
+  function cekPaketIsOpen(){return !!document.getElementById('view-cek-paket')&&!document.getElementById('view-cek-paket').classList.contains('hidden')}
+  function show(force){if(window.__rekapinyuLoggingOut)return hide();const screen=getScreen();if(!force&&(communityIsOpen()||cekPaketIsOpen())){screen.classList.remove('is-visible');return}screen.classList.add('is-visible')}
   function hide(){document.getElementById('rekapinyu-package-expired-screen')?.classList.remove('is-visible')}
   function update(data){
     if(window.__rekapinyuLoggingOut){hide();document.body.classList.remove('rk-package-expired');return}
@@ -13397,8 +13399,8 @@ async function initKasirViews(){
     event.stopImmediatePropagation();
     show(true);
   },true);
-  document.addEventListener('visibilitychange',()=>{if(!window.__rekapinyuLoggingOut&&document.visibilityState==='visible'&&window.__rekapinyuPackageGateActive)show()});
-  window.addEventListener('focus',()=>{if(!window.__rekapinyuLoggingOut&&window.__rekapinyuPackageGateActive&&!communityIsOpen())show()});
+  document.addEventListener('visibilitychange',()=>{if(!window.__rekapinyuLoggingOut&&document.visibilityState==='visible'&&window.__rekapinyuPackageGateActive&&!communityIsOpen()&&!cekPaketIsOpen())show()});
+  window.addEventListener('focus',()=>{if(!window.__rekapinyuLoggingOut&&window.__rekapinyuPackageGateActive&&!communityIsOpen()&&!cekPaketIsOpen())show()});
 })();
 </script>
 
