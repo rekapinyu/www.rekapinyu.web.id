@@ -6212,7 +6212,7 @@ const boot=()=>{
   login:{file:'sa-banner-file-login',preview:'sa-banner-preview-login',empty:'sa-banner-empty-login',status:'sa-banner-status-login',field:'bannerLoginUrl',pathField:'bannerLoginStoragePath',title:'Banner Login'},
   input:{file:'sa-banner-file-input',preview:'sa-banner-preview-input',empty:'sa-banner-empty-input',status:'sa-banner-status-input',field:'bannerInputDataUrl',pathField:'bannerInputDataStoragePath',title:'Banner Input Data'},
   popup:{file:'sa-banner-file-popup',preview:'sa-banner-preview-popup',empty:'sa-banner-empty-popup',status:'sa-banner-status-popup',field:'bannerPopupUrl',pathField:'bannerPopupStoragePath',title:'Banner Popup'},
-  paket:{file:'sa-banner-file-paket',preview:'sa-banner-preview-paket',empty:'sa-banner-empty-paket',status:'sa-banner-status-paket',field:'bannerPaketUrl',pathField:'bannerPaketStoragePath',title:'Banner Paket',bucket:'banners'}
+  paket:{file:'sa-banner-file-paket',preview:'sa-banner-preview-paket',empty:'sa-banner-empty-paket',status:'sa-banner-status-paket',field:'bannerPaketUrl',pathField:'bannerPaketStoragePath',title:'Banner Paket'}
  };
  const bannerPendingFiles={login:null,input:null,popup:null,paket:null},bannerPreviewUrls={login:'',input:'',popup:'',paket:''};
  function setBannerStatus(key,message,kind=''){const el=$(bannerConfig[key].status);if(el){el.textContent=message;el.classList.toggle('is-error',kind==='error');el.classList.toggle('is-success',kind==='success')}}
