@@ -13243,7 +13243,7 @@ async function initKasirViews(){
 
 <!-- REKAPINYU PAKET GATE: kunci semua fitur selain Komunitas saat masa paket habis. -->
 <style id="rekapinyu-package-expiry-gate-css">
-  #rekapinyu-package-expired-screen{position:fixed;z-index:80000;top:88px;left:256px;right:0;bottom:0;display:none;background:#fff;overflow:auto;color:#111827}
+  #rekapinyu-package-expired-screen{position:fixed;z-index:80000;top:62px;left:256px;right:0;bottom:0;display:none;background:#fff;overflow:auto;color:#111827}
   #rekapinyu-package-expired-screen.is-visible{display:flex}
   #rekapinyu-package-expired-screen .rk-expired-info{flex:0 0 42%;min-width:0;box-sizing:border-box;padding:clamp(22px,3vw,48px);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:#fff;box-shadow:14px 0 35px rgba(15,23,42,.08);position:relative;z-index:1}
   #rekapinyu-package-expired-screen .rk-expired-logo{width:min(100%,220px);height:auto;object-fit:contain;margin-bottom:22px}
@@ -13251,8 +13251,9 @@ async function initKasirViews(){
   #rekapinyu-package-expired-screen .rk-expired-subtitle{font-size:clamp(12px,1vw,15px);font-weight:900;line-height:1.45;color:#f5222d;margin:0 0 40px}
   #rekapinyu-package-expired-screen .rk-expired-steps-title{font-size:clamp(16px,1.4vw,22px);font-weight:950;color:#111;margin:0 0 14px}
   #rekapinyu-package-expired-screen .rk-expired-steps{font-size:clamp(12px,1vw,15px);line-height:1.5;font-weight:800;color:#111;margin:0;padding-left:22px}
-  #rekapinyu-package-expired-screen .rk-expired-wa{margin: auto auto 0;min-width:175px;padding:12px 26px;border:3px solid #050505;border-radius:18px;background:#fff;color:#050505;font-size:14px;font-weight:950;cursor:pointer;text-decoration:none;text-align:center}
-  #rekapinyu-package-expired-screen .rk-expired-wa:hover{background:#f0fdf4;border-color:#16a34a}
+  #rekapinyu-package-expired-screen .rk-expired-wa{margin:auto auto 0;min-width:175px;padding:12px 22px;border:0;border-radius:14px;background:#16a34a;color:#fff;font-size:14px;font-weight:950;cursor:pointer;text-decoration:none;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 20px rgba(22,163,74,.24);box-sizing:border-box}
+  #rekapinyu-package-expired-screen .rk-expired-wa:hover{background:#15803d;color:#fff}
+  #rekapinyu-package-expired-screen .rk-expired-wa .rk-expired-wa-icon{width:30px;height:30px;flex:0 0 30px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;background:rgba(255,255,255,.22);color:#fff;font-size:19px;line-height:1}
   #rekapinyu-package-expired-screen .rk-expired-promo{flex:1 1 58%;min-width:0;min-height:100%;background:#ecfdf5;display:flex;align-items:stretch;justify-content:center;overflow:hidden}
   #rekapinyu-package-expired-screen .rk-expired-promo img{width:100%;height:100%;min-height:100%;object-fit:cover;object-position:center;display:block}
   body.rk-package-expired #sidebar nav > button:not(#nav-komunitas),
@@ -13285,7 +13286,7 @@ async function initKasirViews(){
     let screen=document.getElementById('rekapinyu-package-expired-screen');
     if(screen)return screen;
     screen=document.createElement('section');screen.id='rekapinyu-package-expired-screen';screen.setAttribute('aria-live','polite');
-    screen.innerHTML=`<div class="rk-expired-info"><img class="rk-expired-logo" alt="REKAPINYU" src="https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGOHEADERAPLIKASI.jpg?raw=true"><h1 class="rk-expired-title">PAKET ANDA HABIS NIH!</h1><p class="rk-expired-subtitle">YUK PERPANJANG PAKET ANDA SEKARANG, AGAR BISA TERUS MENGGUNAKAN FITUR DARI REKAPINYU</p><h2 class="rk-expired-steps-title">CARA PERPANJANG PAKET</h2><ul class="rk-expired-steps"><li>Klik Tombol WhatsApp Admin di bawah</li><li>Kirim Pesan ke WhatsApp Admin dengan format:</li><li>Perpanjang Paket</li><li>Nama Paket :</li><li>Nama Toko :</li><li>NomorHp :</li></ul><a class="rk-expired-wa" id="rekapinyu-package-whatsapp" href="${WA_URL}" target="_blank" rel="noopener noreferrer">WA ADMIN</a></div><div class="rk-expired-promo"><img alt="Promo berlangganan Rekapinyu" src="${PROMO_URL}"></div>`;
+    screen.innerHTML=`<div class="rk-expired-info"><img class="rk-expired-logo" alt="REKAPINYU" src="https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGOHEADERAPLIKASI.jpg?raw=true"><h1 class="rk-expired-title">PAKET ANDA HABIS NIH!</h1><p class="rk-expired-subtitle">YUK PERPANJANG PAKET ANDA SEKARANG, AGAR BISA TERUS MENGGUNAKAN FITUR DARI REKAPINYU</p><h2 class="rk-expired-steps-title">CARA PERPANJANG PAKET</h2><ul class="rk-expired-steps"><li>Klik Tombol WhatsApp Admin di bawah</li><li>Kirim Pesan ke WhatsApp Admin dengan format:</li><li>Perpanjang Paket</li><li>Nama Paket :</li><li>Nama Toko :</li><li>NomorHp :</li></ul><a class="rk-expired-wa" id="rekapinyu-package-whatsapp" href="${WA_URL}" target="_blank" rel="noopener noreferrer"><span class="rk-expired-wa-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></span><span>WA ADMIN</span></a></div><div class="rk-expired-promo"><img alt="Promo berlangganan Rekapinyu" src="${PROMO_URL}"></div>`;
     document.body.appendChild(screen);
     return screen;
   }
