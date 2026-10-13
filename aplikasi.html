@@ -13293,14 +13293,22 @@ async function initKasirViews(){
   #rekapinyu-package-expired-screen{font-family:Inter,system-ui,-apple-system,sans-serif;position:fixed;z-index:80000;top:62px;left:256px;right:0;bottom:0;display:none;background:#fff;overflow:auto;color:#111827}
   #rekapinyu-package-expired-screen.is-visible{display:flex}
   #rekapinyu-package-expired-screen .rk-expired-info{flex:0 0 42%;min-width:0;box-sizing:border-box;padding:clamp(22px,3vw,48px);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;background:#fff;box-shadow:14px 0 35px rgba(15,23,42,.08);position:relative;z-index:1}
-  #rekapinyu-package-expired-screen .rk-expired-title{font-size:clamp(18px,1.6vw,25px);font-weight:950;line-height:1.25;color:#f5222d;margin:0 0 8px}
-  #rekapinyu-package-expired-screen .rk-expired-subtitle{font-size:clamp(12px,1vw,15px);font-weight:900;line-height:1.45;color:#f5222d;margin:0 0 40px}
-  #rekapinyu-package-expired-screen .rk-expired-steps-title{font-size:clamp(16px,1.4vw,22px);font-weight:950;color:#111;margin:0 0 14px}
-  #rekapinyu-package-expired-screen .rk-expired-steps{font-size:clamp(11px,.85vw,13px);line-height:1.55;font-weight:400;color:#111;margin:0;padding-left:0;list-style:none}
-  #rekapinyu-package-expired-screen .rk-expired-steps li{font-weight:400;margin:0 0 3px}
+  #rekapinyu-package-expired-screen .rk-expired-eyebrow{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:8px 12px;border:1px solid #d1fae5;border-radius:999px;background:#ecfdf5;color:#047857;font-size:10px;font-weight:850;letter-spacing:.09em}
+  #rekapinyu-package-expired-screen .rk-expired-title{font-size:clamp(25px,2.1vw,34px);font-weight:850;letter-spacing:-.045em;line-height:1.15;color:#172033;margin:0 0 14px}
+  #rekapinyu-package-expired-screen .rk-expired-subtitle{font-size:clamp(13px,1vw,15px);font-weight:450;line-height:1.75;color:#64748b;margin:0 0 22px}
+  #rekapinyu-package-expired-screen .rk-expired-steps-title{font-size:15px;font-weight:850;color:#172033;margin:0 0 14px}
+  #rekapinyu-package-expired-screen .rk-expired-steps{font-size:12px;line-height:1.55;font-weight:500;color:#475569;margin:0 0 22px;padding:0;list-style:none;display:grid;gap:12px}
+  #rekapinyu-package-expired-screen .rk-expired-steps li{font-weight:500;margin:0;display:flex;align-items:flex-start;gap:10px}
+  #rekapinyu-package-expired-screen .rk-expired-step-number{display:inline-flex;align-items:center;justify-content:center;flex:0 0 25px;width:25px;height:25px;border-radius:8px;background:#ecfdf5;color:#047857;font-size:11px;font-weight:900}
+  #rekapinyu-package-expired-screen .rk-expired-note{display:flex;align-items:flex-start;gap:12px;width:100%;box-sizing:border-box;margin:0 0 25px;padding:14px;border:1px solid #dbeafe;border-radius:14px;background:#f8fbff}
+  #rekapinyu-package-expired-screen .rk-expired-note-icon{display:flex;align-items:center;justify-content:center;flex:0 0 34px;height:34px;border-radius:10px;background:#dbeafe;color:#2563eb}
+  #rekapinyu-package-expired-screen .rk-expired-note strong{display:block;margin:0 0 4px;color:#1e293b;font-size:12px;font-weight:850}
+  #rekapinyu-package-expired-screen .rk-expired-note p{margin:0;color:#64748b;font-size:11px;line-height:1.6}
+  #rekapinyu-package-expired-screen .rk-expired-footer{margin:16px 0 0;color:#94a3b8;font-size:10px;line-height:1.5}
+  #rekapinyu-package-expired-screen .rk-expired-footer i{margin-right:5px;color:#10b981}
   #rekapinyu-package-expired-screen .rk-expired-steps .rk-expired-message{margin:8px 0 10px 12px;white-space:pre-line;line-height:1.65}
   #rekapinyu-package-expired-screen .rk-expired-steps-title{text-transform:uppercase}
-  #rekapinyu-package-expired-screen .rk-expired-wa{margin:auto auto 0;min-width:175px;padding:12px 22px;border:0;border-radius:14px;background:#16a34a;color:#fff;font-size:14px;font-weight:950;cursor:pointer;text-decoration:none;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 20px rgba(22,163,74,.24);box-sizing:border-box}
+  #rekapinyu-package-expired-screen .rk-expired-wa{margin:0;width:100%;min-width:0;padding:13px 16px;border:0;border-radius:12px;background:#16a34a;color:#fff;font-size:12px;font-weight:850;cursor:pointer;text-decoration:none;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 18px rgba(22,163,74,.18);box-sizing:border-box}
   #rekapinyu-package-expired-screen .rk-expired-wa:hover{background:#15803d;color:#fff}
   #rekapinyu-package-expired-screen .rk-expired-wa .rk-expired-wa-icon{width:30px;height:30px;flex:0 0 30px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;background:rgba(255,255,255,.22);color:#fff;font-size:19px;line-height:1}
   #rekapinyu-package-expired-screen .rk-expired-promo{flex:1 1 58%;min-width:0;min-height:100%;background:#ecfdf5;display:flex;align-items:stretch;justify-content:center;overflow:hidden}
@@ -13312,9 +13320,9 @@ async function initKasirViews(){
   body.rk-package-expired #sidebar nav > button#nav-cek-paket{opacity:1!important;filter:none!important}
   @media(max-width:767px){
     #rekapinyu-package-expired-screen{top:60px;left:0;right:0;bottom:0;flex-direction:column;overflow:auto}
-    #rekapinyu-package-expired-screen .rk-expired-info{flex:0 0 auto;width:100%;padding:24px 22px;min-height:470px;box-shadow:0 10px 25px rgba(15,23,42,.08)}
-    #rekapinyu-package-expired-screen .rk-expired-subtitle{margin-bottom:25px}
-    #rekapinyu-package-expired-screen .rk-expired-wa{margin:35px auto 0}
+    #rekapinyu-package-expired-screen .rk-expired-info{flex:0 0 auto;width:100%;padding:25px 20px;min-height:0;box-shadow:0 10px 25px rgba(15,23,42,.08)}
+    #rekapinyu-package-expired-screen .rk-expired-subtitle{margin-bottom:20px}
+    #rekapinyu-package-expired-screen .rk-expired-wa{margin:0}
     #rekapinyu-package-expired-screen .rk-expired-promo{flex:0 0 auto;width:100%;min-height:350px}
     #rekapinyu-package-expired-screen .rk-expired-promo img{height:auto;min-height:0;object-fit:contain}
   }
@@ -13336,15 +13344,20 @@ async function initKasirViews(){
     let screen=document.getElementById('rekapinyu-package-expired-screen');
     if(screen)return screen;
     screen=document.createElement('section');screen.id='rekapinyu-package-expired-screen';screen.setAttribute('aria-live','polite');
-    screen.innerHTML=`<div class="rk-expired-info"><h1 class="rk-expired-title">PAKET ANDA HABIS NIH!</h1><p class="rk-expired-subtitle">YUK PERPANJANG PAKET ANDA SEKARANG, AGAR BISA TERUS MENGGUNAKAN FITUR DARI REKAPINYU</p><h2 class="rk-expired-steps-title">CARA PERPANJANG PAKET</h2><ul class="rk-expired-steps"><li>- Klik Tombol WA Admin Yang ada dibawah berwara Hijau</li><li>- Kirim Pesan Ke WA Admin, Isi Pesanya Seperti ini Contoh:</li><li class="rk-expired-message">Perpanjang Paket
-
-* Nama Toko : TOKO INOYA
-
-* NomorHp : 081555444469
-
-* Nama Paket : Hemat 15K
-
-* Lalu Kirim Pesan Ke Admin Rekapinyu</li><li>Lalu Dialihkan ke Proses Pembayaran Lewat Whatsapp Admin Rekapinyu.</li><li style="margin-top:14px">Salam Hormat<br>Admin rekapinyu</li></ul><a class="rk-expired-wa" id="rekapinyu-package-whatsapp" href="${WA_URL}" target="_blank" rel="noopener noreferrer"><span class="rk-expired-wa-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></span><span>WA ADMIN</span></a></div><div class="rk-expired-promo"><img alt="Promo berlangganan Rekapinyu" src="${PROMO_URL}"></div>`;
+    screen.innerHTML=`<div class="rk-expired-info">
+      <div class="rk-expired-eyebrow"><i class="fa-solid fa-clock" aria-hidden="true"></i> INFORMASI LANGGANAN</div>
+      <h1 class="rk-expired-title">Masa Paket Anda Telah Berakhir</h1>
+      <p class="rk-expired-subtitle">Perpanjang paket Rekapinyu agar Anda dapat kembali menikmati fitur pengelolaan usaha dengan nyaman.</p>
+      <div class="rk-expired-note"><span class="rk-expired-note-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span><div><strong>Data Anda tetap penting</strong><p>Hubungi admin untuk membantu proses aktivasi kembali paket Anda.</p></div></div>
+      <h2 class="rk-expired-steps-title">Cara memperpanjang paket</h2>
+      <ol class="rk-expired-steps">
+        <li><span class="rk-expired-step-number">1</span><span>Klik tombol WhatsApp Admin di bawah.</span></li>
+        <li><span class="rk-expired-step-number">2</span><span>Kirim pesan permintaan perpanjangan paket. Detail akun akan disiapkan dalam pesan.</span></li>
+        <li><span class="rk-expired-step-number">3</span><span>Ikuti arahan admin untuk konfirmasi paket dan proses pembayaran.</span></li>
+      </ol>
+      <a class="rk-expired-wa" id="rekapinyu-package-whatsapp" href="${WA_URL}" target="_blank" rel="noopener noreferrer"><span class="rk-expired-wa-icon"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></span><span>Hubungi Admin via WhatsApp</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+      <p class="rk-expired-footer"><i class="fa-solid fa-headset" aria-hidden="true"></i> Butuh bantuan? Admin Rekapinyu siap membantu.</p>
+    </div><div class="rk-expired-promo"><img alt="Promo berlangganan Rekapinyu" src="${PROMO_URL}"></div>`;
     document.body.appendChild(screen);
     return screen;
   }
