@@ -6201,23 +6201,22 @@ function updateUserAvatarUI() {
         }
 
         function getHistoryForDisplay() {
-            const localRows = Array.isArray(historyData)
-                ? historyData.map(item => ({...item, __historySource:'local'}))
-                : [];
-
-            /* ATURAN SUMBER HISTORY:
-               Jika setidaknya satu file InputData_*.json ditemukan di folder
-               lokal yang dipilih, tampilkan hanya data lokal. Jangan campur
-               atau menampilkan data Firestore, termasuk untuk tanggal lain.
-               Firestore hanya menjadi fallback saat tidak ada file JSON lokal. */
+            /* SATU IMPLEMENTASI PEMILIHAN SUMBER HISTORY:
+               JSON lokal hanya menjadi sumber utama setelah minimal satu file
+               InputData berhasil dibaca dan divalidasi. Jika folder tidak dapat
+               diakses, file terhapus/rusak, atau tidak ada file InputData valid,
+               gunakan data Firestore. Kedua sumber tidak pernah digabung. */
             if (window.__rekapinyuHasLocalHistoryFiles === true) {
-                return localRows;
+                return (Array.isArray(historyData) ? historyData : [])
+                    .map(item => ({...item, __historySource:'local'}));
             }
 
-            const cloudRows = Array.isArray(window.__rekapinyuFirestoreRekap?.InputData)
-                ? window.__rekapinyuFirestoreRekap.InputData
-                : [];
-            return cloudRows.map(item => ({...item, __historySource:'firestore'}));
+            const cloudDoc = window.__rekapinyuFirestoreRekap || window.__rekapinyuLocalRekapData || {};
+            const cloudRows = Array.isArray(cloudDoc.InputData) ? cloudDoc.InputData : [];
+            return cloudRows
+                .filter(item => item && typeof item === 'object' && !Array.isArray(item))
+                .map(item => ({...item, __historySource:'firestore'}))
+                .sort((a,b) => sortHistoryChronological(a,b));
         }
 
         // RENDER HISTORY DENGAN ICON (BEARISH, BULLISH, PROFIT)
