@@ -7509,8 +7509,11 @@ function updateUserAvatarUI() {
     window.__rekapinyuLocalRekapData=rekapCloudPayload;
     writeChain=writeChain.then(async()=>{
       try{await window.__rekapinyuSaveRekapCloud?.(rekapCloudPayload)}catch(err){console.warn('Rekapinyu: sinkronisasi Rekap ke Firestore gagal.',err)}
-      const dir=await getDir();
-      if(!dir)return true;
+      /* INPUT DATA: wajib memakai folder yang dipilih di Produk Kasir.
+         Jangan menganggap berhasil jika folder target tidak tersedia, karena
+         itu membuat formulir tampak tersimpan padahal file JSON tidak ditulis. */
+      const dir=await getHistoryTargetDir();
+      if(!dir)throw new Error('Folder pilihan Produk Kasir tidak tersedia atau belum diberi izin akses.');
 
       const existing=await listRekapFiles(dir);
       const existingByKey=new Map();
@@ -7523,6 +7526,9 @@ function updateUserAvatarUI() {
       }
 
       const historyGroups=groupByDate(historyData);
+      if(!historyGroups.size && Array.isArray(historyData) && historyData.length){
+        throw new Error('Data Input Data ada, tetapi tidak dapat dikelompokkan berdasarkan tanggal.');
+      }
       const expenseGroups=groupByDate(pengeluaranData);
       const kasbonGroups=groupByDate(kasbonData);
 
