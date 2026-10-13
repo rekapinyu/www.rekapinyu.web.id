@@ -7995,7 +7995,7 @@ async function writeBaseSchema(uid,p,name){
   const [pr,kr,rr,ar]=[getPenggunaRef(uid,pClean),getKasirRef(uid,pClean),getRekapRef(uid,pClean),getAktifitasRef(uid,pClean)];
   const setting=normalizeSetting(SETTING_DEFAULTS);
   await Promise.all([
-    setDoc(pr,{NamaPengguna:nameClean,NomorHp:pClean,Pasword:String(currentSessionUser?.password||""),role:String(currentSessionUser?.role||"Pengguna")}),
+    setDoc(pr,{NamaPengguna:nameClean,NomorHp:pClean,Pasword:String(currentSessionUser?.password||""),role:String(currentSessionUser?.role||"Pengguna")},{merge:true}),
     setDoc(kr,{NamaToko:shopName,NomorHp:pClean,TotalOmsetKasir:0,TotalProfitKasir:0,Seting:setting}),
     setDoc(rr,{NamaToko:shopName,NomorHp:pClean,InputData:[],Pengeluaran:[],Kasbon:[]}),
     setDoc(ar,{Aktifitas:[],NamaToko:shopName,NomorHp:pClean})
@@ -8107,7 +8107,7 @@ async function enforceExactFirestoreSchema(uid,p,docs){
     NamaToko:String(ad.NamaToko||cleanKasir.NamaToko||cleanRekap.NamaToko||currentSessionUser?.shopName||"").trim(),
     NomorHp:phoneOf(ad.NomorHp||p)
   });
-  await Promise.all([setDoc(pr,cleanPengguna),setDoc(kr,cleanKasir),setDoc(rr,cleanRekap),setDoc(ar,cleanAktifitas)]);
+  await Promise.all([setDoc(pr,cleanPengguna,{merge:true}),setDoc(kr,cleanKasir),setDoc(rr,cleanRekap),setDoc(ar,cleanAktifitas)]);
   return {pengguna:cleanPengguna,kasir:cleanKasir,rekap:cleanRekap,aktifitas:cleanAktifitas};
 }
 
@@ -8169,7 +8169,7 @@ async function saveCloudUser(extra={}){
   currentSessionUser.password=payload.Pasword;
   currentSessionUser.role=payload.role;
   const r=getPenggunaRef(u.uid,p);
-  return enqueue(()=>setDoc(r,payload));
+  return enqueue(()=>setDoc(r,payload,{merge:true}));
 }
 async function updateMeta(){
   const uid=cloudUid(),p=currentPhone();if(!uid||!p)return false;
