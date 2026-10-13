@@ -8418,6 +8418,85 @@ window.RekapinyuFirebase={app,auth,db,storage,ready:false,uid:null,refs, schema:
 onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPromise;window.RekapinyuFirebase.ready=true;window.RekapinyuFirebase.uid=u?.uid||null;if(!u){firestoreDataHydrated=false;currentSessionUser=null;try{nativeRemove.call(localStorage,"finance_active_session")}catch{}window.location.replace("https://rekapinyu.github.io/login");return}try{if(!currentSessionUser){const p=phoneOf(u.email?.split("@")[0]||"");const pr=await getPenggunaRef(u.uid,p),s=await getDoc(pr),d=s.exists()?s.data()||{}:{};localSession({uid:u.uid,name:d.NamaPengguna||u.displayName||"",phone:phoneOf(d.NomorHp||p),email:u.email,password:d.Pasword||"",role:d.role||"Pengguna"})}firestoreDataHydrated=false;await hydrate(u.uid);try{await window.__rekapinyuLoadLocalRekap?.()}catch{}realtime(u.uid);renderDashboardSession();try{redraw()}catch{}}catch(e){console.error("Firebase schema final:",e);log("sinkronisasi sesi Auth/Firestore gagal; sesi login tetap dipertahankan",e);renderDashboardSession()}});
 
 (function(){function redrawOnFocus(){try{redraw?.()}catch{}}window.addEventListener("focus",redrawOnFocus);window.addEventListener("pageshow",redrawOnFocus);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")redrawOnFocus()})})();
+
+
+/* REKAPINYU FRONTEND BANNER SYNC — reads Super Admin banner settings in realtime.
+   Configuration source: Firestore PengaturanAplikasi/BannerFrontend.
+   This listener intentionally reuses the existing Firebase app/db imports. */
+(function installRekapinyuFrontendBannerSync(){
+  const BANNER_SETTINGS_REF = doc(db, "PengaturanAplikasi", "BannerFrontend");
+  let latestBannerSettings = null;
+
+  function bannerCssUrl(url){
+    return `url(${JSON.stringify(String(url || "").trim())})`;
+  }
+
+  function applyBannerStyle(selector, key, url, mode){
+    document.querySelectorAll(selector).forEach(element => {
+      const marker = `rekapinyuBanner${key}`;
+      if(url){
+        if(mode === "popup"){
+          element.style.setProperty(
+            "background-image",
+            `linear-gradient(0deg,rgba(255,255,255,.91),rgba(255,255,255,.74)),${bannerCssUrl(url)}`,
+            "important"
+          );
+          element.style.setProperty("background-position", "center", "important");
+          element.style.setProperty("background-size", "cover", "important");
+          element.style.setProperty("background-repeat", "no-repeat", "important");
+        }else{
+          element.style.setProperty("background-image", bannerCssUrl(url), "important");
+        }
+        element.dataset[marker] = "1";
+      }else if(element.dataset[marker] === "1"){
+        element.style.removeProperty("background-image");
+        if(mode === "popup"){
+          element.style.removeProperty("background-position");
+          element.style.removeProperty("background-size");
+          element.style.removeProperty("background-repeat");
+        }
+        delete element.dataset[marker];
+      }
+    });
+  }
+
+  function applyLatestBannerSettings(){
+    if(!latestBannerSettings) return;
+    const settings = latestBannerSettings;
+    /* Login/Daftar selectors are applied if that shell exists in this page. */
+    applyBannerStyle("#auth-container", "Login", settings.bannerLoginUrl, "image");
+    applyBannerStyle("#view-input > div", "Input", settings.bannerInputDataUrl, "image");
+    applyBannerStyle("#custom-modal > div", "Popup", settings.bannerPopupUrl, "popup");
+  }
+
+  onSnapshot(
+    BANNER_SETTINGS_REF,
+    snapshot => {
+      latestBannerSettings = snapshot.exists() ? (snapshot.data() || {}) : {};
+      window.__rekapinyuBannerSettings = latestBannerSettings;
+      applyLatestBannerSettings();
+      window.dispatchEvent(new CustomEvent("rekapinyu-banner-settings-updated", {
+        detail: latestBannerSettings
+      }));
+    },
+    error => {
+      console.warn(
+        "Rekapinyu: pengaturan banner realtime tidak dapat dibaca. Periksa izin baca Firestore untuk PengaturanAplikasi/BannerFrontend.",
+        error
+      );
+    }
+  );
+
+  /* Re-apply when relevant UI elements are inserted/replaced later by app code. */
+  const bannerUiObserver = new MutationObserver(() => {
+    if(latestBannerSettings) applyLatestBannerSettings();
+  });
+  if(document.documentElement){
+    bannerUiObserver.observe(document.documentElement, {childList:true, subtree:true});
+  }
+  window.__rekapinyuFrontendBannerSync = {apply:applyLatestBannerSettings};
+})();
+
 </script>
 <script>
 /* Pengaturan kartu Backup Otomatis.
