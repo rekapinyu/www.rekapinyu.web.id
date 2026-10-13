@@ -7358,10 +7358,15 @@ function updateUserAvatarUI() {
           try{
             const name=String(entry?.name||'');
             if(!/^InputData_.+\.json$/i.test(name))continue;
-            /* Keberadaan file saja sudah cukup untuk menonaktifkan sumber Firestore. */
-            window.__rekapinyuHasLocalHistoryFiles=true;
-
+            /* File yang tidak dapat dibaca bukan sumber lokal yang valid:
+               jangan menonaktifkan fallback Firestore hanya karena nama file ada. */
             const data=await readJsonHandle(entry.handle);
+            if(!data || typeof data!=='object' || Array.isArray(data)){
+              throw new Error('Struktur file JSON History tidak valid.');
+            }
+            /* JSON berhasil dibaca: walaupun InputData kosong, file lokal yang
+               valid tetap menjadi sumber utama. File yang gagal dibaca dilewati. */
+            window.__rekapinyuHasLocalHistoryFiles=true;
             const fileInfo=fileInfoFromData(data,name);
             if(fileInfo?.dateKey){
               window.__rekapinyuLocalHistoryFileKeys.add(String(fileInfo.dateKey).toLowerCase());
