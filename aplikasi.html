@@ -13519,16 +13519,31 @@ async function initKasirViews(){
 </script>
 
 
-<style id="rekapinyu-mobile-community-rail-final-replacement">
+<style id="rekapinyu-mobile-community-single-layout">
+/* Satu implementasi layout Komunitas khusus mobile. Header berada di luar
+   area scroll main, jadi sticky harus mulai dari top:0, bukan top:64px. */
 @media (max-width:767px){
-  /* Sembunyikan heading Feed Komunitas yang tidak diperlukan di layar mobile. */
-  #view-komunitas .komunitas-feed-heading{display:none!important}
-
-  /* Hilangkan batas tinggi/overflow yang membuat feed terpotong dan rail menimpa postingan. */
-  #view-komunitas{
+  main:has(#view-komunitas:not(.hidden)){
+    padding:0 0 7rem!important;
+    overflow-y:auto!important;
+  }
+  main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
+    width:100%!important;
+    max-width:none!important;
     height:auto!important;
     min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  #view-komunitas:not(.hidden){
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
     overflow:visible!important;
+    background:#fff!important;
   }
   #view-komunitas .komunitas-shell{
     display:flex!important;
@@ -13536,45 +13551,50 @@ async function initKasirViews(){
     width:100%!important;
     height:auto!important;
     min-height:0!important;
+    margin:0!important;
+    padding:0!important;
     overflow:visible!important;
   }
+  #view-komunitas .komunitas-feed-heading{display:none!important}
   #view-komunitas .komunitas-rail{
     position:sticky!important;
-    top:64px!important;
-    z-index:80!important;
-    flex:0 0 60px!important;
-    width:100%!important;
-    height:60px!important;
-    min-height:60px!important;
+    top:0!important;
+    z-index:100!important;
     display:flex!important;
+    flex:0 0 60px!important;
     flex-direction:row!important;
     align-items:stretch!important;
     justify-content:space-around!important;
     gap:0!important;
+    width:100%!important;
+    height:60px!important;
+    min-height:60px!important;
+    margin:0!important;
+    padding:0!important;
     overflow-x:auto!important;
     overflow-y:hidden!important;
-    border-right:0!important;
+    border:0!important;
     border-bottom:1px solid #e2e8f0!important;
-    background:rgba(255,255,255,.98)!important;
-    box-shadow:0 4px 12px rgba(15,23,42,.05)!important;
+    background:#fff!important;
+    box-shadow:0 3px 10px rgba(15,23,42,.06)!important;
     scrollbar-width:none!important;
   }
   #view-komunitas .komunitas-rail::-webkit-scrollbar{display:none!important}
   #view-komunitas .komunitas-rail-item{
     position:relative!important;
-    flex:1 1 20%!important;
-    min-width:0!important;
-    width:20%!important;
-    height:60px!important;
-    min-height:60px!important;
-    padding:5px 2px!important;
-    border:0!important;
-    border-bottom:2px solid transparent!important;
     display:flex!important;
+    flex:1 1 20%!important;
     flex-direction:column!important;
     align-items:center!important;
     justify-content:center!important;
     gap:3px!important;
+    width:20%!important;
+    min-width:0!important;
+    height:60px!important;
+    min-height:60px!important;
+    margin:0!important;
+    padding:5px 2px!important;
+    border:0!important;
     font-size:10px!important;
     line-height:1.1!important;
     white-space:nowrap!important;
@@ -13592,10 +13612,12 @@ async function initKasirViews(){
     min-width:16px!important;height:16px!important;font-size:8px!important;
   }
   #view-komunitas .komunitas-content{
-    flex:1 1 auto!important;
+    flex:0 0 auto!important;
     width:100%!important;
     height:auto!important;
     min-height:0!important;
+    margin:0!important;
+    padding:0!important;
     overflow:visible!important;
   }
 }
