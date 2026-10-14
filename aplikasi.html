@@ -11321,10 +11321,7 @@ async function initKasirViews(){
       });
       kasirBluetooth.device=device;
       try{sessionStorage.setItem('rekapinyu_kasir_bluetooth_device_id',String(device.id||''))}catch(e){}
-      device.addEventListener('gattserverdisconnected',()=>{
-        kasirBluetooth.characteristic=null;
-        updateKasirBluetoothUi('disconnected','Koneksi Bluetooth terputus');
-      },{once:false});
+      bindKasirBluetoothDisconnect(device);
       if(!device.gatt)throw new Error('Perangkat Bluetooth tidak menyediakan koneksi GATT.');
       const server=await device.gatt.connect();
       const characteristic=await findKasirBluetoothCharacteristic(server);
@@ -11350,30 +11347,60 @@ async function initKasirViews(){
     }
   }
 
-  async function restoreKasirBluetoothPrinter(){
-    if(kasirBluetooth.connecting||kasirBluetooth.device?.gatt?.connected)return;
-    let savedId='';
-    try{savedId=sessionStorage.getItem('rekapinyu_kasir_bluetooth_device_id')||''}catch(e){}
-    if(!savedId||!navigator.bluetooth||typeof navigator.bluetooth.getDevices!=='function')return;
-    try{
-      const devices=await navigator.bluetooth.getDevices();
-      const device=devices.find(item=>String(item.id||'')===savedId);
-      if(!device?.gatt)return;
-      kasirBluetooth.connecting=true;
-      updateKasirBluetoothUi('connecting','Menyambungkan kembali printer Bluetooth...');
-      kasirBluetooth.device=device;
-      device.addEventListener('gattserverdisconnected',()=>{
+  let kasirBluetoothRestorePromise=null;
+  let kasirBluetoothRestoreAttempts=0;
+  function savedKasirBluetoothDeviceId(){try{return sessionStorage.getItem('rekapinyu_kasir_bluetooth_device_id')||''}catch(e){return ''}}
+  function bindKasirBluetoothDisconnect(device){
+    if(!device||device.__rekapinyuKasirDisconnectBound)return;
+    device.__rekapinyuKasirDisconnectBound=true;
+    device.addEventListener('gattserverdisconnected',()=>{
+      if(kasirBluetooth.device===device){
         kasirBluetooth.characteristic=null;
         updateKasirBluetoothUi('disconnected','Koneksi Bluetooth terputus');
-      },{once:false});
-      const server=device.gatt.connected?device.gatt:await device.gatt.connect();
-      kasirBluetooth.characteristic=await findKasirBluetoothCharacteristic(server);
-      updateKasirBluetoothUi('connected','Printer Bluetooth tersambung');
-    }catch(error){
-      kasirBluetooth.characteristic=null;
-      updateKasirBluetoothUi('disconnected','Printer belum dapat disambungkan kembali');
-      console.warn('Rekapinyu: pemulihan koneksi printer Bluetooth otomatis gagal.',error);
-    }finally{kasirBluetooth.connecting=false}
+        /* Koneksi tak sengaja putus: coba pulihkan selama izin perangkat masih tersimpan. */
+        if(savedKasirBluetoothDeviceId())setTimeout(()=>restoreKasirBluetoothPrinter(),700);
+      }
+    });
+  }
+  async function restoreKasirBluetoothPrinter(){
+    if(kasirBluetooth.device?.gatt?.connected)return true;
+    if(kasirBluetoothRestorePromise)return kasirBluetoothRestorePromise;
+    const savedId=savedKasirBluetoothDeviceId();
+    if(!savedId||!navigator.bluetooth||typeof navigator.bluetooth.getDevices!=='function')return false;
+    kasirBluetoothRestorePromise=(async()=>{
+      try{
+        const devices=await navigator.bluetooth.getDevices();
+        let device=devices.find(item=>String(item.id||'')===savedId);
+        /* Beberapa versi Chromium mengubah ID perangkat antar-sesi; fallback hanya bila satu perangkat telah diizinkan. */
+        if(!device&&devices.length===1)device=devices[0];
+        if(!device?.gatt)return false;
+        kasirBluetooth.connecting=true;
+        updateKasirBluetoothUi('connecting','Menyambungkan kembali printer Bluetooth...');
+        kasirBluetooth.device=device;
+        try{sessionStorage.setItem('rekapinyu_kasir_bluetooth_device_id',String(device.id||savedId))}catch(e){}
+        bindKasirBluetoothDisconnect(device);
+        const server=device.gatt.connected?device.gatt:await device.gatt.connect();
+        kasirBluetooth.characteristic=await findKasirBluetoothCharacteristic(server);
+        updateKasirBluetoothUi('connected','Printer Bluetooth tersambung');
+        return true;
+      }catch(error){
+        kasirBluetooth.characteristic=null;
+        updateKasirBluetoothUi('disconnected','Printer belum dapat disambungkan kembali');
+        console.warn('Rekapinyu: pemulihan koneksi printer Bluetooth otomatis gagal.',error);
+        return false;
+      }finally{kasirBluetooth.connecting=false;kasirBluetoothRestorePromise=null}
+    })();
+    return kasirBluetoothRestorePromise;
+  }
+  function scheduleKasirBluetoothRestore(){
+    if(!savedKasirBluetoothDeviceId()||kasirBluetooth.device?.gatt?.connected)return;
+    if(kasirBluetoothRestoreAttempts>=12)return;
+    kasirBluetoothRestoreAttempts++;
+    setTimeout(async()=>{
+      const restored=await restoreKasirBluetoothPrinter();
+      if(!restored&&savedKasirBluetoothDeviceId())scheduleKasirBluetoothRestore();
+      else kasirBluetoothRestoreAttempts=0;
+    },kasirBluetoothRestoreAttempts===1?400:900);
   }
   window.__rekapinyuRestoreKasirBluetoothPrinter=restoreKasirBluetoothPrinter;
 
@@ -11548,7 +11575,8 @@ async function initKasirViews(){
   }
 
   updateKasirBluetoothUi('disconnected','Koneksi Bluetooth terputus');
-  window.addEventListener('load',()=>{setTimeout(()=>{restoreKasirBluetoothPrinter()},250)},{once:true});
+  window.addEventListener('load',()=>{kasirBluetoothRestoreAttempts=0;scheduleKasirBluetoothRestore()},{once:true});
+  window.addEventListener('pageshow',()=>{if(savedKasirBluetoothDeviceId()&&!kasirBluetooth.device?.gatt?.connected){kasirBluetoothRestoreAttempts=0;scheduleKasirBluetoothRestore()}},{passive:true});
 
   document.addEventListener('click',e=>{
     if(e.target.closest('#kasir-refresh-btn')){e.preventDefault();connectKasirBluetoothPrinter();return}
@@ -13971,6 +13999,13 @@ async function initKasirViews(){
 (function(){
   if(window.__rekapinyuKasirShiftMenuInstalled)return;
   window.__rekapinyuKasirShiftMenuInstalled=true;
+  const SHIFT_KEY='rekapinyu_kasir_selected_shift';
+  function readSelectedShift(){
+    const picker=document.getElementById('kasir-shift-picker');
+    let selected=picker?.dataset.selectedShift||'';
+    if(!selected){try{selected=sessionStorage.getItem(SHIFT_KEY)||''}catch(e){}}
+    return selected==='SHIFT 1'||selected==='SHIFT 2'?selected:'';
+  }
   function readShiftSettings(){
     const settings=window.__rekapinyuSettingData&&window.__rekapinyuSettingData.SettingShift;
     const defaults={shift1:{employee:'',start:'06:00',end:'14:00'},shift2:{employee:'',start:'14:00',end:'22:00'}};
@@ -13982,69 +14017,63 @@ async function initKasirViews(){
     const label=document.getElementById('kasir-shift-label');
     if(!picker||!menu||!label)return;
     const settings=readShiftSettings();
-    menu.querySelectorAll('[data-kasir-shift]').forEach(function(button){
+    menu.querySelectorAll('[data-kasir-shift]').forEach(button=>{
       const shift=button.getAttribute('data-kasir-shift');
-      const key=shift==='SHIFT 1'?'shift1':'shift2';
-      const employee=String(settings[key].employee||'').trim();
+      const cfg=settings[shift==='SHIFT 1'?'shift1':'shift2'];
+      const employee=String(cfg?.employee||'').trim();
       button.textContent=employee?employee+' — '+shift:shift;
       button.title=employee?employee+' ('+shift+')':shift;
       button.dataset.employeeName=employee;
     });
-    let selected=picker.dataset.selectedShift;
-    if(!selected){try{selected=sessionStorage.getItem('rekapinyu_kasir_selected_shift')||''}catch(e){}}
-    if(selected==='SHIFT 1'||selected==='SHIFT 2'){
-      picker.dataset.selectedShift=selected;
-      picker.querySelectorAll('[data-kasir-shift]').forEach(function(button){
-        const active=button.getAttribute('data-kasir-shift')===selected;
-        button.classList.toggle('is-selected',active);
-        button.setAttribute('aria-pressed',String(active));
-      });
-      const key=selected==='SHIFT 1'?'shift1':'shift2';
-      const employee=String(settings[key].employee||'').trim();
-      label.textContent=employee||selected;
-      label.title=employee?employee+' ('+selected+')':selected;
-    }
+    const selected=readSelectedShift();
+    if(!selected)return;
+    picker.dataset.selectedShift=selected;
+    const cfg=settings[selected==='SHIFT 1'?'shift1':'shift2'];
+    const employee=String(cfg?.employee||'').trim();
+    label.textContent=employee||selected;
+    label.title=employee?employee+' ('+selected+')':selected;
+    picker.querySelectorAll('[data-kasir-shift]').forEach(button=>{
+      const active=button.getAttribute('data-kasir-shift')===selected;
+      button.classList.toggle('is-selected',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
   }
-  document.addEventListener('click',function(event){
-    const trigger=event.target.closest('#kasir-shift-btn');
+  function chooseShift(option){
+    const shift=option.getAttribute('data-kasir-shift');
     const picker=document.getElementById('kasir-shift-picker');
     const menu=document.getElementById('kasir-shift-menu');
     const label=document.getElementById('kasir-shift-label');
     if(!picker||!menu||!label)return;
-    if(trigger){
-      event.preventDefault();
-      const opening=menu.hidden;
-      if(opening)refreshShiftNames();
-      menu.hidden=!opening;
-      trigger.setAttribute('aria-expanded',String(opening));
-      return;
-    }
+    const employee=String(option.dataset.employeeName||'').trim();
+    picker.dataset.selectedShift=shift;
+    try{sessionStorage.setItem(SHIFT_KEY,shift)}catch(e){}
+    label.textContent=employee||shift;
+    label.title=employee?employee+' ('+shift+')':shift;
+    picker.querySelectorAll('[data-kasir-shift]').forEach(button=>{
+      const active=button===option;
+      button.classList.toggle('is-selected',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
+    menu.hidden=true;
+    document.getElementById('kasir-shift-btn')?.setAttribute('aria-expanded','false');
+  }
+  document.addEventListener('click',event=>{
+    const trigger=event.target.closest('#kasir-shift-btn');
+    const picker=document.getElementById('kasir-shift-picker');
+    const menu=document.getElementById('kasir-shift-menu');
+    if(!picker||!menu)return;
+    if(trigger){event.preventDefault();const opening=menu.hidden;if(opening)refreshShiftNames();menu.hidden=!opening;trigger.setAttribute('aria-expanded',String(opening));return}
     const option=event.target.closest('[data-kasir-shift]');
-    if(option&&picker.contains(option)){
-      const shift=option.getAttribute('data-kasir-shift');
-      const employee=String(option.dataset.employeeName||'').trim();
-      label.textContent=employee||shift;
-      label.title=employee?employee+' ('+shift+')':shift;
-      picker.dataset.selectedShift=shift;
-      try{sessionStorage.setItem('rekapinyu_kasir_selected_shift',shift)}catch(e){}
-      picker.querySelectorAll('[data-kasir-shift]').forEach(function(button){
-        const selected=button===option;
-        button.classList.toggle('is-selected',selected);
-        button.setAttribute('aria-pressed',String(selected));
-      });
-      menu.hidden=true;
-      document.getElementById('kasir-shift-btn')?.setAttribute('aria-expanded','false');
-      return;
-    }
-    if(!picker.contains(event.target)){
-      menu.hidden=true;
-      document.getElementById('kasir-shift-btn')?.setAttribute('aria-expanded','false');
-    }
+    if(option&&picker.contains(option)){chooseShift(option);return}
+    if(!picker.contains(event.target)){menu.hidden=true;document.getElementById('kasir-shift-btn')?.setAttribute('aria-expanded','false')}
   });
-  document.addEventListener('click',function(event){
-    if(event.target.closest('#settings-shift-save'))setTimeout(refreshShiftNames,0);
-  });
+  document.addEventListener('click',event=>{if(event.target.closest('#settings-shift-save'))setTimeout(refreshShiftNames,100)});
   document.addEventListener('DOMContentLoaded',refreshShiftNames,{once:true});
+  /* SettingShift datang dari Firestore secara asinkron; sinkronkan label setelah data masuk tanpa menimpa shift terpilih. */
+  let refreshAttempts=0;
+  const refreshTimer=setInterval(()=>{refreshShiftNames();if(++refreshAttempts>=30)clearInterval(refreshTimer)},300);
+  window.addEventListener('pageshow',refreshShiftNames);
+  window.__rekapinyuRefreshKasirShiftNames=refreshShiftNames;
 })();
 </script>
 
