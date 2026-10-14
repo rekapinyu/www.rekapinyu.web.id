@@ -13519,41 +13519,28 @@ async function initKasirViews(){
 </script>
 
 
-<style id="rekapinyu-mobile-community-rail-center-fix">
+<style id="rekapinyu-mobile-community-rail-final-replacement">
 @media (max-width:767px){
-  /* Beranda: kotak data terbaru berada tepat di tengah area carousel. */
-  #mobile-home-view .mobile-home-report-carousel{
-    justify-content:center!important;
-    align-items:stretch!important;
-    padding-left:0!important;
-    padding-right:0!important;
-  }
-  #mobile-home-view .mobile-home-day-card{
-    flex:0 1 100%!important;
-    width:100%!important;
-    max-width:100%!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-    scroll-snap-align:center!important;
-  }
+  /* Sembunyikan heading Feed Komunitas yang tidak diperlukan di layar mobile. */
+  #view-komunitas .komunitas-feed-heading{display:none!important}
 
-  /* Komunitas: rail horizontal, proporsional, sticky tepat di bawah header. */
+  /* Hilangkan batas tinggi/overflow yang membuat feed terpotong dan rail menimpa postingan. */
   #view-komunitas{
-    height:calc(100dvh - 128px)!important;
+    height:auto!important;
     min-height:0!important;
-    overflow:hidden!important;
+    overflow:visible!important;
   }
   #view-komunitas .komunitas-shell{
     display:flex!important;
     flex-direction:column!important;
     width:100%!important;
-    height:100%!important;
+    height:auto!important;
     min-height:0!important;
-    overflow:hidden!important;
+    overflow:visible!important;
   }
   #view-komunitas .komunitas-rail{
     position:sticky!important;
-    top:132px!important;
+    top:64px!important;
     z-index:80!important;
     flex:0 0 60px!important;
     width:100%!important;
@@ -13600,26 +13587,16 @@ async function initKasirViews(){
   #view-komunitas #komunitas-rail-friends{order:4!important}
   #view-komunitas #komunitas-rail-notif{order:5!important}
   #view-komunitas #komunitas-rail-group{display:none!important}
-  #view-komunitas .komunitas-notif-badge{top:2px!important;right:calc(50% - 22px)!important;min-width:16px!important;height:16px!important;font-size:8px!important}
+  #view-komunitas .komunitas-notif-badge{
+    top:2px!important;right:calc(50% - 22px)!important;
+    min-width:16px!important;height:16px!important;font-size:8px!important;
+  }
   #view-komunitas .komunitas-content{
     flex:1 1 auto!important;
     width:100%!important;
     height:auto!important;
     min-height:0!important;
-    overflow:hidden!important;
-  }
-}
-</style>
-
-<style id="rekapinyu-mobile-community-heading-sticky-fix">
-@media (max-width:767px){
-  /* Hilangkan judul Feed yang dilingkari; hanya pada tampilan mobile. */
-  #view-komunitas .komunitas-feed-heading{
-    display:none!important;
-  }
-  /* Tempelkan rail komunitas tepat di bawah header aplikasi saat scroll. */
-  #view-komunitas .komunitas-rail{
-    top:128px!important;
+    overflow:visible!important;
   }
 }
 </style>
