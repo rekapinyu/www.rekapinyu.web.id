@@ -6302,11 +6302,21 @@ function updateUserAvatarUI() {
         }
 
         function getHistoryForDisplay() {
-            /* SATU IMPLEMENTASI PEMILIHAN SUMBER HISTORY:
-               JSON lokal hanya menjadi sumber utama setelah minimal satu file
-               InputData berhasil dibaca dan divalidasi. Jika folder tidak dapat
-               diakses, file terhapus/rusak, atau tidak ada file InputData valid,
-               gunakan data Firestore. Kedua sumber tidak pernah digabung. */
+            /* HISTORY MOBILE: sumber tunggal adalah listener realtime Firestore
+               Rekap -> InputData. JSON lokal tidak boleh menimpa data di mobile.
+               Desktop tetap memakai aturan sumber lokal/Firestore sebelumnya. */
+            const mobileHistoryView = window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+            if (mobileHistoryView) {
+                const cloudDoc = window.__rekapinyuFirestoreRekap || {};
+                const cloudRows = Array.isArray(cloudDoc.InputData) ? cloudDoc.InputData : [];
+                return cloudRows
+                    .filter(item => item && typeof item === 'object' && !Array.isArray(item))
+                    .map(item => ({...item, __historySource:'firestore'}))
+                    .sort((a,b) => sortHistoryChronological(a,b));
+            }
+
+            /* Desktop dipertahankan: JSON lokal valid tetap menjadi sumber utama;
+               Firestore menjadi fallback bila data lokal tidak tersedia. */
             if (window.__rekapinyuHasLocalHistoryFiles === true) {
                 return (Array.isArray(historyData) ? historyData : [])
                     .map(item => ({...item, __historySource:'local'}));
