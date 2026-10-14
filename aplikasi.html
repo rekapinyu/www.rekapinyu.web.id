@@ -971,6 +971,18 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   }
 }
 </style>
+<style id="rekapinyu-shift-settings-css">
+/* Styling khusus panel Shift di menu Setting. */
+#view-settings .shift-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
+#view-settings .shift-settings-item{min-width:0;padding:16px;border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc}
+#view-settings .shift-settings-item-title{display:flex;flex-direction:column;gap:4px;margin-bottom:15px}
+#view-settings .shift-settings-item-title>span{font-size:13px;font-weight:900;color:#0f766e;letter-spacing:.04em}
+#view-settings .shift-settings-item-title small{font-size:11px;color:#64748b}
+#view-settings .shift-settings-time-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#view-settings .shift-settings-duration{margin:10px 0 0;padding:9px 10px;border-radius:8px;background:#e9f8f4;color:#11806b;font-size:11px;font-weight:800}
+#view-settings .shift-settings-item input{min-width:0;box-sizing:border-box}
+@media(max-width:760px){#view-settings .shift-settings-grid{grid-template-columns:minmax(0,1fr);gap:10px}#view-settings .shift-settings-item{padding:13px}#view-settings .shift-settings-time-grid{gap:8px}}
+</style>
 <style id="patch-mobile-admin-income-chooser">@media(max-width:767px){#mobile-admin-settings-button{appearance:none!important;border:0!important;background:transparent!important;padding:4px!important;margin:0!important;width:34px!important;height:34px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#aab4c1!important;opacity:.75!important;border-radius:10px!important}#mobile-admin-settings-button i{font-size:20px!important}.mobile-admin-income-chooser{position:fixed!important;z-index:99999!important;width:205px!important;background:#fff!important;border:1px solid #e5eaf0!important;border-radius:14px!important;padding:6px!important;box-shadow:0 14px 35px rgba(15,23,42,.16)!important}.mobile-admin-income-chooser button{width:100%!important;min-height:42px!important;border:0!important;background:#fff!important;color:#334155!important;border-radius:10px!important;display:flex!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;font-size:12px!important;font-weight:700!important;text-align:left!important}.mobile-admin-income-chooser button:active{background:#f1f5f9!important}.mobile-admin-income-chooser button i{width:20px!important;text-align:center!important;color:#64748b!important}}@media(min-width:768px){#mobile-admin-settings-button{display:none!important}}</style>
 <style id="kasir-payment-popup-css">
 #kasir-payment-popup{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.58)}
@@ -2494,7 +2506,7 @@ bind();
 <aside class="app-settings-menu" aria-label="Menu pengaturan">
 <button class="app-settings-menu-item is-active" type="button" data-settings-panel="receipt"><i class="fa-solid fa-receipt"></i><span>Seting Struk</span></button>
 <button class="app-settings-menu-item" type="button" data-settings-panel="printer"><i class="fa-solid fa-print"></i><span>Seting Printer</span></button>
-<button class="app-settings-menu-item" type="button" data-settings-panel="kasir"><i class="fa-solid fa-cash-register"></i><span>Seting Kasir</span></button>
+<button class="app-settings-menu-item" type="button" data-settings-panel="shift"><i class="fa-solid fa-clock"></i><span>Shift</span></button>
 <button class="app-settings-menu-item" type="button" data-settings-panel="toko"><i class="fa-solid fa-store"></i><span>Informasi Toko</span></button>
 </aside>
 <div class="app-settings-content">
@@ -2544,8 +2556,33 @@ bind();
 </div>
 </div>
 </div>
-<div class="app-settings-panel" data-settings-content="kasir">
-<div class="printer-settings-card"><div class="receipt-settings-heading"><div><h3>Seting Kasir</h3><p>Pengaturan umum yang berkaitan dengan proses transaksi kasir.</p></div><i aria-hidden="true" class="fa-solid fa-cash-register"></i></div><div class="printer-settings-body"><div class="printer-setting-checks"><label><input id="kasir-confirm-cancel" type="checkbox" checked/> <span>Konfirmasi saat membatalkan transaksi</span></label><label><input id="kasir-focus-search" type="checkbox" checked/> <span>Fokus otomatis ke pencarian produk saat membuka Kasir</span></label></div><button type="button" class="receipt-settings-save" id="settings-kasir-save"><i class="fa-solid fa-floppy-disk"></i><span>Simpan Pengaturan Kasir</span></button></div></div>
+<div class="app-settings-panel" data-settings-content="shift">
+<div class="printer-settings-card shift-settings-card">
+  <div class="receipt-settings-heading"><div><h3>Pengaturan Shift Karyawan</h3><p>Atur jam mulai, jam selesai, dan nama karyawan yang bertugas pada setiap shift Kasir.</p></div><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
+  <div class="printer-settings-body">
+    <div class="shift-settings-grid">
+      <section class="shift-settings-item" aria-labelledby="shift-settings-title-1">
+        <div class="shift-settings-item-title"><span>SHIFT 1</span><small>Jadwal dan karyawan shift pertama</small></div>
+        <div class="receipt-settings-field"><label for="shift-1-employee">Nama Karyawan</label><input id="shift-1-employee" type="text" autocomplete="off" placeholder="Masukkan nama karyawan SHIFT 1" maxlength="100"/></div>
+        <div class="shift-settings-time-grid">
+          <div class="receipt-settings-field"><label for="shift-1-start">Jam Mulai</label><input id="shift-1-start" type="time" value="06:00"/></div>
+          <div class="receipt-settings-field"><label for="shift-1-end">Jam Selesai</label><input id="shift-1-end" type="time" value="14:00"/></div>
+        </div>
+        <p class="shift-settings-duration" id="shift-1-duration">Durasi: 8 jam</p>
+      </section>
+      <section class="shift-settings-item" aria-labelledby="shift-settings-title-2">
+        <div class="shift-settings-item-title"><span>SHIFT 2</span><small>Jadwal dan karyawan shift kedua</small></div>
+        <div class="receipt-settings-field"><label for="shift-2-employee">Nama Karyawan</label><input id="shift-2-employee" type="text" autocomplete="off" placeholder="Masukkan nama karyawan SHIFT 2" maxlength="100"/></div>
+        <div class="shift-settings-time-grid">
+          <div class="receipt-settings-field"><label for="shift-2-start">Jam Mulai</label><input id="shift-2-start" type="time" value="14:00"/></div>
+          <div class="receipt-settings-field"><label for="shift-2-end">Jam Selesai</label><input id="shift-2-end" type="time" value="22:00"/></div>
+        </div>
+        <p class="shift-settings-duration" id="shift-2-duration">Durasi: 8 jam</p>
+      </section>
+    </div>
+    <button type="button" class="receipt-settings-save" id="settings-shift-save"><i class="fa-solid fa-floppy-disk"></i><span>Simpan Pengaturan Shift</span></button>
+  </div>
+</div>
 </div>
 <div class="app-settings-panel" data-settings-content="toko">
 <div class="printer-settings-card"><div class="receipt-settings-heading"><div><h3>Informasi Toko</h3><p>Informasi toko yang digunakan aplikasi dan dapat disesuaikan dari pengaturan struk.</p></div><i aria-hidden="true" class="fa-solid fa-store"></i></div><div class="printer-settings-body"><div class="settings-info-list"><div><span>Nama Toko</span><strong id="settings-info-store-name">-</strong></div><div><span>Alamat</span><strong id="settings-info-store-address">-</strong></div><div><span>Nomor Handphone</span><strong id="settings-info-store-phone">-</strong></div></div><button type="button" class="receipt-settings-save rk-folder-manager-btn" id="settings-open-folder-manager"><i class="fa-solid fa-folder-tree"></i><span>Atur Folder</span></button><button type="button" class="receipt-settings-save" data-settings-open="receipt"><i class="fa-solid fa-receipt"></i><span>Ubah Informasi Struk</span></button></div></div>
@@ -8117,7 +8154,7 @@ const PENGGUNA_EMPTY={NamaPengguna:"",NomorHp:"",Pasword:"",role:"Pengguna"};
 const REKAP_EMPTY={NamaToko:"",NomorHp:"",InputData:[],Pengeluaran:[],Kasbon:[]};
 const KASIR_EMPTY={NamaToko:"",NomorHp:"",TotalOmsetKasir:0,TotalProfitKasir:0,Seting:{}};
 const AKTIFITAS_EMPTY={Aktifitas:[],NamaToko:"",NomorHp:""};
-const SETTING_DEFAULTS={SettingStruk:{},SettingPrinter:{paperWidth:"32",copyCount:1},SettingKasir:{confirmCancel:true,focusSearch:true},invoiceCounter:0};
+const SETTING_DEFAULTS={SettingStruk:{},SettingPrinter:{paperWidth:"32",copyCount:1},SettingKasir:{confirmCancel:true,focusSearch:true},SettingShift:{shift1:{employee:"",start:"06:00",end:"14:00"},shift2:{employee:"",start:"14:00",end:"22:00"}},invoiceCounter:0};
 
 window.__rekapinyuDataLaporanBulanan=[];
 window.__rekapinyuKasirTransactionsRealtime=[];
@@ -8156,6 +8193,10 @@ function normalizeSetting(raw){
     SettingStruk:s.SettingStruk&&typeof s.SettingStruk==="object"&&!Array.isArray(s.SettingStruk)?s.SettingStruk:{},
     SettingPrinter:s.SettingPrinter&&typeof s.SettingPrinter==="object"&&!Array.isArray(s.SettingPrinter)?{...SETTING_DEFAULTS.SettingPrinter,...s.SettingPrinter}:{...SETTING_DEFAULTS.SettingPrinter},
     SettingKasir:s.SettingKasir&&typeof s.SettingKasir==="object"&&!Array.isArray(s.SettingKasir)?{...SETTING_DEFAULTS.SettingKasir,...s.SettingKasir}:{...SETTING_DEFAULTS.SettingKasir},
+    SettingShift:{
+      shift1:{...SETTING_DEFAULTS.SettingShift.shift1,...(s.SettingShift?.shift1&&typeof s.SettingShift.shift1==="object"?s.SettingShift.shift1:{})},
+      shift2:{...SETTING_DEFAULTS.SettingShift.shift2,...(s.SettingShift?.shift2&&typeof s.SettingShift.shift2==="object"?s.SettingShift.shift2:{})}
+    },
     invoiceCounter:Number(s.invoiceCounter)||0
   };
 }
@@ -11330,22 +11371,28 @@ async function initKasirViews(){
     if(box)box.classList.toggle('is-connected',connected);if(title)title.textContent=connected?'Printer Bluetooth tersambung':'Printer belum tersambung';if(text)text.textContent=connected?'Printer siap digunakan untuk mencetak struk.':'Hubungkan printer Bluetooth untuk mulai mencetak.';
   }
   function loadSettingsInfo(){const s=getKasirReceiptSettings();const a=document.getElementById('settings-info-store-name'),b=document.getElementById('settings-info-store-address'),c=document.getElementById('settings-info-store-phone');if(a)a.textContent=s.name||'-';if(b)b.textContent=s.address||'-';if(c)c.textContent=s.phone||'-';}
-  function loadKasirSettingsPanel(){const s={confirmCancel:true,focusSearch:true,...(getSettingState().SettingKasir||{})};const a=document.getElementById('kasir-confirm-cancel'),b=document.getElementById('kasir-focus-search');if(a)a.checked=s.confirmCancel!==false;if(b)b.checked=s.focusSearch!==false}
+  function getKasirShiftSettings(){const defaults={shift1:{employee:'',start:'06:00',end:'14:00'},shift2:{employee:'',start:'14:00',end:'22:00'}};const saved=getSettingState().SettingShift||{};return {shift1:{...defaults.shift1,...(saved.shift1||{})},shift2:{...defaults.shift2,...(saved.shift2||{})}}}
+  function shiftDurationText(start,end){if(!start||!end)return 'Durasi belum lengkap';const toMinutes=v=>{const m=String(v).match(/^(\d{2}):(\d{2})$/);return m?(Number(m[1])*60+Number(m[2])):null};const a=toMinutes(start),b=toMinutes(end);if(a===null||b===null)return 'Durasi belum lengkap';let minutes=b-a;if(minutes<0)minutes+=1440;if(minutes===0)return 'Durasi: 24 jam';const hours=Math.floor(minutes/60),mins=minutes%60;return 'Durasi: '+(hours?hours+' jam':'')+(hours&&mins?' ':'')+(mins?mins+' menit':'')}
+  function updateShiftDuration(shift){const start=document.getElementById('shift-'+shift+'-start')?.value||'',end=document.getElementById('shift-'+shift+'-end')?.value||'',out=document.getElementById('shift-'+shift+'-duration');if(out)out.textContent=shiftDurationText(start,end)}
+  function loadKasirShiftSettings(){const s=getKasirShiftSettings();['1','2'].forEach((n)=>{const key=n==='1'?'shift1':'shift2',v=s[key];const employee=document.getElementById('shift-'+n+'-employee'),start=document.getElementById('shift-'+n+'-start'),end=document.getElementById('shift-'+n+'-end');if(employee)employee.value=String(v.employee||'');if(start)start.value=String(v.start|| (n==='1'?'06:00':'14:00'));if(end)end.value=String(v.end|| (n==='1'?'14:00':'22:00'));updateShiftDuration(n)})}
+  function saveKasirShiftSettings(){const data={shift1:{employee:String(document.getElementById('shift-1-employee')?.value||'').trim(),start:String(document.getElementById('shift-1-start')?.value||'06:00'),end:String(document.getElementById('shift-1-end')?.value||'14:00')},shift2:{employee:String(document.getElementById('shift-2-employee')?.value||'').trim(),start:String(document.getElementById('shift-2-start')?.value||'14:00'),end:String(document.getElementById('shift-2-end')?.value||'22:00')}};const s=getSettingState();s.SettingShift=data;window.__rekapinyuSettingData=s;try{window.__rekapinyuSaveSettingCloud?.()}catch(e){}return data}
   function activateSettingsPanel(panel){
     document.querySelectorAll('[data-settings-panel]').forEach(b=>b.classList.toggle('is-active',b.dataset.settingsPanel===panel));
     document.querySelectorAll('[data-settings-content]').forEach(v=>v.classList.toggle('is-active',v.dataset.settingsContent===panel));
     if(panel==='printer'){loadKasirPrinterSettings();updateSettingsPrinterPanel()}
     if(panel==='toko')loadSettingsInfo();
-    if(panel==='kasir')loadKasirSettingsPanel();
+    if(panel==='shift')loadKasirShiftSettings();
     if(panel==='receipt')loadKasirReceiptSettings();
   }
+  document.addEventListener('input',e=>{if(e.target?.id==='shift-1-start'||e.target?.id==='shift-1-end')updateShiftDuration('1');if(e.target?.id==='shift-2-start'||e.target?.id==='shift-2-end')updateShiftDuration('2')});
+  document.addEventListener('change',e=>{if(e.target?.id==='shift-1-start'||e.target?.id==='shift-1-end')updateShiftDuration('1');if(e.target?.id==='shift-2-start'||e.target?.id==='shift-2-end')updateShiftDuration('2')});
   document.addEventListener('click',e=>{
     const b=e.target.closest('[data-settings-panel]');if(b){e.preventDefault();activateSettingsPanel(b.dataset.settingsPanel);return}
     const open=e.target.closest('[data-settings-open]');if(open){e.preventDefault();activateSettingsPanel(open.dataset.settingsOpen);return}
     if(e.target.closest('#settings-printer-connect')){e.preventDefault();connectKasirBluetoothPrinter().finally(updateSettingsPrinterPanel);return}
     if(e.target.closest('#settings-printer-disconnect')){e.preventDefault();kasirBluetoothDisconnect();updateSettingsPrinterPanel();showModal('Berhasil','Printer Bluetooth berhasil diputuskan.','fa-solid fa-link-slash text-emerald-600');return}
     if(e.target.closest('#settings-printer-save')){e.preventDefault();saveKasirPrinterSettings();showModal('Berhasil Disimpan','Pengaturan berhasil disimpan.','fa-solid fa-circle-check text-emerald-600');return}
-    if(e.target.closest('#settings-kasir-save')){e.preventDefault();const data={confirmCancel:!!document.getElementById('kasir-confirm-cancel')?.checked,focusSearch:!!document.getElementById('kasir-focus-search')?.checked};const s=getSettingState();s.SettingKasir=data;window.__rekapinyuSettingData=s;try{window.__rekapinyuSaveSettingCloud?.()}catch(err){}notify('Berhasil Disimpan','Pengaturan kasir berhasil disimpan.','fa-solid fa-circle-check text-emerald-600');return}
+    if(e.target.closest('#settings-shift-save')){e.preventDefault();saveKasirShiftSettings();notify('Berhasil Disimpan','Pengaturan Shift berhasil disimpan.','fa-solid fa-circle-check text-emerald-600');return}
     if(e.target.closest('#settings-printer-test')){e.preventDefault();(async()=>{try{if(!kasirBluetooth?.device?.gatt?.connected||!kasirBluetooth?.characteristic){await connectKasirBluetoothPrinter()}const characteristic=kasirBluetooth?.characteristic;if(!kasirBluetooth?.device?.gatt?.connected||!characteristic)throw new Error('Printer Bluetooth belum tersambung atau layanan cetak tidak tersedia.');const data=new TextEncoder().encode('\x1B\x40\x1B\x61\x01TEST PRINT REKAPINYU\n\x1B\x61\x00Printer siap digunakan.\n\n');if(characteristic.properties?.writeWithoutResponse&&typeof characteristic.writeValueWithoutResponse==='function')await characteristic.writeValueWithoutResponse(data);else if(characteristic.properties?.write&&typeof characteristic.writeValue==='function')await characteristic.writeValue(data);else throw new Error('Karakteristik printer tidak mendukung pengiriman data.');showModal('Berhasil','Test print berhasil dikirim ke printer.','fa-solid fa-print text-emerald-600')}catch(err){showModal('Test Print Gagal',err?.message||'Data test print tidak dapat dikirim.','fa-solid fa-print text-rose-600')}finally{updateSettingsPrinterPanel();try{cetak_syncBluetoothFromKasir?.()}catch(_){}}})();return}
   });
   function saveKasirReceiptSettings(){
@@ -11359,7 +11406,7 @@ async function initKasirViews(){
     return settings;
   }
   window.__rekapinyuReloadSettingsUI=function(){
-    try{loadKasirReceiptSettings();loadKasirPrinterSettings();loadKasirSettingsPanel();loadSettingsInfo();}catch(e){}
+    try{loadKasirReceiptSettings();loadKasirPrinterSettings();loadKasirShiftSettings();loadSettingsInfo();}catch(e){}
   };
   function getKasirReceiptStoreInfo(){
     const settings=getKasirReceiptSettings();
