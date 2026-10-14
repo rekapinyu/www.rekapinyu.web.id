@@ -3512,6 +3512,18 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   let communityDocs=[];
   let listenerStarted=false;
   let searchTerm='';
+  const COMMUNITY_PAGE_SIZE=50;
+  let communityLiveDocs=new Map();
+  let communityOlderDocs=new Map();
+  let communityPaginationCursor=null;
+  let communityPaginationInitialized=false;
+  let communityHasMore=true;
+  let communityLoadingOlder=false;
+  let communityPaginationError='';
+  let communityInfiniteScrollBound=false;
+  function todayRange(){const start=new Date();start.setHours(0,0,0,0);const end=new Date(start);end.setDate(end.getDate()+1);return {start:start.toISOString(),end:end.toISOString()};}
+  function isTodayPost(post){const t=notificationTime(post?.date);if(!t)return false;const d=new Date(t),now=new Date();return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth()&&d.getDate()===now.getDate();}
+  function bindCommunityInfiniteScroll(){if(communityInfiniteScrollBound)return;communityInfiniteScrollBound=true;window.addEventListener('scroll',()=>{if(searchTerm.trim()||communityLoadingOlder||!communityHasMore)return;const y=window.scrollY+window.innerHeight;const h=Math.max(document.documentElement.scrollHeight,document.body?.scrollHeight||0);if(h-y<700)loadOlderCommunityPosts();},{passive:true});}
 
   function sessionUser(){
     try{return (typeof currentSessionUser!=='undefined'&&currentSessionUser&&typeof currentSessionUser==='object')?currentSessionUser:{};}catch(_){return {};}
@@ -4312,7 +4324,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   function renderPostList(posts){
     const list=document.getElementById(listId);if(!list)return;list.replaceChildren();
     if(!posts.length){
-      const empty=document.createElement('div');empty.style.cssText='padding:40px 20px;text-align:center;color:#64748b;font-size:13px;font-weight:700';empty.textContent='Postingan yang dikomentari belum ditemukan.';list.appendChild(empty);return;
+      const empty=document.createElement('div');empty.style.cssText='padding:40px 20px;text-align:center;color:#64748b;font-size:13px;font-weight:700';empty.textContent=searchTerm.trim()?'Postingan yang cocok tidak ditemukan.':'Belum ada postingan yang dapat ditampilkan.';list.appendChild(empty);
     }
     posts.forEach(post=>{
       const card=document.createElement('article');card.className='komunitas-post-card';card.dataset.docId=post.docId;
@@ -4359,6 +4371,20 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       button.addEventListener('click',send);input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send();}});box.append(input,button);
       card.appendChild(head);if(body)card.appendChild(body);if(postPhoto)card.appendChild(postPhoto);card.append(title,comments,box);list.appendChild(card);
     });
+    if(!searchTerm.trim()){
+      if(communityPaginationError){const error=document.createElement('div');error.style.cssText='padding:10px;color:#b91c1c;text-align:center;font-size:12px';error.textContent=communityPaginationError;list.appendChild(error);}
+      if(communityHasMore||communityLoadingOlder){
+        const more=document.createElement('div');more.className='komunitas-load-older-status';more.style.cssText='padding:14px 10px;text-align:center;color:#64748b;font-size:12px;font-weight:600';
+        more.textContent=communityLoadingOlder?'Memuat postingan...':'Gulir ke bawah untuk memuat postingan hari ini';list.appendChild(more);
+      }
+    }
+  }
+  function rebuildCommunityDocs(){
+    const merged=new Map(communityOlderDocs);
+    communityLiveDocs.forEach((post,id)=>merged.set(id,post));
+    communityDocs=[...merged.values()].filter(x=>(x.text.trim()||x.postPhotoUrl)&&isTodayPost(x)).sort((a,b)=>{
+      const da=notificationTime(a.date),dbb=notificationTime(b.date);return dbb-da;
+    });
   }
   function render(){
     const content=communityContent();if(content?.classList.contains('komunitas-single-post-open'))return;
@@ -4369,34 +4395,69 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   function db(){return window.RekapinyuFirebase?.db||null;}
   function ready(){return !!(api()&&db()&&window.RekapinyuFirebase.ready&&window.RekapinyuFirebase.uid);}
   function communityCollection(){const a=api();return a?.collection?.(db(),'Komunitas');}
+  async function loadOlderCommunityPosts(){
+    if(communityLoadingOlder||!communityHasMore||!ready())return;
+    const a=api(),col=communityCollection();
+    if(!a?.where||!a?.orderBy||!a?.startAfter||!a?.limit||!a?.getDocs||!col){communityPaginationError='Pemuatan bertahap belum tersedia. Muat ulang aplikasi dan coba lagi.';render();return;}
+    const cursor=communityPaginationCursor;
+    if(!cursor){communityHasMore=false;render();return;}
+    communityLoadingOlder=true;communityPaginationError='';render();
+    try{
+      const range=todayRange();
+      const olderQuery=a.query(col,a.where('PostinganPublik.Tanggal','>=',range.start),a.where('PostinganPublik.Tanggal','<',range.end),a.orderBy('PostinganPublik.Tanggal','desc'),a.startAfter(cursor),a.limit(COMMUNITY_PAGE_SIZE));
+      const snap=await a.getDocs(olderQuery);
+      snap.docs.forEach(docSnap=>{
+        const post=normalizePost(docSnap);
+        if(post.text.trim()||post.postPhotoUrl)communityOlderDocs.set(docSnap.id,post);
+      });
+      if(snap.docs.length)communityPaginationCursor=snap.docs[snap.docs.length-1];
+      communityHasMore=snap.docs.length===COMMUNITY_PAGE_SIZE;
+      rebuildCommunityDocs();
+    }catch(err){
+      communityPaginationError='Postingan lama gagal dimuat. Periksa koneksi dan izin Firestore, lalu coba lagi.';
+      console.error('Pagination posting Komunitas gagal:',err);
+    }finally{communityLoadingOlder=false;render();updateNotifBadge();}
+  }
   function startListener(){
     if(listenerStarted||!ready())return false;
     const a=api(),col=communityCollection();if(!col)return false;
-    // Daftarkan UID/nomor HP akun aktif untuk membantu menghubungkan posting lama
-    // yang belum menyimpan UID, tanpa membaca koleksi Pengguna milik akun lain.
+    if(!a?.where||!a?.orderBy||!a?.limit){console.error('API pagination Firestore belum tersedia.');return false;}
+    bindCommunityInfiniteScroll();
+    // Daftarkan identitas akun tanpa membaca koleksi Pengguna milik akun lain.
     ensureCommunityIdentity().catch(e=>console.warn('Direktori identitas Komunitas gagal disimpan:',e));
-    // Ambil hanya dokumen posting publik. Dokumen Profil_UID dan Teman_UID
-    // berada di koleksi yang sama, tetapi tidak memiliki PostinganPublik.id.
-    const postsQuery=a.query(col,a.where('PostinganPublik.id','!=',''));
+    // Listener realtime dibatasi ke 50 posting terbaru; posting lebih lama dibaca per halaman.
+    const range=todayRange();
+    const postsQuery=a.query(col,a.where('PostinganPublik.Tanggal','>=',range.start),a.where('PostinganPublik.Tanggal','<',range.end),a.orderBy('PostinganPublik.Tanggal','desc'),a.limit(COMMUNITY_PAGE_SIZE));
     listenerStarted=true;
     unsubscribeCommunity=a.onSnapshot(postsQuery,snap=>{
-      communityDocs=snap.docs.map(normalizePost).filter(x=>x.text.trim()||x.postPhotoUrl).sort((a,b)=>{
-        const da=new Date(a.date||0).getTime(),dbb=new Date(b.date||0).getTime();return dbb-da;
+      communityLiveDocs=new Map();
+      snap.docs.forEach(docSnap=>{
+        const post=normalizePost(docSnap);
+        if(post.text.trim()||post.postPhotoUrl)communityLiveDocs.set(docSnap.id,post);
       });
+      if(!communityPaginationInitialized){
+        communityPaginationInitialized=true;
+        if(snap.docs.length)communityPaginationCursor=snap.docs[snap.docs.length-1];
+        communityHasMore=snap.docs.length===COMMUNITY_PAGE_SIZE;
+      }
+      rebuildCommunityDocs();
       if(communityContent()?.classList.contains('komunitas-single-post-open')){
         const target=communityContent()?.querySelector('#komunitas-post-list .komunitas-post-card')?.dataset?.docId;
         const current=target?communityDocs.find(x=>String(x.docId||'')===String(target)):null;
         if(current)renderPostList([current]);else render();
-      }else{
-        render();
-      }
+      }else render();
       updateNotifBadge();
-    },err=>{listenerStarted=false;console.error('Komunitas listener gagal:',err);});
+    },err=>{
+      listenerStarted=false;
+      const failedUnsubscribe=unsubscribeCommunity;unsubscribeCommunity=null;
+      try{failedUnsubscribe?.();}catch(_){}
+      console.error('Komunitas listener gagal:',err);
+    });
     return true;
   }
   function stopListener(){
     if(typeof unsubscribeCommunity==='function'){try{unsubscribeCommunity();}catch(_){}}
-    unsubscribeCommunity=null;listenerStarted=false;communityDocs=[];
+    unsubscribeCommunity=null;listenerStarted=false;communityDocs=[];communityLiveDocs.clear();communityOlderDocs.clear();communityPaginationCursor=null;communityPaginationInitialized=false;communityHasMore=true;communityLoadingOlder=false;communityPaginationError='';
     if(typeof unsubscribeCommunityBio==='function'){try{unsubscribeCommunityBio();}catch(_){}}
     unsubscribeCommunityBio=null;bioListenerStarted=false;
     if(typeof unsubscribeIncomingFriendRequests==='function'){try{unsubscribeIncomingFriendRequests();}catch(_){}}
@@ -7659,7 +7720,7 @@ function updateUserAvatarUI() {
 <script type="module" id="rekapinyu-firebase-final-schema">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,updateProfile,setPersistence,browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getFirestore,collection,query,where,limit,getDocs,doc,getDoc,setDoc,onSnapshot,serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore,collection,query,where,limit,getDocs,doc,getDoc,setDoc,onSnapshot,serverTimestamp,orderBy,startAfter } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { getStorage,ref,uploadBytes,getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
@@ -8491,7 +8552,7 @@ function realtime(uid){
 async function consumeLandingLogin(){try{await authReadyPromise;const hash=window.location.hash||"",m=hash.match(/^#rekapinyu_login=([^&]+)$/);if(!m)return false;const raw=m[1].replace(/-/g,"+").replace(/_/g,"/"),padded=raw+"=".repeat((4-raw.length%4)%4);const bin=atob(padded);const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);const data=JSON.parse(new TextDecoder().decode(bytes));history.replaceState(null,document.title,window.location.pathname+window.location.search);if(!data?.phone||!data?.password)throw new Error("Data login dari Landing Page tidak lengkap.");const landingPhone=strictRekapinyuPhone(data.phone);if(!landingPhone)throw new Error("Nomor HP login tidak valid. Gunakan 12–13 digit dan wajib diawali 08.");const c=await signInWithEmailAndPassword(auth,emailOf(landingPhone),data.password);refs.pengguna=refs.kasir=refs.rekap=refs.aktifitas=null;refCache.clear();const pr=await getPenggunaRef(c.user.uid,data.phone),s=await getDoc(pr),d=s.exists()?s.data()||{}:{};localSession({uid:c.user.uid,name:d.NamaPengguna||c.user.displayName||"",phone:phoneOf(d.NomorHp||data.phone),email:c.user.email,password:String(d.Pasword||data.password),role:d.role||"Pengguna"});window.__rekapinyuLandingHandoffActive=true;await hydrate(c.user.uid);return true}catch(e){log("landing login gagal",e);window.__rekapinyuLandingHandoffActive=false;try{history.replaceState(null,document.title,window.location.pathname+window.location.search)}catch{}notify("Login Gagal","Sesi dari Landing Page tidak dapat diproses. Silakan login kembali melalui aplikasi.","fa-solid fa-circle-xmark text-rose-600");return false}}
 const landingHandoffPromise=consumeLandingLogin();
 
-window.RekapinyuFirebase={app,auth,db,storage,ready:false,uid:null,refs, schema:COLLECTION, firestoreApi:{collection,query,where,limit,getDocs,doc,getDoc,setDoc,onSnapshot,serverTimestamp,getKasirRef:async()=>getKasirRef(cloudUid(),currentPhone())},storageApi:{ref,uploadBytes,getDownloadURL}};
+window.RekapinyuFirebase={app,auth,db,storage,ready:false,uid:null,refs, schema:COLLECTION, firestoreApi:{collection,query,where,limit,getDocs,doc,getDoc,setDoc,onSnapshot,serverTimestamp,orderBy,startAfter,getKasirRef:async()=>getKasirRef(cloudUid(),currentPhone())},storageApi:{ref,uploadBytes,getDownloadURL}};
 
 onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPromise;window.RekapinyuFirebase.ready=true;window.RekapinyuFirebase.uid=u?.uid||null;if(!u){firestoreDataHydrated=false;currentSessionUser=null;try{nativeRemove.call(localStorage,"finance_active_session")}catch{}window.location.replace("https://rekapinyu.github.io/login");return}try{if(!currentSessionUser){const p=phoneOf(u.email?.split("@")[0]||"");const pr=await getPenggunaRef(u.uid,p),s=await getDoc(pr),d=s.exists()?s.data()||{}:{};localSession({uid:u.uid,name:d.NamaPengguna||u.displayName||"",phone:phoneOf(d.NomorHp||p),email:u.email,password:d.Pasword||"",role:d.role||"Pengguna"})}firestoreDataHydrated=false;await hydrate(u.uid);try{await window.__rekapinyuLoadLocalRekap?.()}catch{}realtime(u.uid);renderDashboardSession();try{redraw()}catch{}}catch(e){console.error("Firebase schema final:",e);log("sinkronisasi sesi Auth/Firestore gagal; sesi login tetap dipertahankan",e);renderDashboardSession()}});
 
