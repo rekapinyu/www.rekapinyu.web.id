@@ -1822,18 +1822,39 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
     margin-left:auto!important;
     margin-right:auto!important;
   }
+  /* Dock mobile: pulihkan layout asli yang stabil, penuh selebar layar.
+     Jangan batasi lebar wrapper dock; lima item mendapat ruang sama. */
+  #mobile-simplified-dock{
+    left:0!important;right:0!important;width:100%!important;
+    height:68px!important;padding:0 8px!important;
+    box-sizing:border-box!important;overflow:visible!important;
+  }
   #mobile-simplified-dock > div{
-    max-width:520px!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
+    display:grid!important;
+    width:100%!important;max-width:none!important;
+    height:100%!important;margin:0!important;padding:0!important;
     grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    align-items:center!important;justify-items:stretch!important;
+    gap:0!important;box-sizing:border-box!important;
   }
   #mobile-simplified-dock .mobile-dock-item{
-    min-width:0!important;
-    white-space:nowrap!important;
+    display:flex!important;flex-direction:column!important;
+    align-items:center!important;justify-content:center!important;
+    width:100%!important;min-width:0!important;max-width:none!important;
+    height:58px!important;margin:0!important;padding:6px 1px!important;
+    gap:3px!important;box-sizing:border-box!important;
+    overflow:hidden!important;white-space:nowrap!important;
+    line-height:1!important;text-align:center!important;
+  }
+  #mobile-simplified-dock .mobile-dock-item i{
+    display:block!important;flex:0 0 auto!important;
+    margin:0!important;font-size:18px!important;line-height:1!important;
   }
   #mobile-simplified-dock .mobile-dock-item span{
-    font-size:10px!important;
+    display:block!important;max-width:100%!important;
+    margin:0!important;font-size:9px!important;line-height:1.2!important;
+    font-weight:600!important;white-space:nowrap!important;
+    overflow:hidden!important;text-overflow:clip!important;
   }
 }
 </style>
