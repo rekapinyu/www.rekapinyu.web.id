@@ -5042,7 +5042,8 @@ function updateUserAvatarUI() {
                 if(tab==='report')window.__rekapinyuRenderMobileLaporanBulanan?.();
                 if(tab==='laporan-kasir')window.__rekapinyuRenderMobileLaporanKasir?.();
                 if(tab==='history'){
-                    if(typeof window.__rekapinyuLoadLocalRekap==='function')window.__rekapinyuLoadLocalRekap().catch(err=>console.warn('Rekapinyu: History gagal membaca folder target.',err));
+                    /* MOBILE HISTORY: satu sumber data, Firestore Rekap.InputData.
+                       Jangan memanggil loader JSON lokal pada jalur mobile. */
                     if(typeof populateHistoryFilters==='function')populateHistoryFilters();
                     if(typeof renderHistory==='function')renderHistory();
                 }
@@ -6301,21 +6302,87 @@ function updateUserAvatarUI() {
             }
         }
 
+        function normalizeMobileFirestoreHistory(rows) {
+            const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+            const pick = (item, ...keys) => {
+                for (const key of keys) {
+                    const value = item?.[key];
+                    if (value !== undefined && value !== null && value !== '') return value;
+                }
+                return undefined;
+            };
+            const numberOf = value => {
+                if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+                let valueText = String(value ?? '').replace(/[^0-9,.-]/g, '').trim();
+                if (!valueText) return 0;
+                if (valueText.includes(',') && valueText.includes('.')) {
+                    valueText = valueText.lastIndexOf(',') > valueText.lastIndexOf('.')
+                        ? valueText.replace(/\./g, '').replace(',', '.')
+                        : valueText.replace(/,/g, '');
+                } else if (valueText.includes(',')) {
+                    valueText = /,\d{1,2}$/.test(valueText) ? valueText.replace(',', '.') : valueText.replace(/,/g, '');
+                } else if (/\.\d{3}$/.test(valueText)) {
+                    valueText = valueText.replace(/\./g, '');
+                }
+                return Number(valueText) || 0;
+            };
+            return (Array.isArray(rows) ? rows : []).map((item, index) => {
+                if (!item || typeof item !== 'object' || Array.isArray(item)) return null;
+                const rawMonth = pick(item, 'month', 'Bulan', 'bulan', 'namaBulan');
+                let monthIndex = Number(pick(item, 'monthIndex', 'MonthIndex', 'bulanIndex', 'bulanKe'));
+                if (!Number.isInteger(monthIndex) || monthIndex < 0 || monthIndex > 11) {
+                    monthIndex = months.findIndex(m => String(rawMonth ?? '').trim().toLowerCase() === m.toLowerCase());
+                }
+                if (monthIndex < 0 && Number(rawMonth) >= 1 && Number(rawMonth) <= 12) monthIndex = Number(rawMonth) - 1;
+
+                let rawDate = pick(item, 'date', 'Tanggal', 'tanggal', 'dayOfMonth', 'tanggalRekap', 'tgl');
+                let rawYear = pick(item, 'year', 'Tahun', 'tahun', 'tahunRekap');
+                if (typeof rawDate === 'string' && /\d{4}-\d{1,2}-\d{1,2}/.test(rawDate)) {
+                    const parsed = new Date(rawDate);
+                    if (!Number.isNaN(parsed.getTime())) {
+                        rawDate = parsed.getDate();
+                        if (rawYear === undefined) rawYear = parsed.getFullYear();
+                        if (monthIndex < 0) monthIndex = parsed.getMonth();
+                    }
+                }
+                const date = Number(rawDate);
+                const year = Number(rawYear);
+                if (!Number.isInteger(date) || date < 1 || date > 31 ||
+                    !Number.isInteger(year) || year < 1 ||
+                    !Number.isInteger(monthIndex) || monthIndex < 0 || monthIndex > 11) return null;
+
+                const income = numberOf(pick(item, 'income', 'Income', 'Pendapatan', 'pendapatan', 'pemasukan', 'Pemasukan', 'totalPendapatan', 'jumlahPendapatan', 'omzet', 'Omzet'));
+                const expense = numberOf(pick(item, 'expense', 'Expense', 'Total Belanja', 'Belanja', 'totalBelanja', 'belanja', 'modal', 'Hpp'));
+                const cashout = numberOf(pick(item, 'cashout', 'Cashout', 'Pengeluaran', 'pengeluaran', 'nominalPengeluaran', 'pengeluaranLain', 'totalCashout'));
+                const pctValue = pick(item, 'profitPercentage', 'Profit Persen', 'Profit 10%', 'profitPersen', 'persenProfit', 'Set Profit Persen (%)', 'setProfitPersen');
+                const profitPercentage = pctValue === undefined ? 10 : numberOf(pctValue);
+                const rawId = Number(pick(item, 'id', 'ID'));
+                const time = String(pick(item, 'time', 'Waktu', 'waktu', 'jam') || '00:00').trim();
+                const day = String(pick(item, 'day', 'Rekap_hari', 'Hari', 'hari') ||
+                    ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][new Date(year, monthIndex, date).getDay()]);
+                return {
+                    ...item,
+                    id: Number.isFinite(rawId) ? rawId : index + 1,
+                    day, date, monthIndex, month: months[monthIndex], year, time,
+                    income, expense, cashout, profitPercentage,
+                    profit: numberOf(pick(item, 'profit', 'Profit', 'Keuntungan', 'keuntungan', 'totalProfit', 'laba')) ||
+                        Math.max((income - cashout) * (profitPercentage / 100), 0),
+                    __historySource: 'firestore'
+                };
+            }).filter(Boolean).sort((a,b) => sortHistoryChronological(a,b));
+        }
+
         function getHistoryForDisplay() {
-            /* HISTORY MOBILE: sumber tunggal adalah listener realtime Firestore
-               Rekap -> InputData. JSON lokal tidak boleh menimpa data di mobile.
-               Desktop tetap memakai aturan sumber lokal/Firestore sebelumnya. */
+            /* MOBILE: data hanya dari listener Firestore Rekap.InputData.
+               Normalisasi dilakukan sebelum render agar format field yang berbeda
+               tidak membuat filter History gagal atau melempar error. */
             const mobileHistoryView = window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
             if (mobileHistoryView) {
                 const cloudDoc = window.__rekapinyuFirestoreRekap || {};
-                const cloudRows = Array.isArray(cloudDoc.InputData) ? cloudDoc.InputData : [];
-                return cloudRows
-                    .filter(item => item && typeof item === 'object' && !Array.isArray(item))
-                    .map(item => ({...item, __historySource:'firestore'}))
-                    .sort((a,b) => sortHistoryChronological(a,b));
+                return normalizeMobileFirestoreHistory(cloudDoc.InputData);
             }
 
-            /* Desktop dipertahankan: JSON lokal valid tetap menjadi sumber utama;
+            /* DESKTOP DIPERTAHANKAN: JSON lokal valid tetap menjadi sumber utama;
                Firestore menjadi fallback bila data lokal tidak tersedia. */
             if (window.__rekapinyuHasLocalHistoryFiles === true) {
                 return (Array.isArray(historyData) ? historyData : [])
@@ -6480,18 +6547,21 @@ function updateUserAvatarUI() {
             yearSelect.value = currentSelectedYear;
         }
 
-        /* Jembatan realtime: Firestore hanya memperbarui History saat JSON lokal
-           tidak tersedia/berisi record valid. */
-        window.__rekapinyuRefreshHistoryFromFirestore = function(rows) {
+        /* Satu jembatan listener untuk kedua ukuran layar.
+           Mobile membaca snapshot secara langsung; desktop mempertahankan fallback lama. */
+        window.__rekapinyuRefreshHistoryFromFirestore = function() {
             const mobileHistoryView = window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
-            if (!mobileHistoryView && window.__rekapinyuHasLocalHistoryFiles === true) return;
-            const list = Array.isArray(rows) ? rows : [];
-            historyData = list
-                .filter(item => item && typeof item === 'object' && !Array.isArray(item))
-                .map(item => ({...item, __historySource:'firestore'}))
-                .sort((a,b) => sortHistoryChronological(a,b));
+            if (!mobileHistoryView) {
+                if (window.__rekapinyuHasLocalHistoryFiles === true) return;
+                const cloudDoc = window.__rekapinyuFirestoreRekap || {};
+                const cloudRows = Array.isArray(cloudDoc.InputData) ? cloudDoc.InputData : [];
+                historyData = cloudRows
+                    .filter(item => item && typeof item === 'object' && !Array.isArray(item))
+                    .map(item => ({...item, __historySource:'firestore'}))
+                    .sort((a,b) => sortHistoryChronological(a,b));
+            }
             try { populateHistoryFilters(); } catch (_) {}
-            try { renderHistory(); } catch (_) {}
+            try { renderHistory(); } catch (err) { console.warn('Rekapinyu: render History Firestore gagal.', err); }
         };
 
         // RENDER LAPORAN PER BULAN & TAHUN.
@@ -8510,8 +8580,7 @@ function realtime(uid){
      Schema: NamaToko, NomorHp, InputData, Pengeluaran, Kasbon
      ============================================================= */
   collectionUnsubs.push(onSnapshot(rr,s=>{
-    if(!s.exists()){log("listener Rekap: dokumen tidak ditemukan",uid);return;}
-    const d=s.data()||{};
+    const d=s.exists()?(s.data()||{}):{};
     applyingFirestoreRealtime=true;
     try{
       if(currentSessionUser&&hasField(d,"NamaToko")&&String(d.NamaToko).trim())currentSessionUser.shopName=String(d.NamaToko).trim();
@@ -8524,13 +8593,24 @@ function realtime(uid){
         Kasbon:Array.isArray(d.Kasbon)?d.Kasbon:[]
       };
     }finally{applyingFirestoreRealtime=false}
-    if(window.__rekapinyuHasLocalHistoryFiles!==true || (window.matchMedia && window.matchMedia('(max-width: 767px)').matches)){
-      try{
-        window.__rekapinyuRefreshHistoryFromFirestore?.(window.__rekapinyuFirestoreRekap.InputData);
-      }catch(_){}
+    /* Mobile History selalu diperbarui dari snapshot Rekap.InputData.
+       Dokumen yang belum ada diperlakukan sebagai data kosong, bukan menghentikan jalur listener. */
+    if(window.matchMedia && window.matchMedia('(max-width: 767px)').matches){
+      try{window.__rekapinyuRefreshHistoryFromFirestore?.()}catch(err){console.warn("Rekapinyu: refresh History mobile gagal.",err)}
+    }else if(window.__rekapinyuHasLocalHistoryFiles!==true){
+      try{window.__rekapinyuRefreshHistoryFromFirestore?.()}catch(_){}
     }
+    if(!s.exists())log("listener Rekap: dokumen tidak ditemukan",uid);
     commonAfter();
-  },e=>log("realtime Rekap gagal",e)));
+  },e=>{
+    log("realtime Rekap gagal",e);
+    if(window.matchMedia && window.matchMedia('(max-width: 767px)').matches){
+      const container=document.getElementById("history-grid");
+      if(container && document.documentElement.getAttribute("data-mobile-view")==="history"){
+        container.innerHTML='<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-rose-200 text-rose-600"><p class="text-sm font-semibold">Firestore gagal dibaca.</p><p class="text-xs mt-2">Periksa koneksi, izin baca Firestore, dan dokumen Rekap pengguna.</p></div>';
+      }
+    }
+  }));
 
   /* =============================================================
      REALTIME LISTENER — KASIR
