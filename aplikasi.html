@@ -13520,35 +13520,25 @@ async function initKasirViews(){
 </script>
 
 
-<style id="rekapinyu-mobile-community-rail-final-replacement">
+<style id="rekapinyu-mobile-community-single-implementation">
+/* Implementasi tunggal untuk rail dan kolom posting Komunitas di mobile. */
 @media (max-width:767px){
-  /* Mobile: hilangkan judul Feed Komunitas dan keterangannya. */
   #view-komunitas .komunitas-feed-heading{display:none!important}
-
-  /* Jangan batasi tinggi feed atau memotong postingan. */
-  #view-komunitas,
-  #view-komunitas .komunitas-shell,
-  #view-komunitas .komunitas-content{
-    height:auto!important;min-height:0!important;overflow:visible!important;
-  }
-  #view-komunitas .komunitas-shell{display:flex!important;flex-direction:column!important;width:100%!important}
-
-  /* Rail dipatok tepat di bawah header aplikasi dan tetap terlihat saat scroll. */
+  #view-komunitas{width:100%!important;min-height:0!important;overflow:visible!important}
+  #view-komunitas .komunitas-shell{display:block!important;width:100%!important;height:auto!important;min-height:0!important;overflow:visible!important}
   #view-komunitas .komunitas-rail{
-    position:fixed!important;top:132px!important;left:0!important;right:0!important;
+    position:fixed!important;top:var(--rk-community-rail-top,134px)!important;left:0!important;right:0!important;
     z-index:100!important;width:100%!important;height:60px!important;min-height:60px!important;
-    display:flex!important;flex-direction:row!important;align-items:stretch!important;
-    justify-content:space-around!important;gap:0!important;overflow-x:auto!important;overflow-y:hidden!important;
-    border:0!important;border-bottom:1px solid #e2e8f0!important;
-    background:rgba(255,255,255,.98)!important;box-shadow:0 4px 12px rgba(15,23,42,.05)!important;
-    scrollbar-width:none!important;
+    display:flex!important;flex-direction:row!important;align-items:stretch!important;justify-content:space-around!important;
+    gap:0!important;overflow-x:auto!important;overflow-y:hidden!important;margin:0!important;padding:0!important;
+    border:0!important;border-bottom:1px solid #e2e8f0!important;background:rgba(255,255,255,.99)!important;
+    box-shadow:0 4px 12px rgba(15,23,42,.05)!important;scrollbar-width:none!important;box-sizing:border-box!important;
   }
   #view-komunitas .komunitas-rail::-webkit-scrollbar{display:none!important}
   #view-komunitas .komunitas-rail-item{
-    position:relative!important;flex:1 1 20%!important;min-width:0!important;width:20%!important;
-    height:60px!important;min-height:60px!important;padding:5px 2px!important;margin:0!important;
-    border:0!important;border-bottom:2px solid transparent!important;display:flex!important;
-    flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    position:relative!important;flex:1 1 20%!important;min-width:0!important;width:20%!important;height:60px!important;min-height:60px!important;
+    margin:0!important;padding:5px 2px!important;border:0!important;border-bottom:2px solid transparent!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
     gap:3px!important;font-size:10px!important;line-height:1.1!important;white-space:nowrap!important;box-sizing:border-box!important;
   }
   #view-komunitas .komunitas-rail-item i{font-size:17px!important}
@@ -13559,18 +13549,36 @@ async function initKasirViews(){
   #view-komunitas #komunitas-rail-notif{order:5!important}
   #view-komunitas #komunitas-rail-group{display:none!important}
   #view-komunitas .komunitas-notif-badge{top:2px!important;right:calc(50% - 22px)!important;min-width:16px!important;height:16px!important;font-size:8px!important}
-
-  /* Ruang agar konten tidak tertutup rail fixed maupun composer yang menempel dock. */
-  #view-komunitas .komunitas-content{width:100%!important;padding-top:60px!important;padding-bottom:100px!important;box-sizing:border-box!important}
+  #view-komunitas .komunitas-content{width:100%!important;height:auto!important;min-height:0!important;overflow:visible!important;padding-top:60px!important;padding-bottom:calc(var(--rk-community-composer-space,100px) + 12px)!important;box-sizing:border-box!important}
   #view-komunitas .komunitas-post-box{
-    position:fixed!important;left:0!important;right:0!important;bottom:68px!important;z-index:95!important;
-    width:100%!important;margin:0!important;padding:10px 12px!important;box-sizing:border-box!important;
-    background:rgba(255,255,255,.98)!important;border-top:1px solid #e2e8f0!important;
-    box-shadow:0 -5px 16px rgba(15,23,42,.07)!important;
+    position:fixed!important;left:0!important;right:0!important;bottom:var(--rk-community-dock-height,76px)!important;z-index:95!important;
+    width:100%!important;max-width:none!important;margin:0!important;padding:10px 12px!important;box-sizing:border-box!important;
+    background:rgba(255,255,255,.99)!important;border-top:1px solid #e2e8f0!important;box-shadow:0 -5px 16px rgba(15,23,42,.07)!important;
   }
   #view-komunitas .komunitas-post-controls{width:100%!important;max-width:none!important}
 }
 </style>
+<script id="rekapinyu-mobile-community-sticky-measure">
+(()=>{
+  const updateCommunityStickyOffsets=()=>{
+    if(!window.matchMedia('(max-width:767px)').matches)return;
+    const header=document.querySelector('header');
+    const dock=document.getElementById('mobile-simplified-dock');
+    const headerBottom=header?Math.max(0,Math.round(header.getBoundingClientRect().bottom)):134;
+    const dockHeight=dock?Math.max(0,Math.round(window.innerHeight-dock.getBoundingClientRect().top)):76;
+    document.documentElement.style.setProperty('--rk-community-rail-top',headerBottom+'px');
+    document.documentElement.style.setProperty('--rk-community-dock-height',dockHeight+'px');
+    const composer=document.querySelector('#view-komunitas .komunitas-post-box');
+    const composerHeight=composer?Math.ceil(composer.getBoundingClientRect().height):70;
+    document.documentElement.style.setProperty('--rk-community-composer-space',(dockHeight+composerHeight)+'px');
+  };
+  window.addEventListener('resize',updateCommunityStickyOffsets,{passive:true});
+  window.addEventListener('orientationchange',updateCommunityStickyOffsets,{passive:true});
+  document.addEventListener('DOMContentLoaded',updateCommunityStickyOffsets,{once:true});
+  updateCommunityStickyOffsets();
+  let tries=0;const retry=setInterval(()=>{updateCommunityStickyOffsets();if(++tries>=8)clearInterval(retry)},300);
+})();
+</script>
 
 </body>
 </html>
