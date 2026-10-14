@@ -13113,16 +13113,18 @@ async function initKasirViews(){
             const total = cetak_getCartTotal();
             const cashPaid = CETAK_APP_STATE.cashPaid || 0;
             const change = cashPaid - total;
-            // Gunakan data Seting Struk utama agar preview Cetak mengikuti pengaturan aplikasi.
+            // Satu sumber utama preview struk: Setting > Seting Struk.
+            // Nilai footer dari pengaturan utama selalu menang atas salinan lokal menu Cetak.
             const receiptSettings = window.__rekapinyuSettingData?.SettingStruk;
-            const receiptStore = receiptSettings && typeof receiptSettings === 'object'
-                ? {
-                    name: String(receiptSettings.name ?? CETAK_APP_STATE.store.name ?? ''),
-                    address: String(receiptSettings.address ?? CETAK_APP_STATE.store.address ?? ''),
-                    phone: String(receiptSettings.phone ?? CETAK_APP_STATE.store.phone ?? ''),
-                    footer: String(receiptSettings.footer ?? CETAK_APP_STATE.store.footer ?? '')
-                }
-                : CETAK_APP_STATE.store;
+            const receiptSettingsReady = receiptSettings && typeof receiptSettings === 'object';
+            const receiptStore = {
+                name: String(receiptSettingsReady ? (receiptSettings.name ?? CETAK_APP_STATE.store.name ?? '') : (CETAK_APP_STATE.store.name ?? '')),
+                address: String(receiptSettingsReady ? (receiptSettings.address ?? CETAK_APP_STATE.store.address ?? '') : (CETAK_APP_STATE.store.address ?? '')),
+                phone: String(receiptSettingsReady ? (receiptSettings.phone ?? CETAK_APP_STATE.store.phone ?? '') : (CETAK_APP_STATE.store.phone ?? '')),
+                footer: String(receiptSettingsReady && Object.prototype.hasOwnProperty.call(receiptSettings, 'footer')
+                    ? (receiptSettings.footer ?? '')
+                    : (CETAK_APP_STATE.store.footer ?? ''))
+            };
 
             const now = new Date();
             const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -14079,6 +14081,46 @@ async function initKasirViews(){
   const refreshTimer=setInterval(()=>{refreshShiftNames();if(++refreshAttempts>=30)clearInterval(refreshTimer)},300);
   window.addEventListener('pageshow',refreshShiftNames);
   window.__rekapinyuRefreshKasirShiftNames=refreshShiftNames;
+})();
+</script>
+
+
+<script id="rekapinyu-cetak-footer-setting-sync">
+(function(){
+  if(window.__rekapinyuCetakFooterSettingSyncInstalled)return;
+  window.__rekapinyuCetakFooterSettingSyncInstalled=true;
+  function refreshCetakReceiptPreview(){
+    try{window.cetak_updateReceiptPreview?.()}catch(error){console.warn('Rekapinyu: preview footer struk belum dapat diperbarui.',error)}
+  }
+  // Setelah Seting > Seting Struk tersimpan, render ulang preview menu Cetak.
+  document.addEventListener('submit',function(event){
+    if(event.target?.id!=='receipt-settings-form')return;
+    setTimeout(refreshCetakReceiptPreview,0);
+  });
+  // Jika data Seting dimuat ulang dari penyimpanan/cloud, perbarui preview dengan data terbaru.
+  const originalReloadSettings=window.__rekapinyuReloadSettingsUI;
+  if(typeof originalReloadSettings==='function'&&!originalReloadSettings.__cetakFooterWrapped){
+    const wrappedReloadSettings=function(){
+      const result=originalReloadSettings.apply(this,arguments);
+      refreshCetakReceiptPreview();
+      setTimeout(refreshCetakReceiptPreview,0);
+      return result;
+    };
+    wrappedReloadSettings.__cetakFooterWrapped=true;
+    window.__rekapinyuReloadSettingsUI=wrappedReloadSettings;
+  }
+  // Menu Cetak bisa dibuka sebelum data pengaturan selesai dimuat; refresh lagi setelah inisialisasi.
+  const originalInitCetak=window.__rekapinyuInitCetak;
+  if(typeof originalInitCetak==='function'&&!originalInitCetak.__cetakFooterWrapped){
+    const wrappedInitCetak=function(){
+      const result=originalInitCetak.apply(this,arguments);
+      refreshCetakReceiptPreview();
+      setTimeout(refreshCetakReceiptPreview,0);
+      return result;
+    };
+    wrappedInitCetak.__cetakFooterWrapped=true;
+    window.__rekapinyuInitCetak=wrappedInitCetak;
+  }
 })();
 </script>
 
