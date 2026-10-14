@@ -9229,6 +9229,21 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
                 const saved = await window.__rekapinyuSaveLocalRekap();
                 if (saved === false) throw new Error('Data berhasil diimport tetapi gagal disimpan ke folder Data/Rekap.');
             }
+
+            /* IMPORT JSON -> FIRESTORE Rekap.InputData.
+               Jalankan setelah historyData berisi hasil impor agar fungsi sinkronisasi
+               menulis data terbaru, bukan snapshot lama. Jangan laporkan sukses cloud
+               bila listener/auth Firestore belum siap atau proses tulis gagal. */
+            if (typeof window.__rekapinyuSaveRekapCloud !== 'function') {
+                throw new Error('Data lokal berhasil diimport, tetapi fungsi sinkronisasi Firestore tidak tersedia.');
+            }
+            const cloudSaved = await window.__rekapinyuSaveRekapCloud({
+                ...(window.__rekapinyuLocalRekapData || window.__rekapinyuFirestoreRekap || {}),
+                InputData: historyData
+            });
+            if (cloudSaved === false) {
+                throw new Error('Data lokal berhasil diimport, tetapi Firestore belum siap atau gagal menyimpan. Pastikan akun sudah login dan koneksi Firestore aktif, lalu impor ulang.');
+            }
             populateHistoryFilters();
             renderHistory();
             showModal('Import Berhasil', `${imported.length} data History dari ${isBackup ? 'BackupHistory' : 'InputData'} berhasil diimport.`);
