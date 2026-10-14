@@ -4466,7 +4466,13 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     if(friendRequestRetryTimer){clearTimeout(friendRequestRetryTimer);friendRequestRetryTimer=null;}
     incomingFriendRequests=[];outgoingFriendRequests=[];
   }
+  function blockCommunityWriteWhenPackageExpired(){
+    if(!window.__rekapinyuPackageGateActive)return false;
+    alert('Paket Anda habis. Silakan perpanjang untuk menikmati fitur Rekapinyu.');
+    return true;
+  }
   async function savePost(){
+    if(blockCommunityWriteWhenPackageExpired())return;
     const input=document.getElementById(postInputId),fileInput=document.getElementById('komunitas-post-photo-input'),publishButton=document.getElementById(publishButtonId);
     if(!input)return;
     const value=String(input.value||'').trim(),photoFile=fileInput?.files?.[0]||null;
@@ -4500,6 +4506,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     }
   }
   async function saveComment(docId,input){
+    if(blockCommunityWriteWhenPackageExpired())return;
     const value=String(input?.value||'').trim();if(!value){input?.focus();return;}
     if(!ready()){alert('Koneksi Komunitas ke Firestore belum siap. Silakan coba lagi.');return;}
     const snap=communityDocs.find(x=>x.docId===docId);if(!snap)return;
