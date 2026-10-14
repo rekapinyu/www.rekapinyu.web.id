@@ -13925,6 +13925,33 @@ async function initKasirViews(){
 (function(){
   if(window.__rekapinyuKasirShiftMenuInstalled)return;
   window.__rekapinyuKasirShiftMenuInstalled=true;
+  function readShiftSettings(){
+    const settings=window.__rekapinyuSettingData&&window.__rekapinyuSettingData.SettingShift;
+    const defaults={shift1:{employee:'',start:'06:00',end:'14:00'},shift2:{employee:'',start:'14:00',end:'22:00'}};
+    return {shift1:{...defaults.shift1,...(settings&&settings.shift1||{})},shift2:{...defaults.shift2,...(settings&&settings.shift2||{})}};
+  }
+  function refreshShiftNames(){
+    const picker=document.getElementById('kasir-shift-picker');
+    const menu=document.getElementById('kasir-shift-menu');
+    const label=document.getElementById('kasir-shift-label');
+    if(!picker||!menu||!label)return;
+    const settings=readShiftSettings();
+    menu.querySelectorAll('[data-kasir-shift]').forEach(function(button){
+      const shift=button.getAttribute('data-kasir-shift');
+      const key=shift==='SHIFT 1'?'shift1':'shift2';
+      const employee=String(settings[key].employee||'').trim();
+      button.textContent=employee?employee+' — '+shift:shift;
+      button.title=employee?employee+' ('+shift+')':shift;
+      button.dataset.employeeName=employee;
+    });
+    const selected=picker.dataset.selectedShift;
+    if(selected){
+      const key=selected==='SHIFT 1'?'shift1':'shift2';
+      const employee=String(settings[key].employee||'').trim();
+      label.textContent=employee||selected;
+      label.title=employee?employee+' ('+selected+')':selected;
+    }
+  }
   document.addEventListener('click',function(event){
     const trigger=event.target.closest('#kasir-shift-btn');
     const picker=document.getElementById('kasir-shift-picker');
@@ -13934,6 +13961,7 @@ async function initKasirViews(){
     if(trigger){
       event.preventDefault();
       const opening=menu.hidden;
+      if(opening)refreshShiftNames();
       menu.hidden=!opening;
       trigger.setAttribute('aria-expanded',String(opening));
       return;
@@ -13941,7 +13969,9 @@ async function initKasirViews(){
     const option=event.target.closest('[data-kasir-shift]');
     if(option&&picker.contains(option)){
       const shift=option.getAttribute('data-kasir-shift');
-      label.textContent=shift;
+      const employee=String(option.dataset.employeeName||'').trim();
+      label.textContent=employee||shift;
+      label.title=employee?employee+' ('+shift+')':shift;
       picker.dataset.selectedShift=shift;
       picker.querySelectorAll('[data-kasir-shift]').forEach(function(button){
         const selected=button===option;
@@ -13957,6 +13987,10 @@ async function initKasirViews(){
       document.getElementById('kasir-shift-btn')?.setAttribute('aria-expanded','false');
     }
   });
+  document.addEventListener('click',function(event){
+    if(event.target.closest('#settings-shift-save'))setTimeout(refreshShiftNames,0);
+  });
+  document.addEventListener('DOMContentLoaded',refreshShiftNames,{once:true});
 })();
 </script>
 
