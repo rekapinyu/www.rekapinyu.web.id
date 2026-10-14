@@ -1796,6 +1796,47 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #nav-cek-paket:hover{transform:translateX(3px);background-color:rgba(226,232,240,.55)}
 #nav-cek-paket:active{transform:translateX(1px) scale(.99)}
 </style>
+<style id="rekapinyu-mobile-home-grid-center-dock-order">
+@media (max-width:767px){
+  /* Beranda: panel dan grid laporan diposisikan di tengah layar. */
+  #mobile-home-view{
+    width:100%!important;
+    display:flex;
+    flex-direction:column;
+    align-items:center!important;
+  }
+  #mobile-home-view .mobile-home-report-panel{
+    width:100%!important;
+    max-width:520px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+  #mobile-home-view .mobile-home-report-section{
+    width:100%!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+  #mobile-home-view .mobile-home-report-carousel{
+    justify-content:center!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+  #mobile-simplified-dock > div{
+    max-width:520px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  }
+  #mobile-simplified-dock .mobile-dock-item{
+    min-width:0!important;
+    white-space:nowrap!important;
+  }
+  #mobile-simplified-dock .mobile-dock-item span{
+    font-size:10px!important;
+  }
+}
+</style>
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
@@ -6840,9 +6881,9 @@ function updateUserAvatarUI() {
 <div class="max-w-md mx-auto grid grid-cols-5 px-2 py-2">
 <button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-emerald-600 transition" id="nav-mobile-home" onclick="switchTab('home')" type="button"><i class="fa-solid fa-house-chimney text-lg mb-0.5"></i><span class="text-[10px] font-semibold">Beranda</span></button>
 <button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-history" onclick="switchTab('history')" type="button"><i class="fa-solid fa-clock-rotate-left text-lg mb-0.5"></i><span class="text-[10px] font-medium">History</span></button>
-<button class="mobile-dock-item mobile-dock-activity flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-activity" onclick="switchTab('activity')" type="button"><i class="fa-solid fa-bell text-lg mb-0.5"></i><span class="text-[10px] font-medium">Aktifitas</span></button>
+<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-report" onclick="switchTab('report')" type="button"><i class="fa-solid fa-chart-line text-lg mb-0.5"></i><span class="text-[10px] font-medium">Bulanan</span></button>
+<button class="mobile-dock-item mobile-dock-activity flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-activity" onclick="switchTab('activity')" type="button"><i class="fa-solid fa-bell text-lg mb-0.5"></i><span class="text-[10px] font-medium">Notifikasi</span></button>
 <button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-komunitas" onclick="switchTab('komunitas')" type="button"><i class="fa-solid fa-users text-lg mb-0.5"></i><span class="text-[10px] font-medium">Komunitas</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-report" onclick="switchTab('report')" type="button"><i class="fa-solid fa-chart-line text-lg mb-0.5"></i><span class="text-[10px] font-medium">Lp.Bulanan</span></button>
 </div>
 </nav>
 
