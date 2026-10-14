@@ -4783,14 +4783,11 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 <div class="kasir-search-wrap">
 <input autocomplete="off" id="kasir-search" placeholder="Cari nama produk" type="text">
 </div>
-<div aria-label="Kotak ketik barcode" class="kasir-barcode-wrap kasir-barcode-input-wrap">
-<input autocomplete="off" id="kasir-barcode" placeholder="Ketik barcode" type="text" inputmode="numeric" aria-label="Ketik barcode produk">
-</div>
-<button aria-label="Hubungkan scanner barcode" class="kasir-barcode-wrap kasir-barcode-scan-box" id="kasir-barcode-scan-btn" type="button" title="Hubungkan scanner barcode">
-<span class="kasir-barcode-scan-icon" aria-hidden="true"><i class="fa-solid fa-barcode"></i></span>
-</button>
 <button aria-label="Hubungkan printer Bluetooth" class="kasir-tool-btn" id="kasir-refresh-btn" title="Hubungkan printer Bluetooth" type="button"><i class="fa-brands fa-bluetooth-b"></i></button>
-<button class="kasir-tool-btn" id="kasir-manual-btn" type="button"><i class="fa-solid fa-keyboard"></i> Manual</button>
+<div class="kasir-shift-picker" id="kasir-shift-picker">
+<button class="kasir-tool-btn kasir-shift-trigger" id="kasir-shift-btn" type="button" aria-haspopup="true" aria-expanded="false"><span id="kasir-shift-label">SHIFT</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+<div class="kasir-shift-menu" id="kasir-shift-menu" hidden><button type="button" data-kasir-shift="SHIFT 1">SHIFT 1</button><button type="button" data-kasir-shift="SHIFT 2">SHIFT 2</button></div>
+</div>
 </div>
 <div class="kasir-product-grid" id="kasir-product-grid"></div>
 </div>
@@ -13858,6 +13855,58 @@ async function initKasirViews(){
   document.addEventListener('DOMContentLoaded',updateCommunityStickyOffsets,{once:true});
   updateCommunityStickyOffsets();
   let tries=0;const retry=setInterval(()=>{updateCommunityStickyOffsets();if(++tries>=8)clearInterval(retry)},300);
+})();
+</script>
+
+
+<style id="rekapinyu-kasir-shift-menu-patch">
+/* Perubahan terbatas pada kontrol toolbar Menu Kasir. */
+.kasir-shift-picker{position:relative;flex:0 0 auto;}
+.kasir-shift-trigger{display:flex;align-items:center;justify-content:center;gap:8px;min-width:92px;cursor:pointer;}
+.kasir-shift-trigger .fa-chevron-down{font-size:9px;margin:0;transition:transform .15s ease;}
+.kasir-shift-trigger[aria-expanded="true"] .fa-chevron-down{transform:rotate(180deg);}
+.kasir-shift-menu{position:absolute;top:calc(100% + 6px);right:0;z-index:10050;min-width:120px;padding:5px;background:#fff;border:1px solid #dbe3eb;border-radius:10px;box-shadow:0 10px 28px rgba(15,23,42,.14);}
+.kasir-shift-menu[hidden]{display:none!important;}
+.kasir-shift-menu button{display:block;width:100%;padding:10px 12px;border:0;border-radius:7px;background:#fff;color:#334155;text-align:left;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.kasir-shift-menu button:hover,.kasir-shift-menu button.is-selected{background:#e9f8f4;color:#11806b;}
+@media(max-width:560px){.kasir-shift-trigger{min-width:82px;padding-left:10px;padding-right:10px;}}
+</style>
+<script id="rekapinyu-kasir-shift-menu-patch-js">
+(function(){
+  if(window.__rekapinyuKasirShiftMenuInstalled)return;
+  window.__rekapinyuKasirShiftMenuInstalled=true;
+  document.addEventListener('click',function(event){
+    const trigger=event.target.closest('#kasir-shift-btn');
+    const picker=document.getElementById('kasir-shift-picker');
+    const menu=document.getElementById('kasir-shift-menu');
+    const label=document.getElementById('kasir-shift-label');
+    if(!picker||!menu||!label)return;
+    if(trigger){
+      event.preventDefault();
+      const opening=menu.hidden;
+      menu.hidden=!opening;
+      trigger.setAttribute('aria-expanded',String(opening));
+      return;
+    }
+    const option=event.target.closest('[data-kasir-shift]');
+    if(option&&picker.contains(option)){
+      const shift=option.getAttribute('data-kasir-shift');
+      label.textContent=shift;
+      picker.dataset.selectedShift=shift;
+      picker.querySelectorAll('[data-kasir-shift]').forEach(function(button){
+        const selected=button===option;
+        button.classList.toggle('is-selected',selected);
+        button.setAttribute('aria-pressed',String(selected));
+      });
+      menu.hidden=true;
+      document.getElementById('kasir-shift-btn')?.setAttribute('aria-expanded','false');
+      return;
+    }
+    if(!picker.contains(event.target)){
+      menu.hidden=true;
+      document.getElementById('kasir-shift-btn')?.setAttribute('aria-expanded','false');
+    }
+  });
 })();
 </script>
 
