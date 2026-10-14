@@ -5042,15 +5042,8 @@ function updateUserAvatarUI() {
                 if(tab==='report')window.__rekapinyuRenderMobileLaporanBulanan?.();
                 if(tab==='laporan-kasir')window.__rekapinyuRenderMobileLaporanKasir?.();
                 if(tab==='history'){
-                    /* MOBILE HISTORY: satu sumber data, Firestore Rekap.InputData.
-                       Tunggu snapshot pertama agar render awal tidak keliru menyatakan data kosong. */
-                    const historyGrid=document.getElementById('history-grid');
-                    if(window.__rekapinyuFirestoreRekapLoaded!==true){
-                        if(historyGrid)historyGrid.innerHTML='<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-slate-200 text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat History dari Firestore...</div>';
-                    }else{
-                        if(typeof populateHistoryFilters==='function')populateHistoryFilters();
-                        if(typeof renderHistory==='function')renderHistory();
-                    }
+                    /* MOBILE DOCK HISTORY: renderer khusus Firestore; tidak memakai renderer desktop/JSON. */
+                    window.__rekapinyuRenderMobileFirestoreHistory?.();
                 }
                 return;
             }
@@ -6307,105 +6300,113 @@ function updateUserAvatarUI() {
             }
         }
 
-        function normalizeMobileFirestoreHistory(rows) {
+        /* =========================================================
+         * MOBILE DOCK HISTORY — IMPLEMENTASI BARU KHUSUS FIRESTORE
+         * Sumber tunggal: dokumen Rekap pengguna -> field InputData.
+         * Tidak menggunakan file JSON, localStorage, atau renderer desktop.
+         * Setiap record object ditampilkan walau format tanggal/nominal berbeda.
+         * ========================================================= */
+        window.__rekapinyuRenderMobileFirestoreHistory = function() {
+            const container = document.getElementById('history-grid');
+            if (!container) return;
+            const loaded = window.__rekapinyuFirestoreRekapLoaded === true;
+            if (!loaded) {
+                container.innerHTML = '<div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-200 text-slate-500"><i class="fa-solid fa-spinner fa-spin text-2xl mb-3"></i><p class="text-sm font-semibold">Memuat History dari Firestore...</p></div>';
+                return;
+            }
+            const doc = window.__rekapinyuFirestoreRekap || {};
+            const raw = doc.InputData;
+            const rows = Array.isArray(raw) ? raw : (raw && typeof raw === 'object' ? Object.values(raw) : []);
+            const validRows = rows.filter(row => row && typeof row === 'object' && !Array.isArray(row));
+            if (!validRows.length) {
+                container.innerHTML = '<div class="col-span-full text-center py-16 bg-white rounded-2xl shadow-sm border border-dashed border-slate-200 text-slate-400"><i class="fa-solid fa-clock-rotate-left text-4xl mb-3 text-slate-300"></i><p class="text-sm font-semibold">Belum ada data History di Firestore.</p><p class="text-xs mt-2">Data akan muncul otomatis setelah field InputData pada dokumen Rekap berhasil dibaca.</p></div>';
+                return;
+            }
             const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-            const pick = (item, ...keys) => {
+            const pick = (o, keys, fallback='') => {
                 for (const key of keys) {
-                    const value = item?.[key];
-                    if (value !== undefined && value !== null && value !== '') return value;
+                    const v = o?.[key];
+                    if (v !== undefined && v !== null && v !== '') return v;
                 }
-                return undefined;
+                return fallback;
             };
-            const numberOf = value => {
+            const money = value => {
                 if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
-                let valueText = String(value ?? '').replace(/[^0-9,.-]/g, '').trim();
-                if (!valueText) return 0;
-                if (valueText.includes(',') && valueText.includes('.')) {
-                    valueText = valueText.lastIndexOf(',') > valueText.lastIndexOf('.')
-                        ? valueText.replace(/\./g, '').replace(',', '.')
-                        : valueText.replace(/,/g, '');
-                } else if (valueText.includes(',')) {
-                    valueText = /,\d{1,2}$/.test(valueText) ? valueText.replace(',', '.') : valueText.replace(/,/g, '');
-                } else if (/\.\d{3}$/.test(valueText)) {
-                    valueText = valueText.replace(/\./g, '');
-                }
-                return Number(valueText) || 0;
+                let text = String(value ?? '').replace(/[^0-9,.-]/g, '').trim();
+                if (!text) return 0;
+                if (text.includes(',') && text.includes('.')) text = text.lastIndexOf(',') > text.lastIndexOf('.') ? text.replace(/\./g, '').replace(',', '.') : text.replace(/,/g, '');
+                else if (text.includes(',')) text = /,\d{1,2}$/.test(text) ? text.replace(',', '.') : text.replace(/,/g, '');
+                else if (/\.\d{3}$/.test(text)) text = text.replace(/\./g, '');
+                return Number(text) || 0;
             };
-            const sourceRows = Array.isArray(rows)
-                ? rows
-                : (rows && typeof rows === 'object'
-                    ? Object.values(rows).filter(item => item && typeof item === 'object' && !Array.isArray(item))
-                    : []);
-            return sourceRows.map((item, index) => {
-                if (!item || typeof item !== 'object' || Array.isArray(item)) return null;
-                const rawMonth = pick(item, 'month', 'Bulan', 'bulan', 'namaBulan');
-                let monthIndex = Number(pick(item, 'monthIndex', 'MonthIndex', 'bulanIndex', 'bulanKe'));
-                if (!Number.isInteger(monthIndex) || monthIndex < 0 || monthIndex > 11) {
-                    monthIndex = months.findIndex(m => String(rawMonth ?? '').trim().toLowerCase() === m.toLowerCase());
+            const safe = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+            const getDate = item => {
+                let rawDate = pick(item, ['date','Tanggal','tanggal','tanggalRekap','tgl','createdAt','CreatedAt','timestamp','Timestamp','tanggalWaktu','TanggalWaktu'], '');
+                let dateObj = null;
+                if (rawDate && typeof rawDate === 'object' && typeof rawDate.toDate === 'function') { try { dateObj = rawDate.toDate(); } catch (_) {} }
+                else if (rawDate instanceof Date) dateObj = rawDate;
+                else if (typeof rawDate === 'string' && /\d{4}[-/年]\d{1,2}/.test(rawDate)) { const d = new Date(rawDate); if (!Number.isNaN(d.getTime())) dateObj = d; }
+                let day = Number(pick(item, ['day','Hari','hari','Rekap_hari','dayOfMonth'], ''));
+                let month = pick(item, ['month','Bulan','bulan','namaBulan'], '');
+                let year = Number(pick(item, ['year','Tahun','tahun','tahunRekap'], ''));
+                let monthIndex = Number(pick(item, ['monthIndex','MonthIndex','bulanIndex','bulanKe'], -1));
+                if (dateObj && !Number.isNaN(dateObj.getTime())) {
+                    if (!day || day < 1 || day > 31) day = dateObj.getDate();
+                    if (!year || year < 1) year = dateObj.getFullYear();
+                    if (!month || monthIndex < 0 || monthIndex > 11) month = months[dateObj.getMonth()];
+                    if (monthIndex < 0 || monthIndex > 11) monthIndex = dateObj.getMonth();
                 }
-                if (monthIndex < 0 && Number(rawMonth) >= 1 && Number(rawMonth) <= 12) monthIndex = Number(rawMonth) - 1;
-
-                let rawDate = pick(item, 'date', 'Tanggal', 'tanggal', 'dayOfMonth', 'tanggalRekap', 'tgl');
-                let rawYear = pick(item, 'year', 'Tahun', 'tahun', 'tahunRekap');
-                const rawDateTime = pick(item, 'createdAt', 'CreatedAt', 'timestamp', 'Timestamp', 'tanggalWaktu', 'TanggalWaktu');
-                const parseableDate = (typeof rawDate === 'string' && /\d{4}-\d{1,2}-\d{1,2}/.test(rawDate))
-                    ? rawDate
-                    : (rawDateTime && typeof rawDateTime === 'object' && typeof rawDateTime.toDate === 'function'
-                        ? rawDateTime.toDate()
-                        : (rawDateTime !== undefined ? rawDateTime : null));
-                if (parseableDate !== null) {
-                    const parsed = parseableDate instanceof Date ? parseableDate : new Date(parseableDate);
-                    if (!Number.isNaN(parsed.getTime())) {
-                        if (rawDate === undefined || rawDate === null || rawDate === '') rawDate = parsed.getDate();
-                        else if (typeof rawDate === 'string' && /\d{4}-\d{1,2}-\d{1,2}/.test(rawDate)) rawDate = parsed.getDate();
-                        if (rawYear === undefined || rawYear === null || rawYear === '') rawYear = parsed.getFullYear();
-                        if (monthIndex < 0) monthIndex = parsed.getMonth();
-                    }
+                if (typeof rawDate === 'number' && (!day || day < 1 || day > 31)) day = rawDate;
+                if (typeof month === 'string') {
+                    const found = months.findIndex(m => m.toLowerCase() === month.trim().toLowerCase());
+                    if (found >= 0) monthIndex = found;
+                    else if (/^\d{1,2}$/.test(month) && Number(month) >= 1 && Number(month) <= 12) monthIndex = Number(month) - 1;
                 }
-                const date = Number(rawDate);
-                const year = Number(rawYear);
-                if (!Number.isInteger(date) || date < 1 || date > 31 ||
-                    !Number.isInteger(year) || year < 1 ||
-                    !Number.isInteger(monthIndex) || monthIndex < 0 || monthIndex > 11) return null;
-
-                const income = numberOf(pick(item, 'income', 'Income', 'Pendapatan', 'pendapatan', 'pemasukan', 'Pemasukan', 'totalPendapatan', 'jumlahPendapatan', 'omzet', 'Omzet'));
-                const expense = numberOf(pick(item, 'expense', 'Expense', 'Total Belanja', 'Belanja', 'totalBelanja', 'belanja', 'modal', 'Hpp'));
-                const cashout = numberOf(pick(item, 'cashout', 'Cashout', 'Pengeluaran', 'pengeluaran', 'nominalPengeluaran', 'pengeluaranLain', 'totalCashout'));
-                const pctValue = pick(item, 'profitPercentage', 'Profit Persen', 'Profit 10%', 'profitPersen', 'persenProfit', 'Set Profit Persen (%)', 'setProfitPersen');
-                const profitPercentage = pctValue === undefined ? 10 : numberOf(pctValue);
-                const rawId = Number(pick(item, 'id', 'ID'));
-                const time = String(pick(item, 'time', 'Waktu', 'waktu', 'jam') || '00:00').trim();
-                const day = String(pick(item, 'day', 'Rekap_hari', 'Hari', 'hari') ||
-                    ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][new Date(year, monthIndex, date).getDay()]);
-                return {
-                    ...item,
-                    id: Number.isFinite(rawId) ? rawId : index + 1,
-                    day, date, monthIndex, month: months[monthIndex], year, time,
-                    income, expense, cashout, profitPercentage,
-                    profit: numberOf(pick(item, 'profit', 'Profit', 'Keuntungan', 'keuntungan', 'totalProfit', 'laba')) ||
-                        Math.max((income - cashout) * (profitPercentage / 100), 0),
-                    __historySource: 'firestore'
-                };
-            }).filter(Boolean).sort((a,b) => sortHistoryChronological(a,b));
-        }
+                if ((!month || month === '') && monthIndex >= 0 && monthIndex < 12) month = months[monthIndex];
+                const dateLabel = [day >= 1 && day <= 31 ? day : '', month || '', year > 0 ? year : ''].filter(Boolean).join(' ');
+                const dayName = pick(item, ['dayName','Hari','hari','Rekap_hari'], dateObj && !Number.isNaN(dateObj.getTime()) ? ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][dateObj.getDay()] : '');
+                return {day, month: String(month || ''), year, monthIndex, dateLabel, dayName: String(dayName || ''), dateObj};
+            };
+            const search = (document.getElementById('history-filter-search')?.value || '').trim().toLowerCase();
+            const fDate = document.getElementById('history-filter-date')?.value || '';
+            const fMonth = document.getElementById('history-filter-month')?.value || '';
+            const fYear = document.getElementById('history-filter-year')?.value || '';
+            const records = validRows.map((item, index) => {
+                const d = getDate(item);
+                const income = money(pick(item, ['income','Income','Pendapatan','pendapatan','pemasukan','Pemasukan','totalPendapatan','jumlahPendapatan','omzet','Omzet'], 0));
+                const expense = money(pick(item, ['expense','Expense','Total Belanja','Belanja','totalBelanja','belanja','modal','Hpp'], 0));
+                const cashout = money(pick(item, ['cashout','Cashout','Pengeluaran','pengeluaran','nominalPengeluaran','pengeluaranLain','totalCashout'], 0));
+                const pctRaw = pick(item, ['profitPercentage','Profit Persen','Profit 10%','profitPersen','persenProfit','Set Profit Persen (%)','setProfitPersen'], 10);
+                const pct = money(pctRaw);
+                const profit = money(pick(item, ['profit','Profit','Keuntungan','keuntungan','totalProfit','laba'], Math.max((income - cashout) * pct / 100, 0)));
+                const id = pick(item, ['id','ID','uid','key'], index + 1);
+                const time = pick(item, ['time','Waktu','waktu','jam','Jam'], '');
+                const haystack = `${d.dayName} ${d.dateLabel} ${d.month} ${d.year} ${id} ${time}`.toLowerCase();
+                return {item, index, d, income, expense, cashout, pct, profit, id, time, haystack};
+            }).filter(r => (!search || r.haystack.includes(search)) && (!fDate || String(r.d.day) === String(fDate)) && (!fMonth || r.d.month === fMonth) && (!fYear || String(r.d.year) === String(fYear)));
+            records.sort((a,b) => {
+                const ak = a.d.dateObj instanceof Date ? a.d.dateObj.getTime() : new Date(Number(a.d.year)||2000, Number(a.d.monthIndex)>=0 ? Number(a.d.monthIndex) : 0, Number(a.d.day)||1).getTime();
+                const bk = b.d.dateObj instanceof Date ? b.d.dateObj.getTime() : new Date(Number(b.d.year)||2000, Number(b.d.monthIndex)>=0 ? Number(b.d.monthIndex) : 0, Number(b.d.day)||1).getTime();
+                return bk - ak || b.index - a.index;
+            });
+            if (!records.length) {
+                container.innerHTML = '<div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-200 text-slate-400"><p class="text-sm font-semibold">Tidak ada data yang cocok dengan filter.</p></div>';
+                return;
+            }
+            const rupiah = value => { try { return typeof formatRupiah === 'function' ? formatRupiah(value) : 'Rp ' + Number(value || 0).toLocaleString('id-ID'); } catch (_) { return 'Rp ' + Number(value || 0).toLocaleString('id-ID'); } };
+            container.innerHTML = records.map(r => {
+                const title = [r.d.dayName, r.d.dateLabel].filter(Boolean).join(', ') || 'Riwayat Rekap';
+                return `<article class="w-full max-w-[1100px] bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4"><div class="flex items-start justify-between gap-3 border-b border-slate-100 pb-3"><div><span class="text-[10px] text-slate-400 font-semibold block mb-1">ID: #${safe(r.id)}${r.time ? ' • Pukul '+safe(r.time) : ''}</span><h3 class="font-bold text-slate-800 text-sm sm:text-base"><i class="fa-regular fa-calendar-days text-emerald-600 mr-1"></i>${safe(title)}</h3></div><span class="text-[10px] font-semibold text-blue-600 whitespace-nowrap">Firestore</span></div><div class="grid grid-cols-2 sm:grid-cols-4 gap-3"><div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><div class="text-[11px] text-slate-500 font-semibold mb-1">Pendapatan</div><div class="text-sm font-extrabold text-emerald-600">${safe(rupiah(r.income))}</div></div><div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><div class="text-[11px] text-slate-500 font-semibold mb-1">Total Belanja</div><div class="text-sm font-extrabold text-slate-800">${safe(rupiah(r.expense))}</div></div><div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><div class="text-[11px] text-slate-500 font-semibold mb-1">Pengeluaran</div><div class="text-sm font-extrabold text-rose-600">${safe(rupiah(r.cashout))}</div></div><div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><div class="text-[11px] text-slate-500 font-semibold mb-1">Profit/Keuntungan (${safe(r.pct)}%)</div><div class="text-sm font-extrabold text-amber-600">${safe(rupiah(r.profit))}</div></div></div></article>`;
+            }).join('');
+        };
 
         function getHistoryForDisplay() {
-            /* MOBILE: data hanya dari listener Firestore Rekap.InputData.
-               Normalisasi dilakukan sebelum render agar format field yang berbeda
-               tidak membuat filter History gagal atau melempar error. */
-            const mobileHistoryView = window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
-            if (mobileHistoryView) {
-                const cloudDoc = window.__rekapinyuFirestoreRekap || {};
-                return normalizeMobileFirestoreHistory(cloudDoc.InputData);
-            }
-
             /* DESKTOP DIPERTAHANKAN: JSON lokal valid tetap menjadi sumber utama;
                Firestore menjadi fallback bila data lokal tidak tersedia. */
             if (window.__rekapinyuHasLocalHistoryFiles === true) {
                 return (Array.isArray(historyData) ? historyData : [])
                     .map(item => ({...item, __historySource:'local'}));
             }
-
             const cloudDoc = window.__rekapinyuFirestoreRekap || window.__rekapinyuLocalRekapData || {};
             const cloudRows = Array.isArray(cloudDoc.InputData) ? cloudDoc.InputData : [];
             return cloudRows
@@ -6564,19 +6565,21 @@ function updateUserAvatarUI() {
             yearSelect.value = currentSelectedYear;
         }
 
-        /* Satu jembatan listener untuk kedua ukuran layar.
-           Mobile membaca snapshot secara langsung; desktop mempertahankan fallback lama. */
+        /* Listener Firestore memperbarui History mobile melalui renderer khusus; desktop tetap menggunakan renderHistory lama. */
         window.__rekapinyuRefreshHistoryFromFirestore = function() {
             const mobileHistoryView = window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
-            if (!mobileHistoryView) {
-                if (window.__rekapinyuHasLocalHistoryFiles === true) return;
-                const cloudDoc = window.__rekapinyuFirestoreRekap || {};
-                const cloudRows = Array.isArray(cloudDoc.InputData) ? cloudDoc.InputData : [];
-                historyData = cloudRows
-                    .filter(item => item && typeof item === 'object' && !Array.isArray(item))
-                    .map(item => ({...item, __historySource:'firestore'}))
-                    .sort((a,b) => sortHistoryChronological(a,b));
+            if (mobileHistoryView) {
+                if (document.documentElement.getAttribute('data-mobile-view') === 'history') {
+                    try { window.__rekapinyuRenderMobileFirestoreHistory?.(); } catch (err) { console.warn('Rekapinyu: render mobile History gagal.', err); }
+                }
+                return;
             }
+            if (window.__rekapinyuHasLocalHistoryFiles === true) return;
+            const cloudDoc = window.__rekapinyuFirestoreRekap || {};
+            const cloudRows = Array.isArray(cloudDoc.InputData) ? cloudDoc.InputData : [];
+            historyData = cloudRows.filter(item => item && typeof item === 'object' && !Array.isArray(item))
+                .map(item => ({...item, __historySource:'firestore'}))
+                .sort((a,b) => sortHistoryChronological(a,b));
             try { populateHistoryFilters(); } catch (_) {}
             try { renderHistory(); } catch (err) { console.warn('Rekapinyu: render History Firestore gagal.', err); }
         };
@@ -8597,9 +8600,10 @@ function realtime(uid){
      REALTIME LISTENER — REKAP
      Schema: NamaToko, NomorHp, InputData, Pengeluaran, Kasbon
      ============================================================= */
+  window.__rekapinyuFirestoreRekapLoaded=false;
   collectionUnsubs.push(onSnapshot(rr,s=>{
     const d=s.exists()?(s.data()||{}):{};
-    window.__rekapinyuFirestoreRekapLoaded=true;
+    const toRows=value=>Array.isArray(value)?value:(value&&typeof value==='object'?Object.values(value):[]);
     applyingFirestoreRealtime=true;
     try{
       if(currentSessionUser&&hasField(d,"NamaToko")&&String(d.NamaToko).trim())currentSessionUser.shopName=String(d.NamaToko).trim();
@@ -8607,10 +8611,11 @@ function realtime(uid){
       window.__rekapinyuFirestoreRekap={
         NamaToko:String(d.NamaToko||""),
         NomorHp:phoneOf(d.NomorHp||""),
-        InputData:Array.isArray(d.InputData)?d.InputData:(d.InputData&&typeof d.InputData==="object"?Object.values(d.InputData).filter(item=>item&&typeof item==="object"&&!Array.isArray(item)):[]),
-        Pengeluaran:Array.isArray(d.Pengeluaran)?d.Pengeluaran:[],
-        Kasbon:Array.isArray(d.Kasbon)?d.Kasbon:[]
+        InputData:toRows(d.InputData),
+        Pengeluaran:toRows(d.Pengeluaran),
+        Kasbon:toRows(d.Kasbon)
       };
+      window.__rekapinyuFirestoreRekapLoaded=true;
     }finally{applyingFirestoreRealtime=false}
     /* Mobile History selalu diperbarui dari snapshot Rekap.InputData.
        Dokumen yang belum ada diperlakukan sebagai data kosong, bukan menghentikan jalur listener. */
