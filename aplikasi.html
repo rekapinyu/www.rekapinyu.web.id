@@ -8728,6 +8728,8 @@ window.handleLogout=async()=>{
   window.__rekapinyuLogoutBusy=true;
   /* Tutup gerbang paket sebelum sesi/logout berubah agar layar paket habis tidak sempat berkedip. */
   window.__rekapinyuLoggingOut=true;
+  try{sessionStorage.removeItem('rekapinyu_kasir_bluetooth_device_id');sessionStorage.removeItem('rekapinyu_kasir_selected_shift')}catch(e){}
+  try{window.__rekapinyuKasirBluetoothDisconnect?.()}catch(e){}
   window.__rekapinyuHidePackageGate?.();
   document.body.classList.remove('rk-package-expired');
   try{
@@ -11274,12 +11276,14 @@ async function initKasirViews(){
   }
 
   function kasirBluetoothDisconnect(){
+    try{sessionStorage.removeItem('rekapinyu_kasir_bluetooth_device_id')}catch(e){}
     const device=kasirBluetooth.device;
     kasirBluetooth.characteristic=null;
     kasirBluetooth.device=null;
     try{if(device?.gatt?.connected)device.gatt.disconnect()}catch(e){}
     updateKasirBluetoothUi('disconnected','Koneksi Bluetooth terputus');
   }
+  window.__rekapinyuKasirBluetoothDisconnect=kasirBluetoothDisconnect;
 
   async function findKasirBluetoothCharacteristic(server){
     const services=[];
@@ -11316,6 +11320,7 @@ async function initKasirViews(){
         optionalServices:kasirBluetoothServices
       });
       kasirBluetooth.device=device;
+      try{sessionStorage.setItem('rekapinyu_kasir_bluetooth_device_id',String(device.id||''))}catch(e){}
       device.addEventListener('gattserverdisconnected',()=>{
         kasirBluetooth.characteristic=null;
         updateKasirBluetoothUi('disconnected','Koneksi Bluetooth terputus');
@@ -11344,6 +11349,33 @@ async function initKasirViews(){
       if(kasirBluetooth.device?.gatt?.connected)updateKasirBluetoothUi(kasirBluetooth.characteristic?'connected':'connected','Printer Bluetooth tersambung');
     }
   }
+
+  async function restoreKasirBluetoothPrinter(){
+    if(kasirBluetooth.connecting||kasirBluetooth.device?.gatt?.connected)return;
+    let savedId='';
+    try{savedId=sessionStorage.getItem('rekapinyu_kasir_bluetooth_device_id')||''}catch(e){}
+    if(!savedId||!navigator.bluetooth||typeof navigator.bluetooth.getDevices!=='function')return;
+    try{
+      const devices=await navigator.bluetooth.getDevices();
+      const device=devices.find(item=>String(item.id||'')===savedId);
+      if(!device?.gatt)return;
+      kasirBluetooth.connecting=true;
+      updateKasirBluetoothUi('connecting','Menyambungkan kembali printer Bluetooth...');
+      kasirBluetooth.device=device;
+      device.addEventListener('gattserverdisconnected',()=>{
+        kasirBluetooth.characteristic=null;
+        updateKasirBluetoothUi('disconnected','Koneksi Bluetooth terputus');
+      },{once:false});
+      const server=device.gatt.connected?device.gatt:await device.gatt.connect();
+      kasirBluetooth.characteristic=await findKasirBluetoothCharacteristic(server);
+      updateKasirBluetoothUi('connected','Printer Bluetooth tersambung');
+    }catch(error){
+      kasirBluetooth.characteristic=null;
+      updateKasirBluetoothUi('disconnected','Printer belum dapat disambungkan kembali');
+      console.warn('Rekapinyu: pemulihan koneksi printer Bluetooth otomatis gagal.',error);
+    }finally{kasirBluetooth.connecting=false}
+  }
+  window.__rekapinyuRestoreKasirBluetoothPrinter=restoreKasirBluetoothPrinter;
 
   function getSettingState(){return window.__rekapinyuSettingData&&typeof window.__rekapinyuSettingData==='object'?window.__rekapinyuSettingData:{SettingStruk:{},SettingPrinter:{paperWidth:'32',copyCount:1},SettingKasir:{confirmCancel:true,focusSearch:true},invoiceCounter:0};}
   function getKasirReceiptInvoiceId(){const current=Number(getSettingState().invoiceCounter)||0;return `INV${String(current+1).padStart(2,'0')}`;}
@@ -11516,6 +11548,7 @@ async function initKasirViews(){
   }
 
   updateKasirBluetoothUi('disconnected','Koneksi Bluetooth terputus');
+  window.addEventListener('load',()=>{setTimeout(()=>{restoreKasirBluetoothPrinter()},250)},{once:true});
 
   document.addEventListener('click',e=>{
     if(e.target.closest('#kasir-refresh-btn')){e.preventDefault();connectKasirBluetoothPrinter();return}
@@ -13957,8 +13990,15 @@ async function initKasirViews(){
       button.title=employee?employee+' ('+shift+')':shift;
       button.dataset.employeeName=employee;
     });
-    const selected=picker.dataset.selectedShift;
-    if(selected){
+    let selected=picker.dataset.selectedShift;
+    if(!selected){try{selected=sessionStorage.getItem('rekapinyu_kasir_selected_shift')||''}catch(e){}}
+    if(selected==='SHIFT 1'||selected==='SHIFT 2'){
+      picker.dataset.selectedShift=selected;
+      picker.querySelectorAll('[data-kasir-shift]').forEach(function(button){
+        const active=button.getAttribute('data-kasir-shift')===selected;
+        button.classList.toggle('is-selected',active);
+        button.setAttribute('aria-pressed',String(active));
+      });
       const key=selected==='SHIFT 1'?'shift1':'shift2';
       const employee=String(settings[key].employee||'').trim();
       label.textContent=employee||selected;
@@ -13986,6 +14026,7 @@ async function initKasirViews(){
       label.textContent=employee||shift;
       label.title=employee?employee+' ('+shift+')':shift;
       picker.dataset.selectedShift=shift;
+      try{sessionStorage.setItem('rekapinyu_kasir_selected_shift',shift)}catch(e){}
       picker.querySelectorAll('[data-kasir-shift]').forEach(function(button){
         const selected=button===option;
         button.classList.toggle('is-selected',selected);
