@@ -7233,6 +7233,13 @@ function updateUserAvatarUI() {
   /* Hanya mengatur tampilan mobile. #view-input tetap ada untuk desktop. */
   html[data-mobile-view="home"] #view-input{display:none!important;}
   html[data-mobile-view="home"] #mobile-home-view{display:block!important;}
+  /* FIX: jangan biarkan isi Beranda tetap tampil di belakang view dock lain. */
+  html[data-mobile-view]:not([data-mobile-view="home"]) #mobile-home-view{display:none!important;}
+  html[data-mobile-view="history"] #view-history,
+  html[data-mobile-view="report"] #view-report,
+  html[data-mobile-view="activity"] #activity-main-container,
+  html[data-mobile-view="komunitas"] #view-komunitas,
+  html[data-mobile-view="cek-paket"] #view-cek-paket{display:block!important;}
   #rekapinyu-welcome-popup,
   #rekapinyu-welcome-popup.is-open{display:none!important;}
 }
