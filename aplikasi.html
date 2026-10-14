@@ -6988,9 +6988,7 @@ function updateUserAvatarUI() {
           </article>`;
       };
 
-      /* MOBILE DOCK LP.BULANAN — IMPLEMENTASI BARU KHUSUS FIRESTORE.
-         Sumber tunggal: Rekap pengguna aktif -> InputData.
-         Tidak memakai renderer desktop, JSON, atau localStorage. */
+      /* MOBILE DOCK LP.BULANAN — gunakan perhitungan laporan baku yang sama dengan Firestore Rekap.InputData. */
       window.__rekapinyuRenderMobileLaporanBulanan=function(){
         if(!window.matchMedia('(max-width:767px)').matches)return;
         const view=document.getElementById('view-report');
@@ -7009,94 +7007,34 @@ function updateUserAvatarUI() {
           panel.innerHTML='<div class="mobile-laporan-bulanan-empty"><i class="fa-solid fa-spinner fa-spin"></i><strong>Memuat Laporan Bulanan...</strong><span>Menunggu data Firestore.</span></div>';
           return;
         }
-
         const doc=window.__rekapinyuFirestoreRekap||{};
         const raw=doc.InputData;
         const source=Array.isArray(raw)?raw:(raw&&typeof raw==='object'?Object.values(raw):[]);
         const valid=source.filter(item=>item&&typeof item==='object'&&!Array.isArray(item));
         if(!valid.length){
-          panel.innerHTML='<div class="mobile-laporan-bulanan-empty"><i class="fa-solid fa-chart-pie"></i><strong>Belum ada data rekap di Firestore.</strong><span>Laporan Bulanan membaca data dari Rekap → InputData.</span></div>';
+          panel.innerHTML='<div class="mobile-laporan-bulanan-empty"><i class="fa-solid fa-chart-pie"></i><strong>Belum ada data rekap di Firestore.</strong><span>Sumber data: Rekap → InputData.</span></div>';
           return;
         }
-
-        const months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        const pick=(o,keys,fallback='')=>{
-          for(const key of keys){
-            const value=o?.[key];
-            if(value!==undefined&&value!==null&&value!=='')return value;
-          }
-          return fallback;
-        };
-        const number=value=>{
-          if(typeof value==='number')return Number.isFinite(value)?value:0;
-          let s=String(value??'').replace(/[^0-9,.-]/g,'').trim();
-          if(!s)return 0;
-          if(s.includes(',')&&s.includes('.'))s=s.lastIndexOf(',')>s.lastIndexOf('.')?s.replace(/\./g,'').replace(',','.'):s.replace(/,/g,'');
-          else if(s.includes(','))s=/,\d{1,2}$/.test(s)?s.replace(',','.'):s.replace(/,/g,'');
-          else if(/\.\d{3}$/.test(s))s=s.replace(/\./g,'');
-          return Number(s)||0;
-        };
-        const dateOf=item=>{
-          const rawDate=pick(item,['date','Date','tanggal','Tanggal','tanggalRekap','TanggalRekap','tgl','createdAt','CreatedAt','timestamp','Timestamp','tanggalWaktu','TanggalWaktu','waktuRekap'],'');
-          let date=null;
-          if(rawDate&&typeof rawDate.toDate==='function'){try{date=rawDate.toDate()}catch(_){}}
-          else if(rawDate instanceof Date)date=rawDate;
-          else if(typeof rawDate==='number'&&rawDate>1000000000){const d=new Date(rawDate);if(!Number.isNaN(d.getTime()))date=d}
-          else if(typeof rawDate==='string'&&rawDate.trim()){const d=new Date(rawDate);if(!Number.isNaN(d.getTime())&&(/^\d{4}[-/]/.test(rawDate.trim())||/[T ]\d{1,2}:\d{2}/.test(rawDate.trim())))date=d}
-
-          let year=Number(pick(item,['year','Year','tahun','Tahun','tahunRekap','TahunRekap'],0))||0;
-          let monthIndex=-1;
-          const monthRaw=pick(item,['monthIndex','MonthIndex','bulanIndex','BulanIndex','bulanKe','BulanKe','month','Month','bulan','Bulan','namaBulan','NamaBulan'],'');
-          if(typeof monthRaw==='number'&&Number.isFinite(monthRaw))monthIndex=monthRaw>=1&&monthRaw<=12?monthRaw-1:monthRaw;
-          else if(String(monthRaw).trim()){
-            const s=String(monthRaw).trim().toLowerCase();
-            const found=months.findIndex(m=>m.toLowerCase()===s);
-            if(found>=0)monthIndex=found;
-            else if(/^\d{1,2}$/.test(s)&&Number(s)>=1&&Number(s)<=12)monthIndex=Number(s)-1;
-          }
-          if(date&&!Number.isNaN(date.getTime())){
-            if(!year)year=date.getFullYear();
-            if(monthIndex<0||monthIndex>11)monthIndex=date.getMonth();
-          }
-          if((!year||monthIndex<0||monthIndex>11)){
-            const textDate=String(rawDate||'');
-            const match=textDate.match(/^(\d{4})[-/](\d{1,2})/);
-            if(match){if(!year)year=Number(match[1]);if(monthIndex<0||monthIndex>11)monthIndex=Number(match[2])-1}
-          }
-          return {year,monthIndex};
-        };
-        const groups=new Map();
-        valid.forEach(item=>{
-          const d=dateOf(item);
-          if(!d.year||d.year<1900||d.monthIndex<0||d.monthIndex>11)return;
-          const month=months[d.monthIndex];
-          const key=`${d.year}-${String(d.monthIndex+1).padStart(2,'0')}`;
-          if(!groups.has(key))groups.set(key,{month,year:d.year,monthIndex:d.monthIndex,pendapatan:0,belanja:0,pengeluaran:0,profit:0,count:0});
-          const g=groups.get(key);
-          const income=number(pick(item,['income','Income','pendapatan','Pendapatan','pemasukan','Pemasukan','totalPendapatan','TotalPendapatan','jumlahPendapatan','JumlahPendapatan','omzet','Omzet'],0));
-          const belanja=number(pick(item,['expense','Expense','belanja','Belanja','totalBelanja','TotalBelanja','hargaHpp','HargaHpp','modal','Modal','hpp','Hpp'],0));
-          const pengeluaran=number(pick(item,['cashout','Cashout','pengeluaran','Pengeluaran','nominalPengeluaran','NominalPengeluaran','totalCashout','TotalCashout'],0));
-          const pct=number(pick(item,['profitPercentage','ProfitPercentage','profitPersen','ProfitPersen','persenProfit','PersenProfit','setProfitPersen'],10));
-          const profit=number(pick(item,['profit','Profit','keuntungan','Keuntungan','totalProfit','TotalProfit','laba','Laba'],Math.max((income-pengeluaran)*pct/100,0)));
-          g.pendapatan+=income;
-          g.belanja+=belanja;
-          g.pengeluaran+=pengeluaran;
-          g.profit+=profit;
-          g.count++;
-        });
-        const rows=Array.from(groups.values()).sort((a,b)=>b.year-a.year||b.monthIndex-a.monthIndex);
+        /* Gunakan agregator laporan resmi yang juga dipakai bagian laporan lainnya.
+           Jangan menghitung profit/pengeluaran dengan rumus alternatif di mobile. */
+        const build=window.__rekapinyuBuildLaporanBulanan;
+        if(typeof build!=='function'){
+          panel.innerHTML='<div class="mobile-laporan-bulanan-empty"><i class="fa-solid fa-circle-exclamation"></i><strong>Perhitungan laporan belum siap.</strong><span>Muat ulang aplikasi dan coba kembali.</span></div>';
+          return;
+        }
+        const rows=build(valid).filter(g=>Number(g.year)>0&&Number(g.monthIndex)>=0&&Number(g.monthIndex)<=11);
         const rupiah=n=>'Rp '+(Number(n)||0).toLocaleString('id-ID');
         if(!rows.length){
-          panel.innerHTML='<div class="mobile-laporan-bulanan-empty"><i class="fa-solid fa-calendar-xmark"></i><strong>Data Firestore belum memiliki bulan dan tahun yang valid.</strong><span>Pastikan setiap data InputData memiliki tanggal, bulan, dan tahun.</span></div>';
+          panel.innerHTML='<div class="mobile-laporan-bulanan-empty"><i class="fa-solid fa-calendar-xmark"></i><strong>Data Firestore belum memiliki bulan dan tahun yang valid.</strong><span>Periksa field month, monthIndex, dan year di Rekap → InputData.</span></div>';
           return;
         }
         panel.innerHTML=rows.map(g=>`<article class="mobile-laporan-bulanan-card">
-          <div class="mobile-laporan-bulanan-head"><div><div class="mobile-laporan-bulanan-title"><i class="fa-regular fa-calendar-days"></i> ${g.month} ${g.year}</div><small>${g.count} data rekap dari Firestore</small></div></div>
+          <div class="mobile-laporan-bulanan-head"><div><div class="mobile-laporan-bulanan-title"><i class="fa-regular fa-calendar-days"></i> ${g.month} ${g.year}</div><small>${Number(g.jumlahData)||0} data dari Firestore</small></div></div>
           <div class="mobile-laporan-bulanan-grid">
-            <div><div><i class="fa-solid fa-arrow-trend-up"></i> Pendapatan</div><strong>${rupiah(g.pendapatan)}</strong></div>
-            <div><div><i class="fa-solid fa-bag-shopping"></i> Total Belanja</div><strong>${rupiah(g.belanja)}</strong></div>
-            <div><div><i class="fa-solid fa-arrow-trend-down"></i> Pengeluaran</div><strong>${rupiah(g.pengeluaran)}</strong></div>
-            <div><div><i class="fa-solid fa-wallet"></i> Profit/Keuntungan</div><strong>${rupiah(g.profit)}</strong></div>
+            <div><div><i class="fa-solid fa-arrow-trend-up"></i> Total Pendapatan</div><strong>${rupiah(g.pendapatan)}</strong></div>
+            <div><div><i class="fa-solid fa-bag-shopping"></i> Total Belanja</div><strong>${rupiah(g.totalBelanja)}</strong></div>
+            <div><div><i class="fa-solid fa-arrow-trend-down"></i> Total Pengeluaran</div><strong>${rupiah(g.pengeluaran)}</strong></div>
+            <div><div><i class="fa-solid fa-wallet"></i> Total Keuntungan Bersih</div><strong>${rupiah(g.profit)}</strong></div>
           </div>
         </article>`).join('');
       };
