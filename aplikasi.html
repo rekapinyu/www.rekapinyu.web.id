@@ -3810,9 +3810,12 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     const profileList=document.getElementById('komunitas-profile-tab-content');if(profileList)profileList.scrollTop=0;
     renderProfile();
     if(communityProfileTarget.realUid){
-      loadCommunityFriends(communityProfileTarget.realUid).then(renderProfile);
-      loadCommunityPublicBio(communityProfileTarget.realUid);
-    }else{communityFriends=[];renderProfile();}
+      const openedProfile=communityProfileTarget;
+      loadCommunityFriends(openedProfile.realUid).then(()=>{
+        if(communityProfileTarget===openedProfile)renderProfile();
+      });
+      loadCommunityPublicBio(openedProfile.realUid);
+    }else{communityFriends=[];communityFollowing=[];communityFollowers=[];renderProfile();}
   }
   async function loadCommunityPublicBio(uid){
     const target=communityProfileTarget;
@@ -3897,7 +3900,10 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     const ownUid=currentCommunityUid();
     const uid=String(forUid||ownUid).trim();
     if(!uid||!ready())return;
-    // Baca relasi untuk profil yang sedang dibuka, termasuk profil publik pengguna lain.
+    // Simpan konteks pemilik daftar agar hasil async tidak tertukar saat profil lain dibuka.
+    const requestedProfile=communityProfileTarget;
+    const requestedProfileUid=String(requestedProfile?.realUid||requestedProfile?.uid||'');
+    const isPublicProfile=!!requestedProfile&&requestedProfileUid===uid;
     try{
       const a=api(),database=db(),col=a.collection(database,'Komunitas');
       const mySnap=await a.getDoc(a.doc(database,'Komunitas',`Teman_${uid}`));
@@ -3913,9 +3919,10 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
         a.getDocs(a.query(col,a.where('PengirimUID','==',uid))),
         a.getDocs(a.query(col,a.where('PenerimaUID','==',uid)))
       ]);
+      const isAcceptedRequest=data=>String(data?.Jenis||'').trim().toLowerCase()==='permintaanteman'&&String(data?.Status||'').trim().toLowerCase()==='diterima';
       sentSnap.forEach(docSnap=>{
         const data=docSnap.data()||{};
-        if(data.Jenis!=='PermintaanTeman'||data.Status!=='diterima')return;
+        if(!isAcceptedRequest(data))return;
         const friendUid=String(data.PenerimaUID||'').trim();
         if(friendUid&&friendUid!==uid){
           const friend=normalizeCommunityFriend(friendUid,data,'sender');
@@ -3925,7 +3932,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       });
       receivedSnap.forEach(docSnap=>{
         const data=docSnap.data()||{};
-        if(data.Jenis!=='PermintaanTeman'||data.Status!=='diterima')return;
+        if(!isAcceptedRequest(data))return;
         const friendUid=String(data.PengirimUID||'').trim();
         if(friendUid&&friendUid!==uid){
           const friend=normalizeCommunityFriend(friendUid,data,'recipient');
@@ -3933,6 +3940,10 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
           followersMap.set(friendUid,friend);
         }
       });
+      // Jangan biarkan hasil pemuatan profil sebelumnya menimpa daftar profil yang baru dibuka.
+      if(isPublicProfile&&communityProfileTarget!==requestedProfile)return;
+      if(isPublicProfile&&String(communityProfileTarget?.realUid||communityProfileTarget?.uid||'')!==uid)return;
+      if(!isPublicProfile&&communityProfileTarget)return;
       communityFriends=Array.from(map.values());
       communityFollowing=Array.from(followingMap.values());
       communityFollowers=Array.from(followersMap.values());
