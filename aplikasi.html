@@ -13611,5 +13611,18 @@ async function initKasirViews(){
 }
 </style>
 
+<style id="rekapinyu-mobile-community-heading-sticky-fix">
+@media (max-width:767px){
+  /* Hilangkan judul Feed yang dilingkari; hanya pada tampilan mobile. */
+  #view-komunitas .komunitas-feed-heading{
+    display:none!important;
+  }
+  /* Tempelkan rail komunitas tepat di bawah header aplikasi saat scroll. */
+  #view-komunitas .komunitas-rail{
+    top:128px!important;
+  }
+}
+</style>
+
 </body>
 </html>
