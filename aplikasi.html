@@ -1976,7 +1976,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </button>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-report" onclick="switchTab('report')" title="Laporan Bulanan">
 <span aria-hidden="true" class="sidebar-icon-overlay" id="icon-report"><i aria-hidden="true" class="fa-solid fa-chart-line"></i><i aria-hidden="true" class="fa-solid fa-chart-line"></i></span>
-<span class="sidebar-text truncate">Laporan Bulanan</span>
+<span class="sidebar-text truncate">Laporan <br>Bulanan</span>
 </button>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-kasbon" onclick="switchTab('kasbon')" title="Kasbon" type="button">
 <span aria-hidden="true" class="sidebar-icon-overlay" id="icon-kasbon"><i aria-hidden="true" class="fa-solid fa-hand-holding-dollar"></i><i aria-hidden="true" class="fa-solid fa-hand-holding-dollar"></i></span>
@@ -1988,7 +1988,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </button>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-backup" onclick="switchTab('backup')" title="Backup Otomatis">
 <span aria-hidden="true" class="sidebar-icon-overlay" id="icon-backup"><i aria-hidden="true" class="fa-solid fa-cloud-arrow-up"></i><i aria-hidden="true" class="fa-solid fa-cloud-arrow-up"></i></span>
-<span class="sidebar-text truncate">Backup Otomatis</span>
+<span class="sidebar-text truncate">Backup <br>Otomatis</span>
 </button>
 <div aria-hidden="true" class="sidebar-menu-placeholder">SETING</div>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-settings" onclick="switchTab('settings')" title="Seting">
@@ -2509,8 +2509,8 @@ bind();
 <section class="hidden receipt-settings-view" id="view-settings">
 <div class="app-settings-layout">
 <aside class="app-settings-menu" aria-label="Menu pengaturan">
-<button class="app-settings-menu-item is-active" type="button" data-settings-panel="receipt"><i class="fa-solid fa-receipt"></i><span>Seting Struk</span></button>
-<button class="app-settings-menu-item" type="button" data-settings-panel="printer"><i class="fa-solid fa-print"></i><span>Seting Printer</span></button>
+<button class="app-settings-menu-item is-active" type="button" data-settings-panel="receipt"><i class="fa-solid fa-receipt"></i><span>Seting <br>Struk</span></button>
+<button class="app-settings-menu-item" type="button" data-settings-panel="printer"><i class="fa-solid fa-print"></i><span>Seting <br>Printer</span></button>
 <button class="app-settings-menu-item" type="button" data-settings-panel="shift"><i class="fa-solid fa-clock"></i><span>Shift</span></button>
 <button class="app-settings-menu-item" type="button" data-settings-panel="toko"><i class="fa-solid fa-store"></i><span>Informasi Toko</span></button>
 </aside>
@@ -12491,17 +12491,43 @@ async function initKasirViews(){
         omzet,
         transactions:rows.length,
         barang,
-        profit:Math.round(omzet*0.10)
+        profit:Math.round(omzet*0.10),
+        rows
       };
     });
+  }
+
+  function shiftTimeSeconds(value,fallback){
+    const match=String(value||fallback).match(/^(\d{1,2}):(\d{2})$/);
+    if(!match)return shiftTimeSeconds(fallback,fallback);
+    return Number(match[1])*3600+Number(match[2])*60;
+  }
+
+  function transactionBelongsToShift(tx,shiftKey,shiftSettings){
+    const date=transactionDate(tx);
+    if(!date)return false;
+    const seconds=date.getHours()*3600+date.getMinutes()*60+date.getSeconds();
+    const one=shiftSettings.shift1,two=shiftSettings.shift2;
+    const start1=shiftTimeSeconds(one.start,'06:00'),end1=shiftTimeSeconds(one.end,'14:00');
+    const start2=shiftTimeSeconds(two.start,'14:00'),end2=shiftTimeSeconds(two.end,'22:00');
+    const inRange=(value,start,end)=>start<=end?(value>=start&&value<=end):(value>=start||value<=end);
+    /* Jika jam akhir SHIFT 1 sama dengan jam mulai SHIFT 2, detik :00 tetap milik SHIFT 1;
+       SHIFT 2 mulai pada detik berikutnya, misalnya 14:00:01. */
+    if(shiftKey==='shift1')return inRange(seconds,start1,end1);
+    if(start1===start2&&seconds===start2)return false;
+    return inRange(seconds,start2,end2)&&!(inRange(seconds,start1,end1)&&start1!==end1);
+  }
+
+  function summarizeShift(rows){
+    const omzet=rows.reduce((sum,tx)=>sum+Math.max(0,num(tx?.total??tx?.grandTotal??tx?.amount??tx?.jumlah??tx?.subtotal)),0);
+    return {omzet,transactions:rows.length,barang:rows.reduce((sum,tx)=>sum+itemCount(tx),0),profit:Math.round(omzet*0.10)};
   }
 
   function renderReports(rows){
     const list=document.getElementById('lk16-report-list');
     if(!list)return;
     const reports=makeDailyReports(rows);
-    /* SUMBER PERHITUNGAN OMSET/PROFIT = transaksi JSON yang dibaca Menu Laporan Kasir.
-       Hasil ini menjadi nilai master aplikasi, lalu dikirim ke Firestore. */
+    /* Total keseluruhan tetap menghitung semua transaksi; pembagian SHIFT hanya untuk rincian laporan. */
     const totalOmzet=reports.reduce((sum,report)=>sum+Number(report.omzet||0),0);
     const totalProfit=Math.round(totalOmzet*0.10);
     window.__rekapinyuKasirTotalOmset=totalOmzet;
@@ -12521,19 +12547,24 @@ async function initKasirViews(){
       <div><small><i class="fa-solid fa-box"></i> Total Barang Terjual</small><strong class="barang">${report.barang} Produk Terjual</strong></div>
       <div><small><i class="fa-solid fa-wallet"></i> Profit/Keuntungan (10%)</small><strong class="profit">${rupiah(report.profit)}</strong></div>
     </div>`;
-    list.innerHTML=reports.map(report=>`
-      <article class="lk16-card">
+    list.innerHTML=reports.map(report=>{
+      const shift1Rows=report.rows.filter(tx=>transactionBelongsToShift(tx,'shift1',shiftSettings));
+      const shift2Rows=report.rows.filter(tx=>transactionBelongsToShift(tx,'shift2',shiftSettings));
+      const shift1Report=summarizeShift(shift1Rows);
+      const shift2Report=summarizeShift(shift2Rows);
+      return `<article class="lk16-card">
         <div class="lk16-meta">ID: #${esc(report.id)} <span>•</span> Pukul ${esc(report.time)}</div>
         <div class="lk16-date"><i class="fa-regular fa-calendar-days"></i><span>${esc(report.label)}</span></div>
         <section class="lk16-shift-section">
           <div class="lk16-shift-heading"><strong>SHIFT 1 - ${esc(String(shiftSettings.shift1.employee||'NAMA KARYAWAN').trim()||'NAMA KARYAWAN')}</strong><span>${esc(shiftSettings.shift1.start||'06:00')} / ${esc(shiftSettings.shift1.end||'14:00')}</span></div>
-          ${renderShiftStats(report)}
+          ${renderShiftStats(shift1Report)}
         </section>
         <section class="lk16-shift-section">
           <div class="lk16-shift-heading"><strong>SHIFT 2 - ${esc(String(shiftSettings.shift2.employee||'NAMA KARYAWAN').trim()||'NAMA KARYAWAN')}</strong><span>${esc(shiftSettings.shift2.start||'14:00')} / ${esc(shiftSettings.shift2.end||'22:00')}</span></div>
-          ${renderShiftStats(report)}
+          ${renderShiftStats(shift2Report)}
         </section>
-      </article>`).join('');
+      </article>`;
+    }).join('');
   }
 
   async function refreshFromJson(){
