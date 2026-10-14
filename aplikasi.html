@@ -1976,7 +1976,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </button>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-report" onclick="switchTab('report')" title="Laporan Bulanan">
 <span aria-hidden="true" class="sidebar-icon-overlay" id="icon-report"><i aria-hidden="true" class="fa-solid fa-chart-line"></i><i aria-hidden="true" class="fa-solid fa-chart-line"></i></span>
-<span class="sidebar-text truncate">Laporan <br>Bulanan</span>
+<span class="sidebar-text truncate">Laporan Bulanan</span>
 </button>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-kasbon" onclick="switchTab('kasbon')" title="Kasbon" type="button">
 <span aria-hidden="true" class="sidebar-icon-overlay" id="icon-kasbon"><i aria-hidden="true" class="fa-solid fa-hand-holding-dollar"></i><i aria-hidden="true" class="fa-solid fa-hand-holding-dollar"></i></span>
@@ -1988,7 +1988,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </button>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-backup" onclick="switchTab('backup')" title="Backup Otomatis">
 <span aria-hidden="true" class="sidebar-icon-overlay" id="icon-backup"><i aria-hidden="true" class="fa-solid fa-cloud-arrow-up"></i><i aria-hidden="true" class="fa-solid fa-cloud-arrow-up"></i></span>
-<span class="sidebar-text truncate">Backup <br>Otomatis</span>
+<span class="sidebar-text truncate">Backup Otomatis</span>
 </button>
 <div aria-hidden="true" class="sidebar-menu-placeholder">SETING</div>
 <button class="w-full flex items-center gap-3 text-sm font-medium group relative" id="nav-settings" onclick="switchTab('settings')" title="Seting">
@@ -2509,8 +2509,8 @@ bind();
 <section class="hidden receipt-settings-view" id="view-settings">
 <div class="app-settings-layout">
 <aside class="app-settings-menu" aria-label="Menu pengaturan">
-<button class="app-settings-menu-item is-active" type="button" data-settings-panel="receipt"><i class="fa-solid fa-receipt"></i><span>Seting <br>Struk</span></button>
-<button class="app-settings-menu-item" type="button" data-settings-panel="printer"><i class="fa-solid fa-print"></i><span>Seting <br>Printer</span></button>
+<button class="app-settings-menu-item is-active" type="button" data-settings-panel="receipt"><i class="fa-solid fa-receipt"></i><span>Seting Struk</span></button>
+<button class="app-settings-menu-item" type="button" data-settings-panel="printer"><i class="fa-solid fa-print"></i><span>Seting Printer</span></button>
 <button class="app-settings-menu-item" type="button" data-settings-panel="shift"><i class="fa-solid fa-clock"></i><span>Shift</span></button>
 <button class="app-settings-menu-item" type="button" data-settings-panel="toko"><i class="fa-solid fa-store"></i><span>Informasi Toko</span></button>
 </aside>
@@ -3614,7 +3614,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       <div class="komunitas-rail-item" id="komunitas-rail-profile"><i class="fa-solid fa-user" aria-hidden="true"></i><span>Profil</span></div>
       <div class="komunitas-rail-item" id="komunitas-rail-bio"><i class="fa-solid fa-id-card" aria-hidden="true"></i><span>Bio</span></div>
       <div class="komunitas-rail-item" id="komunitas-rail-friends"><i class="fa-solid fa-user-group" aria-hidden="true"></i><span>Teman</span></div>
-      <div class="komunitas-rail-item" id="komunitas-rail-group"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i><span>Update <br>App</span></div>
+      <div class="komunitas-rail-item" id="komunitas-rail-group"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i><span>Update App</span></div>
     </aside>
     <div class="komunitas-content">
       <div class="komunitas-feed-heading" style="padding:10px 0 8px;">
@@ -14123,6 +14123,35 @@ async function initKasirViews(){
   }
 })();
 </script>
+
+
+
+<!-- PATCH WARNA MENU TERPISAH: hanya enam tombol menu yang diminta. -->
+<style id="rekapinyu-distinct-requested-menu-colors">
+#sidebar nav > #nav-komunitas{background-color:#EDE9FE!important;color:#6D28D9!important;border:1px solid #DDD6FE!important;border-radius:10px!important;}
+#sidebar nav > #nav-komunitas .sidebar-icon-overlay,#sidebar nav > #nav-komunitas .sidebar-text{color:#6D28D9!important;}
+#sidebar nav > #nav-komunitas:hover{background-color:#DDD6FE!important;}
+
+#sidebar nav > #nav-cek-paket{background-color:#FEF3C7!important;color:#92400E!important;border:1px solid #FDE68A!important;border-radius:10px!important;}
+#sidebar nav > #nav-cek-paket .sidebar-icon-overlay,#sidebar nav > #nav-cek-paket .sidebar-text{color:#92400E!important;}
+#sidebar nav > #nav-cek-paket:hover{background-color:#FDE68A!important;}
+
+#sidebar nav > #nav-produk-kasir{background-color:#DBEAFE!important;color:#1D4ED8!important;border:1px solid #BFDBFE!important;border-radius:10px!important;}
+#sidebar nav > #nav-produk-kasir .sidebar-icon-overlay,#sidebar nav > #nav-produk-kasir .sidebar-text{color:#1D4ED8!important;}
+#sidebar nav > #nav-produk-kasir:hover{background-color:#BFDBFE!important;}
+
+#sidebar nav > #nav-activity{background-color:#FCE7F3!important;color:#9D174D!important;border:1px solid #FBCFE8!important;border-radius:10px!important;}
+#sidebar nav > #nav-activity .sidebar-icon-overlay,#sidebar nav > #nav-activity .sidebar-text{color:#9D174D!important;}
+#sidebar nav > #nav-activity:hover{background-color:#FBCFE8!important;}
+
+#sidebar nav > #nav-settings{background-color:#D1FAE5!important;color:#065F46!important;border:1px solid #A7F3D0!important;border-radius:10px!important;}
+#sidebar nav > #nav-settings .sidebar-icon-overlay,#sidebar nav > #nav-settings .sidebar-text{color:#065F46!important;}
+#sidebar nav > #nav-settings:hover{background-color:#A7F3D0!important;}
+
+#sidebar nav > #nav-cetak{background-color:#FFEDD5!important;color:#9A3412!important;border:1px solid #FED7AA!important;border-radius:10px!important;}
+#sidebar nav > #nav-cetak .sidebar-icon-overlay,#sidebar nav > #nav-cetak .sidebar-text{color:#9A3412!important;}
+#sidebar nav > #nav-cetak:hover{background-color:#FED7AA!important;}
+</style>
 
 </body>
 </html>
