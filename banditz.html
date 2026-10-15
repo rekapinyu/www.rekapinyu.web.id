@@ -6035,6 +6035,11 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
         <span class="sa-settings-rail-text"><strong>Banner Popup</strong><small>Banner untuk popup aplikasi</small></span>
         <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
       </button>
+      <button class="sa-settings-rail-item" type="button" role="tab" aria-selected="false" data-sa-settings-rail="kunci">
+        <span class="sa-settings-rail-icon"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
+        <span class="sa-settings-rail-text"><strong>Kunci</strong><small>Kontrol pintasan dan menu inspeksi</small></span>
+        <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
+      </button>
     </nav>
     <div class="sa-settings-content">
             <section class="sa-settings-panel is-active" data-sa-settings-panel="banner-login" role="tabpanel">
@@ -6059,6 +6064,16 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
           <label class="sa-banner-file-label" for="sa-banner-file-popup"><i class="fa-solid fa-cloud-arrow-up"></i><span>Pilih gambar Banner Popup</span><input id="sa-banner-file-popup" type="file" accept="image/*"></label>
           <div class="sa-banner-preview sa-banner-preview-popup"><img id="sa-banner-preview-popup" alt="Pratinjau Banner Popup" hidden><div id="sa-banner-empty-popup" class="sa-banner-preview-empty"><i class="fa-regular fa-image"></i><span>Pratinjau Banner Popup</span></div></div>
           <div class="sa-banner-actions"><button type="button" class="sa-btn sa-banner-upload" data-sa-banner-upload="popup"><i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Terapkan</button><span id="sa-banner-status-popup" class="sa-banner-status" role="status">Pilih gambar untuk mengganti banner popup aplikasi.</span></div>
+        </div>
+      </section>
+      <section class="sa-settings-panel" data-sa-settings-panel="kunci" role="tabpanel" hidden>
+        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-lock" aria-hidden="true"></i></span><div><h3>Kunci Frontend</h3><p>Aktifkan atau nonaktifkan pembatasan pintasan inspeksi pada tampilan aplikasi pengguna.</p></div></div>
+        <div class="sa-banner-editor">
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:16px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;cursor:pointer">
+            <input id="sa-kunci-frontend-toggle" type="checkbox" style="width:18px;height:18px;margin-top:2px;accent-color:#16a085;flex:0 0 auto">
+            <span><strong style="display:block;color:#1e293b;font-size:13px">Aktifkan Kunci Frontend</strong><small style="display:block;color:#64748b;font-size:11px;line-height:1.6;margin-top:4px">Membatasi klik kanan dan pintasan seperti F12, Ctrl+Shift+I/J/C, serta Ctrl+U pada tampilan aplikasi. Ini hanya penghalang ringan, bukan perlindungan kode yang mutlak.</small></span>
+          </label>
+          <div class="sa-banner-actions"><button type="button" class="sa-btn" id="sa-kunci-frontend-save"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button><span id="sa-kunci-frontend-status" class="sa-banner-status" role="status">Memuat pengaturan kunci…</span></div>
         </div>
       </section>
       <section class="sa-settings-panel" data-sa-settings-panel="banner-paket" role="tabpanel" hidden>
@@ -6208,6 +6223,21 @@ const boot=()=>{
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&$('sa-users-page')?.classList.contains('sa-active'))renderUsers()});$('sa-shop-search')?.addEventListener('input',renderShops);$('sa-shops-body')?.addEventListener('click',e=>{const edit=e.target.closest('[data-shop-edit]'),del=e.target.closest('[data-shop-delete]');if(edit){editUser(edit.dataset.shopEdit);return}if(del)delUser(del.dataset.shopDelete)});$('sa-packages-body')?.addEventListener('click',async e=>{const remove=e.target.closest('[data-package-delete]'),activate=e.target.closest('[data-package-activate]');if(!remove&&!activate)return;if(!isSuperAdmin())return;const uid=String((remove||activate).dataset.packageDelete||(remove||activate).dataset.packageActivate||''),u=state.users.find(v=>String(v.uid||v.id)===uid);if(!u){alert('Data pengguna toko tidak ditemukan.');return}const uidDoc=String(u.uid||u.id);if(remove){if(!confirm(`Hapus paket untuk toko ${shopName(u,state.kasir.get(uid)||{},state.rekap.get(uid)||{})}? Paket akan kembali menjadi "Paket belum diatur" dan akses frontend terkunci.`))return;remove.disabled=true;try{const packageNameKeys=['NamaPaket','namaPaket','packageName','paketNama','namaLangganan','package_name','packageTitle','nama_paket','jenisPaket','jenis_paket','subscriptionName','planName','paketPengguna','paketTerdaftar','namaPaketAktif','NamaPaketAktif','PaketAktif','paket','Paket','package','Package','subscription','subscriptionInfo','langganan','plan','paketAktif','dataPaket','infoPaket','packageInfo','paketPengguna'];const packageDurationKeys=['packageDurationDays','packageDuration','durationDays','durasiPaket','DurasiPaket','lamaPaket','masaAktifPaket','durasiLangganan','masaAktif','durasi','duration','lamaBerlangganan'];const packageStartKeys=['packageStartAt','packageStartedAt','subscriptionStartAt','tanggalMulaiPaket','paketMulaiPada'];const changes={packageDurationDays:0,packageDuration:0,packageStartAt:null,packageStartedAt:null,updatedAt:serverTimestamp()};packageNameKeys.forEach(key=>changes[key]=null);packageDurationKeys.forEach(key=>changes[key]=0);packageStartKeys.forEach(key=>changes[key]=null);[...new Set(['packageExpiresAt',...packageExpiryKeys])].forEach(key=>changes[key]=null);await updateDoc(doc(db,USERS,uidDoc),changes);alert('Paket berhasil dihapus. Status kembali menjadi Paket belum diatur dan frontend akan terkunci.')}catch(err){console.error('Hapus paket:',err);alert('Paket gagal dihapus. Periksa koneksi dan izin Firebase Rules.')}finally{remove.disabled=false}return}const select=$('sa-packages-body').querySelector(`[data-package-select="${uid.replace(/"/g,'')}"]`),pack=String(select?.value||'').trim();if(!pack){alert('Pilih nama paket terlebih dahulu.');select?.focus();return}const isLifetimePackage=pack==='Selamanya',days=isLifetimePackage?0:pack==='Hemat 50K /3Bln'?90:pack==='Hemat 25K /2Bln'?60:30,expiry=new Date();if(!isLifetimePackage){expiry.setDate(expiry.getDate()+days);expiry.setHours(23,59,59,0)}const expiryText=isLifetimePackage?null:`${expiry.getFullYear()}-${String(expiry.getMonth()+1).padStart(2,'0')}-${String(expiry.getDate()).padStart(2,'0')}T23:59:59`;activate.disabled=true;try{const packKey=existingKey(u,['NamaPaket','namaPaket','packageName','paketNama','namaLangganan'],'namaPaket'),expiryKey=existingKey(u,packageExpiryKeys,'packageExpiresAt');const packageActivationChanges={packageDurationDays:days,packageDuration:days,packageStartAt:serverTimestamp(),packageStartedAt:serverTimestamp(),updatedAt:serverTimestamp()};['NamaPaket','namaPaket','packageName','paketNama','namaLangganan'].forEach(key=>packageActivationChanges[key]=pack);[...new Set(['packageExpiresAt',...packageExpiryKeys])].forEach(key=>packageActivationChanges[key]=expiryText);await updateDoc(doc(db,USERS,uidDoc),packageActivationChanges);alert(isLifetimePackage?'Paket Selamanya berhasil diaktifkan tanpa durasi dan tanpa tanggal penguncian. Status tersimpan permanen pada koleksi Pengguna.':`Paket ${pack} berhasil diaktifkan selama ${days} hari dan statusnya tersimpan permanen pada koleksi Pengguna.`)}catch(err){console.error('Aktivasi paket:',err);alert('Paket gagal diaktifkan. Periksa koneksi dan izin Firebase Rules.')}finally{activate.disabled=false}return});$('sa-package-search')?.addEventListener('input',renderPackages);$('sa-user-modal-close')?.addEventListener('click',()=>$('sa-user-modal').classList.remove('is-open'));$('sa-user-modal')?.addEventListener('click',e=>{if(e.target.id==='sa-user-modal')e.currentTarget.classList.remove('is-open')});$('sa-users-body')?.addEventListener('click',e=>{const edit=e.target.closest('[data-user-edit]'),del=e.target.closest('[data-user-delete]');if(edit){editUser(edit.dataset.userEdit);return}if(del)delUser(del.dataset.userDelete)});
  const settingsRail=$('sa-settings-page');
  const BANNER_SETTINGS_COLLECTION='PengaturanAplikasi',BANNER_SETTINGS_DOCUMENT='BannerFrontend';
+ const kunciToggle=$('sa-kunci-frontend-toggle'),kunciSave=$('sa-kunci-frontend-save'),kunciStatus=$('sa-kunci-frontend-status');
+ function renderKunciFrontend(data={}){if(kunciToggle)kunciToggle.checked=data.kunciFrontendAktif===true;if(kunciStatus)kunciStatus.textContent=data.kunciFrontendAktif===true?'Kunci Frontend aktif.':'Kunci Frontend nonaktif.';}
+ window.addEventListener('rekapinyu-banner-settings-updated',e=>renderKunciFrontend(e.detail||{}));
+ if(window.__rekapinyuBannerSettings)renderKunciFrontend(window.__rekapinyuBannerSettings);
+ kunciSave?.addEventListener('click',async()=>{
+   if(!isSuperAdmin()){if(kunciStatus)kunciStatus.textContent='Akses Super Admin diperlukan.';return;}
+   if(!kunciToggle||!kunciStatus)return;
+   kunciSave.disabled=true;kunciStatus.textContent='Menyimpan pengaturan…';
+   try{
+     await setDoc(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),{kunciFrontendAktif:kunciToggle.checked,updatedAt:serverTimestamp(),updatedBy:String(auth.currentUser?.uid||'')},{merge:true});
+     kunciStatus.textContent=kunciToggle.checked?'Pengaturan disimpan. Kunci Frontend aktif.':'Pengaturan disimpan. Kunci Frontend nonaktif.';
+   }catch(err){console.error('Gagal menyimpan Kunci Frontend:',err);kunciStatus.textContent='Gagal menyimpan pengaturan: '+(err?.message||String(err));}
+   finally{kunciSave.disabled=false;}
+ });
+
  const bannerConfig={
   login:{file:'sa-banner-file-login',preview:'sa-banner-preview-login',empty:'sa-banner-empty-login',status:'sa-banner-status-login',field:'bannerLoginUrl',pathField:'bannerLoginStoragePath',title:'Banner Login'},
   input:{file:'sa-banner-file-input',preview:'sa-banner-preview-input',empty:'sa-banner-empty-input',status:'sa-banner-status-input',field:'bannerInputDataUrl',pathField:'bannerInputDataStoragePath',title:'Banner Input Data'},
@@ -6319,7 +6349,16 @@ function applyBannerSettings(settings={}){
   window.__rekapinyuBannerSettings=settings;
   window.dispatchEvent(new CustomEvent('rekapinyu-banner-settings-updated',{detail:settings}));
 }
-onSnapshot(bannerRef,snapshot=>applyBannerSettings(snapshot.exists()?(snapshot.data()||{}):{}),error=>console.warn('Pengaturan banner realtime tidak dapat dibaca. Periksa Firestore Rules.',error));
+let frontendLockActive=false;
+function setFrontendLock(active){frontendLockActive=active===true;document.documentElement.dataset.rekapinyuFrontendLock=frontendLockActive?'on':'off';}
+document.addEventListener('contextmenu',event=>{if(frontendLockActive&&!event.target.closest('#superadmin-root,input,textarea,[contenteditable="true"]'))event.preventDefault();},true);
+document.addEventListener('keydown',event=>{
+  if(!frontendLockActive||event.target.closest('#superadmin-root'))return;
+  const key=String(event.key||'').toLowerCase();
+  const blocked=key==='f12'||(event.ctrlKey&&!event.shiftKey&&key==='u')||(event.ctrlKey&&event.shiftKey&&['i','j','c'].includes(key))||(event.metaKey&&event.altKey&&['i','j','c'].includes(key));
+  if(blocked){event.preventDefault();event.stopPropagation();}
+},true);
+onSnapshot(bannerRef,snapshot=>{const settings=snapshot.exists()?(snapshot.data()||{}):{};applyBannerSettings(settings);setFrontendLock(settings.kunciFrontendAktif===true);},error=>console.warn('Pengaturan banner/kunci tidak dapat dibaca. Periksa Firestore Rules.',error));
 </script>
 
 </body>
