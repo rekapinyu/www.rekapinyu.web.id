@@ -4108,43 +4108,19 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     };
   }
   async function loadCommunityFriends(forUid){
-    const ownUid=String(currentCommunityUid()||'').trim();
+    const ownUid=currentCommunityUid();
     const uid=String(forUid||ownUid).trim();
     if(!uid||!ready())return;
+    // Simpan konteks pemilik daftar agar hasil async tidak tertukar saat profil lain dibuka.
     const requestedProfile=communityProfileTarget;
     const requestedProfileUid=String(requestedProfile?.realUid||requestedProfile?.uid||'');
-    const isPublicProfile=!!requestedProfile&&requestedProfileUid===uid&&uid!==ownUid;
-    const stillCurrent=()=>isPublicProfile
-      ? communityProfileTarget===requestedProfile&&String(communityProfileTarget?.realUid||communityProfileTarget?.uid||'')===uid
-      : !communityProfileTarget;
+    const isPublicProfile=!!requestedProfile&&requestedProfileUid===uid;
     try{
       const a=api(),database=db(),col=a.collection(database,'Komunitas');
-      const map=new Map(),followingMap=new Map(),followersMap=new Map();
-
-      // Profil pengguna lain hanya membaca salinan daftar teman yang memang dipublikasikan.
-      // Jangan membaca Teman_UID atau seluruh permintaan teman milik pengguna lain,
-      // karena Firestore Rules dapat menolak akses tersebut.
-      if(isPublicProfile){
-        const publicSnap=await a.getDoc(a.doc(database,'Komunitas',`Profil_${uid}`));
-        if(!stillCurrent())return;
-        const publicData=publicSnap?.exists?.()?publicSnap.data()||{}:{};
-        const publicFriends=Array.isArray(publicData.DaftarTemanPublik)?publicData.DaftarTemanPublik:[];
-        publicFriends.forEach(f=>{
-          const friendUid=String(f?.UID||f?.uid||'').trim();
-          if(friendUid&&friendUid!==uid)map.set(friendUid,{
-            UID:friendUid,
-            NamaToko:String(f.NamaToko||'Pengguna'),
-            FotoProfil:String(f.FotoProfil||''),
-            Tanggal:String(f.Tanggal||'')
-          });
-        });
-        communityFriends=Array.from(map.values());
-        communityFollowing=[];
-        communityFollowers=[];
-        return;
-      }
-
       const mySnap=await a.getDoc(a.doc(database,'Komunitas',`Teman_${uid}`));
+      const map=new Map();
+      const followingMap=new Map();
+      const followersMap=new Map();
       const oldFriends=mySnap?.exists?.()&&Array.isArray(mySnap.data()?.DaftarTeman)?mySnap.data().DaftarTeman:[];
       oldFriends.forEach(f=>{
         const friendUid=String(f?.UID||f?.uid||'').trim();
@@ -4161,7 +4137,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
         const friendUid=String(data.PenerimaUID||'').trim();
         if(friendUid&&friendUid!==uid){
           const friend=normalizeCommunityFriend(friendUid,data,'sender');
-          map.set(friendUid,friend);followingMap.set(friendUid,friend);
+          map.set(friendUid,friend);
+          followingMap.set(friendUid,friend);
         }
       });
       receivedSnap.forEach(docSnap=>{
@@ -4170,37 +4147,18 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
         const friendUid=String(data.PengirimUID||'').trim();
         if(friendUid&&friendUid!==uid){
           const friend=normalizeCommunityFriend(friendUid,data,'recipient');
-          map.set(friendUid,friend);followersMap.set(friendUid,friend);
+          map.set(friendUid,friend);
+          followersMap.set(friendUid,friend);
         }
       });
-      if(!stillCurrent())return;
+      // Jangan biarkan hasil pemuatan profil sebelumnya menimpa daftar profil yang baru dibuka.
+      if(isPublicProfile&&communityProfileTarget!==requestedProfile)return;
+      if(isPublicProfile&&String(communityProfileTarget?.realUid||communityProfileTarget?.uid||'')!==uid)return;
+      if(!isPublicProfile&&communityProfileTarget)return;
       communityFriends=Array.from(map.values());
       communityFollowing=Array.from(followingMap.values());
       communityFollowers=Array.from(followersMap.values());
-
-      // Publikasikan hanya UID, nama toko, foto profil, dan tanggal pertemanan.
-      // Nomor HP tidak ikut disalin ke profil publik.
-      const publicFriends=communityFriends.map(f=>({
-        UID:String(f.UID||f.uid||'').trim(),
-        NamaToko:String(f.NamaToko||f.namaToko||f.store||'Pengguna'),
-        FotoProfil:String(f.FotoProfil||f.fotoProfil||''),
-        Tanggal:String(f.Tanggal||f.tanggal||'')
-      })).filter(f=>f.UID&&f.UID!==uid);
-      try{
-        await a.setDoc(a.doc(database,'Komunitas',`Profil_${uid}`),{
-          DaftarTemanPublik:publicFriends,
-          JumlahTemanPublik:publicFriends.length,
-          RelasiPublikDiperbarui:new Date().toISOString()
-        },{merge:true});
-      }catch(publishError){
-        console.warn('Salinan daftar teman publik belum dapat disimpan:',publishError);
-      }
-    }catch(e){
-      console.warn('Daftar teman Komunitas gagal dimuat:',e);
-      if(isPublicProfile&&stillCurrent()){
-        communityFriends=[];communityFollowing=[];communityFollowers=[];
-      }
-    }
+    }catch(e){console.warn('Daftar teman Komunitas gagal dimuat:',e);}
   }
   function refreshCommunityFriendNotifications(){
     updateNotifBadge();
