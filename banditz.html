@@ -6350,19 +6350,30 @@ function applyBannerSettings(settings={}){
   window.dispatchEvent(new CustomEvent('rekapinyu-banner-settings-updated',{detail:settings}));
 }
 let frontendLockActive=false;
-function setFrontendLock(active){frontendLockActive=active===true;document.documentElement.dataset.rekapinyuFrontendLock=frontendLockActive?'on':'off';}
-document.addEventListener('contextmenu',event=>{if(frontendLockActive&&!event.target.closest('#superadmin-root,input,textarea,[contenteditable="true"]'))event.preventDefault();},true);
-document.addEventListener('keydown',event=>{
-  if(!frontendLockActive||event.target.closest('#superadmin-root'))return;
+function setFrontendLock(active){
+  frontendLockActive=active===true;
+  document.documentElement.dataset.rekapinyuFrontendLock=frontendLockActive?'on':'off';
+}
+function isSuperAdminSettingsTarget(target){return !!(target&&target.closest&&target.closest('#superadmin-root,#sa-settings-page'));}
+function blockFrontendInspection(event){
+  if(!frontendLockActive||isSuperAdminSettingsTarget(event.target))return;
+  if(event.type==='contextmenu'){
+    event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();return;
+  }
   const key=String(event.key||'').toLowerCase();
   const ctrlOrMeta=event.ctrlKey||event.metaKey;
-  const blocked=
-    key==='f12'||
-    (ctrlOrMeta&&!event.shiftKey&&['u'].includes(key))||
-    (ctrlOrMeta&&event.shiftKey&&['i','j','c','k','m'].includes(key))||
-    (event.metaKey&&event.altKey&&['i','j','c'].includes(key));
-  if(blocked){event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();}
-},true);
+  const shift=event.shiftKey,alt=event.altKey;
+  const blocked = key==='f12' ||
+    (ctrlOrMeta&&!shift&&['u','s','p'].includes(key)) ||
+    (ctrlOrMeta&&shift&&['i','j','c','k','m','e'].includes(key)) ||
+    (ctrlOrMeta&&alt&&['i','j','c'].includes(key));
+  if(blocked){event.preventDefault();event.stopPropagation();if(event.stopImmediatePropagation)event.stopImmediatePropagation();return false;}
+}
+/* Tangkap pada window dan document untuk menghambat pintasan umum lebih awal. */
+['contextmenu','keydown'].forEach(type=>{
+  window.addEventListener(type,blockFrontendInspection,true);
+  document.addEventListener(type,blockFrontendInspection,true);
+});
 onSnapshot(bannerRef,snapshot=>{const settings=snapshot.exists()?(snapshot.data()||{}):{};applyBannerSettings(settings);setFrontendLock(settings.kunciFrontendAktif===true);},error=>console.warn('Pengaturan banner/kunci tidak dapat dibaca. Periksa Firestore Rules.',error));
 </script>
 
