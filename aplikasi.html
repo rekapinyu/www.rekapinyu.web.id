@@ -3998,6 +3998,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     if(!targetUid){return;}
     if(isOwnCommunityUser(targetUid)){communityProfileTarget=null;openProfile();return;}
     communityProfileTarget={uid:targetUid,realUid:String(user.realUid||(!String(targetUid).startsWith('legacy:')?targetUid:'')),sourceDocId:String(user.sourceDocId||''),legacy:!!user.legacy||String(targetUid).startsWith('legacy:'),store:String(user.store||'Pengguna'),phone:String(user.phone||''),photo:String(user.photo||''),bio:String(user.bio||'')};
+    profileTab='posts';
     const content=communityContent();if(!content)return;
     content.classList.remove('komunitas-notif-open','komunitas-bio-open','komunitas-single-post-open','komunitas-friends-open');content.classList.add('komunitas-profile-open');
     hideCommunityPageSafely('komunitas-notification-page');document.getElementById('komunitas-bio-page')?.setAttribute('aria-hidden','true');
@@ -4080,7 +4081,21 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       const details=document.createElement('div');details.style.cssText='min-width:0;flex:1;';
       const title=document.createElement('strong');title.textContent=item.title;
       const body=document.createElement('div');body.textContent=item.text||'';
-      details.append(title,body);card.appendChild(details);if(item.sub){const sub=document.createElement('div');sub.style.cssText='margin-top:6px;color:#64748b;font-size:11px';sub.textContent=item.sub;card.appendChild(sub);}box.appendChild(card);});
+      details.append(title,body);card.appendChild(details);
+      if(profileTab==='friends'){
+        card.setAttribute('role','button');card.setAttribute('tabindex','0');
+        card.setAttribute('aria-label','Buka profil '+String(item.title||'teman'));
+        card.style.cursor='pointer';
+        card.addEventListener('click',()=>{
+          const friendUid=String(item.uid||'').trim();
+          if(!friendUid)return;
+          openCommunityUserProfile({uid:friendUid,realUid:friendUid,store:String(item.title||'Pengguna'),phone:String(item.text||''),photo:String(item.photo||'')});
+        });
+        card.addEventListener('keydown',event=>{
+          if(event.key==='Enter'||event.key===' '){event.preventDefault();card.click();}
+        });
+      }
+      if(item.sub){const sub=document.createElement('div');sub.style.cssText='margin-top:6px;color:#64748b;font-size:11px';sub.textContent=item.sub;card.appendChild(sub);}box.appendChild(card);});
   }
   function normalizeCommunityFriend(uid, data, side){
     const isSender=side==='sender';
@@ -4792,7 +4807,16 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       renderCommunityFriends();
     }));
     document.getElementById('komunitas-add-friend-btn')?.addEventListener('click',()=>addCommunityFriend(communityProfileTarget?.realUid||communityProfileTarget?.uid));
-    document.querySelectorAll('#komunitas-profile-page [data-profile-tab]').forEach(btn=>btn.addEventListener('click',()=>{profileTab=btn.dataset.profileTab||'posts';renderProfileTab();}));
+    document.querySelectorAll('#komunitas-profile-page [data-profile-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+      profileTab=btn.dataset.profileTab||'posts';
+      if(profileTab==='friends'){
+        const ownerUid=String(communityProfileTarget?.realUid||communityProfileTarget?.uid||currentCommunityUid()).trim();
+        renderProfileTab();
+        if(ownerUid)loadCommunityFriends(ownerUid).then(()=>{
+          if(String(communityProfileTarget?.realUid||communityProfileTarget?.uid||currentCommunityUid())===ownerUid)renderProfile();
+        });
+      }else renderProfileTab();
+    }));
     document.getElementById('komunitas-rail-home')?.addEventListener('click',()=>{closeCommunityPages();render();});
     document.getElementById('komunitas-bio-input')?.addEventListener('input',updateBioCounter);
     document.getElementById('komunitas-bio-save')?.addEventListener('click',saveCommunityBio);
