@@ -6035,9 +6035,9 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
         <span class="sa-settings-rail-text"><strong>Banner Popup</strong><small>Banner untuk popup aplikasi</small></span>
         <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
       </button>
-      <button class="sa-settings-rail-item" type="button" role="tab" aria-selected="false" data-sa-settings-rail="kunci">
-        <span class="sa-settings-rail-icon"><i class="fa-solid fa-lock" aria-hidden="true"></i></span>
-        <span class="sa-settings-rail-text"><strong>Kunci</strong><small>Kontrol pintasan dan menu inspeksi</small></span>
+      <button class="sa-settings-rail-item" type="button" role="tab" aria-selected="false" data-sa-settings-rail="kunci-frontend">
+        <span class="sa-settings-rail-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>
+        <span class="sa-settings-rail-text"><strong>Kunci</strong><small>Batasi klik kanan dan pintasan</small></span>
         <i class="fa-solid fa-chevron-right sa-settings-rail-arrow" aria-hidden="true"></i>
       </button>
     </nav>
@@ -6066,14 +6066,12 @@ body>#superadmin-root{position:fixed!important;top:64px!important;right:0!import
           <div class="sa-banner-actions"><button type="button" class="sa-btn sa-banner-upload" data-sa-banner-upload="popup"><i class="fa-solid fa-cloud-arrow-up"></i> Upload &amp; Terapkan</button><span id="sa-banner-status-popup" class="sa-banner-status" role="status">Pilih gambar untuk mengganti banner popup aplikasi.</span></div>
         </div>
       </section>
-      <section class="sa-settings-panel" data-sa-settings-panel="kunci" role="tabpanel" hidden>
-        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-lock" aria-hidden="true"></i></span><div><h3>Kunci Frontend</h3><p>Aktifkan atau nonaktifkan pembatasan pintasan inspeksi pada tampilan aplikasi pengguna.</p></div></div>
-        <div class="sa-banner-editor">
-          <label style="display:flex;align-items:flex-start;gap:12px;padding:16px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;cursor:pointer">
-            <input id="sa-kunci-frontend-toggle" type="checkbox" style="width:18px;height:18px;margin-top:2px;accent-color:#16a085;flex:0 0 auto">
-            <span><strong style="display:block;color:#1e293b;font-size:13px">Aktifkan Kunci Frontend</strong><small style="display:block;color:#64748b;font-size:11px;line-height:1.6;margin-top:4px">Membatasi klik kanan dan pintasan seperti F12, Ctrl+Shift+I/J/C, serta Ctrl+U pada tampilan aplikasi. Ini hanya penghalang ringan, bukan perlindungan kode yang mutlak.</small></span>
-          </label>
-          <div class="sa-banner-actions"><button type="button" class="sa-btn" id="sa-kunci-frontend-save"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button><span id="sa-kunci-frontend-status" class="sa-banner-status" role="status">Memuat pengaturan kunci…</span></div>
+      <section class="sa-settings-panel" data-sa-settings-panel="kunci-frontend" role="tabpanel" hidden>
+        <div class="sa-settings-panel-heading"><span class="sa-settings-panel-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span><div><h3>Kunci Frontend</h3><p>Menghambat klik kanan dan pintasan sumber/Developer Tools untuk pengguna biasa. Tidak dapat meniadakan menu browser secara mutlak.</p></div></div>
+        <div class="sa-banner-editor" style="padding:18px;gap:14px">
+          <label style="display:flex;align-items:center;gap:12px;font-weight:700;color:#334155;cursor:pointer"><input id="sa-kunci-frontend-toggle" type="checkbox" style="width:20px;height:20px;accent-color:#16a085"><span>Aktifkan Kunci Frontend</span></label>
+          <p style="font-size:12px;line-height:1.6;color:#64748b;margin:0">Saat aktif, aplikasi mencegah menu klik kanan, Ctrl+U, F12, dan beberapa pintasan Ctrl+Shift. Pengaturan disimpan ke Firestore dan diterapkan realtime pada halaman aplikasi.</p>
+          <div class="sa-banner-actions"><button type="button" class="sa-btn" id="sa-kunci-frontend-save"><i class="fa-solid fa-floppy-disk"></i> Simpan Pengaturan</button><span id="sa-kunci-frontend-status" class="sa-banner-status" role="status">Memuat pengaturan Kunci…</span></div>
         </div>
       </section>
       <section class="sa-settings-panel" data-sa-settings-panel="banner-paket" role="tabpanel" hidden>
@@ -6223,21 +6221,6 @@ const boot=()=>{
  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&$('sa-users-page')?.classList.contains('sa-active'))renderUsers()});$('sa-shop-search')?.addEventListener('input',renderShops);$('sa-shops-body')?.addEventListener('click',e=>{const edit=e.target.closest('[data-shop-edit]'),del=e.target.closest('[data-shop-delete]');if(edit){editUser(edit.dataset.shopEdit);return}if(del)delUser(del.dataset.shopDelete)});$('sa-packages-body')?.addEventListener('click',async e=>{const remove=e.target.closest('[data-package-delete]'),activate=e.target.closest('[data-package-activate]');if(!remove&&!activate)return;if(!isSuperAdmin())return;const uid=String((remove||activate).dataset.packageDelete||(remove||activate).dataset.packageActivate||''),u=state.users.find(v=>String(v.uid||v.id)===uid);if(!u){alert('Data pengguna toko tidak ditemukan.');return}const uidDoc=String(u.uid||u.id);if(remove){if(!confirm(`Hapus paket untuk toko ${shopName(u,state.kasir.get(uid)||{},state.rekap.get(uid)||{})}? Paket akan kembali menjadi "Paket belum diatur" dan akses frontend terkunci.`))return;remove.disabled=true;try{const packageNameKeys=['NamaPaket','namaPaket','packageName','paketNama','namaLangganan','package_name','packageTitle','nama_paket','jenisPaket','jenis_paket','subscriptionName','planName','paketPengguna','paketTerdaftar','namaPaketAktif','NamaPaketAktif','PaketAktif','paket','Paket','package','Package','subscription','subscriptionInfo','langganan','plan','paketAktif','dataPaket','infoPaket','packageInfo','paketPengguna'];const packageDurationKeys=['packageDurationDays','packageDuration','durationDays','durasiPaket','DurasiPaket','lamaPaket','masaAktifPaket','durasiLangganan','masaAktif','durasi','duration','lamaBerlangganan'];const packageStartKeys=['packageStartAt','packageStartedAt','subscriptionStartAt','tanggalMulaiPaket','paketMulaiPada'];const changes={packageDurationDays:0,packageDuration:0,packageStartAt:null,packageStartedAt:null,updatedAt:serverTimestamp()};packageNameKeys.forEach(key=>changes[key]=null);packageDurationKeys.forEach(key=>changes[key]=0);packageStartKeys.forEach(key=>changes[key]=null);[...new Set(['packageExpiresAt',...packageExpiryKeys])].forEach(key=>changes[key]=null);await updateDoc(doc(db,USERS,uidDoc),changes);alert('Paket berhasil dihapus. Status kembali menjadi Paket belum diatur dan frontend akan terkunci.')}catch(err){console.error('Hapus paket:',err);alert('Paket gagal dihapus. Periksa koneksi dan izin Firebase Rules.')}finally{remove.disabled=false}return}const select=$('sa-packages-body').querySelector(`[data-package-select="${uid.replace(/"/g,'')}"]`),pack=String(select?.value||'').trim();if(!pack){alert('Pilih nama paket terlebih dahulu.');select?.focus();return}const isLifetimePackage=pack==='Selamanya',days=isLifetimePackage?0:pack==='Hemat 50K /3Bln'?90:pack==='Hemat 25K /2Bln'?60:30,expiry=new Date();if(!isLifetimePackage){expiry.setDate(expiry.getDate()+days);expiry.setHours(23,59,59,0)}const expiryText=isLifetimePackage?null:`${expiry.getFullYear()}-${String(expiry.getMonth()+1).padStart(2,'0')}-${String(expiry.getDate()).padStart(2,'0')}T23:59:59`;activate.disabled=true;try{const packKey=existingKey(u,['NamaPaket','namaPaket','packageName','paketNama','namaLangganan'],'namaPaket'),expiryKey=existingKey(u,packageExpiryKeys,'packageExpiresAt');const packageActivationChanges={packageDurationDays:days,packageDuration:days,packageStartAt:serverTimestamp(),packageStartedAt:serverTimestamp(),updatedAt:serverTimestamp()};['NamaPaket','namaPaket','packageName','paketNama','namaLangganan'].forEach(key=>packageActivationChanges[key]=pack);[...new Set(['packageExpiresAt',...packageExpiryKeys])].forEach(key=>packageActivationChanges[key]=expiryText);await updateDoc(doc(db,USERS,uidDoc),packageActivationChanges);alert(isLifetimePackage?'Paket Selamanya berhasil diaktifkan tanpa durasi dan tanpa tanggal penguncian. Status tersimpan permanen pada koleksi Pengguna.':`Paket ${pack} berhasil diaktifkan selama ${days} hari dan statusnya tersimpan permanen pada koleksi Pengguna.`)}catch(err){console.error('Aktivasi paket:',err);alert('Paket gagal diaktifkan. Periksa koneksi dan izin Firebase Rules.')}finally{activate.disabled=false}return});$('sa-package-search')?.addEventListener('input',renderPackages);$('sa-user-modal-close')?.addEventListener('click',()=>$('sa-user-modal').classList.remove('is-open'));$('sa-user-modal')?.addEventListener('click',e=>{if(e.target.id==='sa-user-modal')e.currentTarget.classList.remove('is-open')});$('sa-users-body')?.addEventListener('click',e=>{const edit=e.target.closest('[data-user-edit]'),del=e.target.closest('[data-user-delete]');if(edit){editUser(edit.dataset.userEdit);return}if(del)delUser(del.dataset.userDelete)});
  const settingsRail=$('sa-settings-page');
  const BANNER_SETTINGS_COLLECTION='PengaturanAplikasi',BANNER_SETTINGS_DOCUMENT='BannerFrontend';
- const kunciToggle=$('sa-kunci-frontend-toggle'),kunciSave=$('sa-kunci-frontend-save'),kunciStatus=$('sa-kunci-frontend-status');
- function renderKunciFrontend(data={}){if(kunciToggle)kunciToggle.checked=data.kunciFrontendAktif===true;if(kunciStatus)kunciStatus.textContent=data.kunciFrontendAktif===true?'Kunci Frontend aktif.':'Kunci Frontend nonaktif.';}
- window.addEventListener('rekapinyu-banner-settings-updated',e=>renderKunciFrontend(e.detail||{}));
- if(window.__rekapinyuBannerSettings)renderKunciFrontend(window.__rekapinyuBannerSettings);
- kunciSave?.addEventListener('click',async()=>{
-   if(!isSuperAdmin()){if(kunciStatus)kunciStatus.textContent='Akses Super Admin diperlukan.';return;}
-   if(!kunciToggle||!kunciStatus)return;
-   kunciSave.disabled=true;kunciStatus.textContent='Menyimpan pengaturan…';
-   try{
-     await setDoc(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),{kunciFrontendAktif:kunciToggle.checked,updatedAt:serverTimestamp(),updatedBy:String(auth.currentUser?.uid||'')},{merge:true});
-     kunciStatus.textContent=kunciToggle.checked?'Pengaturan disimpan. Kunci Frontend aktif.':'Pengaturan disimpan. Kunci Frontend nonaktif.';
-   }catch(err){console.error('Gagal menyimpan Kunci Frontend:',err);kunciStatus.textContent='Gagal menyimpan pengaturan: '+(err?.message||String(err));}
-   finally{kunciSave.disabled=false;}
- });
-
  const bannerConfig={
   login:{file:'sa-banner-file-login',preview:'sa-banner-preview-login',empty:'sa-banner-empty-login',status:'sa-banner-status-login',field:'bannerLoginUrl',pathField:'bannerLoginStoragePath',title:'Banner Login'},
   input:{file:'sa-banner-file-input',preview:'sa-banner-preview-input',empty:'sa-banner-empty-input',status:'sa-banner-status-input',field:'bannerInputDataUrl',pathField:'bannerInputDataStoragePath',title:'Banner Input Data'},
@@ -6323,6 +6306,24 @@ const boot=()=>{
  function selectSettingsRail(key){if(!settingsRail)return;const buttons=[...settingsRail.querySelectorAll('[data-sa-settings-rail]')],panels=[...settingsRail.querySelectorAll('[data-sa-settings-panel]')];if(!buttons.some(b=>b.dataset.saSettingsRail===key))return;buttons.forEach(b=>{const active=b.dataset.saSettingsRail===key;b.classList.toggle('is-active',active);b.setAttribute('aria-selected',active?'true':'false')});panels.forEach(p=>{const active=p.dataset.saSettingsPanel===key;p.classList.toggle('is-active',active);p.hidden=!active})}
  settingsRail?.addEventListener('click',e=>{const b=e.target.closest('[data-sa-settings-rail]');if(b)selectSettingsRail(b.dataset.saSettingsRail)});
  selectSettingsRail('banner-login');
+ // Implementasi tunggal pengaturan Kunci; memakai dokumen BannerFrontend yang juga dibaca frontend.
+ const kunciToggle=$('sa-kunci-frontend-toggle'),kunciSave=$('sa-kunci-frontend-save'),kunciStatus=$('sa-kunci-frontend-status');
+ let kunciLoaded=false;
+ onSnapshot(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),snap=>{
+   const data=snap.exists()?(snap.data()||{}):{};
+   if(kunciToggle)kunciToggle.checked=data.kunciFrontendAktif===true;
+   if(kunciStatus){kunciStatus.textContent=data.kunciFrontendAktif===true?'Kunci aktif pada frontend.':'Kunci nonaktif pada frontend.';kunciStatus.classList.toggle('is-success',data.kunciFrontendAktif===true);kunciStatus.classList.remove('is-error')}
+   kunciLoaded=true;
+ },err=>{console.error('Baca pengaturan Kunci:',err);if(kunciStatus){kunciStatus.textContent='Gagal membaca pengaturan Kunci. Periksa Firestore Rules.';kunciStatus.classList.add('is-error')}});
+ kunciSave?.addEventListener('click',async()=>{
+   if(!isSuperAdmin()){if(kunciStatus)kunciStatus.textContent='Akses Super Admin diperlukan.';return}
+   if(!kunciLoaded){if(kunciStatus)kunciStatus.textContent='Tunggu sampai pengaturan berhasil dimuat.';return}
+   const enabled=!!kunciToggle?.checked;kunciSave.disabled=true;
+   if(kunciStatus)kunciStatus.textContent='Menyimpan pengaturan…';
+   try{await setDoc(doc(db,BANNER_SETTINGS_COLLECTION,BANNER_SETTINGS_DOCUMENT),{kunciFrontendAktif:enabled,kunciFrontendUpdatedAt:serverTimestamp(),kunciFrontendUpdatedBy:String(auth.currentUser?.uid||'')},{merge:true});if(kunciStatus){kunciStatus.textContent=enabled?'Kunci berhasil diaktifkan.':'Kunci berhasil dinonaktifkan.';kunciStatus.classList.toggle('is-success',enabled);kunciStatus.classList.remove('is-error')}}
+   catch(err){console.error('Simpan pengaturan Kunci:',err);if(kunciStatus){kunciStatus.textContent='Gagal menyimpan. Periksa koneksi dan izin Firestore Rules.';kunciStatus.classList.add('is-error')}}
+   finally{kunciSave.disabled=false}
+ });
  window.__superAdminOpen=open;
  onAuthStateChanged(auth,async au=>{const ok=await resolveSuperAdmin(au);if(ok)open('superadmin-dashboard');else{stopListeners();showOnly('sa-dashboard-page');$('sa-dashboard-page').innerHTML='<div class="sa-panel"><div class="sa-note"><strong>Akses Super Admin diperlukan.</strong><br>Super Admin dibaca dari koleksi <code>Pengguna</code>.</div></div>';}});
 };
@@ -6332,49 +6333,36 @@ try{boot()}catch(e){console.error('Superadmin boot:',e)}
 <script type="module" id="rekapinyu-banner-settings-runtime">
 import { getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-const bannerRef=doc(getFirestore(getApp()),"PengaturanAplikasi","BannerFrontend");
-function applyBannerSettings(settings={}){
-  const loginUrl=String(settings.bannerLoginUrl||''),inputUrl=String(settings.bannerInputDataUrl||''),popupUrl=String(settings.bannerPopupUrl||'');
-  const auth=document.getElementById('auth-container');
-  if(auth&&loginUrl)auth.style.setProperty('background-image',`url("${loginUrl.replace(/"/g,'%22')}")`,'important');
-  const input=document.querySelector('#view-input > div');
-  if(input&&inputUrl)input.style.setProperty('background-image',`url("${inputUrl.replace(/"/g,'%22')}")`,'important');
-  const popup=document.querySelector('#custom-modal > div');
-  if(popup&&popupUrl){
-    popup.style.setProperty('background-image',`linear-gradient(0deg,rgba(255,255,255,.91),rgba(255,255,255,.72)),url("${popupUrl.replace(/"/g,'%22')}")`,'important');
-    popup.style.setProperty('background-position','center','important');
-    popup.style.setProperty('background-size','cover','important');
-    popup.style.setProperty('background-repeat','no-repeat','important');
-  }
-  window.__rekapinyuBannerSettings=settings;
-  window.dispatchEvent(new CustomEvent('rekapinyu-banner-settings-updated',{detail:settings}));
+const settingsRef=doc(getFirestore(getApp()),"PengaturanAplikasi","BannerFrontend");
+let protectionEnabled=false;
+function blockContextMenu(e){if(protectionEnabled){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();return false}}
+function blockShortcuts(e){
+ if(!protectionEnabled)return;
+ const key=String(e.key||'').toLowerCase();
+ const ctrl=e.ctrlKey||e.metaKey;
+ const blocked=e.key==='F12'||(ctrl&&key==='u')||(ctrl&&e.shiftKey&&['i','j','c','k','m','e'].includes(key))||(ctrl&&e.shiftKey&&key==='s');
+ if(blocked){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();return false}
 }
-/* Kunci default aktif sampai Firestore mengirim status tersimpan. Ini mencegah celah saat halaman baru dimuat. */
-let frontendLockActive=true;
-function setFrontendLock(active){
-  frontendLockActive=active===true;
-  document.documentElement.dataset.rekapinyuFrontendLock=frontendLockActive?'on':'off';
+// Listener dipasang satu kali; status aktif/nonaktif dikendalikan dari satu dokumen Firestore.
+document.addEventListener('contextmenu',blockContextMenu,true);
+window.addEventListener('contextmenu',blockContextMenu,true);
+document.addEventListener('keydown',blockShortcuts,true);
+window.addEventListener('keydown',blockShortcuts,true);
+function applySettings(settings={}){
+ const loginUrl=String(settings.bannerLoginUrl||''),inputUrl=String(settings.bannerInputDataUrl||''),popupUrl=String(settings.bannerPopupUrl||'');
+ const auth=document.getElementById('auth-container');
+ if(auth&&loginUrl)auth.style.setProperty('background-image',`url("${loginUrl.replace(/"/g,'%22')}")`,'important');
+ const input=document.querySelector('#view-input > div');
+ if(input&&inputUrl)input.style.setProperty('background-image',`url("${inputUrl.replace(/"/g,'%22')}")`,'important');
+ const popup=document.querySelector('#custom-modal > div');
+ if(popup&&popupUrl){popup.style.setProperty('background-image',`linear-gradient(0deg,rgba(255,255,255,.91),rgba(255,255,255,.72)),url("${popupUrl.replace(/"/g,'%22')}")`,'important');popup.style.setProperty('background-position','center','important');popup.style.setProperty('background-size','cover','important');popup.style.setProperty('background-repeat','no-repeat','important')}
+ protectionEnabled=settings.kunciFrontendAktif===true;
+ document.documentElement.classList.toggle('rk-frontend-locked',protectionEnabled);
+ window.__rekapinyuBannerSettings=settings;
+ window.dispatchEvent(new CustomEvent('rekapinyu-banner-settings-updated',{detail:settings}));
+ window.dispatchEvent(new CustomEvent('rekapinyu-kunci-frontend-updated',{detail:{active:protectionEnabled}}));
 }
-window.__rekapinyuSetFrontendLock=setFrontendLock;
-function isSuperAdminSettingsTarget(target){return !!(target&&target.closest&&target.closest('#superadmin-root,#sa-settings-page'));}
-function blockFrontendInspection(event){
-  if(!frontendLockActive||isSuperAdminSettingsTarget(event.target))return;
-  if(event.type==='contextmenu'){
-    event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();return false;
-  }
-  if(event.type!=='keydown')return;
-  const key=String(event.key||'').toLowerCase();
-  const ctrlOrMeta=event.ctrlKey||event.metaKey;
-  const shift=event.shiftKey,alt=event.altKey;
-  const blocked = key==='f12' || key==='u'&&ctrlOrMeta ||
-    (ctrlOrMeta&&!shift&&['s','p'].includes(key)) ||
-    (ctrlOrMeta&&shift&&['i','j','c','k','m','e'].includes(key)) ||
-    (ctrlOrMeta&&alt&&['i','j','c'].includes(key));
-  if(blocked){event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();return false;}
-}
-/* Listener capture di window; jangan bergantung pada event bubbling elemen aplikasi. */
-['contextmenu','keydown'].forEach(type=>window.addEventListener(type,blockFrontendInspection,true));
-onSnapshot(bannerRef,snapshot=>{const settings=snapshot.exists()?(snapshot.data()||{}):{};applyBannerSettings(settings);setFrontendLock(settings.kunciFrontendAktif===true);},error=>{console.warn('Pengaturan banner/kunci tidak dapat dibaca. Periksa Firestore Rules.',error);/* Jika pembacaan gagal, kunci tetap aktif secara aman. */setFrontendLock(true);});
+onSnapshot(settingsRef,snapshot=>applySettings(snapshot.exists()?(snapshot.data()||{}):{}),error=>{console.warn('Pengaturan frontend tidak dapat dibaca dari Firestore.',error);protectionEnabled=false});
 </script>
 
 </body>
