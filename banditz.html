@@ -6355,8 +6355,13 @@ document.addEventListener('contextmenu',event=>{if(frontendLockActive&&!event.ta
 document.addEventListener('keydown',event=>{
   if(!frontendLockActive||event.target.closest('#superadmin-root'))return;
   const key=String(event.key||'').toLowerCase();
-  const blocked=key==='f12'||(event.ctrlKey&&!event.shiftKey&&key==='u')||(event.ctrlKey&&event.shiftKey&&['i','j','c'].includes(key))||(event.metaKey&&event.altKey&&['i','j','c'].includes(key));
-  if(blocked){event.preventDefault();event.stopPropagation();}
+  const ctrlOrMeta=event.ctrlKey||event.metaKey;
+  const blocked=
+    key==='f12'||
+    (ctrlOrMeta&&!event.shiftKey&&['u'].includes(key))||
+    (ctrlOrMeta&&event.shiftKey&&['i','j','c','k','m'].includes(key))||
+    (event.metaKey&&event.altKey&&['i','j','c'].includes(key));
+  if(blocked){event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();}
 },true);
 onSnapshot(bannerRef,snapshot=>{const settings=snapshot.exists()?(snapshot.data()||{}):{};applyBannerSettings(settings);setFrontendLock(settings.kunciFrontendAktif===true);},error=>console.warn('Pengaturan banner/kunci tidak dapat dibaca. Periksa Firestore Rules.',error));
 </script>
