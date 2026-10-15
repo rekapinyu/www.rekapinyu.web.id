@@ -1875,6 +1875,23 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   }
 }
 </style>
+<style id="fix-sidebar-report-backup-label-wrap">
+/* Hanya menjaga label Laporan Bulanan dan Backup Otomatis tetap dua baris saat berpindah menu/reload. */
+#nav-report .sidebar-text,
+#nav-backup .sidebar-text{
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  line-height:1.2!important;
+  text-align:center!important;
+}
+#nav-report,
+#nav-backup{
+  min-width:0!important;
+}
+</style>
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
