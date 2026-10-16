@@ -14422,3 +14422,72 @@ async function initKasirViews(){
   #mobile-home-view .mobile-home-icon{width:35px!important;height:35px!important;font-size:15px!important}
 }
 </style>
+
+<!-- MOBILE UI REDESIGN v2: visual-only mobile overrides; desktop and application logic preserved -->
+<style id="rekapinyu-mobile-ui-redesign-v2">
+@media (max-width:767px){
+  :root{--rk-blue:#0878f9;--rk-blue-dark:#073a86;--rk-blue-soft:#eaf4ff;--rk-border:#dfebf8;--rk-ink:#102e5c;--rk-muted:#7186a5}
+  html{background:#f3f8ff!important}
+  body{background:linear-gradient(180deg,#eaf5ff 0,#f7faff 240px,#f4f8fd 100%)!important;color:var(--rk-ink)!important;-webkit-tap-highlight-color:transparent}
+  body,button,input,select,textarea{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  header{background:rgba(255,255,255,.97)!important;border-bottom:1px solid #dceafb!important;box-shadow:0 3px 16px rgba(22,78,145,.06)!important;backdrop-filter:blur(14px)!important}
+  header h1,header h2{color:#12396f!important;font-weight:900!important;letter-spacing:-.025em!important}
+  header p,header small{color:#7b91b0!important}
+  main{background:transparent!important;min-width:0!important}
+  main>*,main section,.view-section{min-width:0}
+  #mobile-home-view{padding:13px 12px 100px!important;gap:14px!important}
+  #mobile-home-view>h1,#mobile-home-view>h2{color:#12396f!important;font-weight:900!important}
+  #mobile-home-view .mobile-home-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
+  #mobile-home-view .mobile-home-card{position:relative!important;isolation:isolate!important;min-width:0!important;min-height:112px!important;padding:9px 4px!important;border:1px solid rgba(205,225,249,.95)!important;border-radius:19px!important;background:linear-gradient(150deg,#fff 0%,#f9fcff 100%)!important;box-shadow:0 7px 17px rgba(32,91,158,.085),inset 0 1px 0 #fff!important;color:#12386d!important;overflow:hidden!important}
+  #mobile-home-view .mobile-home-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#1489ff,#53b8ff);opacity:.85;z-index:0}
+  #mobile-home-view .mobile-home-card-main{position:absolute!important;inset:0!important;z-index:1!important;padding:9px 4px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+  #mobile-home-view .mobile-home-card-content{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;width:100%!important;min-width:0!important}
+  #mobile-home-view .mobile-home-card-content>span{font-size:10.5px!important;line-height:1.2!important;font-weight:850!important;letter-spacing:-.01em!important;color:#10366e!important;overflow-wrap:anywhere!important}
+  #mobile-home-view .mobile-home-icon{width:40px!important;height:40px!important;flex:0 0 40px!important;border-radius:14px!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#eaf4ff!important;color:#1680f9!important;font-size:18px!important;box-shadow:0 5px 12px rgba(23,106,207,.12)!important}
+  #mobile-home-view .mobile-home-card:nth-child(6n+1) .mobile-home-icon{background:#e4f1ff!important;color:#1684ff!important}
+  #mobile-home-view .mobile-home-card:nth-child(6n+2) .mobile-home-icon{background:#ffe9e8!important;color:#f04444!important}
+  #mobile-home-view .mobile-home-card:nth-child(6n+3) .mobile-home-icon{background:#e0faeb!important;color:#12b76a!important}
+  #mobile-home-view .mobile-home-card:nth-child(6n+4) .mobile-home-icon{background:#fff0d9!important;color:#ee9b09!important}
+  #mobile-home-view .mobile-home-card:nth-child(6n+5) .mobile-home-icon{background:#f0e8ff!important;color:#8b5cf6!important}
+  #mobile-home-view .mobile-home-card:nth-child(6n) .mobile-home-icon{background:#dff9fb!important;color:#06a9c7!important}
+  #mobile-home-view .mobile-home-watermark{font-size:58px!important;right:-5px!important;bottom:-8px!important;color:#1674d7!important;opacity:.055!important}
+  #mobile-home-view .mobile-admin-summary,.mobile-admin-summary{border-radius:21px!important;background:linear-gradient(125deg,#0788ff 0%,#0750c9 100%)!important;border:1px solid rgba(255,255,255,.42)!important;box-shadow:0 11px 24px rgba(0,91,220,.2)!important;color:#fff!important}
+  #mobile-home-view .mobile-admin-card{border-radius:13px!important;background:rgba(255,255,255,.16)!important;border-color:rgba(255,255,255,.25)!important}
+  #mobile-home-view .mobile-home-report-title{font-size:13px!important;color:#12396f!important;font-weight:900!important}
+  #mobile-home-view .mobile-home-day-card{border:1px solid #dfebf8!important;border-radius:17px!important;background:#fff!important;box-shadow:0 5px 15px rgba(30,82,145,.07)!important}
+  /* Shared card, form, button and list treatment across mobile screens */
+  #view-kasir,#view-produk-kasir,#view-laporan-kasir,#view-history,#view-report,#view-input,#view-settings,#view-cetak,#view-pengeluaran,#view-kasbon,#view-activity,#view-komunitas{color:#17365f!important}
+  #view-kasir .card,#view-produk-kasir .card,#view-laporan-kasir .card,#view-history .card,#view-report .card,#view-input .card,#view-settings .card,#view-cetak .card,#view-komunitas .card,
+  #view-kasir [class*="rounded-xl"],#view-produk-kasir [class*="rounded-xl"],#view-laporan-kasir [class*="rounded-xl"],#view-history [class*="rounded-xl"],#view-report [class*="rounded-xl"]{border-color:#e0ebf8}
+  #view-kasir input,#view-kasir select,#view-kasir textarea,#view-produk-kasir input,#view-produk-kasir select,#view-produk-kasir textarea,#view-input input,#view-input select,#view-input textarea,#view-settings input,#view-settings select,#view-settings textarea,#view-komunitas input,#view-komunitas textarea{border-color:#d8e6f6!important;border-radius:12px!important;background:#fff!important;color:#16365f!important;box-shadow:0 2px 7px rgba(23,75,135,.035)!important;max-width:100%}
+  #view-kasir button,#view-produk-kasir button,#view-laporan-kasir button,#view-history button,#view-report button,#view-input button,#view-settings button,#view-cetak button,#view-komunitas button{border-radius:11px}
+  #view-kasir img,#view-produk-kasir img,#view-laporan-kasir img,#view-history img,#view-report img,#view-input img,#view-komunitas img{max-width:100%}
+  /* The dock uses illustrated, colorful app icons and a raised center action */
+  #mobile-simplified-dock{height:76px!important;padding:0 7px!important;background:rgba(255,255,255,.97)!important;border-top:1px solid #d9e8fa!important;box-shadow:0 -8px 24px rgba(12,59,130,.12)!important;backdrop-filter:blur(18px)!important}
+  #mobile-simplified-dock>div{height:100%!important;max-width:520px!important;margin:0 auto!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;align-items:center!important;padding:0!important}
+  #mobile-simplified-dock .mobile-dock-item{height:61px!important;min-width:0!important;border-radius:15px!important;color:#8498b4!important;gap:4px!important;padding:5px 1px!important;transition:transform .16s ease,background .16s ease!important}
+  #mobile-simplified-dock .mobile-dock-item i{width:30px;height:30px;display:flex!important;align-items:center!important;justify-content:center!important;margin:0!important;border-radius:10px!important;background:#f0f5fb!important;color:#8298b7!important;font-size:15px!important;line-height:1!important}
+  #mobile-simplified-dock .mobile-dock-item span{font-size:9px!important;line-height:1.05!important;font-weight:800!important;white-space:nowrap!important}
+  #mobile-simplified-dock .mobile-dock-item.text-emerald-600,#mobile-simplified-dock .mobile-dock-item:focus-visible{color:#0878f9!important}
+  #mobile-simplified-dock #nav-mobile-home i{background:#e6f2ff!important;color:#0878f9!important}
+  #mobile-simplified-dock #nav-mobile-history i{background:#edf2ff!important;color:#617be9!important}
+  #mobile-simplified-dock #nav-mobile-report i{background:linear-gradient(145deg,#1597ff,#0757d8)!important;color:#fff!important}
+  #mobile-simplified-dock #nav-mobile-activity i{background:#fff0e2!important;color:#f28a12!important}
+  #mobile-simplified-dock #nav-mobile-komunitas i{background:#f3eaff!important;color:#8b5cf6!important}
+  #mobile-simplified-dock #nav-mobile-report{position:relative!important}
+  #mobile-simplified-dock #nav-mobile-report i{width:44px!important;height:44px!important;margin-top:-23px!important;border-radius:50%!important;border:4px solid #fff!important;box-shadow:0 5px 15px rgba(0,91,220,.3)!important;font-size:17px!important}
+  #mobile-simplified-dock .mobile-dock-item:active{transform:scale(.95)!important}
+  /* Rounded overlays and dialogs on mobile only */
+  [role="dialog"],.modal-content,.modal-card{max-width:calc(100vw - 16px)}
+  #rekapinyu-welcome-popup .rw-dialog,#kasir-payment-popup .kasir-payment-dialog{border-radius:20px!important;overflow:hidden!important}
+  #mobile-profile-menu-container .mobile-profile-menu{border:1px solid #dfebf8!important;border-radius:16px!important;box-shadow:0 16px 38px rgba(16,54,100,.18)!important}
+}
+@media(max-width:390px){
+  #mobile-home-view{padding-left:9px!important;padding-right:9px!important}
+  #mobile-home-view .mobile-home-grid{gap:7px!important}
+  #mobile-home-view .mobile-home-card{min-height:101px!important;border-radius:15px!important}
+  #mobile-home-view .mobile-home-icon{width:35px!important;height:35px!important;flex-basis:35px!important;font-size:15px!important}
+  #mobile-home-view .mobile-home-card-content>span{font-size:9.7px!important}
+}
+</style>
+
