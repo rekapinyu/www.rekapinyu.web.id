@@ -1894,6 +1894,31 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   min-width:0!important;
 }
 </style>
+<script id="rekapinyu-anti-inspect-shortcuts">
+(function () {
+  "use strict";
+  // Penghambat pintasan umum untuk membuka alat inspeksi browser.
+  document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+  }, true);
+  document.addEventListener("keydown", function (event) {
+    var key = (event.key || "").toLowerCase();
+    var blocked = key === "f12" ||
+      (event.ctrlKey && !event.altKey && key === "u") ||
+      (event.ctrlKey && event.shiftKey &&
+        (key === "i" || key === "j" || key === "c"));
+    if (blocked) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === "function") {
+        event.stopImmediatePropagation();
+      }
+      return false;
+    }
+  }, true);
+})();
+</script>
+
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
