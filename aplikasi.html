@@ -14382,3 +14382,43 @@ async function initKasirViews(){
 
 </body>
 </html>
+
+<!-- REKAPINYU MOBILE UI REFRESH — mobile-only overrides; desktop untouched -->
+<style id="rekapinyu-mobile-promotional-ui-refresh">
+@media (max-width:767px){
+  body{background:#f2f8ff!important;color:#102b55!important}
+  body>.flex-1.flex.flex-col.h-screen.overflow-hidden{min-width:0!important;width:100%!important}
+  header{height:58px!important;min-height:58px!important;padding:0 13px!important;background:linear-gradient(110deg,#fff 0%,#eef7ff 100%)!important;border-bottom:1px solid #d7e8fb!important;box-shadow:0 3px 12px rgba(16,65,130,.08)!important}
+  header .rounded-lg.bg-emerald-600{width:36px!important;height:36px!important;border-radius:12px!important;background:linear-gradient(145deg,#0879ef,#0750c6)!important;box-shadow:0 5px 12px #0879ef30!important}
+  header h1{font-size:16px!important;font-weight:950!important;letter-spacing:-.4px!important;color:#092e6e!important;text-shadow:0 1px #fff}
+  main{background:linear-gradient(180deg,#f3f9ff 0%,#fff 55%,#edf6ff 100%)!important;padding:12px 12px 94px!important;gap:12px!important}
+  #mobile-home-view{gap:13px!important}
+  #mobile-home-view .mobile-home-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;padding:0!important}
+  #mobile-home-view .mobile-home-card{min-height:112px!important;padding:9px 5px!important;border:1px solid #e1edfc!important;border-radius:17px!important;background:linear-gradient(150deg,#fff 0%,#f8fbff 100%)!important;box-shadow:0 5px 14px rgba(28,89,160,.09),inset 0 1px #fff!important;color:#0b326d!important}
+  #mobile-home-view .mobile-home-card-main{padding:8px 5px!important;border-radius:17px!important}
+  #mobile-home-view .mobile-home-card-content{gap:7px!important}
+  #mobile-home-view .mobile-home-card-content>span{font-size:10.5px!important;line-height:1.2!important;font-weight:850!important;color:#10366e!important}
+  #mobile-home-view .mobile-home-icon{width:39px!important;height:39px!important;border-radius:13px!important;font-size:17px!important;box-shadow:0 4px 10px rgba(25,90,160,.08)!important}
+  #mobile-home-view .mobile-home-watermark{font-size:58px!important;right:-5px!important;bottom:-7px!important;opacity:.07!important}
+  #mobile-home-view #mobile-admin-summary,.mobile-admin-summary{border-radius:20px!important;background:linear-gradient(120deg,#0788ff 0%,#0751cf 100%)!important;box-shadow:0 10px 22px rgba(0,92,220,.23)!important;border:1px solid #7dbdff!important}
+  #mobile-home-view .mobile-home-report-title{font-size:13px!important;color:#10366e!important;font-weight:900!important}
+  #mobile-home-view .mobile-home-day-card{border-color:#e1edfc!important;border-radius:17px!important;box-shadow:0 5px 14px rgba(28,89,160,.07)!important}
+  #mobile-simplified-dock{height:72px!important;background:rgba(255,255,255,.97)!important;border-top:1px solid #d8e8fb!important;box-shadow:0 -7px 22px rgba(12,59,130,.12)!important;padding:0 8px!important;backdrop-filter:blur(16px)!important}
+  #mobile-simplified-dock>div{max-width:520px!important;margin:0 auto!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
+  #mobile-simplified-dock .mobile-dock-item{height:60px!important;border-radius:14px!important;color:#7f97b8!important;padding:5px 2px!important;gap:4px!important}
+  #mobile-simplified-dock .mobile-dock-item i{font-size:18px!important;margin:0!important}
+  #mobile-simplified-dock .mobile-dock-item span{font-size:9px!important;font-weight:750!important;line-height:1.1!important}
+  #mobile-simplified-dock .mobile-dock-item.text-emerald-600{color:#0875e8!important}
+  #mobile-simplified-dock #nav-mobile-report{position:relative!important}
+  #mobile-simplified-dock #nav-mobile-report i{width:42px!important;height:42px!important;margin-top:-25px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:50%!important;background:linear-gradient(145deg,#1498ff,#0757dc)!important;color:#fff!important;border:4px solid #fff!important;box-shadow:0 5px 14px rgba(0,91,220,.3)!important;font-size:17px!important}
+  #mobile-simplified-dock #nav-mobile-report span{margin-top:0!important}
+  #mobile-simplified-dock .mobile-dock-item:active{transform:scale(.96)!important}
+  #view-kasir,#view-produk-kasir,#view-laporan-kasir,#view-history,#view-report,#view-input,#view-settings,#view-cetak{border-radius:16px!important}
+}
+@media(max-width:390px){
+  #mobile-home-view .mobile-home-grid{gap:7px!important}
+  #mobile-home-view .mobile-home-card{min-height:103px!important;border-radius:15px!important}
+  #mobile-home-view .mobile-home-card-content>span{font-size:10px!important}
+  #mobile-home-view .mobile-home-icon{width:35px!important;height:35px!important;font-size:15px!important}
+}
+</style>
