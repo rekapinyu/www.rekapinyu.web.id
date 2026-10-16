@@ -8518,6 +8518,38 @@ function exactAktifitasDoc(payload={}){
   };
 }
 
+/* PAKET GRATIS: satu jalur untuk memberi trial akun baru dan memulihkan akun yang
+   dibuat saat percobaan pendaftaran sebelumnya gagal menyimpan metadata paket.
+   Waktu trial memakai waktu pembuatan akun Firebase Auth, bukan waktu login. */
+const REKAPINYU_TRIAL_LENGTH_MS=7*24*60*60*1000;
+function rekapinyuPackageDateMs(value){
+  if(value&&typeof value.toDate==="function"){try{return value.toDate().getTime()}catch(_){}}
+  if(value&&typeof value==="object"&&typeof value.seconds==="number")return value.seconds*1000;
+  if(typeof value==="number")return value<100000000000?value*1000:value;
+  const parsed=Date.parse(String(value||""));return Number.isFinite(parsed)?parsed:0;
+}
+async function rekapinyuEnsureTrialPackage(uid,p,data={}){
+  const source=data&&typeof data==="object"?data:{};
+  const name=String(source.NamaPaket||source.namaPaket||source.packageName||source.paketNama||source.namaLangganan||"").trim();
+  const isTrial=/gratis\s*7\s*hari|uji\s*coba/i.test(name);
+  const expiryKeys=["packageExpiresAt","PackageExpiresAt","packageExpiry","tanggalBerakhirPaket","TanggalBerakhirPaket","masaAktifSampai","MasaAktifSampai"];
+  const hasExpiry=expiryKeys.some(key=>rekapinyuPackageDateMs(source[key])>0);
+  /* Jangan menimpa paket berbayar/Selamanya atau tanggal aktivasi yang ditulis Superadmin. */
+  if((name&&!isTrial)||(!name&&hasExpiry)||(isTrial&&hasExpiry))return source;
+  const user=auth.currentUser;
+  if(!uid||!user||user.uid!==uid)return source;
+  const authCreatedAt=rekapinyuPackageDateMs(user.metadata?.creationTime);
+  const storedTrialStart=rekapinyuPackageDateMs(source.packageStartedAt||source.TanggalPendaftaran||source.tanggalPendaftaran||source.tanggalMulaiPaket||source.TanggalMulaiPaket);
+  const startedMs=isTrial&&storedTrialStart?storedTrialStart:authCreatedAt;
+  if(!Number.isFinite(startedMs)||startedMs<=0)return source;
+  const startedAt=new Date(startedMs).toISOString();
+  const expiresAt=new Date(startedMs+REKAPINYU_TRIAL_LENGTH_MS).toISOString();
+  const trial={NamaPaket:"Gratis 7 Hari",TanggalPendaftaran:startedAt,packageStartedAt:startedAt,packageExpiresAt:expiresAt,packageTrialDays:7};
+  await setDoc(getPenggunaRef(uid,phoneOf(p||user.email?.split("@")[0]||"")),trial,{merge:true});
+  return {...source,...trial};
+}
+window.__rekapinyuEnsureTrialPackage=rekapinyuEnsureTrialPackage;
+
 async function writeBaseSchema(uid,p,name,initialPackage={}){
   const pClean=phoneOf(p),shopName=String(name||"").trim(),nameClean=String(name||currentSessionUser?.name||auth.currentUser?.displayName||"").trim();
   const [pr,kr,rr,ar]=[getPenggunaRef(uid,pClean),getKasirRef(uid,pClean),getRekapRef(uid,pClean),getAktifitasRef(uid,pClean)];
@@ -8649,7 +8681,10 @@ async function hydrate(uid){
     rekap:rs.exists()?rs.data()||{}:{},
     aktifitas:as.exists()?as.data()||{}:{}
   };
-  const pu=docs.pengguna,kd=docs.kasir,rd=docs.rekap,ad=docs.aktifitas;
+  let pu=docs.pengguna;const kd=docs.kasir,rd=docs.rekap,ad=docs.aktifitas;
+  /* Jika pendaftaran sudah membuat akun Auth tetapi metadata trial belum tersimpan,
+     pulihkan dari timestamp creationTime hanya bila akun memang belum punya paket. */
+  try{pu=await rekapinyuEnsureTrialPackage(uid,p,pu);docs.pengguna=pu}catch(e){log("trial gratis tidak dapat disimpan ke Firestore",e)}
   const shopName=String(kd.NamaToko||rd.NamaToko||currentSessionUser?.shopName||"").trim();
   const user={uid,name:String(pu.NamaPengguna||currentSessionUser?.name||auth.currentUser?.displayName||""),shopName,phone:phoneOf(pu.NomorHp||p),email:auth.currentUser?.email||currentSessionUser?.email||"",password:String(pu.Pasword||currentSessionUser?.password||""),role:String(pu.role||"Pengguna")};
   localSession(user);
@@ -8784,9 +8819,10 @@ const rekapinyuAuth={busy:false,activeForm(){const l=document.getElementById("lo
         return;
       }
       const c=await createUserWithEmailAndPassword(auth,emailOf(p),password);authenticated=true;await updateProfile(c.user,{displayName:name});
-      const registrationTime=new Date();
+      const authCreatedAt=Date.parse(c.user.metadata?.creationTime||"");
+      const registrationTime=new Date(Number.isFinite(authCreatedAt)&&authCreatedAt>0?authCreatedAt:Date.now());
       const trialStart=registrationTime.toISOString();
-      const trialExpiry=new Date(registrationTime.getTime()+7*24*60*60*1000).toISOString();
+      const trialExpiry=new Date(registrationTime.getTime()+REKAPINYU_TRIAL_LENGTH_MS).toISOString();
       const initialPackage={NamaPaket:"Gratis 7 Hari",TanggalPendaftaran:trialStart,packageStartedAt:trialStart,packageExpiresAt:trialExpiry,packageTrialDays:7};
       currentSessionUser={uid:c.user.uid,name,shopName:name,phone:p,email:c.user.email,password,role:"Pengguna",photo:"",cover:"",coverX:50,coverY:50,...initialPackage};refs.pengguna=refs.kasir=refs.rekap=refs.aktifitas=null;refCache.clear();
       await writeBaseSchema(c.user.uid,p,name,initialPackage);await saveCloudUser({name,phone:p,password,role:"Pengguna"});localSession({uid:c.user.uid,name,shopName:name,phone:p,email:c.user.email,password,role:"Pengguna",photo:"",cover:"",coverX:50,coverY:50,...initialPackage});await signOut(auth);currentSessionUser=null;nativeRemove.call(localStorage,"finance_active_session");form.reset();toggleAuthView("login");notify("Pendaftaran Berhasil","Akun berhasil dibuat dengan paket gratis 7 hari. Masa aktif dihitung sejak waktu pendaftaran; silakan masuk menggunakan Nomor HP dan Kata Sandi.");return;
@@ -8869,9 +8905,10 @@ function realtime(uid){
      REALTIME LISTENER — PENGGUNA
      Schema: NamaPengguna, NomorHp, Pasword, role
      ============================================================= */
-  collectionUnsubs.push(onSnapshot(pr,s=>{
+  collectionUnsubs.push(onSnapshot(pr,async s=>{
     if(!s.exists()){log("listener Pengguna: dokumen tidak ditemukan",uid);return;}
-    const d=s.data()||{};
+    let d=s.data()||{};
+    try{d=await rekapinyuEnsureTrialPackage(uid,p,d)}catch(e){log("trial gratis realtime tidak dapat disimpan",e)}
     applyingFirestoreRealtime=true;
     try{
       if(!currentSessionUser)currentSessionUser={uid,name:"",phone:p,email:auth.currentUser?.email||"",password:"",role:"Pengguna",shopName:""};
@@ -14005,11 +14042,14 @@ async function initKasirViews(){
     packageKnown=true;
     lastPackageData=data;
     const name=String(data.NamaPaket||data.namaPaket||data.packageName||data.paketNama||data.namaLangganan||'').trim();
-    /* Superadmin lama mungkin menulis salah satu alias tanggal berakhir. Pilih masa akhir terbaru agar tanggal trial lama tidak mengalahkan aktivasi paket berbayar. */
+    /* Gunakan tanggal akhir yang tersimpan; untuk trial lama tanpa tanggal akhir,
+       turunkan dari tanggal pendaftaran. Alias tanggal akhir lama tetap didukung. */
     const expiryCandidates=[data.packageExpiresAt,data.PackageExpiresAt,data.packageExpiry,data.tanggalBerakhirPaket,data.TanggalBerakhirPaket,data.masaAktifSampai,data.MasaAktifSampai].map(parseExpiry).filter(value=>value>0);
-    const expiry=expiryCandidates.length?Math.max(...expiryCandidates):0;
     const isLifetimePackage=/selamanya/i.test(name);
     const isFreeTrial=/gratis\s*7\s*hari|uji\s*coba/i.test(name);
+    const startCandidates=[data.packageStartedAt,data.TanggalPendaftaran,data.tanggalPendaftaran,data.tanggalMulaiPaket,data.TanggalMulaiPaket].map(parseExpiry).filter(value=>value>0);
+    const derivedTrialExpiry=isFreeTrial&&startCandidates.length?Math.max(...startCandidates)+7*24*60*60*1000:0;
+    const expiry=expiryCandidates.length?Math.max(...expiryCandidates):(derivedTrialExpiry||0);
     const active=!!name&&(isLifetimePackage||expiry>Date.now());
     const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
     const expiryDate=expiry?new Date(expiry):null;
