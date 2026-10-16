@@ -3620,7 +3620,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"><div class="rounded-xl bg-white/15 p-4"><div class="text-xs font-semibold uppercase tracking-wide text-white/80">Paket Anda</div><div id="cek-paket-nama" class="mt-1 text-xl font-extrabold">Memuat data paket…</div></div><div class="rounded-xl bg-white/15 p-4"><div class="text-xs font-semibold uppercase tracking-wide text-white/80">Status Paket</div><div id="cek-paket-status" class="mt-1 text-xl font-extrabold">Memeriksa…</div></div></div>
     </div>
     <div class="space-y-5 p-5 sm:p-7">
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="text-sm text-slate-500">Sisa masa aktif</div><div class="mt-1 flex items-baseline gap-2"><span id="cek-paket-sisa" class="text-3xl font-black text-slate-800">—</span><span id="cek-paket-satuan" class="text-sm font-semibold text-slate-500">hari</span></div><p id="cek-paket-keterangan-sisa" class="mt-1 text-xs text-slate-500">Mengambil data dari akun Anda</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Tanggal berakhir</div><div id="cek-paket-berakhir" class="mt-2 text-base font-bold text-slate-800">—</div><p class="mt-1 text-xs text-slate-500">Dihitung Sejak Tanggal Pembelian Paket</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Nama toko</div><div id="cek-paket-toko" class="mt-2 break-words text-base font-bold text-slate-800">—</div><p class="mt-1 text-xs text-slate-500">Akun yang sedang masuk</p></div></div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="text-sm text-slate-500">Sisa masa aktif</div><div class="mt-1 flex items-baseline gap-2"><span id="cek-paket-sisa" class="text-3xl font-black text-slate-800">—</span><span id="cek-paket-satuan" class="text-sm font-semibold text-slate-500">hari</span></div><p id="cek-paket-keterangan-sisa" class="mt-1 text-xs text-slate-500">Mengambil data dari akun Anda</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Tanggal berakhir</div><div id="cek-paket-berakhir" class="mt-2 text-base font-bold text-slate-800">—</div><p id="cek-paket-keterangan-berakhir" class="mt-1 text-xs text-slate-500">Dihitung sejak tanggal mulai masa aktif</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Nama toko</div><div id="cek-paket-toko" class="mt-2 break-words text-base font-bold text-slate-800">—</div><p class="mt-1 text-xs text-slate-500">Akun yang sedang masuk</p></div></div>
       <div><div class="mb-2 flex items-center justify-between gap-3"><span class="text-sm font-bold text-slate-700">Masa aktif paket</span><span id="cek-paket-progress-label" class="text-xs font-semibold text-slate-500">—</span></div><div class="h-3 overflow-hidden rounded-full bg-slate-100"><div id="cek-paket-progress" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width:0%"></div></div><p id="cek-paket-info" class="mt-3 text-sm text-slate-600">Status paket akan diperbarui otomatis dari data akun.</p></div>
       <div class="flex flex-col gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 sm:flex-row sm:items-center sm:justify-between"><div><div class="font-bold text-slate-800">Butuh perpanjangan paket?</div><p class="mt-1 text-sm text-slate-600">Hubungi admin Rekapinyu untuk mengaktifkan atau memperpanjang paket Anda.</p></div><a id="cek-paket-wa" href="https://wa.me/message/FCDFMUUH7KDWC1" target="_blank" rel="noopener noreferrer" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-green-700"><i class="fa-brands fa-whatsapp text-lg"></i> Hubungi Admin</a></div>
       <p class="text-xs text-slate-400"><i class="fa-solid fa-rotate mr-1"></i>Data diperbarui otomatis saat status paket pada akun berubah.</p>
@@ -8518,12 +8518,12 @@ function exactAktifitasDoc(payload={}){
   };
 }
 
-async function writeBaseSchema(uid,p,name){
+async function writeBaseSchema(uid,p,name,initialPackage={}){
   const pClean=phoneOf(p),shopName=String(name||"").trim(),nameClean=String(name||currentSessionUser?.name||auth.currentUser?.displayName||"").trim();
   const [pr,kr,rr,ar]=[getPenggunaRef(uid,pClean),getKasirRef(uid,pClean),getRekapRef(uid,pClean),getAktifitasRef(uid,pClean)];
   const setting=normalizeSetting(SETTING_DEFAULTS);
   await Promise.all([
-    setDoc(pr,{NamaPengguna:nameClean,NomorHp:pClean,Pasword:String(currentSessionUser?.password||""),role:String(currentSessionUser?.role||"Pengguna")},{merge:true}),
+    setDoc(pr,{NamaPengguna:nameClean,NomorHp:pClean,Pasword:String(currentSessionUser?.password||""),role:String(currentSessionUser?.role||"Pengguna"),...(initialPackage&&typeof initialPackage==="object"?initialPackage:{})},{merge:true}),
     setDoc(kr,{NamaToko:shopName,NomorHp:pClean,TotalOmsetKasir:0,TotalProfitKasir:0,Seting:setting}),
     setDoc(rr,{NamaToko:shopName,NomorHp:pClean,InputData:[],Pengeluaran:[],Kasbon:[]}),
     setDoc(ar,{Aktifitas:[],NamaToko:shopName,NomorHp:pClean})
@@ -8653,6 +8653,7 @@ async function hydrate(uid){
   const shopName=String(kd.NamaToko||rd.NamaToko||currentSessionUser?.shopName||"").trim();
   const user={uid,name:String(pu.NamaPengguna||currentSessionUser?.name||auth.currentUser?.displayName||""),shopName,phone:phoneOf(pu.NomorHp||p),email:auth.currentUser?.email||currentSessionUser?.email||"",password:String(pu.Pasword||currentSessionUser?.password||""),role:String(pu.role||"Pengguna")};
   localSession(user);
+  try{window.__rekapinyuPackageGateUpdate?.(pu)}catch(e){log("status paket awal belum dapat diperbarui",e)}
   applyingFirestoreRealtime=true;
   try{
     window.__rekapinyuActivityData=arrayFromField(ad,"Aktifitas",[]);
@@ -8783,8 +8784,12 @@ const rekapinyuAuth={busy:false,activeForm(){const l=document.getElementById("lo
         return;
       }
       const c=await createUserWithEmailAndPassword(auth,emailOf(p),password);authenticated=true;await updateProfile(c.user,{displayName:name});
-      currentSessionUser={uid:c.user.uid,name,shopName:name,phone:p,email:c.user.email,password,role:"Pengguna",photo:"",cover:"",coverX:50,coverY:50};refs.pengguna=refs.kasir=refs.rekap=refs.aktifitas=null;refCache.clear();
-      await writeBaseSchema(c.user.uid,p,name);await saveCloudUser({name,phone:p,password,role:"Pengguna"});localSession({uid:c.user.uid,name,shopName:name,phone:p,email:c.user.email,password,role:"Pengguna",photo:"",cover:"",coverX:50,coverY:50});await signOut(auth);currentSessionUser=null;nativeRemove.call(localStorage,"finance_active_session");form.reset();toggleAuthView("login");notify("Pendaftaran Berhasil","Akun berhasil dibuat. Silakan masuk menggunakan Nomor HP dan Kata Sandi.");return;
+      const registrationTime=new Date();
+      const trialStart=registrationTime.toISOString();
+      const trialExpiry=new Date(registrationTime.getTime()+7*24*60*60*1000).toISOString();
+      const initialPackage={NamaPaket:"Gratis 7 Hari",TanggalPendaftaran:trialStart,packageStartedAt:trialStart,packageExpiresAt:trialExpiry,packageTrialDays:7};
+      currentSessionUser={uid:c.user.uid,name,shopName:name,phone:p,email:c.user.email,password,role:"Pengguna",photo:"",cover:"",coverX:50,coverY:50,...initialPackage};refs.pengguna=refs.kasir=refs.rekap=refs.aktifitas=null;refCache.clear();
+      await writeBaseSchema(c.user.uid,p,name,initialPackage);await saveCloudUser({name,phone:p,password,role:"Pengguna"});localSession({uid:c.user.uid,name,shopName:name,phone:p,email:c.user.email,password,role:"Pengguna",photo:"",cover:"",coverX:50,coverY:50,...initialPackage});await signOut(auth);currentSessionUser=null;nativeRemove.call(localStorage,"finance_active_session");form.reset();toggleAuthView("login");notify("Pendaftaran Berhasil","Akun berhasil dibuat dengan paket gratis 7 hari. Masa aktif dihitung sejak waktu pendaftaran; silakan masuk menggunakan Nomor HP dan Kata Sandi.");return;
     }
     const rawPhone=document.getElementById("login-phone")?.value||"",p=strictRekapinyuPhone(rawPhone),password=document.getElementById("login-password")?.value||"";
     const phoneCheck=rekapinyuValidatePhoneInput(rawPhone);
@@ -14000,8 +14005,11 @@ async function initKasirViews(){
     packageKnown=true;
     lastPackageData=data;
     const name=String(data.NamaPaket||data.namaPaket||data.packageName||data.paketNama||data.namaLangganan||'').trim();
-    const expiry=parseExpiry(data.packageExpiresAt||data.PackageExpiresAt||data.packageExpiry||data.tanggalBerakhirPaket||data.TanggalBerakhirPaket||data.masaAktifSampai||data.MasaAktifSampai);
+    /* Superadmin lama mungkin menulis salah satu alias tanggal berakhir. Pilih masa akhir terbaru agar tanggal trial lama tidak mengalahkan aktivasi paket berbayar. */
+    const expiryCandidates=[data.packageExpiresAt,data.PackageExpiresAt,data.packageExpiry,data.tanggalBerakhirPaket,data.TanggalBerakhirPaket,data.masaAktifSampai,data.MasaAktifSampai].map(parseExpiry).filter(value=>value>0);
+    const expiry=expiryCandidates.length?Math.max(...expiryCandidates):0;
     const isLifetimePackage=/selamanya/i.test(name);
+    const isFreeTrial=/gratis\s*7\s*hari|uji\s*coba/i.test(name);
     const active=!!name&&(isLifetimePackage||expiry>Date.now());
     const setText=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value};
     const expiryDate=expiry?new Date(expiry):null;
@@ -14011,15 +14019,16 @@ async function initKasirViews(){
     const duration=durationMatch?Number(durationMatch[1])*(/bln|bulan/i.test(durationMatch[0])?30:1):(/2\s*bulan/i.test(name)?60:30);
     const progress=isLifetimePackage?100:(expiry&&duration>0?Math.max(0,Math.min(100,remaining/duration*100)):0);
     setText('cek-paket-nama',name||'Belum ada paket aktif');
-    setText('cek-paket-status',!name?'Belum aktif':(isLifetimePackage?'AKTIF SELAMANYA':(active?'AKTIF':'KEDALUWARSA')));
+    setText('cek-paket-status',!name?'Belum aktif':(isLifetimePackage?'AKTIF SELAMANYA':(isFreeTrial?(active?'GRATIS AKTIF':'MASA GRATIS HABIS'):(active?'AKTIF':'KEDALUWARSA'))));
     setText('cek-paket-sisa',isLifetimePackage?'∞':(expiry?String(remaining):'—'));
     setText('cek-paket-satuan',isLifetimePackage?'tanpa batas':'hari');
-    setText('cek-paket-keterangan-sisa',isLifetimePackage?'Paket tidak memiliki tanggal kedaluwarsa':(!expiry?'Tanggal berakhir belum tersedia':(active?'Sisa hari dihitung otomatis':'Masa aktif paket telah berakhir')));
+    setText('cek-paket-keterangan-sisa',isLifetimePackage?'Paket tidak memiliki tanggal kedaluwarsa':(!expiry?'Tanggal berakhir belum tersedia':(isFreeTrial?(active?'Sisa masa gratis dihitung sejak pendaftaran akun':'Masa gratis 7 hari telah berakhir'):(active?'Sisa hari dihitung otomatis':'Masa aktif paket telah berakhir'))));
     setText('cek-paket-berakhir',isLifetimePackage?'Tidak kedaluwarsa':dateLabel);
+    setText('cek-paket-keterangan-berakhir',isLifetimePackage?'Paket tidak memiliki tanggal berakhir':(isFreeTrial?'Dihitung sejak tanggal pendaftaran akun':'Dihitung sejak tanggal aktivasi atau pembelian paket'));
     setText('cek-paket-toko',String(window.__rekapinyuDashboardSession?.read?.()?.shopName||document.getElementById('sidebar-user-name')?.textContent||'-'));
     setText('cek-paket-progress-label',isLifetimePackage?'Selamanya':(expiry?(remaining+' hari tersisa'):'Belum tersedia'));
     const progressEl=document.getElementById('cek-paket-progress');if(progressEl){progressEl.style.width=progress+'%';progressEl.classList.toggle('bg-red-500',!active);progressEl.classList.toggle('bg-emerald-500',active)}
-    setText('cek-paket-info',!name?'Belum ada nama paket pada data akun. Silakan hubungi admin untuk memastikan aktivasi paket.':(isLifetimePackage?'Paket Selamanya aktif dan tidak menggunakan hitung mundur kedaluwarsa.':(active?'Paket Anda aktif. Hitung mundur mengikuti tanggal berakhir yang tersimpan pada akun.':'Paket Anda telah berakhir. Hubungi admin untuk memperpanjang masa aktif.')));
+    setText('cek-paket-info',!name?'Belum ada nama paket pada data akun. Silakan hubungi admin untuk memastikan aktivasi paket.':(isLifetimePackage?'Paket Selamanya aktif dan tidak menggunakan hitung mundur kedaluwarsa.':(isFreeTrial?(active?'Paket Gratis 7 Hari aktif sejak pendaftaran akun. Hitung mundur berjalan terus dan tidak diulang saat Anda login kembali.':'Masa gratis 7 hari sejak pendaftaran akun telah habis. Seluruh menu yang terkunci akan tetap terkunci sampai Superadmin mengaktifkan paket berbayar. Hubungi admin untuk pembelian paket.'):(active?'Paket Anda aktif. Hitung mundur mengikuti tanggal berakhir yang tersimpan pada akun.':'Paket Anda telah berakhir. Hubungi admin untuk memperpanjang masa aktif.'))));
     const cekWa=document.getElementById('cek-paket-wa');if(cekWa){const session=window.__rekapinyuDashboardSession?.read?.()||{};const message=`Perpanjang Paket\nNama Paket : ${name||'-'}\nNama Toko : ${session.shopName||document.getElementById('sidebar-user-name')?.textContent||'-'}\nNomorHp : ${session.phone||'-'}`;cekWa.href=WA_URL+'?text='+encodeURIComponent(message)}
     window.__rekapinyuPackageGateActive=!active;
     document.body.classList.toggle('rk-package-expired',!active);
