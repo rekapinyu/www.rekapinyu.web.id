@@ -3549,9 +3549,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 #view-komunitas .komunitas-profile-bio{margin-top:3px!important;color:#77787b!important;font-size:12px!important;font-weight:800!important;line-height:1.45!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important}
 /* PERBAIKAN TERBATAS: tengahkan foto profil, nama toko, label BIO, dan keterangan BIO. */
 #view-komunitas .komunitas-profile-main{align-items:center!important;text-align:center!important}
-#view-komunitas .komunitas-profile-topline{position:relative!important;justify-content:center!important;align-items:center!important}
+#view-komunitas .komunitas-profile-topline{position:relative!important;width:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:14px!important;box-sizing:border-box!important}
 #view-komunitas .komunitas-profile-topline .komunitas-profile-avatar{margin:0 auto 14px!important}
-#view-komunitas .komunitas-profile-topline #komunitas-add-friend-btn{position:absolute!important;right:0!important;top:0!important}
 #view-komunitas .komunitas-profile-name,
 #view-komunitas .komunitas-profile-label,
 #view-komunitas .komunitas-profile-bio{width:100%!important;text-align:center!important}
@@ -3589,14 +3588,19 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   #view-komunitas .komunitas-bio-card{margin:12px!important;width:calc(100% - 24px)!important}
 }
 /* COMMUNITY PROFILE: interaksi Post, Komentar, Teman dan tombol tambah teman */
-#view-komunitas .komunitas-profile-topline{width:100%;display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
 #view-komunitas .komunitas-add-friend-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:0 14px;border:0;border-radius:9px;background:#2563eb;color:#fff;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap}
 #view-komunitas .komunitas-add-friend-btn:hover{background:#1d4ed8}
 #view-komunitas #komunitas-add-friend-btn[hidden]{display:none!important}
 #view-komunitas .komunitas-add-friend-btn:disabled{background:#94a3b8;cursor:default}
-#view-komunitas .komunitas-profile-stats>button{min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:0;border-right:1px solid #e2e8f0;background:#fff;cursor:pointer}
+#view-komunitas .komunitas-profile-stats>button,
+#view-komunitas .komunitas-profile-social-cell>[data-profile-tab="friends"]{min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:0;border-right:1px solid #e2e8f0;background:#fff;cursor:pointer;box-sizing:border-box}
 #view-komunitas .komunitas-profile-stats>button:last-child{border-right:0}
-#view-komunitas .komunitas-profile-stats>button:hover{background:#f8fafc}
+#view-komunitas .komunitas-profile-stats>button:hover,
+#view-komunitas .komunitas-profile-social-cell>[data-profile-tab="friends"]:hover{background:#f8fafc}
+#view-komunitas .komunitas-profile-stats>.komunitas-profile-social-cell{min-height:58px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:6px!important;box-sizing:border-box!important}
+#view-komunitas .komunitas-profile-social-cell>[data-profile-tab="friends"]{width:100%!important;height:100%!important;border:0!important}
+#view-komunitas .komunitas-profile-social-cell>[hidden]{display:none!important}
+#view-komunitas .komunitas-profile-social-cell #komunitas-add-friend-btn{position:static!important;right:auto!important;top:auto!important;max-width:100%!important;margin:0!important;flex:0 1 auto!important}
 #view-komunitas .komunitas-profile-tab-content{padding:14px 16px 28px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:max-content;align-content:start;gap:10px}
 #view-komunitas .komunitas-profile-entry{display:block;width:100%;height:max-content;min-height:0;box-sizing:border-box;align-self:start;padding:9px 12px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;min-width:0;color:#334155;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
 #view-komunitas .komunitas-profile-entry strong{display:block;color:#0f172a;margin-bottom:2px}
@@ -3654,7 +3658,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       </div>
       <div class="komunitas-profile-page" id="komunitas-profile-page" aria-hidden="true">
         <div class="komunitas-profile-main">
-          <div class="komunitas-profile-topline"><div class="komunitas-profile-avatar" id="komunitas-profile-avatar"></div><button class="komunitas-add-friend-btn" id="komunitas-add-friend-btn" type="button"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Tambah Teman</button></div>
+          <div class="komunitas-profile-topline"><div class="komunitas-profile-avatar" id="komunitas-profile-avatar"></div></div>
           <div class="komunitas-profile-name" id="komunitas-profile-name">Toko</div>
           <div class="komunitas-profile-label">BIO & ALAMAT</div>
           <div class="komunitas-profile-bio" id="komunitas-profile-bio">Belum ada bio.</div>
@@ -3662,7 +3666,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
         <div class="komunitas-profile-stats">
           <button type="button" data-profile-tab="posts"><strong id="komunitas-profile-post-count">0</strong><span>POST</span></button>
           <button type="button" data-profile-tab="comments"><strong id="komunitas-profile-comment-count">0</strong><span>KOMENTAR</span></button>
-          <button type="button" data-profile-tab="friends"><strong id="komunitas-profile-friend-count">0</strong><span>RELASI (TEMAN)</span></button>
+          <div class="komunitas-profile-social-cell"><button type="button" data-profile-tab="friends"><strong id="komunitas-profile-friend-count">0</strong><span>RELASI (TEMAN)</span></button><button class="komunitas-add-friend-btn" id="komunitas-add-friend-btn" type="button"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Tambah Teman</button></div>
         </div>
         <div class="komunitas-profile-tab-content" id="komunitas-profile-tab-content" aria-live="polite"></div>
       </div>
@@ -4424,6 +4428,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     const target=communityProfileTarget;
     const targetUid=String(target?.uid||currentCommunityUid());
     const addBtn=document.getElementById('komunitas-add-friend-btn');
+    const friendsStatBtn=document.querySelector('#komunitas-profile-page [data-profile-tab="friends"]');
     if(addBtn){
         const targetId=String(target?.realUid||target?.uid||'').trim();
       const own=!target||isOwnCommunityUser(targetId)||((target.phone&&String(target.phone).replace(/\D/g,'')===String(phone()||'').replace(/\D/g,''))||(!target.phone&&String(target.store||'').trim().toLowerCase()===String(storeName()||'').trim().toLowerCase()));
@@ -4434,8 +4439,9 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
       );
       const alreadyFriend=!!targetId&&(communityFriends.some(f=>String(f.UID||f.uid||'')===targetId)||isAcceptedRelation);
       const waiting=!!targetId&&outgoingFriendRequests.some(r=>r.Jenis==='PermintaanTeman'&&String(r.PenerimaUID||'')===targetId&&r.Status==='menunggu');
+      if(friendsStatBtn)friendsStatBtn.hidden=!own;
       addBtn.hidden=own;addBtn.disabled=false;addBtn.innerHTML='<i class="fa-solid fa-user-plus" aria-hidden="true"></i> Tambah Teman';
-      if(!own&&alreadyFriend){addBtn.disabled=true;addBtn.innerHTML='<i class="fa-solid fa-check" aria-hidden="true"></i> Sudah Berteman';}
+      if(!own&&alreadyFriend){addBtn.disabled=true;addBtn.innerHTML='<i class="fa-solid fa-check" aria-hidden="true"></i> Berteman';}
       else if(!own&&waiting){addBtn.disabled=true;addBtn.innerHTML='<i class="fa-solid fa-clock" aria-hidden="true"></i> Menunggu Konfirmasi';}
     }
     const avatarEl=document.getElementById('komunitas-profile-avatar');
