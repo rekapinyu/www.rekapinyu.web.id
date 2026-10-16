@@ -928,10 +928,13 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 /* KASIR SUGGEST + CART SELECTION — satu styling */
 #kasir-search-suggestions{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:1000;background:#fff;border:1px solid #dbe3eb;border-radius:8px;box-shadow:0 8px 20px rgba(15,23,42,.12);max-height:220px;overflow:auto;padding:4px;}
 #kasir-search-suggestions[hidden]{display:none!important}
-#kasir-search-suggestions .kasir-suggestion-item{display:block;width:100%;text-align:left;border:0;background:#fff;padding:8px 9px;border-radius:6px;cursor:pointer;}
-#kasir-search-suggestions .kasir-suggestion-item:hover,#kasir-search-suggestions .kasir-suggestion-item[aria-selected="true"]{background:#fee2e2!important;color:#dc2626;}
-#kasir-search-suggestions .kasir-suggestion-item strong{display:block;font-size:11px;color:#334155;}
+#kasir-search-suggestions .kasir-suggestion-item{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;text-align:left;border:0;background:#fff;padding:7px 8px;border-radius:6px;cursor:pointer;box-sizing:border-box;}
+#kasir-search-suggestions .kasir-suggestion-copy{display:block;flex:1;min-width:0;}
+#kasir-search-suggestions .kasir-suggestion-item strong{display:block;font-size:11px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #kasir-search-suggestions .kasir-suggestion-item span{display:block;font-size:9px;color:#94a3b8;margin-top:2px;}
+#kasir-search-suggestions .kasir-suggestion-photo{display:flex;flex:0 0 38px;width:38px;height:38px;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e2e8f0;border-radius:6px;background:#f8fafc;color:#94a3b8;}
+#kasir-search-suggestions .kasir-suggestion-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;}
+#kasir-search-suggestions .kasir-suggestion-item:hover,#kasir-search-suggestions .kasir-suggestion-item[aria-selected="true"]{background:#fee2e2!important;color:#dc2626;}
 #kasir-cart-list [data-kasir-cart-item]{transition:background .12s ease,box-shadow .12s ease;}
 #kasir-cart-list [data-kasir-cart-item]:hover,#kasir-cart-list [data-kasir-cart-item].kasir-cart-key-selected{background:#fee2e2!important;color:#dc2626;}
 </style>
@@ -12035,8 +12038,15 @@ async function initKasirViews(){
       return name.includes(q)||barcode.includes(q);
     }).slice(0,8);
     if(!matches.length){box.hidden=true;box.innerHTML='';return}
-    box.innerHTML=matches.map((p,i)=>`<button type="button" class="kasir-suggestion-item" data-kasir-suggest="${esc(p.id)}" data-kasir-suggest-index="${i}" role="option" aria-selected="false"><strong>${esc(p.name)}</strong><span>${rupiah(p.price)}${productBarcodes(p).length?' • '+esc(productBarcodes(p).join(', ')):''}</span></button>`).join('');
+    box.innerHTML=matches.map((p,i)=>`<button type="button" class="kasir-suggestion-item" data-kasir-suggest="${esc(p.id)}" data-kasir-suggest-index="${i}" data-kasir-suggest-photo="${esc(p.photoFileName||'')}" role="option" aria-selected="false"><span class="kasir-suggestion-copy"><strong>${esc(p.name)}</strong><span>${rupiah(p.price)}${productBarcodes(p).length?' • '+esc(productBarcodes(p).join(', ')):''}</span></span><span class="kasir-suggestion-photo" data-kasir-suggestion-photo="${esc(p.id)}"><i class="fa-solid fa-image" aria-hidden="true"></i></span></button>`).join('');
     box.hidden=false;
+    if(typeof window.__rekapinyuResolveProdukKasirPhoto==='function'){
+      matches.forEach(p=>{
+        const cached=window.__rekapinyuGetProdukKasirPhotoUrl?.(p.photoFileName);
+        const apply=url=>{if(!url)return;const current=box.querySelector(`[data-kasir-suggestion-photo="${CSS.escape(String(p.id))}"]`);if(!current)return;current.innerHTML='';const img=document.createElement('img');img.src=url;img.alt=p.name||'';current.appendChild(img)};
+        if(cached)apply(cached);else window.__rekapinyuResolveProdukKasirPhoto(p.photoFileName).then(apply).catch(()=>{});
+      });
+    }
   }
 
   function setKasirSuggestionSelection(index){
