@@ -574,7 +574,7 @@
           padding:0!important;
           overflow:hidden!important;
           border-radius:0!important;
-          background:#fff url('https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20INPUT%20DATA.jpg?raw=true') right center / 58% 100% no-repeat!important;
+          background:#fff url('https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20INPUT%20DATA.jpg?raw=true') right center / auto 100% no-repeat!important;
           background-color:#fff!important;
           box-shadow:none!important;
         }
@@ -9117,7 +9117,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       if(bannerUrl){
         element.style.setProperty("background-image", bannerCssUrl(bannerUrl), "important");
         element.style.setProperty("background-position", "right center", "important");
-        element.style.setProperty("background-size", "58% 100%", "important");
+        element.style.setProperty("background-size", "auto 100%", "important");
         element.style.setProperty("background-repeat", "no-repeat", "important");
         element.dataset[marker] = "1";
       }else{
@@ -9126,7 +9126,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         const fallbackBannerUrl = "https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20INPUT%20DATA.jpg?raw=true";
         element.style.setProperty("background-image", bannerCssUrl(fallbackBannerUrl), "important");
         element.style.setProperty("background-position", "right center", "important");
-        element.style.setProperty("background-size", "58% 100%", "important");
+        element.style.setProperty("background-size", "auto 100%", "important");
         element.style.setProperty("background-repeat", "no-repeat", "important");
         element.dataset[marker] = "1";
       }
