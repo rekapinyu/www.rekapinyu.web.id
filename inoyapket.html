@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>InoyaShip — Pengiriman Paket Internasional</title>
+<style>
+:root{
+  --blue:#315cf5;--blue2:#2449d8;--lime:#c7ff24;--bg:#f5f7fb;--card:#fff;
+  --text:#172033;--muted:#7b8497;--line:#e5e8ef;--danger:#ef5b66;--green:#28b77b;
+  --shadow:0 12px 35px rgba(34,48,80,.08);--radius:22px;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{display:flex;min-height:100vh}.sidebar{width:265px;flex:0 0 265px;background:#fff;border-right:1px solid var(--line);padding:24px 18px;position:-webkit-sticky;position:sticky;top:0;height:100vh;min-height:100vh;align-self:flex-start;display:flex;flex-direction:column;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:22px;padding:3px 10px 28px}.brand-logo{display:block;width:185px;height:65px;max-width:100%;object-fit:contain;object-position:left center}
+.brandmark span{display:block;width:21px;height:21px;border:4px solid var(--lime);border-left-color:transparent;border-radius:50%}
+.nav-title{font-size:11px;color:#a0a6b3;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:10px 12px}
+.nav{display:flex;flex-direction:column;gap:5px}.nav button{border:0;background:transparent;padding:13px 14px;border-radius:14px;text-align:left;color:#596275;font-weight:650;display:flex;align-items:center;gap:12px}.nav button:hover{background:#f4f6ff;color:var(--blue)}.nav button.active{background:var(--blue);color:#fff;box-shadow:0 8px 18px rgba(49,92,245,.2)}
+.icon{width:19px;height:19px;display:inline-grid;place-items:center;flex:0 0 19px}.nav-badge{margin-left:auto;background:var(--lime);color:#152000;padding:3px 8px;border-radius:20px;font-size:11px}
+.sidebar-bottom{margin-top:auto}.upgrade{background:#16234a;color:#fff;border-radius:18px;padding:18px;margin:12px 4px 18px}.upgrade b{display:block;font-size:16px}.upgrade small{color:#b8c2e4;display:block;margin:5px 0 12px}.upgrade button{border:0;background:var(--lime);padding:9px 12px;border-radius:10px;font-weight:800}
+.profile{border-top:1px solid var(--line);padding:17px 7px 0;display:flex;align-items:center;gap:10px}.avatar{width:38px;height:38px;border-radius:50%;background:#dfe6ff;display:grid;place-items:center;font-weight:800;color:var(--blue)}.profile small{display:block;color:var(--muted)}
+.main{flex:1;min-width:0;padding:28px 30px 50px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:24px}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}.title{font-size:28px;margin:4px 0 0}.actions{display:flex;gap:9px}.btn{border:1px solid var(--line);background:#fff;border-radius:13px;padding:11px 15px;font-weight:750;color:#4e576b}.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.lime{background:var(--lime);color:#1c2800;border-color:var(--lime)}
+.page{display:none}.page.active{display:block}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.stat{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)}.stat-top{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;font-weight:700}.stat-num{font-size:27px;font-weight:850;margin:11px 0 3px}.trend{font-size:12px;color:var(--green);font-weight:750}.trend.red{color:var(--danger)}
+.section{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:18px;overflow:hidden}.section-head{padding:20px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:15px}.section-head h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}.filters{display:flex;gap:8px;flex-wrap:wrap}.search{border:1px solid var(--line);background:#fafbfe;border-radius:12px;padding:10px 12px;min-width:230px;outline:none}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:780px}.table th,.table td{padding:15px 18px;border-bottom:1px solid #eef0f5;text-align:left;font-size:13px}.table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#9299a8;background:#fafbfe}.table tr:last-child td{border-bottom:0}.status{display:inline-flex;padding:6px 9px;border-radius:20px;font-size:11px;font-weight:800}.status.blue{background:#e9eeff;color:var(--blue)}.status.green{background:#e4faef;color:#16875b}.status.orange{background:#fff1d9;color:#b26a00}.status.red{background:#ffe5e8;color:#c13b47}.status.gray{background:#eef0f4;color:#6e7685}
+.dashboard2{display:grid;grid-template-columns:1.45fr .85fr;gap:18px}.chart{height:265px;padding:18px 22px}.bars{height:190px;display:flex;align-items:flex-end;gap:15px;border-bottom:1px solid var(--line);padding:10px 5px 0}.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%}.bar i{display:block;width:70%;max-width:48px;background:linear-gradient(180deg,var(--blue),#88a0ff);border-radius:8px 8px 0 0}.bar span{font-size:10px;color:var(--muted)}.chart-legend{display:flex;justify-content:space-between;padding-top:10px;color:var(--muted);font-size:11px}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:18px}.quick button{border:1px solid var(--line);background:#fbfcff;border-radius:15px;padding:18px 10px;text-align:left}.quick strong{display:block;margin-top:8px}.quick span{font-size:11px;color:var(--muted)}
+.trackbox{padding:24px;display:grid;grid-template-columns:1fr auto;gap:12px}.trackbox input{border:1px solid var(--line);border-radius:13px;padding:13px;outline:none}.track-result{padding:0 24px 24px;display:none}.timeline{border-left:2px solid #dce3ff;margin:15px 0 0 8px;padding-left:20px}.event{position:relative;padding:0 0 18px}.event:before{content:"";position:absolute;left:-27px;top:2px;width:11px;height:11px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px #e9eeff}.event b{font-size:13px}.event small{display:block;color:var(--muted);margin-top:3px}
+.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;padding:22px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:750;color:#596275}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:12px;padding:12px;outline:none;background:#fff}.field textarea{min-height:85px;resize:vertical}.form-actions{padding:0 22px 22px;display:flex;justify-content:flex-end;gap:9px}
+.empty{text-align:center;padding:45px;color:var(--muted)}.toast{position:fixed;right:25px;bottom:25px;background:#172033;color:#fff;padding:13px 17px;border-radius:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s;z-index:50}.toast.show{opacity:1;transform:translateY(0)}
+.modal{position:fixed;inset:0;background:rgba(16,23,40,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}.modal.show{display:flex}.modal-card{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:24px}.modal-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}.close{border:0;background:#f1f3f7;border-radius:10px;width:34px;height:34px}.summary{background:#f8f9fd;border-radius:15px;padding:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.summary b{display:block;font-size:16px}.summary span{font-size:10px;color:var(--muted)}
+.mobilebar{display:none}
+@media(max-width:1100px){.sidebar{width:225px}.grid4{grid-template-columns:repeat(2,1fr)}.dashboard2{grid-template-columns:1fr}.main{padding:22px}}
+@media(max-width:720px){.sidebar{display:none}.main{padding:18px 14px 80px}.topbar{align-items:flex-start}.actions .hide-mobile{display:none}.title{font-size:23px}.grid4{grid-template-columns:1fr 1fr;gap:10px}.stat{padding:14px}.stat-num{font-size:21px}.section-head{padding:16px}.quick{grid-template-columns:1fr}.trackbox{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.mobilebar{position:fixed;display:flex;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:30;padding:8px;justify-content:space-around}.mobilebar button{border:0;background:transparent;font-size:10px;color:#687286}.mobilebar button.active{color:var(--blue);font-weight:800}.mobilebar span{display:block;font-size:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><img class="brand-logo" src="https://github.com/rekapinyu/tokoinoya/blob/main/Galery/LOGO%20HEADER%20LACAK%20PAKET.png?raw=true" alt="INOYA SHIPPING"></div>
+  <div class="nav-title">Operasional</div>
+  <div class="nav">
+    <button class="active" data-page="dashboard">◈ <span>Dashboard</span></button>
+    <button data-page="shipments">▣ <span>Pengiriman</span><span class="nav-badge" id="shipCount">0</span></button>
+    <button data-page="create">＋ <span>Buat Pengiriman</span></button>
+    <button data-page="tracking">⌖ <span>Tracking Paket</span></button>
+    <button data-page="customers">♙ <span>Pelanggan</span></button>
+  </div>
+  <div class="nav-title">Keuangan & Laporan</div>
+  <div class="nav">
+    <button data-page="rates">▤ <span>Tarif Internasional</span></button>
+    <button data-page="finance">◎ <span>Pembayaran</span></button>
+    <button data-page="reports">▥ <span>Laporan</span></button>
+  </div>
+  <div class="nav-title">Sistem</div>
+  <div class="nav"><button data-page="settings">⚙ <span>Pengaturan</span></button></div>
+  <div class="sidebar-bottom">
+    <div class="upgrade"><b>ShipFlow Pro</b><small>Kelola pengiriman lebih cepat dengan fitur lengkap.</small><button onclick="toast('Fitur Pro siap diaktifkan')">Upgrade</button></div>
+    <div class="profile"><div class="avatar">AD</div><div><b>Admin</b><small>Operator</small></div></div>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><div class="eyebrow">International Logistics</div><h1 class="title" id="pageTitle">Dashboard</h1></div>
+  <div class="actions"><button class="btn hide-mobile" onclick="showPage('tracking')">⌖ Lacak Paket</button><button class="btn primary" onclick="showPage('create')">＋ Pengiriman Baru</button></div>
+</header>
+
+<section class="page active" id="page-dashboard">
+  <div class="grid4">
+    <div class="stat"><div class="stat-top"><span>Total Pengiriman</span><span>↗</span></div><div class="stat-num" id="statTotal">0</div><div class="trend">+12,4% bulan ini</div></div>
+    <div class="stat"><div class="stat-top"><span>Dalam Perjalanan</span><span>✈</span></div><div class="stat-num" id="statTransit">0</div><div class="trend">Aktif sekarang</div></div>
+    <div class="stat"><div class="stat-top"><span>Terkirim</span><span>✓</span></div><div class="stat-num" id="statDelivered">0</div><div class="trend">Performa baik</div></div>
+    <div class="stat"><div class="stat-top"><span>Pendapatan</span><span>Rp</span></div><div class="stat-num" id="statRevenue">Rp 0</div><div class="trend">+8,2% bulan ini</div></div>
+  </div>
+  <div class="dashboard2">
+    <div class="section">
+      <div class="section-head"><div><h3>Aktivitas Pengiriman</h3><span class="muted">Performa 7 hari terakhir</span></div><button class="btn">Minggu ini⌄</button></div>
+      <div class="chart"><div class="bars" id="bars"></div><div class="chart-legend"><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span></div></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><div><h3>Aksi Cepat</h3><span class="muted">Operasional harian</span></div></div>
+      <div class="quick">
+        <button onclick="showPage('create')"><span>📦</span><strong>Buat paket</strong><span>Input pengiriman baru</span></button>
+        <button onclick="showPage('tracking')"><span>⌖</span><strong>Tracking</strong><span>Cek status paket</span></button>
+        <button onclick="showPage('rates')"><span>🌎</span><strong>Cek tarif</strong><span>Bandingkan ekspedisi</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="section"><div class="section-head"><div><h3>Pengiriman Terbaru</h3><span class="muted">Order yang baru dibuat</span></div><button class="btn" onclick="showPage('shipments')">Lihat Semua</button></div><div class="table-wrap"><table class="table" id="recentTable"></table></div></div>
+</section>
+
+<section class="page" id="page-shipments">
+  <div class="section">
+    <div class="section-head"><div><h3>Semua Pengiriman</h3><span class="muted">Kelola seluruh paket domestik & internasional</span></div><div class="filters"><input class="search" id="shipSearch" placeholder="Cari resi, penerima, negara..." oninput="renderShipments()"><button class="btn primary" onclick="showPage('create')">＋ Baru</button></div></div>
+    <div class="table-wrap"><table class="table" id="shipTable"></table></div>
+  </div>
+</section>
+
+<section class="page" id="page-create">
+  <div class="section"><div class="section-head"><div><h3>Buat Pengiriman Internasional</h3><span class="muted">Isi data pengirim, penerima, paket, dan layanan</span></div></div>
+    <form id="shipForm" onsubmit="createShipment(event)">
+      <div class="formgrid">
+        <div class="field"><label>Nama Pengirim</label><input name="sender" required placeholder="Nama lengkap"></div>
+        <div class="field"><label>No. WhatsApp Pengirim</label><input name="phone" required placeholder="+62..."></div>
+        <div class="field"><label>Nama Penerima</label><input name="receiver" required placeholder="Nama penerima"></div>
+        <div class="field"><label>Negara Tujuan</label><select name="country" required><option value="">Pilih negara</option><option>Singapura</option><option>Malaysia</option><option>Jepang</option><option>Australia</option><option>Amerika Serikat</option><option>Inggris</option><option>Jerman</option><option>Arab Saudi</option><option>Uni Emirat Arab</option></select></div>
+        <div class="field"><label>Alamat Penerima</label><input name="address" required placeholder="Alamat lengkap"></div>
+        <div class="field"><label>Kota / Kode Pos</label><input name="city" required placeholder="Tokyo 100-0001"></div>
+        <div class="field"><label>Jenis Paket</label><select name="type"><option>Dokumen</option><option>Barang</option><option>Sample / Merchandise</option><option>Hadiah</option></select></div>
+        <div class="field"><label>Berat (kg)</label><input name="weight" type="number" min="0.1" step="0.1" required placeholder="1.0"></div>
+        <div class="field"><label>Panjang (cm)</label><input name="length" type="number" min="1" value="20"></div>
+        <div class="field"><label>Lebar (cm)</label><input name="width" type="number" min="1" value="15"></div>
+        <div class="field"><label>Tinggi (cm)</label><input name="height" type="number" min="1" value="10"></div>
+        <div class="field"><label>Layanan</label><select name="service"><option>Express International</option><option>Economy International</option><option>Priority Cargo</option></select></div>
+        <div class="field"><label>Nilai Barang (Rp)</label><input name="value" type="number" min="0" value="0"></div>
+        <div class="field full"><label>Deskripsi Isi Paket / Customs Declaration</label><textarea name="description" required placeholder="Contoh: 2 pcs baju, 1 buku..."></textarea></div>
+        <div class="field full"><label>Catatan Internal</label><textarea name="notes" placeholder="Catatan untuk operator"></textarea></div>
+        <div class="field full"><div class="summary"><div><span>Estimasi Ongkir</span><b id="estimate">Rp 0</b></div><div><span>Asuransi</span><b id="insurance">Rp 0</b></div><div><span>Total</span><b id="grandTotal">Rp 0</b></div></div></div>
+      </div>
+      <div class="form-actions"><button type="button" class="btn" onclick="document.getElementById('shipForm').reset();calcPrice()">Reset</button><button class="btn primary">Simpan & Buat Resi</button></div>
+    </form>
+  </div>
+</section>
+
+<section class="page" id="page-tracking">
+  <div class="section"><div class="section-head"><div><h3>Tracking Paket</h3><span class="muted">Lacak status paket berdasarkan nomor resi</span></div></div>
+    <div class="trackbox"><input id="trackInput" placeholder="Contoh: SF20261005001"><button class="btn primary" onclick="track()">Lacak Paket</button></div>
+    <div class="track-result" id="trackResult"></div>
+  </div>
+</section>
+
+<section class="page" id="page-customers">
+  <div class="section"><div class="section-head"><div><h3>Pelanggan</h3><span class="muted">Database pengirim dan penerima</span></div><button class="btn primary" onclick="toast('Form pelanggan siap digunakan')">＋ Pelanggan</button></div><div class="table-wrap"><table class="table" id="customerTable"></table></div></div>
+</section>
+
+<section class="page" id="page-rates">
+  <div class="section"><div class="section-head"><div><h3>Tarif Internasional</h3><span class="muted">Simulasi biaya berdasarkan tujuan dan berat</span></div></div>
+    <div class="formgrid">
+      <div class="field"><label>Negara Tujuan</label><select id="rateCountry" onchange="calcRate()"><option>Singapura</option><option>Malaysia</option><option>Jepang</option><option>Australia</option><option>Amerika Serikat</option><option>Inggris</option><option>Jerman</option></select></div>
+      <div class="field"><label>Berat (kg)</label><input id="rateWeight" type="number" value="1" min="0.1" step="0.1" oninput="calcRate()"></div>
+    </div>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Kurir</th><th>Layanan</th><th>Estimasi</th><th>Harga</th><th></th></tr></thead><tbody id="rateTable"></tbody></table></div>
+  </div>
+</section>
+
+<section class="page" id="page-finance">
+  <div class="grid4"><div class="stat"><div class="stat-top">Pendapatan</div><div class="stat-num" id="finRevenue">Rp 0</div></div><div class="stat"><div class="stat-top">Piutang</div><div class="stat-num">Rp 4,8 jt</div></div><div class="stat"><div class="stat-top">Refund</div><div class="stat-num">Rp 350 rb</div></div><div class="stat"><div class="stat-top">Transaksi</div><div class="stat-num" id="finCount">0</div></div></div>
+  <div class="section"><div class="section-head"><div><h3>Riwayat Pembayaran</h3><span class="muted">Pembayaran dari pengiriman</span></div></div><div class="table-wrap"><table class="table" id="financeTable"></table></div></div>
+</section>
+
+<section class="page" id="page-reports">
+  <div class="section"><div class="section-head"><div><h3>Laporan Operasional</h3><span class="muted">Ringkasan pengiriman dan pendapatan</span></div><button class="btn" onclick="window.print()">🖨 Cetak / PDF</button></div>
+    <div class="grid4" style="padding:20px"><div class="stat"><div class="stat-top">Shipment</div><div class="stat-num" id="repShip">0</div></div><div class="stat"><div class="stat-top">Delivered</div><div class="stat-num" id="repDel">0</div></div><div class="stat"><div class="stat-top">Revenue</div><div class="stat-num" id="repRev">Rp 0</div></div><div class="stat"><div class="stat-top">Rata-rata</div><div class="stat-num" id="repAvg">Rp 0</div></div></div>
+  </div>
+</section>
+
+<section class="page" id="page-settings">
+  <div class="section"><div class="section-head"><div><h3>Pengaturan Sistem</h3><span class="muted">Konfigurasi akun dan operasional</span></div></div>
+    <div class="formgrid"><div class="field"><label>Nama Perusahaan</label><input value="ShipFlow International"></div><div class="field"><label>Mata Uang</label><select><option>IDR — Rupiah</option><option>USD — Dollar</option></select></div><div class="field"><label>Zona Waktu</label><select><option>Asia/Jakarta (GMT+7)</option></select></div><div class="field"><label>Notifikasi WhatsApp</label><select><option>Aktif</option><option>Nonaktif</option></select></div><div class="field full"><button class="btn primary" onclick="toast('Pengaturan berhasil disimpan')">Simpan Pengaturan</button></div></div>
+  </div>
+</section>
+</main>
+</div>
+
+<div class="mobilebar">
+  <button class="active" data-page="dashboard"><span>◈</span>Home</button>
+  <button data-page="shipments"><span>▣</span>Order</button>
+  <button data-page="create"><span>＋</span>Buat</button>
+  <button data-page="tracking"><span>⌖</span>Tracking</button>
+  <button data-page="settings"><span>⚙</span>Setting</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='shipflow_international_v1';
+const initial=[
+ {id:'SF20261005001',sender:'PT Nusantara Jaya',phone:'+62 812-1111-2233',receiver:'Kenji Sato',country:'Jepang',address:'Shibuya, Tokyo',city:'Tokyo 150-0001',type:'Barang',weight:2.4,service:'Express International',value:1500000,status:'Transit',price:785000,date:'05 Okt 2026',description:'Fashion merchandise'},
+ {id:'SF20261004002',sender:'Andi Pratama',phone:'+62 811-2222-3333',receiver:'Michael Brown',country:'Australia',address:'Sydney NSW',city:'Sydney 2000',type:'Dokumen',weight:.8,service:'Priority Cargo',value:500000,status:'Delivered',price:420000,date:'04 Okt 2026',description:'Dokumen bisnis'},
+ {id:'SF20261003003',sender:'CV Maju Bersama',phone:'+62 813-3333-4444',receiver:'Aisha Rahman',country:'Malaysia',address:'Kuala Lumpur',city:'50000',type:'Barang',weight:4.2,service:'Economy International',value:2800000,status:'Processing',price:560000,date:'03 Okt 2026',description:'Sample produk'}
+];
+let shipments=JSON.parse(localStorage.getItem(KEY)||'null')||initial;
+function money(n){return 'Rp '+Number(n||0).toLocaleString('id-ID')}
+function save(){localStorage.setItem(KEY,JSON.stringify(shipments));renderAll()}
+function toast(s){const e=document.getElementById('toast');e.textContent=s;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2600)}
+function showPage(page){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById('page-'+page).classList.add('active');
+ document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+ const names={dashboard:'Dashboard',shipments:'Pengiriman',create:'Buat Pengiriman',tracking:'Tracking Paket',customers:'Pelanggan',rates:'Tarif Internasional',finance:'Pembayaran',reports:'Laporan',settings:'Pengaturan'};
+ document.getElementById('pageTitle').textContent=names[page]||'Dashboard';
+ if(page==='rates')calcRate(); if(page==='customers')renderCustomers(); if(page==='finance')renderFinance();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+function statusClass(s){return s==='Delivered'?'green':s==='Transit'?'blue':s==='Processing'?'orange':s==='Cancelled'?'red':'gray'}
+function renderShipments(){
+ const q=(document.getElementById('shipSearch')?.value||'').toLowerCase();
+ const rows=shipments.filter(s=>[s.id,s.sender,s.receiver,s.country].join(' ').toLowerCase().includes(q));
+ document.getElementById('shipTable').innerHTML='<thead><tr><th>Resi</th><th>Pengirim</th><th>Penerima</th><th>Tujuan</th><th>Layanan</th><th>Status</th><th>Ongkir</th><th>Tanggal</th></tr></thead><tbody>'+
+ rows.map(s=>`<tr><td><b>${s.id}</b></td><td>${s.sender}</td><td>${s.receiver}</td><td>${s.country}</td><td>${s.service}</td><td><span class="status ${statusClass(s.status)}">${s.status}</span></td><td><b>${money(s.price)}</b></td><td>${s.date}</td></tr>`).join('')+'</tbody>';
+}
+function renderRecent(){
+ document.getElementById('recentTable').innerHTML='<thead><tr><th>Resi</th><th>Penerima</th><th>Negara</th><th>Status</th><th>Ongkir</th></tr></thead><tbody>'+
+ shipments.slice(0,5).map(s=>`<tr><td><b>${s.id}</b></td><td>${s.receiver}</td><td>${s.country}</td><td><span class="status ${statusClass(s.status)}">${s.status}</span></td><td>${money(s.price)}</td></tr>`).join('')+'</tbody>';
+}
+function renderDashboard(){
+ const total=shipments.length, transit=shipments.filter(s=>s.status==='Transit'||s.status==='Processing').length, del=shipments.filter(s=>s.status==='Delivered').length, rev=shipments.reduce((a,s)=>a+Number(s.price||0),0);
+ document.getElementById('statTotal').textContent=total;document.getElementById('statTransit').textContent=transit;document.getElementById('statDelivered').textContent=del;document.getElementById('statRevenue').textContent=money(rev);
+ document.getElementById('shipCount').textContent=total;
+ const nums=[35,55,42,72,63,82,68], max=Math.max(...nums);
+ document.getElementById('bars').innerHTML=nums.map(n=>`<div class="bar"><i style="height:${n/max*88}%"></i></div>`).join('');
+}
+function renderCustomers(){
+ const map={};shipments.forEach(s=>{map[s.sender]=map[s.sender]||{name:s.sender,phone:s.phone,count:0};map[s.sender].count++});
+ document.getElementById('customerTable').innerHTML='<thead><tr><th>Pelanggan</th><th>WhatsApp</th><th>Total Pengiriman</th><th>Terakhir</th></tr></thead><tbody>'+
+ Object.values(map).map(c=>`<tr><td><b>${c.name}</b></td><td>${c.phone}</td><td>${c.count}</td><td>Aktif</td></tr>`).join('')+'</tbody>';
+}
+function renderFinance(){
+ const rev=shipments.reduce((a,s)=>a+Number(s.price||0),0);document.getElementById('finRevenue').textContent=money(rev);document.getElementById('finCount').textContent=shipments.length;
+ document.getElementById('financeTable').innerHTML='<thead><tr><th>Tanggal</th><th>Resi</th><th>Pelanggan</th><th>Metode</th><th>Nominal</th><th>Status</th></tr></thead><tbody>'+
+ shipments.map(s=>`<tr><td>${s.date}</td><td>${s.id}</td><td>${s.sender}</td><td>Transfer</td><td><b>${money(s.price)}</b></td><td><span class="status green">Paid</span></td></tr>`).join('')+'</tbody>';
+}
+function renderReports(){
+ const rev=shipments.reduce((a,s)=>a+Number(s.price||0),0),del=shipments.filter(s=>s.status==='Delivered').length;
+ document.getElementById('repShip').textContent=shipments.length;document.getElementById('repDel').textContent=del;document.getElementById('repRev').textContent=money(rev);document.getElementById('repAvg').textContent=money(shipments.length?rev/shipments.length:0);
+}
+function renderAll(){renderDashboard();renderRecent();renderShipments();renderReports();renderCustomers();renderFinance()}
+function calcPrice(){
+ const f=document.getElementById('shipForm');const w=Number(f.weight?.value||0),v=Number(f.value?.value||0);
+ const base=Math.max(250000,w*290000);const ins=v*.01;document.getElementById('estimate').textContent=money(base);document.getElementById('insurance').textContent=money(ins);document.getElementById('grandTotal').textContent=money(base+ins);
+}
+document.querySelectorAll('#shipForm input,#shipForm select').forEach(x=>x.addEventListener('input',calcPrice));
+function createShipment(ev){
+ ev.preventDefault();const f=new FormData(ev.target);const now=new Date();const id='SF'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+String(Date.now()).slice(-5);
+ const w=Number(f.get('weight')),v=Number(f.get('value'));const price=Math.max(250000,w*290000)+v*.01;
+ shipments.unshift({id,sender:f.get('sender'),phone:f.get('phone'),receiver:f.get('receiver'),country:f.get('country'),address:f.get('address'),city:f.get('city'),type:f.get('type'),weight:w,service:f.get('service'),value:v,status:'Processing',price,date:now.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}),description:f.get('description')});
+ save();ev.target.reset();calcPrice();toast('Pengiriman berhasil dibuat — Resi '+id);showPage('shipments');
+}
+function track(){
+ const q=document.getElementById('trackInput').value.trim().toUpperCase(),s=shipments.find(x=>x.id===q),box=document.getElementById('trackResult');box.style.display='block';
+ if(!s){box.innerHTML='<div class="empty">Resi tidak ditemukan. Periksa nomor resi dan coba lagi.</div>';return}
+ const events=s.status==='Delivered'?[['Paket diterima','Penerima menerima paket di alamat tujuan'],['Out for delivery','Kurir membawa paket ke alamat penerima'],['Tiba di negara tujuan','Paket melewati proses impor']]:[['Paket sedang diproses','Data pengiriman telah diterima sistem'],['Dalam perjalanan','Paket menuju '+s.country],['Pickup berhasil','Paket telah diterima oleh kurir']];
+ box.innerHTML=`<div class="summary"><div><span>Nomor Resi</span><b>${s.id}</b></div><div><span>Status</span><b>${s.status}</b></div><div><span>Tujuan</span><b>${s.country}</b></div></div><div class="timeline">${events.map((e,i)=>`<div class="event"><b>${e[0]}</b><small>${e[1]} • ${i===0?'Hari ini':'Sebelumnya'}</small></div>`).join('')}</div>`;
+}
+function calcRate(){
+ const w=Number(document.getElementById('rateWeight').value||1),country=document.getElementById('rateCountry').value;
+ const mult={Singapura:1,Malaysia:.85,Jepang:1.25,Australia:1.4,'Amerika Serikat':1.7,Inggris:1.8,Jerman:1.75}[country]||1;
+ const providers=[['DHL Express','Express','3–5 hari',360000],['FedEx','Priority','4–7 hari',330000],['UPS','Worldwide Saver','5–8 hari',305000]];
+ document.getElementById('rateTable').innerHTML=providers.map(p=>`<tr><td><b>${p[0]}</b></td><td>${p[1]}</td><td>${p[2]}</td><td><b>${money(Math.round(p[3]*w*mult/1000)*1000)}</b></td><td><button class="btn" onclick="showPage('create');toast('Layanan ${p[0]} dipilih')">Pilih</button></td></tr>`).join('');
+}
+calcPrice();renderAll();
+</script>
+</body>
+</html>

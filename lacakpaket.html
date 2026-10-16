@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>INOYA SHIPPING — Lacak Paket Internasional</title>
+<style>
+:root{--blue:#315cf5;--lime:#c7ff24;--bg:#f5f7fb;--text:#172033;--muted:#7b8497;--line:#e5e8ef;--green:#28b77b;--orange:#d88b18;--red:#ef5b66}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
+button,input{font:inherit}.page{min-height:100vh;displ.brand-logo {
+ay:flex;flex-direction:column}.header{height:74px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;z-index:20}.brand{display:flex;align-items:center;gap:10px}.brand-logo{display:block;width:190px;height:65px;max-height:65px;object-fit:contain;transform:scale(1.2);transform-origin:left center}.nav{display:flex;gap:10px}.nav a{color:#596275;text-decoration:none;font-size:13px;font-weight:700;padding:10px 12px;border-radius:10px}.nav a:hover{background:#f1f4ff;color:var(--blue)}
+/* ===== HALAMAN DEPAN — SATU IMPLEMENTASI ===== */
+.home-hero{position:relative;min-height:calc(100vh - 74px);display:flex;align-items:center;justify-content:center;overflow:hidden;background-image:linear-gradient(180deg,rgba(7,20,55,.38),rgba(7,20,55,.55)),url("https://images.unsplash.com/photo-1765608461706-2678e824ed15?auto=format&fit=crop&w=2400&q=82");background-size:cover;background-position:center 52%;color:#fff;padding:70px 20px 150px}
+.home-hero-content{width:min(980px,100%);text-align:center;position:relative;z-index:2}
+.home-kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:var(--lime);margin-bottom:14px}
+.home-hero h1{font-size:clamp(38px,6vw,72px);line-height:1.04;margin:0 auto 18px;font-weight:950;max-width:950px;text-shadow:0 4px 24px rgba(0,0,0,.22)}
+.home-hero p{max-width:720px;margin:0 auto;color:rgba(255,255,255,.92);font-size:15px;line-height:1.65;text-shadow:0 2px 10px rgba(0,0,0,.2)}
+.home-tools{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);width:min(900px,calc(100% - 30px));display:grid;grid-template-columns:1fr 1px 1fr;align-items:center;background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.72);border-radius:34px;box-shadow:0 18px 50px rgba(7,20,55,.23);backdrop-filter:blur(12px);z-index:4;color:var(--text);padding:0 18px}
+.home-tools-divider{height:62px;background:rgba(23,32,51,.12)}
+.home-tool{display:flex;align-items:center;gap:13px;padding:17px 14px}
+.home-tool-icon{width:42px;height:42px;border-radius:13px;background:#e9eeff;color:var(--blue);display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+.home-tool-copy{min-width:0;flex:1;text-align:left}
+.home-tool-title{font-size:13px;font-weight:900;margin-bottom:4px}
+.home-tool-input{width:100%;border:0;outline:none;background:transparent;color:var(--muted);font-size:14px;padding:0}
+.home-tool-input::placeholder{color:#9ba3b1}
+.home-tool-action{border:0;background:transparent;color:var(--text);font-size:22px;line-height:1;cursor:pointer;padding:8px;border-radius:10px}
+.home-tool-action:hover{background:#eef1f7}
+@media(max-width:760px){
+  .home-hero{min-height:calc(100vh - 112px);padding:50px 15px 190px;background-position:center}
+  .home-hero h1{font-size:clamp(34px,10vw,50px)}
+  .home-hero p{font-size:13px}
+  .home-tools{grid-template-columns:1fr;width:calc(100% - 20px);border-radius:25px;padding:8px 10px;bottom:14px}
+  .home-tools-divider{display:none}
+  .home-tool{padding:12px 8px}
+}
+.container{width:min(1100px,calc(100% - 28px));margin:25px auto 70px}.result{display:none}.result.show{display:block}.top-card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 8px 28px rgba(34,48,80,.06);overflow:hidden}.top{padding:22px;display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line)}.label{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}.resi{font-size:23px;font-weight:900;margin-top:5px}.status{padding:8px 12px;border-radius:20px;font-size:11px;font-weight:850;height:max-content}.green{background:#e4faef;color:#16875b}.blue{background:#e9eeff;color:var(--blue)}.orange{background:#fff1d9;color:#b26a00}.red{background:#ffe5e8;color:#c13b47}.gray{background:#eef0f4;color:#6e7685}
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);padding:18px 22px;gap:15px}.info b{display:block;margin-top:5px;font-size:14px}.info span{font-size:11px;color:var(--muted)}
+.body-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:18px}.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 8px 28px rgba(34,48,80,.06);padding:22px}.card h3{margin:0 0 18px;font-size:17px}.timeline{border-left:2px solid #dce3ff;margin:5px 0 0 8px;padding-left:24px}.event{position:relative;padding:0 0 25px}.event:last-child{padding-bottom:0}.event:before{content:"";position:absolute;left:-31px;top:2px;width:11px;height:11px;border-radius:50%;background:#c8cfdd;box-shadow:0 0 0 4px #f0f2f7}.event.done:before{background:var(--blue);box-shadow:0 0 0 4px #e9eeff}.event.current:before{background:var(--lime);box-shadow:0 0 0 4px #efffc4}.event b{font-size:14px}.event small{display:block;color:var(--muted);margin-top:4px;line-height:1.5}.route{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}.place{text-align:center;flex:1}.place strong{display:block;font-size:14px}.place small{color:var(--muted);font-size:11px}.plane{width:38px;height:38px;border-radius:50%;background:#e9eeff;color:var(--blue);display:grid;place-items:center}.detail{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.detail-row{display:flex;justify-content:space-between;gap:15px;padding:8px 0;font-size:13px}.detail-row span:first-child{color:var(--muted)}.empty{background:#fff;border:1px solid var(--line);border-radius:22px;padding:50px 20px;text-align:center;color:var(--muted);box-shadow:0 8px 28px rgba(34,48,80,.05)}.empty .big{font-size:42px;margin-bottom:10px}.footer{text-align:center;color:var(--muted);font-size:11px;padding:30px 20px;border-top:1px solid var(--line);background:#fff;margin-top:auto}
+
+/* ===== CEK TARIF — SATU IMPLEMENTASI POPUP ===== */
+.price-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(7,20,55,.62);align-items:center;justify-content:center;padding:18px}
+.price-modal.show{display:flex}
+.price-modal-card{width:min(1000px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:0 24px 70px rgba(7,20,55,.3)}
+.price-modal-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 26px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
+.price-modal-title .eyebrow{color:var(--blue)}
+.price-modal-title h2{margin:7px 0 0;font-size:27px}
+.price-modal-close{border:0;background:#eef1f7;color:#596275;width:40px;height:40px;border-radius:50%;font-size:24px;line-height:1;cursor:pointer}
+.price-form{padding:24px 26px}
+.price-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.price-field{display:flex;flex-direction:column;gap:7px}
+.price-field label{font-size:11px;font-weight:800;color:#596275}
+.price-field select,.price-field input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px;outline:none;background:#fff;color:var(--text)}
+.price-field select:focus,.price-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #e9eeff}
+.price-output{margin-top:18px;border-top:1px solid var(--line);padding-top:18px}
+.price-total{padding:20px;border:1px solid #dfe5f8;border-radius:18px;background:#f8faff;text-align:center}
+.price-total-label{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.price-total-value{font-size:30px;font-weight:950;color:var(--blue);margin:5px 0}
+.price-total-route{font-size:12px;color:var(--muted)}
+.price-status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.price-status{padding:18px;border:1px solid var(--line);border-radius:18px;background:#fff}
+.price-status b{display:block;font-size:14px;margin-bottom:7px}
+.price-status span{font-size:12px;line-height:1.55;color:var(--muted)}
+.price-disclaimer{margin-top:14px;color:var(--muted);font-size:11px;line-height:1.5}
+@media(max-width:760px){
+  .price-modal{padding:10px}
+  .price-modal-card{max-height:95vh;border-radius:18px}
+  .price-modal-head{padding:18px}
+  .price-form{padding:18px}
+  .price-grid,.price-status-grid{grid-template-columns:1fr}
+}
+.toast{position:fixed;right:20px;bottom:20px;background:#172033;color:#fff;padding:13px 17px;border-radius:12px;opacity:0;transform:translateY(10px);transition:.25s;z-index:50}.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:760px){.header{height:auto;min-height:0;padding:12px 15px 10px;flex-direction:column;align-items:center;justify-content:center;gap:6px}.brand{width:100%;justify-content:center;align-items:center}.brand-logo{width:300px;height:65px;max-height:65px;object-fit:contain;transform:scale(1.2);transform-origin:center center}.nav{width:100%;display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap}.nav a{font-size:11px;padding:7px 8px;white-space:nowrap}.nav a:not(:last-child){display:block}.hero{padding:50px 18px 95px}.search-row{flex-direction:column}.btn{width:100%}.info-grid{grid-template-columns:1fr 1fr}.body-grid{grid-template-columns:1fr}.top{align-items:flex-start}.resi{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="header">
+  <div class="brand"><img class="brand-logo" src="https://github.com/rekapinyu/tokoinoya/blob/main/Galery/LOGO%20HEADER%20LACAK%20PAKET.png?raw=true" alt="INOYA SHIPPING"></div>
+  <nav class="nav">
+    <a href="https://rekapinyu.github.io/tokoinoya/lacakpaket">Traking Paket</a>
+    
+    <a href="#cek-harga" onclick="openPriceCheck(event)">Cek Harga Kirim</a>
+    <a href="#help">Cara Kirim</a>
+  </nav>
+</header>
+
+<div class="price-modal" id="priceCheckModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="priceModalTitle">
+  <div class="price-modal-card" role="document">
+    <div class="price-modal-head">
+      <div class="price-modal-title">
+        <div class="eyebrow">International Shipping Rate</div>
+        <h2 id="priceModalTitle">Cek Harga Kirim</h2>
+      </div>
+      <button class="price-modal-close" type="button" onclick="closePriceCheck()" aria-label="Tutup">×</button>
+    </div>
+
+    <form class="price-form" id="priceCheckForm" onsubmit="return false">
+      <div class="price-grid">
+        <div class="price-field">
+          <label for="priceFrom">Dari Negara *</label>
+          <select id="priceFrom" required></select>
+        </div>
+
+        <div class="price-field">
+          <label for="priceTo">Ke Negara *</label>
+          <select id="priceTo" required></select>
+        </div>
+
+        <div class="price-field">
+          <label for="priceWeight">Berat Paket (kg) *</label>
+          <input id="priceWeight" type="number" min="0.01" step="0.01" value="1" required placeholder="Contoh: 2.5">
+        </div>
+
+        <div class="price-field">
+          <label for="priceType">Jenis Paket *</label>
+          <select id="priceType" required>
+            <option>Dokumen</option>
+            <option>Barang</option>
+            <option>Elektronik</option>
+            <option>Fashion</option>
+            <option>Makanan</option>
+            <option>Sample Produk</option>
+            <option>Lainnya</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="price-output">
+        <div class="price-total">
+          <div class="price-total-label">Harga Kirim Otomatis</div>
+          <div class="price-total-value" id="priceValue">Rp 100.000</div>
+          <div class="price-total-route" id="priceRoute">Indonesia → Jepang · 1 kg</div>
+        </div>
+
+        <div class="price-status-grid">
+          <div class="price-status">
+            <b>Estimasi Paket Diantar</b>
+            <span id="priceDelivery">Estimasi pengantaran akan muncul otomatis berdasarkan rute.</span>
+          </div>
+
+          <div class="price-status">
+            <b>Paket Terkirim</b>
+            <span id="priceSent">Setelah paket dibuat dan nomor resi diterbitkan, paket dapat dilacak melalui menu Traking Paket.</span>
+          </div>
+        </div>
+
+        <div class="price-disclaimer">
+          Harga dan waktu yang ditampilkan merupakan estimasi otomatis berdasarkan berat dan rute negara.
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="trackingView">
+<section class="home-hero" id="tracking">
+  <div class="home-hero-content">
+    <div class="home-kicker">International Shipping</div>
+    <h1>Menyambung Kebahagiaan<br>dari Indonesia ke Dunia</h1>
+    <p>Kirim paket internasional dengan mudah, cek tarif pengiriman, dan lacak perjalanan paketmu dalam satu tempat.</p>
+    
+  </div>
+
+  <div class="home-tools">
+    <div class="home-tool">
+      <div class="home-tool-icon">⌖</div>
+      <div class="home-tool-copy">
+        <div class="home-tool-title">Lacak Pengiriman</div>
+        <input class="home-tool-input" id="trackingNumber" autocomplete="off" placeholder="Masukkan nomor resi">
+      </div>
+      <button class="home-tool-action" type="button" onclick="trackPackage()" aria-label="Lacak pengiriman">⌕</button>
+    </div>
+
+    <div class="home-tools-divider"></div>
+
+    <div class="home-tool">
+      <div class="home-tool-icon">▣</div>
+      <div class="home-tool-copy">
+        <div class="home-tool-title">Cek Tarif</div>
+        <input class="home-tool-input" id="homePriceShortcut" readonly tabindex="-1" placeholder="Masukkan data pengiriman">
+      </div>
+      <button class="home-tool-action" type="button" onclick="openPriceCheck(event)" aria-label="Cek tarif">⌕</button>
+    </div>
+  </div>
+</section>
+
+<main class="container">
+  <div id="result" class="result"></div>
+</main>
+
+</div>
+
+<footer class="footer" id="help">© 2026 ShipFlow International · Sistem pelacakan paket internasional</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+
+
+<script>
+/*
+  KONEKSI DENGAN PORTAL UTAMA
+  Portal utama menggunakan localStorage key:
+  shipflow_international_v1
+
+  Karena tracking frontend menggunakan key yang sama, pengiriman baru
+  yang dibuat dari portal utama akan dapat ditemukan di halaman ini
+  selama keduanya berada pada origin/domain yang sama.
+*/
+const STORAGE_KEY='shipflow_international_v1';
+
+const demoFallback=[
+ {id:'SF20261005001',sender:'PT Nusantara Jaya',phone:'+62 812-1111-2233',receiver:'Kenji Sato',country:'Jepang',address:'Shibuya, Tokyo',city:'Tokyo 150-0001',type:'Barang',weight:2.4,service:'Express International',value:1500000,status:'Transit',price:785000,date:'05 Okt 2026',description:'Fashion merchandise'},
+ {id:'SF20261004002',sender:'Andi Pratama',phone:'+62 811-2222-3333',receiver:'Michael Brown',country:'Australia',address:'Sydney NSW',city:'Sydney 2000',type:'Dokumen',weight:.8,service:'Priority Cargo',value:500000,status:'Delivered',price:420000,date:'04 Okt 2026',description:'Dokumen bisnis'},
+ {id:'SF20261003003',sender:'CV Maju Bersama',phone:'+62 813-3333-4444',receiver:'Aisha Rahman',country:'Malaysia',address:'Kuala Lumpur',city:'50000',type:'Barang',weight:4.2,service:'Economy International',value:2800000,status:'Processing',price:560000,date:'03 Okt 2026',description:'Sample produk'}
+];
+
+function getShipments(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const data=JSON.parse(raw);
+      if(Array.isArray(data)) return data;
+    }
+  }catch(e){}
+  return demoFallback;
+}
+
+function money(n){return 'Rp '+Number(n||0).toLocaleString('id-ID')}
+function statusClass(s){
+  if(s==='Delivered')return 'green';
+  if(s==='Transit')return 'blue';
+  if(s==='Processing')return 'orange';
+  if(s==='Cancelled')return 'red';
+  return 'gray';
+}
+
+function escapeHtml(v){
+  return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+function buildEvents(s){
+  const status=s.status;
+  if(status==='Delivered'){
+    return [
+      ['Paket diterima','Paket telah berhasil diterima oleh penerima di alamat tujuan.',true],
+      ['Out for delivery','Paket dibawa kurir menuju alamat penerima.',true],
+      ['Tiba di negara tujuan','Paket selesai melewati proses masuk negara tujuan.',true],
+      ['Dalam perjalanan internasional','Paket bergerak menuju '+s.country+'.',true],
+      ['Paket diproses','Data pengiriman diterima oleh ShipFlow.',true]
+    ];
+  }
+  if(status==='Transit'){
+    return [
+      ['Dalam perjalanan','Paket sedang menuju '+s.country+'.',true],
+      ['Pickup berhasil','Paket telah diterima oleh kurir.',true],
+      ['Paket diproses','Data pengiriman diterima oleh ShipFlow.',true],
+      ['Menunggu keberangkatan','Paket masuk proses pengiriman internasional.',false]
+    ];
+  }
+  if(status==='Processing'){
+    return [
+      ['Paket diproses','Data pengiriman sedang diproses oleh ShipFlow.',true],
+      ['Menunggu pickup','Paket menunggu pengambilan oleh kurir.',false],
+      ['Pengiriman dibuat','Nomor resi berhasil dibuat.',true]
+    ];
+  }
+  return [
+    ['Status paket: '+status,'Silakan hubungi customer service untuk informasi lebih lanjut.',true]
+  ];
+}
+
+function trackPackage(){
+  const q=document.getElementById('trackingNumber').value.trim().toUpperCase();
+  const result=document.getElementById('result');
+  if(!q){
+    result.className='result show';
+    result.innerHTML='<div class="empty"><div class="big">⌖</div><b>Masukkan nomor resi terlebih dahulu</b><p>Contoh: SF20261005001</p></div>';
+    return;
+  }
+
+  const shipments=getShipments();
+  const s=shipments.find(x=>String(x.id||'').toUpperCase()===q);
+
+  result.className='result show';
+  if(!s){
+    result.innerHTML='<div class="empty"><div class="big">📦</div><b>Nomor resi tidak ditemukan</b><p>Pastikan nomor resi benar dan data pengiriman sudah dibuat pada portal pengirim.</p></div>';
+    return;
+  }
+
+  const events=buildEvents(s);
+  result.innerHTML=`
+    <div class="top-card">
+      <div class="top">
+        <div><div class="label">Nomor Resi</div><div class="resi">${escapeHtml(s.id)}</div></div>
+        <span class="status ${statusClass(s.status)}">${escapeHtml(s.status)}</span>
+      </div>
+      <div class="info-grid">
+        <div class="info"><span>Pengirim</span><b>${escapeHtml(s.sender)}</b></div>
+        <div class="info"><span>Penerima</span><b>${escapeHtml(s.receiver)}</b></div>
+        <div class="info"><span>Tujuan</span><b>${escapeHtml(s.country)}</b></div>
+        <div class="info"><span>Layanan</span><b>${escapeHtml(s.service)}</b></div>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <section class="card">
+        <h3>Perjalanan Paket</h3>
+        <div class="timeline">
+          ${events.map((e,i)=>`
+            <div class="event ${e[2]?'done':''} ${i===0?'current':''}">
+              <b>${escapeHtml(e[0])}</b>
+              <small>${escapeHtml(e[1])} · ${i===0?'Status terbaru':'Riwayat perjalanan'}</small>
+            </div>
+          `).join('')}
+        </div>
+      </section>
+
+      <aside class="card">
+        <h3>Detail Pengiriman</h3>
+        <div class="route">
+          <div class="place"><strong>Indonesia</strong><small>Origin</small></div>
+          <div class="plane">✈</div>
+          <div class="place"><strong>${escapeHtml(s.country)}</strong><small>Destination</small></div>
+        </div>
+        <div class="detail">
+          <div class="detail-row"><span>Jenis paket</span><b>${escapeHtml(s.type)}</b></div>
+          <div class="detail-row"><span>Berat</span><b>${escapeHtml(s.weight)} kg</b></div>
+          <div class="detail-row"><span>Tanggal dibuat</span><b>${escapeHtml(s.date)}</b></div>
+          <div class="detail-row"><span>Alamat tujuan</span><b>${escapeHtml(s.address||'-')}</b></div>
+          <div class="detail-row"><span>Kota / Kode Pos</span><b>${escapeHtml(s.city||'-')}</b></div>
+          <div class="detail-row"><span>Deskripsi</span><b>${escapeHtml(s.description||'-')}</b></div>
+        </div>
+      </aside>
+    </div>
+  `;
+  result.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+
+/* ===== CEK TARIF — SATU IMPLEMENTASI POPUP ===== */
+const PRICE_COUNTRY_CODES=[
+  'AD','AE','AF','AG','AI','AL','AM','AO','AR','AS','AT','AU','AW','AX','AZ',
+  'BA','BB','BD','BE','BF','BG','BH','BI','BJ','BL','BM','BN','BO','BQ','BR','BS','BT','BV','BW','BY','BZ',
+  'CA','CC','CD','CF','CG','CH','CI','CK','CL','CM','CN','CO','CR','CU','CV','CW','CX','CY','CZ',
+  'DE','DJ','DK','DM','DO','DZ','EC','EE','EG','EH','ER','ES','ET','FI','FJ','FK','FM','FO','FR',
+  'GA','GB','GD','GE','GF','GG','GH','GI','GL','GM','GN','GP','GQ','GR','GS','GT','GU','GW','GY',
+  'HK','HM','HN','HR','HT','HU','ID','IE','IL','IM','IN','IO','IQ','IR','IS','IT','JE','JM','JO','JP',
+  'KE','KG','KH','KI','KM','KN','KP','KR','KW','KY','KZ','LA','LB','LC','LI','LK','LR','LS','LT','LU','LV','LY',
+  'MA','MC','MD','ME','MF','MG','MH','MK','ML','MM','MN','MO','MP','MQ','MR','MS','MT','MU','MV','MW','MX','MY','MZ',
+  'NA','NC','NE','NF','NG','NI','NL','NO','NP','NR','NU','NZ','OM',
+  'PA','PE','PF','PG','PH','PK','PL','PM','PN','PR','PS','PT','PW','PY','QA',
+  'RE','RO','RS','RU','RW','SA','SB','SC','SD','SE','SG','SH','SI','SJ','SK','SL','SM','SN','SO','SR','SS','ST','SV','SX','SY','SZ',
+  'TC','TD','TF','TG','TH','TJ','TK','TL','TM','TN','TO','TR','TT','TV','TW','TZ',
+  'UA','UG','UM','US','UY','UZ','VA','VC','VE','VG','VI','VN','VU','WF','WS','YE','YT','ZA','ZM','ZW'
+];
+
+function buildPriceCountryOptions(){
+  const from=document.getElementById('priceFrom');
+  const to=document.getElementById('priceTo');
+  if(!from||!to)return;
+
+  const names=new Intl.DisplayNames(['id'],{type:'region'});
+  const countries=PRICE_COUNTRY_CODES.map(code=>{
+    let name=code;
+    try{name=names.of(code)||code}catch(e){}
+    return {code,name};
+  }).sort((a,b)=>a.name.localeCompare(b.name,'id'));
+
+  const options=countries.map(c=>'<option value="'+c.code+'">'+escapeHtml(c.name)+'</option>').join('');
+  from.innerHTML=options;
+  to.innerHTML=options;
+  from.value='ID';
+  to.value='JP';
+}
+
+function getPriceRegion(code){
+  const groups={
+    Asia:['ID','MY','SG','TH','VN','PH','BN','KH','LA','MM','CN','JP','KR','KP','MN','TW','IN','PK','BD','LK','NP','BT','MV','KZ','UZ','TM','TJ','KG','AF','AM','AZ','GE'],
+    Oceania:['AU','NZ','FJ','PG','SB','VU','WS','TO','TV','KI','NR','FM','MH','PW'],
+    MiddleEast:['AE','SA','QA','KW','BH','OM','JO','LB','IL','IQ','IR','YE','SY','TR'],
+    Europe:['GB','IE','FR','DE','NL','BE','LU','CH','AT','IT','ES','PT','NO','SE','DK','FI','IS','PL','CZ','SK','HU','RO','BG','GR','HR','SI','RS','BA','ME','MK','AL','EE','LV','LT','UA','BY','MD','MC','LI','MT','CY','SM','VA','AD','RU'],
+    Africa:['EG','MA','DZ','TN','LY','SD','SS','ET','ER','DJ','SO','KE','UG','TZ','RW','BI','CD','CG','CM','CF','TD','NG','NE','ML','SN','GM','GN','GW','SL','LR','CI','GH','TG','BJ','BF','MR','CV','GQ','GA','AO','NA','BW','ZA','ZM','ZW','MZ','MW','MG','MU','SC','KM','SZ','LS'],
+    Americas:['CA','US','MX','GT','BZ','SV','HN','NI','CR','PA','CU','JM','HT','DO','BS','BB','TT','GD','LC','VC','AG','DM','KN','CO','VE','GY','SR','BR','EC','PE','BO','PY','CL','AR','UY']
+  };
+
+  for(const [region,list] of Object.entries(groups)){
+    if(list.includes(code))return region;
+  }
+  return 'Other';
+}
+
+function calculatePriceCheck(){
+  const from=document.getElementById('priceFrom');
+  const to=document.getElementById('priceTo');
+  const weight=document.getElementById('priceWeight');
+  const value=document.getElementById('priceValue');
+  const route=document.getElementById('priceRoute');
+  const delivery=document.getElementById('priceDelivery');
+
+  if(!from||!to||!weight||!value||!route||!delivery)return;
+
+  const w=Number(weight.value);
+  const fromName=from.options[from.selectedIndex]?.text||'-';
+  const toName=to.options[to.selectedIndex]?.text||'-';
+
+  if(!Number.isFinite(w)||w<=0){
+    value.textContent='Rp 0';
+    route.textContent=fromName+' → '+toName;
+    delivery.textContent='Masukkan berat paket untuk menghitung harga dan estimasi pengantaran.';
+    return;
+  }
+
+  const sameCountry=from.value===to.value;
+  const fromRegion=getPriceRegion(from.value);
+  const toRegion=getPriceRegion(to.value);
+
+  let factor=1;
+  if(!sameCountry){
+    if(fromRegion===toRegion)factor=1.25;
+    else if(fromRegion==='Asia'||toRegion==='Asia')factor=1.5;
+    else if(fromRegion==='Oceania'||toRegion==='Oceania')factor=1.7;
+    else if(fromRegion==='Europe'||toRegion==='Europe')factor=1.8;
+    else if(fromRegion==='MiddleEast'||toRegion==='MiddleEast')factor=1.7;
+    else if(fromRegion==='Africa'||toRegion==='Africa')factor=1.9;
+    else factor=2;
+  }
+
+  const basePerKg=100000;
+  const total=Math.ceil((w*basePerKg*factor)/10000)*10000;
+
+  value.textContent='Rp '+total.toLocaleString('id-ID');
+  route.textContent=fromName+' → '+toName+' · '+w.toLocaleString('id-ID')+' kg';
+
+  let minDays,maxDays;
+  if(sameCountry){
+    minDays=1;maxDays=3;
+  }else if(fromRegion===toRegion){
+    minDays=3;maxDays=7;
+  }else if(fromRegion==='Asia'||toRegion==='Asia'){
+    minDays=5;maxDays=10;
+  }else if(fromRegion==='Oceania'||toRegion==='Oceania'){
+    minDays=6;maxDays=12;
+  }else{
+    minDays=7;maxDays=14;
+  }
+
+  delivery.textContent='Estimasi paket diantar '+minDays+'–'+maxDays+' hari kerja setelah paket diterima kurir.';
+}
+
+function openPriceCheck(e){
+  if(e)e.preventDefault();
+
+  const modal=document.getElementById('priceCheckModal');
+  if(!modal)return;
+
+  buildPriceCountryOptions();
+  calculatePriceCheck();
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+
+  setTimeout(()=>document.getElementById('priceFrom')?.focus(),50);
+}
+
+function closePriceCheck(){
+  const modal=document.getElementById('priceCheckModal');
+  if(!modal)return;
+
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
+
+document.getElementById('priceFrom').addEventListener('change',calculatePriceCheck);
+document.getElementById('priceTo').addEventListener('change',calculatePriceCheck);
+document.getElementById('priceWeight').addEventListener('input',calculatePriceCheck);
+document.getElementById('priceType').addEventListener('change',calculatePriceCheck);
+
+document.getElementById('priceCheckModal').addEventListener('click',e=>{
+  if(e.target.id==='priceCheckModal')closePriceCheck();
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closePriceCheck();
+});
+
+buildPriceCountryOptions();
+calculatePriceCheck();
+
+
+document.getElementById('priceFrom').addEventListener('change',calculatePriceCheck);
+document.getElementById('priceTo').addEventListener('change',calculatePriceCheck);
+document.getElementById('priceWeight').addEventListener('input',calculatePriceCheck);
+document.getElementById('priceType').addEventListener('change',calculatePriceCheck);
+buildPriceCountryOptions();
+calculatePriceCheck();
+
+document.getElementById('trackingNumber').addEventListener('keydown',e=>{
+  if(e.key==='Enter')trackPackage();
+});
+
+window.addEventListener('storage',e=>{
+  if(e.key===STORAGE_KEY){
+    const q=document.getElementById('trackingNumber').value.trim();
+    if(q)trackPackage();
+  }
+});
+
+/* Jika halaman dibuka dengan ?resi=SF... maka langsung tracking. */
+const params=new URLSearchParams(location.search);
+const initialResi=params.get('resi');
+if(initialResi){
+  document.getElementById('trackingNumber').value=initialResi;
+  trackPackage();
+}
+</script>
+</body>
+</html>
