@@ -14404,6 +14404,21 @@ async function initKasirViews(){
 #sidebar nav > #nav-cetak .sidebar-icon-overlay > i{color:#9A3412!important;}
 </style>
 
+
+
+<!-- PATCH MOBILE: sembunyikan header global dan tombol ikon logout hanya pada mobile. -->
+<style id="rekapinyu-mobile-hide-global-header-logout">
+@media (max-width: 767px) {
+  body > .flex-1.flex.flex-col.h-screen.overflow-hidden > header,
+  body > #app > .flex-1.flex.flex-col.h-screen.overflow-hidden > header {
+    display: none !important;
+  }
+  header button[onclick*="handleLogout"] {
+    display: none !important;
+  }
+}
+</style>
+
 </body>
 </html>
 
