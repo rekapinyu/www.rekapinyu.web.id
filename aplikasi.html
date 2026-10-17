@@ -14458,7 +14458,12 @@ async function initKasirViews(){
   header button[onclick*="handleLogout"]{display:none!important}
   #mobile-home-view{padding-top:68px!important}
   .rku-mobile-brand-row{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:2147483000!important;display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;width:100%!important;max-width:100%!important;height:56px!important;min-height:56px!important;flex:0 0 56px!important;margin:0!important;padding:5px 48px 7px!important;box-sizing:border-box!important;background:rgba(220,239,255,.97)!important;border-bottom:1px solid rgba(255,255,255,.98)!important;box-shadow:none!important;backdrop-filter:blur(12px)!important}
-  .rku-mobile-hamburger{position:absolute!important;left:12px!important;top:50%!important;transform:translateY(-50%)!important;z-index:2!important}
+  .rku-mobile-hamburger{position:absolute!important;left:12px!important;top:50%!important;transform:translateY(-50%)!important;z-index:5!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:4px!important;width:28px!important;height:32px!important;min-width:28px!important;min-height:32px!important;padding:4px!important;margin:0!important;border:0!important;border-radius:7px!important;background:transparent!important;box-shadow:none!important;opacity:1!important;visibility:visible!important;cursor:pointer!important}
+  .rku-mobile-hamburger span{display:block!important;height:3px!important;border-radius:3px!important;background:#102b45!important;opacity:1!important;visibility:visible!important;flex:none!important}
+  .rku-mobile-hamburger span:nth-child(1){width:19px!important}
+  .rku-mobile-hamburger span:nth-child(2){width:13px!important}
+  .rku-mobile-hamburger span:nth-child(3){width:18px!important}
+  .rku-mobile-notification{display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important}
   .rku-mobile-header-actions{position:absolute!important;right:12px!important;top:50%!important;transform:translateY(-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;height:32px!important}
   .rku-mobile-header-actions .rku-mobile-notification,.rku-mobile-header-actions .rku-mobile-profile{position:relative!important;inset:auto!important;top:auto!important;right:auto!important;transform:none!important;flex:0 0 32px!important;width:32px!important;height:32px!important;margin:0!important}
   .rku-mobile-brand-word{font-size:22px;line-height:1;font-weight:1000;letter-spacing:-.7px;color:#082f68;text-align:center}
@@ -14509,7 +14514,7 @@ async function initKasirViews(){
   [role=dialog],.modal-content,.modal-card{max-width:calc(100vw - 16px)!important}
   #history-io-floating{display:none!important}
   /* Promo carousel mobile: full bleed, 3 slides, responsive and touch-scrollable. */
-  #mobile-home-view .rku-mobile-promo-carousel{position:relative!important;left:50%!important;transform:translateX(-50%)!important;width:100vw!important;max-width:100vw!important;margin:0!important;padding:0 0 17px!important;overflow:hidden!important;box-sizing:border-box!important}
+  #mobile-home-view .rku-mobile-promo-carousel{position:relative!important;left:auto!important;right:auto!important;transform:none!important;width:calc(100% + 24px)!important;max-width:none!important;margin-left:-12px!important;margin-right:0!important;padding:0 0 17px!important;overflow:hidden!important;box-sizing:border-box!important;align-self:stretch!important}
   #mobile-home-view .rku-mobile-promo-track{display:flex!important;width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;overscroll-behavior-x:contain!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important}
   #mobile-home-view .rku-mobile-promo-track::-webkit-scrollbar{display:none!important}
   #mobile-home-view .rku-mobile-promo-slide{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;height:142px!important;min-height:142px!important;padding:18px 22px!important;box-sizing:border-box!important;overflow:hidden!important;color:#fff!important;scroll-snap-align:start!important}
@@ -14527,7 +14532,7 @@ async function initKasirViews(){
   #mobile-home-view .rku-mobile-promo-dots button.active{width:19px!important;background:#087cf5!important}
   #mobile-home-view .rku-mobile-hero-card{display:none!important}
 }
-@media(max-width:390px){#mobile-home-view{padding-left:9px!important;padding-right:9px!important}.rku-mobile-menu-grid{gap:7px!important}.rku-mobile-menu-card{min-height:92px!important;border-radius:15px!important}.rku-mobile-menu-card>i{width:38px!important;height:38px!important;font-size:18px!important}.rku-mobile-menu-card>span{font-size:9.5px!important}#mobile-simplified-dock .mobile-dock-item span{font-size:8px!important}#mobile-home-view .rku-mobile-promo-slide{height:132px!important;min-height:132px!important;padding-left:18px!important;padding-right:18px!important}#mobile-home-view .rku-mobile-promo-copy strong{font-size:17px!important}}
+@media(max-width:390px){#mobile-home-view{padding-left:9px!important;padding-right:9px!important}.rku-mobile-menu-grid{gap:7px!important}.rku-mobile-menu-card{min-height:92px!important;border-radius:15px!important}.rku-mobile-menu-card>i{width:38px!important;height:38px!important;font-size:18px!important}.rku-mobile-menu-card>span{font-size:9.5px!important}#mobile-simplified-dock .mobile-dock-item span{font-size:8px!important}#mobile-home-view .rku-mobile-promo-carousel{width:calc(100% + 18px)!important;margin-left:-9px!important}#mobile-home-view .rku-mobile-promo-slide{height:132px!important;min-height:132px!important;padding-left:18px!important;padding-right:18px!important}#mobile-home-view .rku-mobile-promo-copy strong{font-size:17px!important}}
 </style>
 
 <!-- Header mobile ditangani oleh implementasi CSS mobile tunggal. -->
