@@ -2479,6 +2479,7 @@ bind();
       <button type="button" class="rku-mobile-profile" onclick="document.getElementById('mobile-profile-menu-container')?.classList.toggle('hidden')" aria-label="Profil"><i class="fa-solid fa-user"></i></button>
     </div>
   </div>
+  <div id="rku-mobile-promo-body" aria-label="Area banner promosi">
   <section class="rku-mobile-promo-carousel" id="rku-mobile-promo-carousel" aria-label="Promosi Rekapinyu">
     <div class="rku-mobile-promo-track">
       <article class="rku-mobile-promo-slide rku-mobile-promo-slide-1" aria-label="Slide 1">
@@ -2496,6 +2497,7 @@ bind();
     </div>
     <div class="rku-mobile-promo-dots" aria-label="Pilih slide"><button type="button" aria-label="Slide 1"></button><button type="button" aria-label="Slide 2"></button><button type="button" class="active" aria-label="Slide 3"></button></div>
   </section>
+  </div>
   <div class="rku-mobile-search"><i class="fa-solid fa-magnifying-glass"></i><input id="rku-mobile-menu-search" type="search" placeholder="Cari menu..." autocomplete="off" oninput="(function(v){document.querySelectorAll('#rku-mobile-menu-grid .rku-mobile-menu-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().includes(v.toLowerCase())?'':'none'})})(this.value)"></div>
   <div class="rku-mobile-kasir-heading">KASIR</div>
   <div class="rku-mobile-menu-grid" id="rku-mobile-menu-grid">
@@ -14507,30 +14509,30 @@ async function initKasirViews(){
   #view-kasir input,#view-kasir select,#view-kasir textarea,#view-produk-kasir input,#view-produk-kasir select,#view-produk-kasir textarea,#view-input input,#view-input select,#view-input textarea{max-width:100%!important}
   [role=dialog],.modal-content,.modal-card{max-width:calc(100vw - 16px)!important}
   #history-io-floating{display:none!important}
-  /* Satu implementasi carousel: alur normal, full viewport, padding terpisah dari Beranda. */
-  #rku-mobile-promo-body{display:none!important}
-  #mobile-home-view .rku-mobile-promo-carousel{position:relative!important;top:auto!important;left:50%!important;right:auto!important;transform:none!important;display:block!important;width:100vw!important;min-width:100vw!important;max-width:100vw!important;margin-left:-50vw!important;margin-right:-50vw!important;margin-top:0!important;margin-bottom:0!important;padding:0!important;overflow:hidden!important;box-sizing:border-box!important;align-self:auto!important;flex:0 0 100vw!important;background:#d8ecff!important;border-radius:0!important;box-shadow:none!important;z-index:auto!important}
-  #mobile-home-view .rku-mobile-promo-track{height:142px!important;min-height:142px!important}
-  #mobile-home-view .rku-mobile-promo-slide{height:142px!important;min-height:142px!important;max-height:142px!important}
-  #mobile-home-view .rku-mobile-promo-carousel,#mobile-home-view .rku-mobile-promo-track,#mobile-home-view .rku-mobile-promo-slide{position:relative!important;sticky:auto!important;top:auto!important;bottom:auto!important}
-  #mobile-home-view .rku-mobile-promo-track{display:flex!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;overscroll-behavior-x:contain!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;box-sizing:border-box!important}
-  #mobile-home-view .rku-mobile-promo-track::-webkit-scrollbar{display:none!important}
-  #mobile-home-view .rku-mobile-promo-slide{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;height:142px!important;min-height:142px!important;padding:18px 22px!important;box-sizing:border-box!important;overflow:hidden!important;color:#fff!important;scroll-snap-align:start!important}
-  #mobile-home-view .rku-mobile-promo-slide-1{background:linear-gradient(112deg,#087cf5 0%,#0756d8 65%,#063da9 100%)!important}
-  #mobile-home-view .rku-mobile-promo-slide-2{background:linear-gradient(112deg,#07a985 0%,#078fbb 55%,#0755c7 100%)!important}
-  #mobile-home-view .rku-mobile-promo-slide-3{background:linear-gradient(112deg,#7148ed 0%,#4b45d5 55%,#153da8 100%)!important}
-  #mobile-home-view .rku-mobile-promo-slide:after{content:""!important;position:absolute!important;right:-32px!important;top:-58px!important;width:210px!important;height:210px!important;border-radius:50%!important;background:#ffffff12!important}
-  #mobile-home-view .rku-mobile-promo-copy{position:relative!important;z-index:1!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important;max-width:74%!important}
-  #mobile-home-view .rku-mobile-promo-copy small{font-size:9px!important;letter-spacing:1.2px!important;font-weight:900!important;color:#dbeafe!important}
-  #mobile-home-view .rku-mobile-promo-copy strong{font-size:19px!important;line-height:1.13!important;font-weight:950!important;color:#fff!important}
-  #mobile-home-view .rku-mobile-promo-copy span{font-size:10px!important;line-height:1.35!important;font-weight:600!important;color:#f1f7ff!important}
-  #mobile-home-view .rku-mobile-promo-art{position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 66px!important;width:66px!important;height:66px!important;border:1px solid #ffffff30!important;border-radius:22px!important;background:#ffffff20!important;color:#fff!important;font-size:34px!important;transform:rotate(5deg)!important}
-  #mobile-home-view .rku-mobile-promo-dots{position:absolute!important;left:auto!important;right:12px!important;bottom:10px!important;z-index:3!important;display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:6px!important;padding:5px 7px!important;border-radius:99px!important;background:#ffffffd9!important;box-shadow:0 2px 8px #12345a22!important}
-  #mobile-home-view .rku-mobile-promo-dots button{width:6px!important;height:6px!important;min-width:6px!important;padding:0!important;border:0!important;border-radius:99px!important;background:#9abce5!important;box-shadow:none!important}
-  #mobile-home-view .rku-mobile-promo-dots button.active{width:19px!important;background:#087cf5!important}
+  /* Implementasi tunggal: body banner mandiri full viewport, terpisah dari padding Beranda. */
+  #mobile-home-view #rku-mobile-promo-body{position:relative!important;display:block!important;width:100vw!important;min-width:100vw!important;max-width:100vw!important;margin-left:calc(50% - 50vw)!important;margin-right:calc(50% - 50vw)!important;padding:0!important;box-sizing:border-box!important;overflow:hidden!important;background:#d8ecff!important;align-self:auto!important;flex:0 0 100vw!important}
+  #rku-mobile-promo-body .rku-mobile-promo-carousel{position:relative!important;top:auto!important;left:auto!important;right:auto!important;transform:none!important;display:block!important;width:100%!important;min-width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;overflow:hidden!important;box-sizing:border-box!important;align-self:auto!important;flex:0 0 100%!important;background:transparent!important;border-radius:0!important;box-shadow:none!important;z-index:auto!important}
+  #rku-mobile-promo-body .rku-mobile-promo-track{height:142px!important;min-height:142px!important}
+  #rku-mobile-promo-body .rku-mobile-promo-slide{height:142px!important;min-height:142px!important;max-height:142px!important}
+  #mobile-home-view .rku-mobile-promo-carousel,#rku-mobile-promo-body .rku-mobile-promo-track,#rku-mobile-promo-body .rku-mobile-promo-slide{position:relative!important;sticky:auto!important;top:auto!important;bottom:auto!important}
+  #rku-mobile-promo-body .rku-mobile-promo-track{display:flex!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;overscroll-behavior-x:contain!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;box-sizing:border-box!important}
+  #rku-mobile-promo-body .rku-mobile-promo-track::-webkit-scrollbar{display:none!important}
+  #rku-mobile-promo-body .rku-mobile-promo-slide{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;height:142px!important;min-height:142px!important;padding:18px 22px!important;box-sizing:border-box!important;overflow:hidden!important;color:#fff!important;scroll-snap-align:start!important}
+  #rku-mobile-promo-body .rku-mobile-promo-slide-1{background:linear-gradient(112deg,#087cf5 0%,#0756d8 65%,#063da9 100%)!important}
+  #rku-mobile-promo-body .rku-mobile-promo-slide-2{background:linear-gradient(112deg,#07a985 0%,#078fbb 55%,#0755c7 100%)!important}
+  #rku-mobile-promo-body .rku-mobile-promo-slide-3{background:linear-gradient(112deg,#7148ed 0%,#4b45d5 55%,#153da8 100%)!important}
+  #rku-mobile-promo-body .rku-mobile-promo-slide:after{content:""!important;position:absolute!important;right:-32px!important;top:-58px!important;width:210px!important;height:210px!important;border-radius:50%!important;background:#ffffff12!important}
+  #rku-mobile-promo-body .rku-mobile-promo-copy{position:relative!important;z-index:1!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important;max-width:74%!important}
+  #rku-mobile-promo-body .rku-mobile-promo-copy small{font-size:9px!important;letter-spacing:1.2px!important;font-weight:900!important;color:#dbeafe!important}
+  #rku-mobile-promo-body .rku-mobile-promo-copy strong{font-size:19px!important;line-height:1.13!important;font-weight:950!important;color:#fff!important}
+  #rku-mobile-promo-body .rku-mobile-promo-copy span{font-size:10px!important;line-height:1.35!important;font-weight:600!important;color:#f1f7ff!important}
+  #rku-mobile-promo-body .rku-mobile-promo-art{position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 66px!important;width:66px!important;height:66px!important;border:1px solid #ffffff30!important;border-radius:22px!important;background:#ffffff20!important;color:#fff!important;font-size:34px!important;transform:rotate(5deg)!important}
+  #rku-mobile-promo-body .rku-mobile-promo-dots{position:absolute!important;left:auto!important;right:12px!important;bottom:10px!important;z-index:3!important;display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:6px!important;padding:5px 7px!important;border-radius:99px!important;background:#ffffffd9!important;box-shadow:0 2px 8px #12345a22!important}
+  #rku-mobile-promo-body .rku-mobile-promo-dots button{width:6px!important;height:6px!important;min-width:6px!important;padding:0!important;border:0!important;border-radius:99px!important;background:#9abce5!important;box-shadow:none!important}
+  #rku-mobile-promo-body .rku-mobile-promo-dots button.active{width:19px!important;background:#087cf5!important}
   #mobile-home-view .rku-mobile-hero-card{display:none!important}
 }
-@media(max-width:390px){#mobile-home-view{padding-top:68px!important;padding-left:9px!important;padding-right:9px!important}.rku-mobile-menu-grid{gap:7px!important}.rku-mobile-menu-card{min-height:92px!important;border-radius:15px!important}.rku-mobile-menu-card>i{width:38px!important;height:38px!important;font-size:18px!important}.rku-mobile-menu-card>span{font-size:9.5px!important}#mobile-simplified-dock .mobile-dock-item span{font-size:8px!important}#mobile-home-view .rku-mobile-promo-slide{height:132px!important;min-height:132px!important;padding-left:18px!important;padding-right:18px!important}#mobile-home-view .rku-mobile-promo-copy strong{font-size:17px!important}}
+@media(max-width:390px){#mobile-home-view{padding-top:68px!important;padding-left:9px!important;padding-right:9px!important}.rku-mobile-menu-grid{gap:7px!important}.rku-mobile-menu-card{min-height:92px!important;border-radius:15px!important}.rku-mobile-menu-card>i{width:38px!important;height:38px!important;font-size:18px!important}.rku-mobile-menu-card>span{font-size:9.5px!important}#mobile-simplified-dock .mobile-dock-item span{font-size:8px!important}#rku-mobile-promo-body .rku-mobile-promo-slide{height:132px!important;min-height:132px!important;padding-left:18px!important;padding-right:18px!important}#rku-mobile-promo-body .rku-mobile-promo-copy strong{font-size:17px!important}}
 </style>
 
 <!-- Header mobile ditangani oleh implementasi CSS mobile tunggal. -->
