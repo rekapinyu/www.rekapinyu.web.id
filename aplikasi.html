@@ -14607,3 +14607,20 @@ async function initKasirViews(){
 <!-- MOBILE HEADER PATCH: hamburger, notifikasi, profil, dan sticky brand row -->
 
 
+
+<!-- PATCH TERARAH: kunci header Beranda mobile ke viewport agar tetap terlihat saat konten digulir. -->
+<style id="rekapinyu-mobile-header-fixed-final">
+@media (max-width:767px){
+  #mobile-home-view .rku-mobile-brand-row{
+    position:fixed!important;
+    top:0!important;left:0!important;right:0!important;
+    width:100%!important;max-width:100%!important;
+    margin:0!important;
+    min-height:56px!important;height:56px!important;
+    flex:0 0 56px!important;
+    z-index:2147483000!important;
+    box-sizing:border-box!important;
+  }
+  #mobile-home-view{padding-top:68px!important;}
+}
+</style>
