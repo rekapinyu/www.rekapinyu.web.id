@@ -14566,5 +14566,46 @@ async function initKasirViews(){
   window.addEventListener('pageshow',initRekapinyuMobilePromoCarousel);
 })();
 </script>
+
+<style id="rekapinyu-mobile-carousel-independent-padding-kasir-hover">
+@media(max-width:767px){
+  /* Carousel punya area dan padding sendiri, terpisah dari padding Beranda. */
+  #mobile-home-view .rku-mobile-promo-carousel{
+    position:relative!important;
+    left:50%!important;
+    right:auto!important;
+    transform:translateX(-50%)!important;
+    width:100vw!important;
+    min-width:100vw!important;
+    max-width:100vw!important;
+    margin:0!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+    align-self:auto!important;
+    background:linear-gradient(180deg,#d8ecff 0,#f4f9ff 100%)!important;
+    border-radius:0!important;
+  }
+  #mobile-home-view .rku-mobile-promo-track{width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;box-sizing:border-box!important}
+  #mobile-home-view .rku-mobile-promo-slide{width:100%!important;min-width:100%!important;flex-basis:100%!important;box-sizing:border-box!important}
+  /* KASIR menjadi kotak interaktif dengan efek hover/fokus yang halus. */
+  #mobile-home-view .rku-mobile-kasir-heading{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    min-height:44px!important;width:100%!important;box-sizing:border-box!important;
+    margin:10px 0 10px!important;padding:9px 12px!important;
+    border:1px solid #dcecff!important;border-radius:14px!important;
+    background:linear-gradient(150deg,#fff,#fafdff)!important;
+    box-shadow:0 5px 13px #1c55930e!important;
+    color:#0b3268!important;text-align:center!important;
+    transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease!important;
+  }
+  #mobile-home-view .rku-mobile-kasir-heading:hover,
+  #mobile-home-view .rku-mobile-kasir-heading:focus-visible{
+    border-color:#8dc5ff!important;box-shadow:0 8px 18px #176ac71c!important;
+    transform:translateY(-1px)!important;outline:none!important;
+  }
+}
+</style>
+
 </body>
 </html>
