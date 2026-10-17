@@ -1751,79 +1751,11 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #cetak-module-content > .flex-1{min-height:0;}
 </style>
 
-<style id="rekapinyu-mobile-home-report-single">
+<style id="rekapinyu-mobile-home-layout">
 @media (max-width:767px){
-  #mobile-home-view{
-    width:100%!important;min-width:0!important;box-sizing:border-box!important;
-    overflow:hidden!important;
-  }
-  #mobile-home-view #mobile-admin-summary{
-    display:none!important;
-  }
-  #mobile-home-view .mobile-home-report-panel{
-    width:100%!important;margin:0!important;padding:0!important;
-    background:transparent!important;border:0!important;box-shadow:none!important;
-  }
-  #mobile-home-view .mobile-home-report-section{
-    width:100%!important;margin:0!important;padding:0!important;
-  }
-  #mobile-home-view .mobile-home-report-title{
-    display:flex!important;align-items:center!important;justify-content:space-between!important;
-    margin:0 0 8px!important;padding:0!important;color:#172033!important;
-    font-size:13px!important;line-height:1.2!important;font-weight:800!important;
-  }
-  #mobile-home-view .mobile-home-report-title small{
-    color:#94a3b8!important;font-size:9px!important;font-weight:600!important;
-  }
-  #mobile-home-view .mobile-home-report-carousel{
-    display:flex!important;gap:10px!important;width:100%!important;
-    overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;
-    scrollbar-width:none!important;padding:0 1px 5px!important;box-sizing:border-box!important;
-  }
-  #mobile-home-view .mobile-home-report-carousel::-webkit-scrollbar{display:none!important}
-  /* Bentuk carousel disamakan dengan kotak/grid Menu Laporan Kasir mobile. */
-  #mobile-home-view .mobile-home-day-card{
-    flex:0 0 calc(100% - 18px)!important;min-width:0!important;
-    box-sizing:border-box!important;padding:12px!important;
-    border:1px solid #e5eaf0!important;border-radius:18px!important;
-    background:#fff!important;box-shadow:none!important;
-    scroll-snap-align:start!important;display:block!important;overflow:hidden!important;
-  }
-  #mobile-home-view .mobile-home-day-head{
-    display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;min-width:0!important;
-  }
-  #mobile-home-view .mobile-home-day-title{
-    display:flex!important;align-items:center!important;gap:7px!important;color:#172033!important;font-size:13px!important;font-weight:900!important;
-  }
-  #mobile-home-view .mobile-home-day-title i{color:#16a085!important}
-  #mobile-home-view .mobile-home-day-head small{display:block!important;margin-top:3px!important;color:#94a3b8!important;font-size:9px!important}
-  #mobile-home-view .mobile-home-day-icon{
-    width:38px!important;height:38px!important;flex:0 0 38px!important;border-radius:12px!important;
-    display:flex!important;align-items:center!important;justify-content:center!important;background:#e9f8f4!important;color:#16a085!important;font-size:15px!important;
-  }
-  #mobile-home-view .mobile-home-day-grid{
-    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;
-    margin-top:10px!important;padding-top:10px!important;border-top:1px solid #edf0f3!important;
-  }
-  #mobile-home-view .mobile-home-day-stat{
-    min-width:0!important;padding:9px!important;border:1px solid #e8edf2!important;border-radius:12px!important;background:#f7f9fb!important;
-  }
-  #mobile-home-view .mobile-home-day-stat>div{display:flex!important;align-items:center!important;gap:5px!important;color:#64748b!important;font-size:9px!important;font-weight:800!important}
-  #mobile-home-view .mobile-home-day-stat strong{display:block!important;margin-top:5px!important;font-size:11px!important;color:#334155!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-  #mobile-home-view .mobile-home-day-empty{
-    padding:12px!important;color:#cbd5e1!important;font-size:9px!important;font-weight:700!important;
-  }
-  #mobile-home-view .mobile-home-report-divider{
-    display:block!important;width:100%!important;height:1px!important;
-    margin:15px 0 14px!important;background:#e5e7eb!important;
-  }
-  #mobile-home-view .mobile-home-grid-secondary{display:none!important}
-  @media(max-width:370px){
-    #mobile-home-view .mobile-home-day-card{
-      flex-basis:calc((100% - 16px)/3)!important;height:106px!important;
-      padding:8px!important;
-    }
-  }
+  #mobile-home-view{width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow:hidden!important;}
+  #mobile-home-view #mobile-admin-summary{display:none!important;}
+  #mobile-home-view .mobile-home-grid-secondary{display:none!important;}
 }
 </style>
 <style id="rekapinyu-cek-paket-sidebar-style">
@@ -1833,30 +1765,6 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </style>
 <style id="rekapinyu-mobile-home-grid-center-dock-order">
 @media (max-width:767px){
-  /* Beranda: panel dan grid laporan diposisikan di tengah layar. */
-  #mobile-home-view{
-    width:100%!important;
-    display:flex;
-    flex-direction:column;
-    align-items:center!important;
-  }
-  #mobile-home-view .mobile-home-report-panel{
-    width:100%!important;
-    max-width:520px!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-    box-sizing:border-box!important;
-  }
-  #mobile-home-view .mobile-home-report-section{
-    width:100%!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-  }
-  #mobile-home-view .mobile-home-report-carousel{
-    justify-content:center!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-  }
   /* Dock mobile: pulihkan layout asli yang stabil, penuh selebar layar.
      Jangan batasi lebar wrapper dock; lima item mendapat ruang sama. */
   #mobile-simplified-dock{
@@ -2517,24 +2425,6 @@ bind();
       <button class="rku-mobile-menu-card" type="button" onclick="switchTab('pengeluaran')"><i class="fa-solid fa-receipt"></i><span>Pengeluaran</span></button>
     </div>
   </section>
-  <div class="rku-mobile-benefits"><div><i class="fa-solid fa-bolt"></i><span>Transaksi<br>Lebih Cepat</span></div><div><i class="fa-solid fa-chart-simple"></i><span>Laporan<br>Lebih Akurat</span></div><div><i class="fa-solid fa-store"></i><span>Cocok untuk<br>Semua Usaha</span></div><div><i class="fa-solid fa-check"></i><span>Aman<br>dan Stabil</span></div></div>
-  <div class="mobile-home-report-panel">
-    <section class="mobile-home-report-section">
-      <h3 class="mobile-home-report-title">
-        <span><i class="fa-solid fa-cash-register" style="color:#059669;margin-right:5px"></i>Laporan Kasir</span>
-        <small>Data terbaru</small>
-      </h3>
-      <div class="mobile-home-report-carousel" id="mobile-home-kasir-carousel"></div>
-    </section>
-    <div class="mobile-home-report-divider" aria-hidden="true"></div>
-    <section class="mobile-home-report-section">
-      <h3 class="mobile-home-report-title">
-        <span><i class="fa-solid fa-file-invoice" style="color:#059669;margin-right:5px"></i>Laporan Rekap</span>
-        <small>Data terbaru</small>
-      </h3>
-      <div class="mobile-home-report-carousel" id="mobile-home-rekap-carousel"></div>
-    </section>
-  </div>
 </section>
 <!-- VIEW 1: INPUT DATA -->
 <section class="space-y-6" id="view-input">
@@ -7397,77 +7287,6 @@ function updateUserAvatarUI() {
           </div>
         </article>`).join('');
       };
-
-      /* MOBILE SAJA: BERANDA CAROUSEL — Firestore langsung. */
-      window.__rekapinyuRenderMobileReportHome=async function(){
-        if(!window.matchMedia('(max-width:767px)').matches)return;
-        const kasirBox=document.getElementById('mobile-home-kasir-carousel');
-        const rekapBox=document.getElementById('mobile-home-rekap-carousel');
-        if(!kasirBox||!rekapBox)return;
-        const rupiah=n=>'Rp '+(Number(n)||0).toLocaleString('id-ID');
-        const dateKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        const toDate=(item)=>{
-          if(item?.date instanceof Date&&!Number.isNaN(item.date.getTime()))return new Date(item.date.getFullYear(),item.date.getMonth(),item.date.getDate());
-          const day=Number(item?.date??item?.day);
-          const month=Number(item?.monthIndex);
-          const year=Number(item?.year);
-          if(day&&Number.isInteger(month)&&year)return new Date(year,month,day);
-          const raw=item?.tanggal??item?.Tanggal??item?.createdAt??item?.timestamp;
-          if(raw?.toDate){const d=raw.toDate();if(!Number.isNaN(d.getTime()))return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
-          if(raw){const d=new Date(raw);if(!Number.isNaN(d.getTime()))return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
-          return null;
-        };
-        const empty=(icon,title,text)=>`<div class="mobile-home-day-empty"><i class="${icon}"></i><strong>${title}</strong><span>${text}</span></div>`;
-        try{
-          /* KASIR: langsung dari Firestore Kasir.TotalOmsetKasir dan TotalProfitKasir. */
-          const kasirTotals=window.__rekapinyuFirestoreKasirTotals||{};
-          const omzet=Number(kasirTotals.TotalOmsetKasir)||0;
-          const profit=Number(kasirTotals.TotalProfitKasir)||0;
-
-          /* REKAP: langsung dari Firestore Rekap.InputData, bukan dari Menu Input Data. */
-          const firestoreRekap=window.__rekapinyuFirestoreRekap||{};
-          const inputData=Array.isArray(firestoreRekap.InputData)?firestoreRekap.InputData:[];
-          const rekapMap=new Map();
-          inputData.forEach(item=>{
-            const d=toDate(item);if(!d)return;
-            const key=dateKey(d);
-            const old=rekapMap.get(key)||{income:0,expense:0,cashout:0,profit:0,count:0};
-            old.income+=Number(item?.income??item?.Income??item?.pendapatan??item?.Pendapatan)||0;
-            old.expense+=Number(item?.expense??item?.Expense??item?.belanja??item?.Belanja)||0;
-            old.cashout+=Number(item?.cashout??item?.Cashout??item?.pengeluaran??item?.Pengeluaran)||0;
-            old.profit+=Number(item?.profit??item?.Profit)||0;
-            old.count++;
-            rekapMap.set(key,old);
-          });
-
-          /* Mobile hanya menampilkan satu kartu: hari ini untuk ringkasan Kasir,
-             dan tanggal data Rekap paling baru yang tersedia di Firestore. */
-          const today=new Date();
-          today.setHours(0,0,0,0);
-          const latestRekapKey=Array.from(rekapMap.keys()).sort((a,b)=>b.localeCompare(a))[0];
-          const latestRekapDate=latestRekapKey?new Date(`${latestRekapKey}T00:00:00`):today;
-
-          const card=(d,type)=>{
-            const key=dateKey(d);
-            const day=d.toLocaleDateString('id-ID',{weekday:'long'});
-            const date=d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
-            const sourceLabel='<span style="position:absolute;top:8px;right:10px;color:#2563eb;font-size:9px;font-weight:800;line-height:1;z-index:2;">#Firestore</span>';
-            if(type==='kasir'){
-              return `<article class="mobile-home-day-card" style="position:relative;"><div class="mobile-home-day-head"><div><div class="mobile-home-day-title"><i class="fa-regular fa-calendar-days"></i><span>${day}, ${date}</span></div><small>Total Kasir Hari Ini</small></div><span class="mobile-home-day-icon"><i class="fa-solid fa-cash-register"></i></span>${sourceLabel}</div><div class="mobile-home-day-grid"><div class="mobile-home-day-stat"><div><i class="fa-solid fa-arrow-trend-up"></i> Total Omset Kasir</div><strong>${rupiah(omzet)}</strong></div><div class="mobile-home-day-stat"><div><i class="fa-solid fa-sack-dollar"></i> Total Profit Kasir</div><strong>${rupiah(profit)}</strong></div></div></article>`;
-            }
-            const item=rekapMap.get(key);
-            return `<article class="mobile-home-day-card" style="position:relative;"><div class="mobile-home-day-head"><div><div class="mobile-home-day-title"><i class="fa-regular fa-calendar-days"></i><span>${day}, ${date}</span></div><small>Total Rekap Hari Ini</small></div><span class="mobile-home-day-icon"><i class="fa-solid fa-chart-line"></i></span>${sourceLabel}</div><div class="mobile-home-day-grid">${item?`<div class="mobile-home-day-stat"><div><i class="fa-solid fa-arrow-trend-up"></i> Pendapatan</div><strong>${rupiah(item.income)}</strong></div><div class="mobile-home-day-stat"><div><i class="fa-solid fa-bag-shopping"></i> Total Belanja</div><strong>${rupiah(item.expense)}</strong></div><div class="mobile-home-day-stat"><div><i class="fa-solid fa-wallet"></i> Profit/Keuntungan</div><strong>${rupiah(item.profit)}</strong></div><div class="mobile-home-day-stat"><div><i class="fa-solid fa-calendar-day"></i> Tanggal</div><strong>${date}</strong></div>`:`<div class="mobile-home-day-stat"><div><i class="fa-solid fa-arrow-trend-up"></i> Pendapatan</div><strong>Rp 0</strong></div><div class="mobile-home-day-stat"><div><i class="fa-solid fa-bag-shopping"></i> Total Belanja</div><strong>Rp 0</strong></div><div class="mobile-home-day-stat"><div><i class="fa-solid fa-wallet"></i> Profit/Keuntungan</div><strong>Rp 0</strong></div><div class="mobile-home-day-stat"><div><i class="fa-solid fa-calendar-day"></i> Tanggal</div><strong>Belum ada data</strong></div>`}</div></article>`;
-          };
-
-          kasirBox.innerHTML=card(today,'kasir');
-          rekapBox.innerHTML=card(latestRekapDate,'rekap');
-        }catch(error){
-          console.warn('Rekapinyu: carousel Beranda gagal membaca Firestore.',error);
-          kasirBox.innerHTML=empty('fa-solid fa-triangle-exclamation','Gagal membaca Laporan Kasir','Data Firestore belum tersedia.');
-          rekapBox.innerHTML=empty('fa-solid fa-triangle-exclamation','Gagal membaca Laporan Rekap','Data Firestore InputData belum tersedia.');
-        }
-      };
-
       function active(id){
         ['nav-mobile-home','nav-mobile-history','nav-mobile-activity','nav-mobile-komunitas','nav-mobile-report'].forEach(x=>{
           const e=document.getElementById(x); if(!e)return;
@@ -7492,12 +7311,12 @@ function updateUserAvatarUI() {
         const t=document.getElementById('page-title-header'),sub=document.getElementById('page-subtitle-header');
         if(t)t.innerText='Beranda'; if(sub)sub.innerText='Ringkasan laporan 7 hari terakhir.';
         active('nav-mobile-home');
-        if(typeof window.__rekapinyuRenderMobileReportHome==='function')window.__rekapinyuRenderMobileReportHome();
+
       }
       window.__rekapinyuShowMobileHome=home;
       document.addEventListener('rekapinyu-mobile-home-firestore-updated',function(){
         if(window.matchMedia('(max-width:767px)').matches && document.documentElement.getAttribute('data-mobile-view')==='home'){
-          window.__rekapinyuRenderMobileReportHome?.();
+
         }
       });
     document.addEventListener('click',e=>{const m=document.getElementById('mobile-profile-menu'),b=document.getElementById('mobile-profile-menu-container');if(m&&b&&!b.contains(e.target))m.classList.add('hidden')});
@@ -14497,16 +14316,6 @@ async function initKasirViews(){
   .rku-mobile-menu-card:nth-child(6n+5)>i{background:#f0e8ff;color:#8b5cf6}
   .rku-mobile-menu-card:nth-child(6n)>i{background:#dff9fb;color:#06a9c7}
   .rku-mobile-menu-card>span{display:block;max-width:100%;font-size:10px;line-height:1.2;font-weight:850;overflow-wrap:anywhere}
-  .rku-mobile-benefits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:9px;border:1px solid #dcecff;border-radius:19px;background:#ffffffd9;box-shadow:0 5px 15px #1a55900c}
-  .rku-mobile-benefits>div{display:flex;align-items:center;gap:8px;min-width:0;padding:9px 7px;border-radius:13px;background:#fff;color:#123a70;font-size:10px;line-height:1.2;font-weight:850}
-  .rku-mobile-benefits i{width:34px;height:34px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#fff0c7;color:#efa500;font-size:15px}
-  .rku-mobile-benefits>div:nth-child(2) i{background:#ffe6e1;color:#f04438}.rku-mobile-benefits>div:nth-child(3) i{background:#eee5ff;color:#8755ed}.rku-mobile-benefits>div:nth-child(4) i{background:#ddf9e8;color:#12b76a}
-  #mobile-home-view .mobile-home-report-panel{padding:13px!important;border:1px solid #dcecff!important;border-radius:20px!important;background:#fff!important;box-shadow:0 6px 17px #164f8c0d!important}
-  #mobile-home-view .mobile-home-report-title{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;margin:0 0 10px!important;color:#123a70!important;font-size:13px!important;font-weight:900!important}
-  #mobile-home-view .mobile-home-report-title small{padding:5px 8px!important;border-radius:20px!important;background:#eef6ff!important;color:#6d86a6!important;font-size:9px!important}
-  #mobile-home-view .mobile-home-report-divider{height:1px!important;margin:13px 0!important;background:#e6eff9!important}
-  #mobile-home-view .mobile-home-report-carousel{display:flex!important;gap:9px!important;overflow-x:auto!important;scroll-snap-type:x mandatory!important;padding-bottom:3px!important}
-  #mobile-home-view .mobile-home-day-card{flex:0 0 84%!important;scroll-snap-align:start!important;border:1px solid #dfebf8!important;border-radius:16px!important;background:#fff!important;box-shadow:0 4px 12px #1e52910d!important}
   #mobile-simplified-dock{position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:999!important;height:72px!important;padding:0 6px env(safe-area-inset-bottom,0px)!important;background:#fffffff5!important;border-top:1px solid #d9e8fa!important;box-shadow:0 -6px 22px #0c3b821f!important;backdrop-filter:blur(16px)!important;overflow:visible!important}
   #mobile-simplified-dock>div{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;align-items:center!important;height:100%!important;max-width:520px!important;margin:0 auto!important;padding:0!important}
   #mobile-simplified-dock .mobile-dock-item{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;min-width:0!important;height:61px!important;padding:4px 1px!important;border-radius:13px!important;color:#8196b3!important;background:transparent!important}
