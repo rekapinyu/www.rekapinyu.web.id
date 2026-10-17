@@ -2496,23 +2496,27 @@ bind();
     </div>
     <div class="rku-mobile-promo-dots" aria-label="Pilih slide"><button type="button" aria-label="Slide 1"></button><button type="button" aria-label="Slide 2"></button><button type="button" class="active" aria-label="Slide 3"></button></div>
   </section>
-  <div class="rku-mobile-search"><i class="fa-solid fa-magnifying-glass"></i><input id="rku-mobile-menu-search" type="search" placeholder="Cari menu..." autocomplete="off" oninput="(function(v){document.querySelectorAll('#rku-mobile-menu-grid .rku-mobile-menu-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().includes(v.toLowerCase())?'':'none'})})(this.value)"></div>
-  <div class="rku-mobile-menu-grid" id="rku-mobile-menu-grid">
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('input')"><i class="fa-solid fa-file-pen"></i><span>Input Data</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('kasir')"><i class="fa-solid fa-cart-shopping"></i><span>Kasir</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('produk-kasir')"><i class="fa-solid fa-box-open"></i><span>Produk Kasir</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('report')"><i class="fa-solid fa-file-lines"></i><span>Laporan Bulanan</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('pengeluaran')"><i class="fa-solid fa-receipt"></i><span>Pengeluaran</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('kasbon')"><i class="fa-solid fa-wallet"></i><span>Kasbon</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('activity')"><i class="fa-solid fa-users"></i><span>Aktifitas</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('komunitas')"><i class="fa-solid fa-people-group"></i><span>Komunitas</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('cek-paket')"><i class="fa-solid fa-gift"></i><span>Paket</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i><span>Setting</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('cetak')"><i class="fa-solid fa-print"></i><span>Cetak</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('laporan-kasir')"><i class="fa-solid fa-chart-column"></i><span>Laporan Kasir</span></button>
-    <button class="rku-mobile-menu-card" type="button" onclick="switchTab('backup')"><i class="fa-solid fa-cloud-arrow-down"></i><span>Backup Otomatis</span></button>
-  </div>
+  <div class="rku-mobile-search"><i class="fa-solid fa-magnifying-glass"></i><input id="rku-mobile-menu-search" type="search" placeholder="Cari menu..." autocomplete="off" oninput="(function(v){document.querySelectorAll('#mobile-home-view .rku-mobile-menu-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().includes(v.toLowerCase())?'':'none'})})(this.value)"></div>
+  <section class="rku-mobile-menu-section" aria-labelledby="rku-kasir-heading">
+    <h2 class="rku-mobile-section-heading" id="rku-kasir-heading">KASIR</h2>
+    <div class="rku-mobile-menu-grid" id="rku-mobile-kasir-grid">
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('kasir')"><i class="fa-solid fa-cart-shopping"></i><span>Kasir</span></button>
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('produk-kasir')"><i class="fa-solid fa-box-open"></i><span>Produk Kasir</span></button>
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('laporan-kasir')"><i class="fa-solid fa-chart-column"></i><span>Laporan Kasir</span></button>
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('cek-paket')"><i class="fa-solid fa-gift"></i><span>Cek Paket</span></button>
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('activity')"><i class="fa-solid fa-users"></i><span>Aktifitas</span></button>
+    </div>
+  </section>
+  <section class="rku-mobile-menu-section" aria-labelledby="rku-management-heading">
+    <h2 class="rku-mobile-section-heading" id="rku-management-heading">MANAGEMENT</h2>
+    <div class="rku-mobile-menu-grid" id="rku-mobile-management-grid">
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('input')"><i class="fa-solid fa-file-pen"></i><span>Input Data</span></button>
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></button>
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('report')"><i class="fa-solid fa-file-lines"></i><span>Laporan Bulanan</span></button>
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('kasbon')"><i class="fa-solid fa-wallet"></i><span>Kasbon</span></button>
+      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('pengeluaran')"><i class="fa-solid fa-receipt"></i><span>Pengeluaran</span></button>
+    </div>
+  </section>
   <div class="rku-mobile-benefits"><div><i class="fa-solid fa-bolt"></i><span>Transaksi<br>Lebih Cepat</span></div><div><i class="fa-solid fa-chart-simple"></i><span>Laporan<br>Lebih Akurat</span></div><div><i class="fa-solid fa-store"></i><span>Cocok untuk<br>Semua Usaha</span></div><div><i class="fa-solid fa-check"></i><span>Aman<br>dan Stabil</span></div></div>
   <div class="mobile-home-report-panel">
     <section class="mobile-home-report-section">
@@ -14479,6 +14483,10 @@ async function initKasirViews(){
   .rku-mobile-hero-copy>span{font-size:12px;line-height:1.35;font-weight:600;opacity:.96}
   .rku-mobile-hero-icon{width:62px;height:62px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#ffffff22;color:#fff;font-size:31px}
   .rku-mobile-menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;width:100%;min-width:0}
+  .rku-mobile-menu-section{display:flex;flex-direction:column;gap:10px;width:100%;min-width:0}
+  .rku-mobile-section-heading{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;margin:0;padding:10px 14px;box-sizing:border-box;border:1px solid #dbeafe;border-radius:14px;background:linear-gradient(145deg,#fff,#f5f9ff);box-shadow:0 5px 14px #1c559312;color:#0b3268;font-size:13px;font-weight:900;letter-spacing:.12em;text-align:center;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+  .rku-mobile-section-heading:hover{transform:translateY(-1px);border-color:#93c5fd;box-shadow:0 8px 18px #1c55931c}
+
   .rku-mobile-menu-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:98px;padding:10px 4px;border:1px solid #e4eefb;border-radius:17px;background:linear-gradient(150deg,#fff,#fafdff);box-shadow:0 5px 13px #1c55930e;color:#0b3268;text-align:center;transition:transform .15s ease,box-shadow .15s ease}
   .rku-mobile-menu-card:active{transform:scale(.97);box-shadow:0 2px 6px #1c55931a}
   .rku-mobile-menu-card>i{width:43px;height:43px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#e4f1ff;color:#1684ff;font-size:20px;box-shadow:0 4px 9px #176ac714}
