@@ -14461,7 +14461,8 @@ async function initKasirViews(){
   .rku-mobile-brand-word{font-size:22px;line-height:1;font-weight:1000;letter-spacing:-.7px;color:#082f68;text-align:center}
   .rku-mobile-brand-word>span{color:#08a9e8}
   .rku-mobile-profile{position:relative;width:32px;height:32px;border:1px solid #d9e9fb;border-radius:50%;background:#fff;color:#087cf5;box-shadow:0 3px 9px #164c8a12}
-  .rku-mobile-kasir-heading{width:100%;margin:10px 0 10px;text-align:center;font-size:16px;font-weight:900;letter-spacing:.18em;color:#0b3268}
+  .rku-mobile-kasir-heading{display:flex!important;align-items:center!important;justify-content:center!important;min-height:44px!important;width:100%!important;box-sizing:border-box!important;margin:10px 0 10px!important;padding:9px 12px!important;border:1px solid #dcecff!important;border-radius:14px!important;background:linear-gradient(150deg,#fff,#fafdff)!important;box-shadow:0 5px 13px #1c55930e!important;color:#0b3268!important;text-align:center!important;font-size:16px!important;font-weight:900!important;letter-spacing:.18em!important;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease!important}
+  .rku-mobile-kasir-heading:hover,.rku-mobile-kasir-heading:focus-visible{border-color:#8dc5ff!important;box-shadow:0 8px 18px #176ac71c!important;transform:translateY(-1px)!important;outline:none!important}
   .rku-mobile-search{height:42px;display:flex;align-items:center;gap:9px;padding:0 13px;border:1px solid #e0edfb;border-radius:15px;background:#fff;box-shadow:0 4px 12px #1b5da30b;color:#8198b6}
   .rku-mobile-search input{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;font-size:12px!important;color:#163e73!important;padding:0!important}
   .rku-mobile-hero-card{position:relative;display:flex;align-items:center;justify-content:space-between;min-height:104px;width:100%;padding:16px 18px;border:0;border-radius:20px;text-align:left;color:#fff;background:linear-gradient(115deg,#0789ff 0%,#0756d8 65%,#0643b4 100%);box-shadow:0 9px 20px #0766d633;overflow:hidden}
@@ -14506,11 +14507,10 @@ async function initKasirViews(){
   #view-kasir input,#view-kasir select,#view-kasir textarea,#view-produk-kasir input,#view-produk-kasir select,#view-produk-kasir textarea,#view-input input,#view-input select,#view-input textarea{max-width:100%!important}
   [role=dialog],.modal-content,.modal-card{max-width:calc(100vw - 16px)!important}
   #history-io-floating{display:none!important}
-  /* Carousel di alur normal Beranda, tidak sticky/fixed; lebar penuh seperti semula. */
+  /* Satu implementasi carousel: alur normal, full viewport, padding terpisah dari Beranda. */
   #rku-mobile-promo-body{display:none!important}
-  #mobile-home-view{padding-top:68px!important}
-  #mobile-home-view .rku-mobile-promo-carousel{position:relative!important;display:block!important;left:auto!important;right:auto!important;transform:none!important;width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;box-sizing:border-box!important;align-self:stretch!important;background:transparent!important}
-  #mobile-home-view .rku-mobile-promo-track{display:flex!important;width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;overscroll-behavior-x:contain!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important}
+  #mobile-home-view .rku-mobile-promo-carousel{position:relative!important;display:block!important;left:auto!important;right:auto!important;transform:none!important;width:100vw!important;min-width:100vw!important;max-width:100vw!important;margin-left:calc(50% - 50vw)!important;margin-right:calc(50% - 50vw)!important;padding:0!important;overflow:hidden!important;box-sizing:border-box!important;align-self:auto!important;background:linear-gradient(180deg,#d8ecff 0,#f4f9ff 100%)!important;border-radius:0!important}
+  #mobile-home-view .rku-mobile-promo-track{display:flex!important;width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;overscroll-behavior-x:contain!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important;box-sizing:border-box!important}
   #mobile-home-view .rku-mobile-promo-track::-webkit-scrollbar{display:none!important}
   #mobile-home-view .rku-mobile-promo-slide{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;height:142px!important;min-height:142px!important;padding:18px 22px!important;box-sizing:border-box!important;overflow:hidden!important;color:#fff!important;scroll-snap-align:start!important}
   #mobile-home-view .rku-mobile-promo-slide-1{background:linear-gradient(112deg,#087cf5 0%,#0756d8 65%,#063da9 100%)!important}
@@ -14537,10 +14537,7 @@ async function initKasirViews(){
 <!-- PATCH TERARAH: kunci header Beranda mobile ke viewport agar tetap terlihat saat konten digulir. -->
 <!-- Removed duplicate mobile override: rekapinyu-mobile-header-fixed-final -->
 
-<script id="rekapinyu-mobile-promo-body-isolation">
-/* Carousel dipertahankan di dalam Beranda agar mengikuti alur halaman dan tidak sticky. */
-(function(){})();
-</script>
+
 
 <script id="rekapinyu-mobile-promo-carousel-controller">
 (function(){
@@ -14567,45 +14564,7 @@ async function initKasirViews(){
 })();
 </script>
 
-<style id="rekapinyu-mobile-carousel-independent-padding-kasir-hover">
-@media(max-width:767px){
-  /* Carousel punya area dan padding sendiri, terpisah dari padding Beranda. */
-  #mobile-home-view .rku-mobile-promo-carousel{
-    position:relative!important;
-    left:50%!important;
-    right:auto!important;
-    transform:translateX(-50%)!important;
-    width:100vw!important;
-    min-width:100vw!important;
-    max-width:100vw!important;
-    margin:0!important;
-    padding:0!important;
-    box-sizing:border-box!important;
-    overflow:hidden!important;
-    align-self:auto!important;
-    background:linear-gradient(180deg,#d8ecff 0,#f4f9ff 100%)!important;
-    border-radius:0!important;
-  }
-  #mobile-home-view .rku-mobile-promo-track{width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;box-sizing:border-box!important}
-  #mobile-home-view .rku-mobile-promo-slide{width:100%!important;min-width:100%!important;flex-basis:100%!important;box-sizing:border-box!important}
-  /* KASIR menjadi kotak interaktif dengan efek hover/fokus yang halus. */
-  #mobile-home-view .rku-mobile-kasir-heading{
-    display:flex!important;align-items:center!important;justify-content:center!important;
-    min-height:44px!important;width:100%!important;box-sizing:border-box!important;
-    margin:10px 0 10px!important;padding:9px 12px!important;
-    border:1px solid #dcecff!important;border-radius:14px!important;
-    background:linear-gradient(150deg,#fff,#fafdff)!important;
-    box-shadow:0 5px 13px #1c55930e!important;
-    color:#0b3268!important;text-align:center!important;
-    transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease!important;
-  }
-  #mobile-home-view .rku-mobile-kasir-heading:hover,
-  #mobile-home-view .rku-mobile-kasir-heading:focus-visible{
-    border-color:#8dc5ff!important;box-shadow:0 8px 18px #176ac71c!important;
-    transform:translateY(-1px)!important;outline:none!important;
-  }
-}
-</style>
+
 
 </body>
 </html>
