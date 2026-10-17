@@ -2472,8 +2472,7 @@ bind();
 <!-- MOBILE ONLY: BERANDA -->
 <section class="hidden md:hidden space-y-4" id="mobile-home-view">
   <div class="rku-mobile-brand-row">
-    <div class="rku-mobile-brand-mark"><i class="fa-solid fa-lock"></i></div>
-    <div class="rku-mobile-brand-word">REKAP<span>INYU</span><small>Aplikasi Kasir &amp; Rekap Usaha</small></div>
+    <div class="rku-mobile-brand-word">REKAP<span>INYU</span></div>
     <button type="button" class="rku-mobile-profile" onclick="document.getElementById('mobile-profile-menu-container')?.classList.toggle('hidden')" aria-label="Profil"><i class="fa-solid fa-user"></i></button>
   </div>
   <div class="rku-mobile-search"><i class="fa-solid fa-magnifying-glass"></i><input id="rku-mobile-menu-search" type="search" placeholder="Cari menu..." autocomplete="off" oninput="(function(v){document.querySelectorAll('#rku-mobile-menu-grid .rku-mobile-menu-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().includes(v.toLowerCase())?'':'none'})})(this.value)"></div>
@@ -14476,12 +14475,10 @@ async function initKasirViews(){
   main>.max-w-4xl,main>.max-w-7xl,main>.container{width:100%!important;max-width:none!important;margin:0!important;padding-left:12px!important;padding-right:12px!important;box-sizing:border-box!important}
   #mobile-home-view{display:flex!important;flex-direction:column!important;gap:12px!important;width:100%!important;max-width:100%!important;margin:0!important;padding:12px 12px 100px!important;box-sizing:border-box!important;background:transparent!important}
   #mobile-home-view.hidden{display:none!important}
-  .rku-mobile-brand-row{display:flex;align-items:center;gap:9px;min-width:0;padding:2px 2px 4px}
-  .rku-mobile-brand-mark{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(145deg,#0b8dff,#0649bd);box-shadow:0 5px 12px #087cf533;font-size:16px}
-  .rku-mobile-brand-word{font-size:19px;line-height:1;font-weight:1000;letter-spacing:-.8px;color:#082f68}
+  .rku-mobile-brand-row{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:5px 42px 7px}
+  .rku-mobile-brand-word{font-size:22px;line-height:1;font-weight:1000;letter-spacing:-.7px;color:#082f68;text-align:center}
   .rku-mobile-brand-word>span{color:#08a9e8}
-  .rku-mobile-brand-word small{display:block;margin-top:5px;font-size:9px;font-weight:700;letter-spacing:0;color:#7890ad}
-  .rku-mobile-profile{margin-left:auto;width:36px;height:36px;border:1px solid #d9e9fb;border-radius:50%;background:#fff;color:#087cf5;box-shadow:0 3px 9px #164c8a12}
+  .rku-mobile-profile{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:1px solid #d9e9fb;border-radius:50%;background:#fff;color:#087cf5;box-shadow:0 3px 9px #164c8a12}
   .rku-mobile-search{height:42px;display:flex;align-items:center;gap:9px;padding:0 13px;border:1px solid #e0edfb;border-radius:15px;background:#fff;box-shadow:0 4px 12px #1b5da30b;color:#8198b6}
   .rku-mobile-search input{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;font-size:12px!important;color:#163e73!important;padding:0!important}
   .rku-mobile-hero-card{position:relative;display:flex;align-items:center;justify-content:space-between;min-height:104px;width:100%;padding:16px 18px;border:0;border-radius:20px;text-align:left;color:#fff;background:linear-gradient(115deg,#0789ff 0%,#0756d8 65%,#0643b4 100%);box-shadow:0 9px 20px #0766d633;overflow:hidden}
