@@ -2494,7 +2494,7 @@ bind();
         <div class="rku-mobile-promo-art"><i class="fa-solid fa-file-invoice-dollar"></i></div>
       </article>
     </div>
-    <div class="rku-mobile-promo-dots" aria-label="Pilih slide"><button type="button" class="active" aria-label="Slide 1"></button><button type="button" aria-label="Slide 2"></button><button type="button" aria-label="Slide 3"></button></div>
+    <div class="rku-mobile-promo-dots" aria-label="Pilih slide"><button type="button" aria-label="Slide 1"></button><button type="button" aria-label="Slide 2"></button><button type="button" class="active" aria-label="Slide 3"></button></div>
   </section>
   <div class="rku-mobile-search"><i class="fa-solid fa-magnifying-glass"></i><input id="rku-mobile-menu-search" type="search" placeholder="Cari menu..." autocomplete="off" oninput="(function(v){document.querySelectorAll('#rku-mobile-menu-grid .rku-mobile-menu-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().includes(v.toLowerCase())?'':'none'})})(this.value)"></div>
   <div class="rku-mobile-menu-grid" id="rku-mobile-menu-grid">
@@ -14669,13 +14669,14 @@ async function initKasirViews(){
     var dots=Array.from(root.querySelectorAll('.rku-mobile-promo-dots button'));
     if(!track||slides.length!==3)return;
     root.dataset.carouselReady='1';
-    var current=0, timer=null, touching=false;
+    var current=2, timer=null, touching=false;
     function go(index){current=(index+slides.length)%slides.length;track.scrollTo({left:slides[current].offsetLeft,behavior:'smooth'});dots.forEach(function(dot,i){dot.classList.toggle('active',i===current);});}
     dots.forEach(function(dot,i){dot.addEventListener('click',function(){go(i);restart();});});
     track.addEventListener('scroll',function(){var width=track.clientWidth;if(width){current=Math.max(0,Math.min(2,Math.round(track.scrollLeft/width)));dots.forEach(function(dot,i){dot.classList.toggle('active',i===current);});}},{passive:true});
     root.addEventListener('touchstart',function(){touching=true;},{passive:true});
     root.addEventListener('touchend',function(){touching=false;restart();},{passive:true});
     function restart(){if(timer)clearInterval(timer);timer=setInterval(function(){if(!touching&&window.matchMedia('(max-width: 767px)').matches)go(current+1);},4200);}
+    go(current);
     restart();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initRekapinyuMobilePromoCarousel,{once:true});else initRekapinyuMobilePromoCarousel();
