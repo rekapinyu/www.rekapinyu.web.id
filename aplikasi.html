@@ -14885,28 +14885,3 @@ async function initKasirViews(){
 }
 </style>
 
-
-<style id="rekapinyu-kasir-mobile-layout-final-correction">
-@media (max-width:767px){
-  /* Koreksi khusus isi Kasir: jangan paksa tinggi panel berdasarkan tinggi viewport. */
-  #view-kasir{width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden!important;}
-  #view-kasir .kasir-shell{display:flex!important;flex-direction:column!important;width:100%!important;min-width:0!important;max-width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important;}
-  #view-kasir .kasir-products-panel{flex:1 1 auto!important;width:100%!important;min-width:0!important;min-height:0!important;height:auto!important;max-height:none!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;}
-  #view-kasir .kasir-transaction-tabs{flex:0 0 auto!important;max-width:100%!important;overflow-x:auto!important;}
-  #view-kasir .kasir-toolbar{display:grid!important;grid-template-columns:minmax(0,1fr) clamp(36px,10vw,46px) minmax(0,1fr)!important;grid-template-rows:38px 38px!important;gap:clamp(4px,1.5vw,8px)!important;width:100%!important;min-width:0!important;flex:0 0 auto!important;}
-  #view-kasir .kasir-search-wrap{grid-column:1/-1!important;grid-row:1!important;width:100%!important;min-width:0!important;}
-  #view-kasir .kasir-shift-picker{grid-column:1!important;grid-row:2!important;width:100%!important;min-width:0!important;}
-  #view-kasir #kasir-refresh-btn{grid-column:2!important;grid-row:2!important;width:100%!important;min-width:0!important;max-width:100%!important;}
-  #view-kasir .kasir-barcode-wrap{grid-column:3!important;grid-row:2!important;width:100%!important;min-width:0!important;}
-  #view-kasir .kasir-product-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:max-content!important;flex:1 1 0!important;height:auto!important;min-height:0!important;min-width:0!important;width:100%!important;overflow-y:auto!important;overflow-x:hidden!important;align-content:start!important;gap:clamp(4px,1.5vw,8px)!important;}
-  #view-kasir .kasir-product-card{min-width:0!important;width:100%!important;max-width:100%!important;}
-  #view-kasir .kasir-product-photo{width:100%!important;max-width:100%!important;height:clamp(44px,16vw,72px)!important;flex-basis:clamp(44px,16vw,72px)!important;object-fit:contain!important;}
-  #view-kasir .kasir-product-data{grid-template-columns:repeat(2,minmax(0,1fr))!important;min-width:0!important;}
-  #view-kasir .kasir-product-data-box{min-width:0!important;max-width:100%!important;}
-  #view-kasir .kasir-product-name,#view-kasir .kasir-product-category,#view-kasir .kasir-product-data-box strong{min-width:0!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;overflow-wrap:anywhere!important;}
-  #view-kasir .kasir-cart-panel{width:100%!important;min-width:0!important;max-width:100%!important;}
-}
-@media (max-width:380px){
-  #view-kasir .kasir-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
-}
-</style>
