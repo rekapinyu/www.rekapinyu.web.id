@@ -2,7 +2,7 @@
 
 <html lang="id">
 <head>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230f766e%27%2F%3E%3Cpath d=%27M18 34l10 10 20-24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%2F%3E%3C%2Fsvg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230f766e%27%2F%3E%3Cpath d=%27M18 34l10 10 20-24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%2F%3E%3C%2Fsvg%3E" />
 <meta charset="utf-8"/>
 <!-- REKAPINYU FOLDER SAFETY: aplikasi TIDAK BOLEH membuat folder otomatis.
      Semua getDirectoryHandle dipaksa membaca folder yang sudah ada (create:false).
@@ -25,23 +25,35 @@
 })();
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<!-- Mobile reload first-paint guard: cegah layout mentah terlihat sebelum skrip tampilan mobile selesai. -->
+<!-- Mobile reload first-paint guard: cegah view Input Data dan header lama terlihat sebelum Beranda siap. -->
 <style id="rekapinyu-mobile-first-paint-guard">
 @media (max-width:767px){
+ html.rku-mobile-first-paint-pending #view-input,
  html.rku-mobile-first-paint-pending #mobile-home-view,
- html.rku-mobile-first-paint-pending #rku-mobile-promo-body{
+ html.rku-mobile-first-paint-pending #rku-mobile-promo-body,
+ html.rku-mobile-first-paint-pending #page-title-header,
+ html.rku-mobile-first-paint-pending #page-subtitle-header{
    visibility:hidden!important;
  }
+ html[data-mobile-view="home"] #view-input{display:none!important;}
+ html[data-mobile-view="home"] #mobile-home-view{display:block!important;}
 }
 </style>
 <script id="rekapinyu-mobile-first-paint-guard-script">
 (function(){
  var root=document.documentElement;
  if(!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches))return;
+ /* Tentukan state Beranda sebelum browser melukis isi halaman, bukan setelah skrip akhir berjalan. */
  root.classList.add('rku-mobile-first-paint-pending');
+ root.setAttribute('data-mobile-view','home');
  function reveal(){
    requestAnimationFrame(function(){
      requestAnimationFrame(function(){
+       /* Pastikan judul yang muncul sudah judul Beranda, bukan judul Input Data lama. */
+       var title=document.getElementById('page-title-header');
+       var subtitle=document.getElementById('page-subtitle-header');
+       if(title)title.textContent='Beranda';
+       if(subtitle)subtitle.textContent='Ringkasan laporan 7 hari terakhir.';
        root.classList.remove('rku-mobile-first-paint-pending');
      });
    });
@@ -1990,6 +2002,16 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   #view-kasir .kasir-cart-empty{min-height:45px!important;height:auto!important;padding:8px 0!important;}
   #view-kasir .kasir-cart-empty i{display:none!important;}
   #view-kasir .kasir-summary{flex:0 0 auto!important;padding:6px 0!important;}
+}
+</style>
+
+
+<style id="rekapinyu-mobile-remove-legacy-header">
+@media (max-width:767px){
+  #page-title-header,
+  #page-subtitle-header{
+    display:none!important;
+  }
 }
 </style>
 
@@ -14609,12 +14631,24 @@ async function initKasirViews(){
     flex:1 1 auto!important;height:auto!important;min-height:0!important;
     padding:6px 8px 0!important;border:0!important;overflow:hidden!important;
   }
-  #view-kasir .kasir-transaction-tabs{
-    flex:0 0 34px!important;height:34px!important;margin:0 0 7px!important;
-    padding:0!important;overflow-x:auto!important;overflow-y:hidden!important;
+  /* Pulihkan bar tab transaksi di bagian paling atas panel Kasir mobile. */
+  #view-kasir .kasir-products-panel > #kasir-transaction-tabs,
+  #view-kasir #kasir-transaction-tabs.kasir-transaction-tabs{
+    display:flex!important;visibility:visible!important;opacity:1!important;
+    position:relative!important;inset:auto!important;order:0!important;
+    flex:0 0 40px!important;height:40px!important;min-height:40px!important;max-height:40px!important;
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    margin:0 0 7px!important;padding:0 0 2px!important;
+    align-items:flex-end!important;gap:6px!important;
+    overflow-x:auto!important;overflow-y:hidden!important;
+    background:#fff!important;border-bottom:1px solid #e2e8f0!important;
+    box-sizing:border-box!important;z-index:40!important;
   }
-  #view-kasir .kasir-transaction-tab{
-    height:32px!important;min-width:100px!important;max-width:160px!important;
+  #view-kasir #kasir-transaction-tabs > .kasir-transaction-tab{
+    display:flex!important;visibility:visible!important;opacity:1!important;
+    position:relative!important;flex:0 0 auto!important;
+    height:32px!important;min-height:32px!important;min-width:100px!important;max-width:160px!important;
+    align-items:center!important;justify-content:space-between!important;
   }
   #view-kasir .kasir-toolbar{
     flex:0 0 auto!important;display:grid!important;
@@ -14903,25 +14937,26 @@ async function initKasirViews(){
   #view-kasir .kasir-product-grid{margin-top:5px!important;padding-bottom:76px!important;gap:6px!important;}
   #view-kasir .kasir-product-photo{height:clamp(52px,14vh,70px)!important;flex-basis:clamp(52px,14vh,70px)!important;}
 }
-/* MOBILE SAJA: body isi semua menu memenuhi area layar HP; desktop tetap original. */
+/* MOBILE SAJA: setiap menu memiliki area scroll sendiri; body bukan scroll global. */
 @media (max-width:767px){
-  html, body { width:100%!important; max-width:100%!important; min-width:0!important; margin:0!important; overflow-x:hidden!important; }
-  body { box-sizing:border-box!important; }
-  /* Paksa area utama mengambil seluruh viewport mobile, termasuk padding atas/bawah. */
-  main {
-    width:100vw!important;max-width:100vw!important;min-width:0!important;
-    margin:0!important;padding:0 0 calc(7rem + env(safe-area-inset-bottom, 0px)) 0!important;
-    box-sizing:border-box!important; flex:1 1 100vw!important; flex-shrink:0!important;
-    align-self:stretch!important; overflow-x:hidden!important;
-    position:relative!important; inset-inline:0!important;
-    scrollbar-width:none!important; -ms-overflow-style:none!important;
+  html, body {
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    margin:0!important;overflow-x:hidden!important;
   }
-  /* Hilangkan jalur scrollbar kanan yang menyisakan strip kosong pada HP. */
-  main::-webkit-scrollbar,
-  body::-webkit-scrollbar { width:0!important; height:0!important; display:none!important; }
-  body { overflow-x:hidden!important; }
-  /* Hilangkan jarak luar pada panel/menu aktif, tanpa mengubah isi atau fungsi menu. */
-  main > section,
+  body { box-sizing:border-box!important; }
+  /* Main hanya menjadi bingkai di antara header dan dock, bukan pemilik scroll isi menu. */
+  main {
+    display:flex!important;flex-direction:column!important;
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    min-height:0!important;height:auto!important;flex:1 1 auto!important;
+    margin:0!important;padding:0!important;box-sizing:border-box!important;
+    align-self:stretch!important;overflow:hidden!important;position:relative!important;
+  }
+  main::-webkit-scrollbar, body::-webkit-scrollbar {
+    width:0!important;height:0!important;display:none!important;
+  }
+  /* Semua panel menu diberi aturan masing-masing lewat selector ID, bukan aturan body global. */
+  main > section[id^="view-"],
   main > div[id^="view-"],
   main section[id^="view-"],
   main div[id^="view-"] {
@@ -14929,21 +14964,26 @@ async function initKasirViews(){
     margin-left:0!important;margin-right:0!important;
     box-sizing:border-box!important;
   }
-  main > section:not(.hidden),
+  main > section[id^="view-"]:not(.hidden),
   main > div[id^="view-"]:not(.hidden),
   main section[id^="view-"]:not(.hidden),
   main div[id^="view-"]:not(.hidden) {
     width:100%!important;max-width:100%!important;min-width:0!important;
+    min-height:0!important;max-height:100%!important;
     margin:0!important;padding-left:0!important;padding-right:0!important;
     box-sizing:border-box!important;align-self:stretch!important;
+    overflow-x:hidden!important;overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
   }
-  /* Kontainer pembungkus isi menu ikut penuh tanpa padding horizontal/vertikal luar. */
-  main > section:not(.hidden) > :first-child,
+  /* Bungkus isi tiap menu tidak memaksakan lebar melebihi panel aktif. */
+  main > section[id^="view-"]:not(.hidden) > :first-child,
   main > div[id^="view-"]:not(.hidden) > :first-child,
   main section[id^="view-"]:not(.hidden) > :first-child,
   main div[id^="view-"]:not(.hidden) > :first-child {
     max-width:100%!important;box-sizing:border-box!important;
   }
+  /* Kasir tetap memakai lebar penuh; scroll katalog dan keranjang internal dipertahankan. */
   #view-kasir:not(.hidden),
   #view-kasir:not(.hidden) .kasir-shell,
   #view-kasir:not(.hidden) .kasir-products-panel {
