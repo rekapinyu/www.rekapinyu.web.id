@@ -14681,6 +14681,67 @@ async function initKasirViews(){
 @media (max-width:767px){
   html.rku-mobile-initializing #mobile-home-view,
   html.rku-mobile-initializing #rku-mobile-promo-body{visibility:hidden!important}
+
+  /* Beranda setelah reload: pastikan carousel dan kartu memakai layout mobile. */
+  html[data-mobile-view="home"] #mobile-home-view{
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;
+    gap:12px!important;width:100%!important;max-width:100%!important;
+    box-sizing:border-box!important;
+  }
+  html[data-mobile-view="home"] #rku-mobile-promo-body{
+    display:block!important;position:fixed!important;top:56px!important;left:0!important;right:0!important;
+    width:100%!important;max-width:100%!important;margin:0!important;padding:0!important;
+    box-sizing:border-box!important;overflow:hidden!important;z-index:85!important;
+  }
+  #rku-mobile-promo-body .rku-mobile-promo-carousel{display:block!important;width:100%!important;max-width:100%!important;overflow:hidden!important}
+  #rku-mobile-promo-body .rku-mobile-promo-track{
+    display:flex!important;flex-wrap:nowrap!important;width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;
+    scroll-snap-type:x mandatory!important;-webkit-overflow-scrolling:touch!important;
+  }
+  #rku-mobile-promo-body .rku-mobile-promo-slide{
+    display:flex!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;
+    min-height:142px!important;height:142px!important;box-sizing:border-box!important;
+    align-items:center!important;justify-content:space-between!important;gap:10px!important;
+    padding:18px 22px!important;color:#fff!important;overflow:hidden!important;
+    scroll-snap-align:start!important;
+  }
+  #rku-mobile-promo-body .rku-mobile-promo-copy{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important;max-width:74%!important}
+  #rku-mobile-promo-body .rku-mobile-promo-copy small{display:block!important;font-size:10px!important}
+  #rku-mobile-promo-body .rku-mobile-promo-copy strong{display:block!important;font-size:17px!important;line-height:1.2!important}
+  #rku-mobile-promo-body .rku-mobile-promo-copy span{display:block!important;font-size:12px!important;line-height:1.35!important}
+  #rku-mobile-promo-body .rku-mobile-promo-art{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 54px!important;width:54px!important;height:54px!important;font-size:26px!important}
+
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-search{
+    display:flex!important;flex:0 0 42px!important;width:100%!important;height:42px!important;
+    box-sizing:border-box!important;margin:0!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-section{
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;
+    gap:10px!important;width:100%!important;min-width:0!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-grid{
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:9px!important;width:100%!important;min-width:0!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-section-heading{
+    display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;
+    min-height:44px!important;margin:0!important;box-sizing:border-box!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-card{
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    gap:8px!important;width:100%!important;min-width:0!important;min-height:98px!important;
+    padding:10px 4px!important;box-sizing:border-box!important;text-align:center!important;
+    white-space:normal!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-card>i{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:43px!important;height:43px!important;flex:0 0 43px!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-card>span{
+    display:block!important;max-width:100%!important;font-size:10px!important;line-height:1.2!important;
+    white-space:normal!important;overflow-wrap:anywhere!important;
+  }
+
   main:has(#view-kasir:not(.hidden)){padding-top:0!important}
   main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden){
     padding-top:8px!important;scroll-margin-top:64px!important;
@@ -14702,26 +14763,21 @@ async function initKasirViews(){
         window.__rekapinyuShowMobileHome();
       }else{
         root.setAttribute('data-mobile-view','home');
-        document.querySelectorAll('main [id^="view-"]').forEach(function(el){el.classList.add('hidden')});
         var home=document.getElementById('mobile-home-view');
         if(home)home.classList.remove('hidden');
+        document.querySelectorAll('main [id^="view-"]').forEach(function(el){el.classList.add('hidden')});
       }
       root.setAttribute('data-mobile-view','home');
-      var home=document.getElementById('mobile-home-view');
-      if(home)home.classList.remove('hidden');
-      document.querySelectorAll('main [id^="view-"]').forEach(function(el){el.classList.add('hidden')});
+      var homeView=document.getElementById('mobile-home-view');
+      if(homeView)homeView.classList.remove('hidden');
     }catch(err){console.warn('Rekapinyu: stabilisasi tampilan mobile gagal.',err)}
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){root.classList.remove('rku-mobile-initializing')});
-    });
+    requestAnimationFrame(function(){requestAnimationFrame(function(){root.classList.remove('rku-mobile-initializing')})});
   }
 
   if(document.readyState==='complete'){
     requestAnimationFrame(function(){requestAnimationFrame(settleMobileHome)});
   }else{
-    window.addEventListener('load',function(){
-      requestAnimationFrame(function(){requestAnimationFrame(settleMobileHome)});
-    },{once:true});
+    window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(settleMobileHome)})},{once:true});
   }
   window.addEventListener('pageshow',function(){
     finished=false;
