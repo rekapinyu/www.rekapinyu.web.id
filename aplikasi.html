@@ -1843,6 +1843,67 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 })();
 </script>
 
+
+
+<style id="rekapinyu-mobile-kasir-toolbar-and-dock-fix">
+@media (max-width:767px){
+  /* Menu Kasir: kolom cari produk dibuat panjang; tombol Bluetooth berbentuk kotak. */
+  #view-kasir .kasir-toolbar{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 38px 82px 38px!important;
+    gap:7px!important;
+    align-items:center!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #view-kasir .kasir-search-wrap{
+    grid-column:1 / -1!important;
+    width:100%!important;
+    min-width:0!important;
+    height:42px!important;
+    flex:none!important;
+    box-sizing:border-box!important;
+  }
+  #view-kasir .kasir-barcode-wrap{
+    grid-column:1 / 2!important;
+    width:100%!important;
+    min-width:0!important;
+    height:38px!important;
+    flex:none!important;
+    padding-left:9px!important;
+    padding-right:9px!important;
+  }
+  #view-kasir .kasir-shift-picker{
+    grid-column:3 / 4!important;
+    width:82px!important;
+    min-width:0!important;
+  }
+  #view-kasir .kasir-shift-trigger{
+    width:82px!important;
+    min-width:0!important;
+    padding-left:7px!important;
+    padding-right:7px!important;
+  }
+  #view-kasir #kasir-refresh-btn{
+    grid-column:4 / 5!important;
+    width:38px!important;
+    min-width:38px!important;
+    max-width:38px!important;
+    height:38px!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    flex:none!important;
+    border-radius:9px!important;
+  }
+  #view-kasir #kasir-refresh-btn i{margin:0!important;font-size:16px!important}
+  #mobile-simplified-dock .mobile-dock-item span{
+    font-size:9px!important;
+    white-space:nowrap!important;
+  }
+}
+</style>
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
@@ -7089,11 +7150,10 @@ function updateUserAvatarUI() {
 <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 shadow-[0_-6px_20px_rgba(15,23,42,.08)] z-40" id="mobile-simplified-dock">
 <div class="max-w-md mx-auto grid grid-cols-5 px-2 py-2">
 <button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-emerald-600 transition" id="nav-mobile-home" onclick="switchTab('home')" type="button"><i class="fa-solid fa-house-chimney text-lg mb-0.5"></i><span class="text-[10px] font-semibold">Beranda</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-history" onclick="switchTab('history')" type="button"><i class="fa-solid fa-clock-rotate-left text-lg mb-0.5"></i><span class="text-[10px] font-medium">History</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-report" onclick="switchTab('report')" type="button"><i class="fa-solid fa-chart-line text-lg mb-0.5"></i><span class="text-[10px] font-medium">Bulanan</span></button>
-
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-activity" onclick="switchTab('activity')" type="button"><i class="fa-solid fa-bell text-lg mb-0.5"></i><span class="text-[10px] font-medium">Notifikasi</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-komunitas" onclick="switchTab('komunitas')" type="button"><i class="fa-solid fa-users text-lg mb-0.5"></i><span class="text-[10px] font-medium">Komunitas</span></button>
+<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-history" onclick="switchTab('input')" type="button"><i class="fa-solid fa-pen-to-square text-lg mb-0.5"></i><span class="text-[10px] font-medium">Input Data</span></button>
+<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-report" onclick="switchTab('kasir')" type="button"><i class="fa-solid fa-cash-register text-lg mb-0.5"></i><span class="text-[10px] font-medium">Kasir</span></button>
+<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-activity" onclick="switchTab('kasbon')" type="button"><i class="fa-solid fa-hand-holding-dollar text-lg mb-0.5"></i><span class="text-[10px] font-medium">Kasbon</span></button>
+<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-komunitas" onclick="switchTab('pengeluaran')" type="button"><i class="fa-solid fa-money-bill-transfer text-lg mb-0.5"></i><span class="text-[10px] font-medium">Pengeluaran</span></button>
 </div>
 </nav>
 
