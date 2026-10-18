@@ -2,25 +2,7 @@
 
 <html lang="id">
 <head>
-<style id="rekapinyu-mobile-header-first-paint-guard">
-@media (max-width:767px){
-  html.rku-mobile-header-initializing #page-title-header,
-  html.rku-mobile-header-initializing #page-subtitle-header{
-    visibility:hidden!important;
-  }
-}
-</style>
-<script id="rekapinyu-mobile-header-first-paint-guard-script">
-(function(){
-  try{
-    if(window.matchMedia && window.matchMedia("(max-width:767px)").matches){
-      document.documentElement.classList.add("rku-mobile-header-initializing");
-    }
-  }catch(_){}
-})();
-</script>
-
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230f766e%27%2F%3E%3Cpath d=%27M18 34l10 10 20-24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%2F%3E%3C%2Fsvg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230f766e%27%2F%3E%3Cpath d=%27M18 34l10 10 20-24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%2F%3E%3C%2Fsvg%3E" />
 <meta charset="utf-8"/>
 <!-- REKAPINYU FOLDER SAFETY: aplikasi TIDAK BOLEH membuat folder otomatis.
      Semua getDirectoryHandle dipaksa membaca folder yang sudah ada (create:false).
@@ -2020,6 +2002,16 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   #view-kasir .kasir-cart-empty{min-height:45px!important;height:auto!important;padding:8px 0!important;}
   #view-kasir .kasir-cart-empty i{display:none!important;}
   #view-kasir .kasir-summary{flex:0 0 auto!important;padding:6px 0!important;}
+}
+</style>
+
+
+<style id="rekapinyu-mobile-remove-legacy-header">
+@media (max-width:767px){
+  #page-title-header,
+  #page-subtitle-header{
+    display:none!important;
+  }
 }
 </style>
 
@@ -7491,7 +7483,6 @@ function updateUserAvatarUI() {
         const h=document.getElementById('mobile-home-view'); if(h)h.classList.remove('hidden');
         const t=document.getElementById('page-title-header'),sub=document.getElementById('page-subtitle-header');
         if(t)t.innerText='Beranda'; if(sub)sub.innerText='Ringkasan laporan 7 hari terakhir.';
-        document.documentElement.classList.remove('rku-mobile-header-initializing');
         active('nav-mobile-home');
 
       }
