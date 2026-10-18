@@ -14666,6 +14666,19 @@ async function initKasirViews(){
 }
 </style>
 
+
+<!-- PATCH TERBATAS: aktifkan kembali menu Input Data di mobile saja. -->
+<style id="mobile-restore-input-data-only">
+@media (max-width:767px){
+  html[data-mobile-view="input"] #view-input{
+    display:block!important;
+    visibility:visible!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+}
+</style>
+
 </body>
 </html>
 
