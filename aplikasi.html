@@ -14925,25 +14925,26 @@ async function initKasirViews(){
   #view-kasir .kasir-product-grid{margin-top:5px!important;padding-bottom:76px!important;gap:6px!important;}
   #view-kasir .kasir-product-photo{height:clamp(52px,14vh,70px)!important;flex-basis:clamp(52px,14vh,70px)!important;}
 }
-/* MOBILE SAJA: body isi semua menu memenuhi area layar HP; desktop tetap original. */
+/* MOBILE SAJA: setiap menu memiliki area scroll sendiri; body bukan scroll global. */
 @media (max-width:767px){
-  html, body { width:100%!important; max-width:100%!important; min-width:0!important; margin:0!important; overflow-x:hidden!important; }
-  body { box-sizing:border-box!important; }
-  /* Paksa area utama mengambil seluruh viewport mobile, termasuk padding atas/bawah. */
-  main {
-    width:100vw!important;max-width:100vw!important;min-width:0!important;
-    margin:0!important;padding:0 0 calc(7rem + env(safe-area-inset-bottom, 0px)) 0!important;
-    box-sizing:border-box!important; flex:1 1 100vw!important; flex-shrink:0!important;
-    align-self:stretch!important; overflow-x:hidden!important;
-    position:relative!important; inset-inline:0!important;
-    scrollbar-width:none!important; -ms-overflow-style:none!important;
+  html, body {
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    margin:0!important;overflow-x:hidden!important;
   }
-  /* Hilangkan jalur scrollbar kanan yang menyisakan strip kosong pada HP. */
-  main::-webkit-scrollbar,
-  body::-webkit-scrollbar { width:0!important; height:0!important; display:none!important; }
-  body { overflow-x:hidden!important; }
-  /* Hilangkan jarak luar pada panel/menu aktif, tanpa mengubah isi atau fungsi menu. */
-  main > section,
+  body { box-sizing:border-box!important; }
+  /* Main hanya menjadi bingkai di antara header dan dock, bukan pemilik scroll isi menu. */
+  main {
+    display:flex!important;flex-direction:column!important;
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    min-height:0!important;height:auto!important;flex:1 1 auto!important;
+    margin:0!important;padding:0!important;box-sizing:border-box!important;
+    align-self:stretch!important;overflow:hidden!important;position:relative!important;
+  }
+  main::-webkit-scrollbar, body::-webkit-scrollbar {
+    width:0!important;height:0!important;display:none!important;
+  }
+  /* Semua panel menu diberi aturan masing-masing lewat selector ID, bukan aturan body global. */
+  main > section[id^="view-"],
   main > div[id^="view-"],
   main section[id^="view-"],
   main div[id^="view-"] {
@@ -14951,21 +14952,26 @@ async function initKasirViews(){
     margin-left:0!important;margin-right:0!important;
     box-sizing:border-box!important;
   }
-  main > section:not(.hidden),
+  main > section[id^="view-"]:not(.hidden),
   main > div[id^="view-"]:not(.hidden),
   main section[id^="view-"]:not(.hidden),
   main div[id^="view-"]:not(.hidden) {
     width:100%!important;max-width:100%!important;min-width:0!important;
+    min-height:0!important;max-height:100%!important;
     margin:0!important;padding-left:0!important;padding-right:0!important;
     box-sizing:border-box!important;align-self:stretch!important;
+    overflow-x:hidden!important;overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
   }
-  /* Kontainer pembungkus isi menu ikut penuh tanpa padding horizontal/vertikal luar. */
-  main > section:not(.hidden) > :first-child,
+  /* Bungkus isi tiap menu tidak memaksakan lebar melebihi panel aktif. */
+  main > section[id^="view-"]:not(.hidden) > :first-child,
   main > div[id^="view-"]:not(.hidden) > :first-child,
   main section[id^="view-"]:not(.hidden) > :first-child,
   main div[id^="view-"]:not(.hidden) > :first-child {
     max-width:100%!important;box-sizing:border-box!important;
   }
+  /* Kasir tetap memakai lebar penuh; scroll katalog dan keranjang internal dipertahankan. */
   #view-kasir:not(.hidden),
   #view-kasir:not(.hidden) .kasir-shell,
   #view-kasir:not(.hidden) .kasir-products-panel {
