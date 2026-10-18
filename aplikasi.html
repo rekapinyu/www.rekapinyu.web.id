@@ -14741,3 +14741,37 @@ async function initKasirViews(){
   }
 }
 </style>
+
+<style id="rekapinyu-mobile-kasir-sticky-toolbar-only">
+@media (max-width:767px){
+  /* Area tab dan seluruh kontrol pencarian tetap di atas; hanya kartu produk yang bergulir. */
+  #view-kasir .kasir-products-panel{
+    display:flex!important;flex-direction:column!important;
+    min-height:0!important;overflow:hidden!important;
+  }
+  #view-kasir .kasir-transaction-tabs{
+    position:sticky!important;top:0!important;z-index:40!important;
+    flex:0 0 auto!important;background:#fff!important;
+  }
+  #view-kasir .kasir-toolbar{
+    position:sticky!important;top:40px!important;z-index:39!important;
+    display:grid!important;grid-template-columns:48px 92px minmax(0,1fr)!important;
+    grid-template-rows:auto auto!important;flex:0 0 auto!important;
+    flex-wrap:initial!important;gap:8px!important;
+    padding:0 0 8px!important;margin:0!important;
+    background:#fff!important;
+  }
+  #view-kasir .kasir-search-wrap{
+    grid-column:1/-1!important;grid-row:1!important;
+    width:100%!important;min-width:0!important;
+  }
+  #view-kasir #kasir-refresh-btn{grid-column:1!important;grid-row:2!important;}
+  #view-kasir .kasir-shift-picker{grid-column:2!important;grid-row:2!important;width:92px!important;min-width:0!important;}
+  #view-kasir .kasir-barcode-wrap{grid-column:3!important;grid-row:2!important;width:100%!important;min-width:0!important;}
+  #view-kasir .kasir-product-grid{
+    position:relative!important;flex:1 1 0!important;min-height:0!important;height:0!important;
+    overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+}
+</style>
