@@ -14600,5 +14600,56 @@ async function initKasirViews(){
 })();
 </script>
 
+
+<!-- PATCH TERBATAS: popup hanya untuk isi keranjang; tombol aksi tetap sticky di luar popup dan ikon hanya muncul pada menu Kasir. -->
+<style id="rekapinyu-mobile-cart-popup-actions-separation">
+@media(max-width:767px){
+  /* Popup hanya menampilkan isi keranjang, bukan ringkasan/pembayaran/tombol aksi. */
+  #view-kasir.rk-mobile-cart-open .kasir-summary{display:none!important}
+  #rekapinyu-mobile-cart-trigger[hidden]{display:none!important}
+  #rekapinyu-mobile-cart-actions-host{
+    position:fixed!important;left:0!important;right:0!important;
+    bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
+    z-index:1280!important;display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important;
+    width:100%!important;margin:0!important;padding:8px 12px!important;
+    box-sizing:border-box!important;background:rgba(255,255,255,.98)!important;
+    border-top:1px solid #e2e8f0!important;box-shadow:0 -5px 14px rgba(15,23,42,.05)!important;
+  }
+  #rekapinyu-mobile-cart-actions-host button{width:100%!important;min-width:0!important;height:44px!important;min-height:44px!important;margin:0!important;box-sizing:border-box!important;white-space:nowrap!important}
+}
+@media(min-width:768px){#rekapinyu-mobile-cart-actions-host{display:none!important}}
+</style>
+<script id="rekapinyu-mobile-cart-popup-actions-separation-script">
+(function(){
+ function patch(){
+  const view=document.getElementById('view-kasir');
+  const row=view?.querySelector('.kasir-summary .kasir-action-row');
+  const trigger=document.getElementById('rekapinyu-mobile-cart-trigger');
+  if(!view||!row||!trigger)return;
+  let host=document.getElementById('rekapinyu-mobile-cart-actions-host');
+  if(!host){host=document.createElement('div');host.id='rekapinyu-mobile-cart-actions-host';document.body.appendChild(host);}
+  if(row.parentElement!==host)host.appendChild(row);
+  function visibility(){
+    const active=window.matchMedia('(max-width:767px)').matches&&!view.classList.contains('hidden');
+    trigger.hidden=!active;host.style.display=active?'grid':'none';
+    if(!active&&view.classList.contains('rk-mobile-cart-open')){
+      view.classList.remove('rk-mobile-cart-open');
+      document.getElementById('rekapinyu-mobile-cart-backdrop')?.classList.remove('is-open');
+      document.body.classList.remove('rk-mobile-cart-lock');
+    }
+  }
+  visibility();
+  if(!view.__rkCartVisibilityObserver){
+   view.__rkCartVisibilityObserver=new MutationObserver(visibility);
+   view.__rkCartVisibilityObserver.observe(view,{attributes:true,attributeFilter:['class']});
+   window.addEventListener('resize',visibility);
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',patch);else patch();
+ window.addEventListener('load',patch);
+})();
+</script>
+
 </body>
 </html>
