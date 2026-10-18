@@ -25,6 +25,33 @@
 })();
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<!-- Mobile reload first-paint guard: cegah layout mentah terlihat sebelum skrip tampilan mobile selesai. -->
+<style id="rekapinyu-mobile-first-paint-guard">
+@media (max-width:767px){
+ html.rku-mobile-first-paint-pending #mobile-home-view,
+ html.rku-mobile-first-paint-pending #rku-mobile-promo-body{
+   visibility:hidden!important;
+ }
+}
+</style>
+<script id="rekapinyu-mobile-first-paint-guard-script">
+(function(){
+ var root=document.documentElement;
+ if(!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches))return;
+ root.classList.add('rku-mobile-first-paint-pending');
+ function reveal(){
+   requestAnimationFrame(function(){
+     requestAnimationFrame(function(){
+       root.classList.remove('rku-mobile-first-paint-pending');
+     });
+   });
+ }
+ if(document.readyState==='complete') reveal();
+ else window.addEventListener('load',reveal,{once:true});
+ window.addEventListener('pageshow',reveal);
+})();
+</script>
+
 <style id="rekapinyu-banner-no-old-flash">
   /* Jangan lukis banner bawaan sampai konfigurasi terbaru terkonfirmasi dari Firestore server. */
   html:not([data-rekapinyu-banner-settings-ready="1"]) #view-input > div{
