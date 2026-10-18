@@ -14668,3 +14668,49 @@ async function initKasirViews(){
 
 </body>
 </html>
+
+<!-- PATCH MINIMAL: ikon keranjang bulat di atas baris TOTAL PRODUK, khusus Kasir mobile. -->
+<style id="kasir-mobile-floating-cart-icon-only">
+@media(max-width:767px){
+  #kasir-mobile-cart-fab{display:none;position:fixed;right:12px;bottom:calc(174px + env(safe-area-inset-bottom,0px));z-index:1001;width:48px;height:48px;border:0;border-radius:50%;background:#16a34a;color:#fff;box-shadow:0 5px 16px rgba(22,163,74,.3);align-items:center;justify-content:center;font-size:19px}
+  #view-kasir:not(.hidden) #kasir-mobile-cart-fab{display:flex}
+  #kasir-mobile-cart-fab span{position:absolute;right:-3px;top:-4px;min-width:19px;height:19px;padding:0 4px;border-radius:99px;background:#ef4444;color:#fff;border:2px solid #fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-panel{position:fixed!important;left:12px!important;right:12px!important;top:12%!important;bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;z-index:10000!important;display:flex!important;min-height:0!important;height:auto!important;overflow:hidden!important;border:1px solid #dbe3eb!important;border-radius:16px!important;box-shadow:0 20px 60px rgba(15,23,42,.28)!important}
+  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-head{display:flex!important;flex:0 0 auto!important;padding:14px!important}
+  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-meta{display:flex!important;flex:0 0 auto!important;padding:10px 14px!important}
+  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-list{display:block!important;flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;padding:10px 14px!important}
+  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-item{display:grid!important;grid-template-columns:42px minmax(0,1fr) auto!important;align-items:center!important;gap:8px!important}
+  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-thumb{width:42px!important;height:42px!important;min-width:42px!important;object-fit:cover!important;border-radius:8px!important}
+  #view-kasir.kasir-mobile-cart-popup-open .kasir-summary{display:none!important}
+  #kasir-mobile-cart-popup-close{width:30px;height:30px;flex:0 0 30px;border:0;border-radius:9px;background:#f1f5f9;color:#475569;display:flex;align-items:center;justify-content:center}
+}
+@media(min-width:768px){#kasir-mobile-cart-fab{display:none!important}}
+</style>
+<script id="kasir-mobile-floating-cart-icon-script">
+(function(){
+  function setup(){
+    const view=document.getElementById('view-kasir');
+    if(!view)return;
+    let fab=document.getElementById('kasir-mobile-cart-fab');
+    if(!fab){
+      fab=document.createElement('button');fab.type='button';fab.id='kasir-mobile-cart-fab';fab.setAttribute('aria-label','Buka keranjang');fab.innerHTML='<i class="fa-solid fa-cart-shopping"></i><span id="kasir-mobile-cart-fab-count">0</span>';
+      view.appendChild(fab);
+      fab.addEventListener('click',function(){view.classList.add('kasir-mobile-cart-popup-open');});
+    }
+    const head=view.querySelector('.kasir-cart-head');
+    if(head&&!head.querySelector('#kasir-mobile-cart-popup-close')){
+      const close=document.createElement('button');close.type='button';close.id='kasir-mobile-cart-popup-close';close.setAttribute('aria-label','Tutup keranjang');close.innerHTML='<i class="fa-solid fa-xmark"></i>';head.appendChild(close);
+      close.addEventListener('click',function(){view.classList.remove('kasir-mobile-cart-popup-open');});
+    }
+    if(!document.documentElement.dataset.kasirCartPopupOutsideBound){
+      document.addEventListener('click',function(e){if(e.target.closest('#kasir-mobile-cart-fab')||e.target.closest('.kasir-cart-panel'))return;if(view.classList.contains('kasir-mobile-cart-popup-open')&&!e.target.closest('#view-kasir'))view.classList.remove('kasir-mobile-cart-popup-open');});
+      document.addEventListener('keydown',function(e){if(e.key==='Escape')view.classList.remove('kasir-mobile-cart-popup-open');});
+      document.documentElement.dataset.kasirCartPopupOutsideBound='1';
+    }
+    const count=document.getElementById('kasir-cart-count');const badge=document.getElementById('kasir-mobile-cart-fab-count');
+    if(count&&badge&&!count.dataset.kasirFabObserver){count.dataset.kasirFabObserver='1';const observer=new MutationObserver(function(){badge.textContent=(count.textContent.match(/\d+/)||['0'])[0];});observer.observe(count,{childList:true,subtree:true,characterData:true});badge.textContent=(count.textContent.match(/\d+/)||['0'])[0];}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
+  new MutationObserver(setup).observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
