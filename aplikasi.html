@@ -14647,5 +14647,24 @@ async function initKasirViews(){
 }
 </style>
 
+
+<!-- PATCH MINIMAL: baris TOTAL PRODUK tetap terlihat di atas tombol transaksi pada mobile. -->
+<style id="kasir-mobile-total-products-sticky">
+@media (max-width:767px){
+  #view-kasir .kasir-summary>div:first-child{
+    position:fixed!important;
+    left:0!important;right:0!important;
+    bottom:calc(130px + env(safe-area-inset-bottom,0px))!important;
+    z-index:997!important;
+    min-height:36px!important;
+    padding:8px 18px!important;
+    box-sizing:border-box!important;
+    background:#fff!important;
+    border-top:1px solid #dbe3eb!important;
+    border-bottom:1px solid #dbe3eb!important;
+  }
+}
+</style>
+
 </body>
 </html>
