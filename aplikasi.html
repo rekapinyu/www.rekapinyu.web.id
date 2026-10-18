@@ -14793,6 +14793,51 @@ async function initKasirViews(){
 })();
 </script>
 
+
+<!-- PATCH TUNGGAL: koreksi area atas menu Kasir khusus mobile; tidak menyentuh desktop/menu lain. -->
+<style id="rekapinyu-mobile-kasir-top-final">
+@media (max-width:767px){
+  main:has(#view-kasir:not(.hidden)){
+    box-sizing:border-box!important;
+    padding:8px 0 88px!important;
+    margin:0!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain;
+  }
+  main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden){
+    box-sizing:border-box!important;
+    display:flex!important;
+    flex-direction:column!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    scroll-margin-top:68px!important;
+  }
+  main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden) .kasir-shell{
+    box-sizing:border-box!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+  }
+  main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden) .kasir-products-panel{
+    box-sizing:border-box!important;
+    height:480px!important;
+    min-height:480px!important;
+    max-height:none!important;
+    overflow:hidden!important;
+  }
+}
+</style>
+
 </body>
 </html>
 
