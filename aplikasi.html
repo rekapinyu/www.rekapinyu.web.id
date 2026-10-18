@@ -25,14 +25,32 @@
 })();
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<!-- FIX MOBILE RELOAD: tetapkan view Beranda sebelum halaman dirender agar konten desktop/promosi mentah tidak sempat muncul. Desktop tidak berubah. -->
+<!-- FIX TUNGGAL MOBILE RELOAD: tahan Beranda sampai CSS mobile selesai dimuat, lalu tampilkan satu kali dalam mode yang benar. -->
+<style id="rekapinyu-mobile-reload-guard">
+@media (max-width:767px){
+  html.rku-mobile-loading #mobile-home-view,
+  html.rku-mobile-loading #rku-mobile-promo-body{
+    visibility:hidden!important;
+  }
+}
+</style>
 <script id="rekapinyu-mobile-initial-view-fix">
 (function(){
-  try {
-    if (window.matchMedia && window.matchMedia("(max-width: 767px)").matches) {
-      document.documentElement.setAttribute("data-mobile-view", "home");
-    }
-  } catch (_) {}
+  var root=document.documentElement;
+  var isMobile=!!(window.matchMedia&&window.matchMedia("(max-width:767px)").matches);
+  if(!isMobile)return;
+  root.classList.add("rku-mobile-loading");
+  root.setAttribute("data-mobile-view","home");
+  function revealMobileHome(){
+    root.classList.remove("rku-mobile-loading");
+  }
+  if(document.readyState==="complete"){
+    requestAnimationFrame(function(){requestAnimationFrame(revealMobileHome);});
+  }else{
+    window.addEventListener("load",function(){
+      requestAnimationFrame(function(){requestAnimationFrame(revealMobileHome);});
+    },{once:true});
+  }
 })();
 </script>
 
