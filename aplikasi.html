@@ -14676,50 +14676,59 @@ async function initKasirViews(){
 
 
 
-<!-- IMPLEMENTASI TUNGGAL: reload mobile + posisi atas menu Kasir. Tidak mengubah desktop atau logika menu lain. -->
+<!-- IMPLEMENTASI TUNGGAL: stabilisasi reload tampilan mobile + offset atas Kasir. -->
 <style id="rekapinyu-mobile-reload-kasir-single">
 @media (max-width:767px){
   html.rku-mobile-initializing #mobile-home-view,
-  html.rku-mobile-initializing #rku-mobile-promo-body{
-    visibility:hidden!important;
-  }
-  main:has(#view-kasir:not(.hidden)){
-    padding-top:0!important;
-  }
+  html.rku-mobile-initializing #rku-mobile-promo-body{visibility:hidden!important}
+  main:has(#view-kasir:not(.hidden)){padding-top:0!important}
   main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden){
-    padding-top:8px!important;
-    scroll-margin-top:64px!important;
+    padding-top:8px!important;scroll-margin-top:64px!important;
   }
 }
 </style>
 <script id="rekapinyu-mobile-reload-kasir-single-script">
 (function(){
   var root=document.documentElement;
-  var mobile=!!(window.matchMedia&&window.matchMedia("(max-width:767px)").matches);
-  if(!mobile)return;
+  if(!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches))return;
+  var finished=false;
+  root.classList.add('rku-mobile-initializing');
 
-  root.classList.add("rku-mobile-initializing");
-
-  // Hanya tetapkan Beranda bila belum ada pilihan tampilan mobile.
-  // Jangan menimpa menu mobile yang sudah dipilih oleh aplikasi.
-  if(!root.hasAttribute("data-mobile-view")){
-    root.setAttribute("data-mobile-view","home");
+  function settleMobileHome(){
+    if(finished || !(window.matchMedia&&window.matchMedia('(max-width:767px)').matches))return;
+    finished=true;
+    try{
+      if(typeof window.__rekapinyuShowMobileHome==='function'){
+        window.__rekapinyuShowMobileHome();
+      }else{
+        root.setAttribute('data-mobile-view','home');
+        document.querySelectorAll('main [id^="view-"]').forEach(function(el){el.classList.add('hidden')});
+        var home=document.getElementById('mobile-home-view');
+        if(home)home.classList.remove('hidden');
+      }
+      root.setAttribute('data-mobile-view','home');
+      var home=document.getElementById('mobile-home-view');
+      if(home)home.classList.remove('hidden');
+      document.querySelectorAll('main [id^="view-"]').forEach(function(el){el.classList.add('hidden')});
+    }catch(err){console.warn('Rekapinyu: stabilisasi tampilan mobile gagal.',err)}
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){root.classList.remove('rku-mobile-initializing')});
+    });
   }
 
-  function finish(){
-    root.classList.remove("rku-mobile-initializing");
-  }
-
-  if(document.readyState==="complete"){
-    requestAnimationFrame(function(){requestAnimationFrame(finish);});
+  if(document.readyState==='complete'){
+    requestAnimationFrame(function(){requestAnimationFrame(settleMobileHome)});
   }else{
-    window.addEventListener("load",function(){
-      requestAnimationFrame(function(){requestAnimationFrame(finish);});
+    window.addEventListener('load',function(){
+      requestAnimationFrame(function(){requestAnimationFrame(settleMobileHome)});
     },{once:true});
   }
+  window.addEventListener('pageshow',function(){
+    finished=false;
+    requestAnimationFrame(function(){requestAnimationFrame(settleMobileHome)});
+  });
 })();
 </script>
-
 </body>
 </html>
 
