@@ -1995,8 +1995,8 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
     height:100%!important;min-height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;box-sizing:border-box!important;
   }
   #view-kasir .kasir-products-panel{
-    flex:0 0 auto!important;width:100%!important;max-width:100%!important;height: min(69%, 455px)!important;
-    min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;box-sizing:border-box!important;
+    flex:0 0 auto!important;width:100%!important;max-width:100%!important;height:min(69%,455px)!important;
+    min-height:0!important;padding:8px 0 0!important;margin:0!important;overflow:hidden!important;box-sizing:border-box!important;
   }
   #view-kasir .kasir-toolbar{
     display:grid!important;grid-template-columns:minmax(0,1fr) 56px minmax(0,1.35fr)!important;
@@ -14792,51 +14792,6 @@ async function initKasirViews(){
   }
 })();
 </script>
-
-
-<!-- PATCH TUNGGAL: koreksi area atas menu Kasir khusus mobile; tidak menyentuh desktop/menu lain. -->
-<style id="rekapinyu-mobile-kasir-top-final">
-@media (max-width:767px){
-  main:has(#view-kasir:not(.hidden)){
-    box-sizing:border-box!important;
-    padding:8px 0 88px!important;
-    margin:0!important;
-    height:auto!important;
-    min-height:0!important;
-    overflow-x:hidden!important;
-    overflow-y:auto!important;
-    overscroll-behavior-y:contain;
-  }
-  main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden){
-    box-sizing:border-box!important;
-    display:flex!important;
-    flex-direction:column!important;
-    flex:0 0 auto!important;
-    width:100%!important;
-    height:auto!important;
-    min-height:0!important;
-    margin:0!important;
-    padding:0!important;
-    overflow:visible!important;
-    scroll-margin-top:68px!important;
-  }
-  main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden) .kasir-shell{
-    box-sizing:border-box!important;
-    flex:0 0 auto!important;
-    width:100%!important;
-    height:auto!important;
-    min-height:0!important;
-    overflow:visible!important;
-  }
-  main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden) .kasir-products-panel{
-    box-sizing:border-box!important;
-    height:480px!important;
-    min-height:480px!important;
-    max-height:none!important;
-    overflow:hidden!important;
-  }
-}
-</style>
 
 </body>
 </html>
