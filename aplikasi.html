@@ -14839,9 +14839,15 @@ async function initKasirViews(){
   main {
     width:100vw!important;max-width:100vw!important;min-width:0!important;
     margin:0!important;padding:0 0 calc(7rem + env(safe-area-inset-bottom, 0px)) 0!important;
-    box-sizing:border-box!important; flex:1 1 auto!important;
+    box-sizing:border-box!important; flex:1 1 100vw!important; flex-shrink:0!important;
     align-self:stretch!important; overflow-x:hidden!important;
+    position:relative!important; inset-inline:0!important;
+    scrollbar-width:none!important; -ms-overflow-style:none!important;
   }
+  /* Hilangkan jalur scrollbar kanan yang menyisakan strip kosong pada HP. */
+  main::-webkit-scrollbar,
+  body::-webkit-scrollbar { width:0!important; height:0!important; display:none!important; }
+  body { overflow-x:hidden!important; }
   /* Hilangkan jarak luar pada panel/menu aktif, tanpa mengubah isi atau fungsi menu. */
   main > section,
   main > div[id^="view-"],
