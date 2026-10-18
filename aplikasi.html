@@ -25,23 +25,35 @@
 })();
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<!-- Mobile reload first-paint guard: cegah layout mentah terlihat sebelum skrip tampilan mobile selesai. -->
+<!-- Mobile reload first-paint guard: cegah view Input Data dan header lama terlihat sebelum Beranda siap. -->
 <style id="rekapinyu-mobile-first-paint-guard">
 @media (max-width:767px){
+ html.rku-mobile-first-paint-pending #view-input,
  html.rku-mobile-first-paint-pending #mobile-home-view,
- html.rku-mobile-first-paint-pending #rku-mobile-promo-body{
+ html.rku-mobile-first-paint-pending #rku-mobile-promo-body,
+ html.rku-mobile-first-paint-pending #page-title-header,
+ html.rku-mobile-first-paint-pending #page-subtitle-header{
    visibility:hidden!important;
  }
+ html[data-mobile-view="home"] #view-input{display:none!important;}
+ html[data-mobile-view="home"] #mobile-home-view{display:block!important;}
 }
 </style>
 <script id="rekapinyu-mobile-first-paint-guard-script">
 (function(){
  var root=document.documentElement;
  if(!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches))return;
+ /* Tentukan state Beranda sebelum browser melukis isi halaman, bukan setelah skrip akhir berjalan. */
  root.classList.add('rku-mobile-first-paint-pending');
+ root.setAttribute('data-mobile-view','home');
  function reveal(){
    requestAnimationFrame(function(){
      requestAnimationFrame(function(){
+       /* Pastikan judul yang muncul sudah judul Beranda, bukan judul Input Data lama. */
+       var title=document.getElementById('page-title-header');
+       var subtitle=document.getElementById('page-subtitle-header');
+       if(title)title.textContent='Beranda';
+       if(subtitle)subtitle.textContent='Ringkasan laporan 7 hari terakhir.';
        root.classList.remove('rku-mobile-first-paint-pending');
      });
    });
