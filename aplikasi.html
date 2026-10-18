@@ -14779,166 +14779,108 @@ async function initKasirViews(){
 <!-- PATCH RESPONSIVE MOBILE FINAL: hanya koreksi layout berdasarkan lebar/tinggi viewport.
      CSS/HTML/JavaScript lain dipertahankan apa adanya. -->
 <style id="rekapinyu-mobile-viewport-stability-fix">
+/* Satu implementasi responsif khusus mobile; ukuran mengikuti lebar viewport, bukan tinggi layar. */
 @media (max-width:767px){
-  /* Ukuran kotak dihitung konsisten agar padding tidak membuat konten melebar. */
   *,*::before,*::after{box-sizing:border-box}
   html,body,#app-container{
     width:100%!important;max-width:100%!important;min-width:0!important;
   }
   body{overflow-x:hidden!important}
-  main{
-    min-width:0!important;max-width:100%!important;
-    overflow-x:hidden!important;
-  }
-  main > section, main > div,
-  main [id^="view-"]:not(.hidden){
-    min-width:0!important;max-width:100%!important;
-  }
-  /* Semua menu selain Kasir: elemen grid/flex boleh mengecil sesuai lebar perangkat. */
-  main [class*="grid"],
-  main [class*="flex"]{min-width:0}
-  main input,main select,main textarea,main button{
-    max-width:100%;min-width:0;
-  }
+  main{min-width:0!important;max-width:100%!important;overflow-x:hidden!important}
+  main>section,main>div,main [id^="view-"]:not(.hidden){min-width:0!important;max-width:100%!important}
+  main [class*="grid"],main [class*="flex"]{min-width:0}
+  main input,main select,main textarea,main button{max-width:100%;min-width:0}
   main table{max-width:100%}
   main [class*="overflow-x-auto"]{max-width:100%;overscroll-behavior-x:contain}
+
+  /* Dock mobile: setiap item berbagi ruang secara merata tanpa mengubah gaya ikon. */
   #mobile-simplified-dock{
-    left:0!important;right:0!important;width:100%!important;
-    max-width:100vw!important;padding-left:max(8px,env(safe-area-inset-left))!important;
+    left:0!important;right:0!important;width:100%!important;max-width:100vw!important;
+    padding-left:max(8px,env(safe-area-inset-left))!important;
     padding-right:max(8px,env(safe-area-inset-right))!important;
   }
-  #mobile-simplified-dock > div{gap:0!important}
+  #mobile-simplified-dock>div{width:100%!important;min-width:0!important;gap:0!important}
   #mobile-simplified-dock .mobile-dock-item{
-    flex:1 1 0!important;width:100%!important;max-width:none!important;
+    flex:1 1 0!important;width:auto!important;min-width:0!important;max-width:none!important;
   }
 
-  /* Kasir: stabil pada HP kecil maupun lebar; hanya panel produk yang scroll. */
+  /* Kasir mobile: panel fleksibel; hanya daftar produk yang dapat digulir. */
   main:has(#view-kasir:not(.hidden)){
-    height:calc(100dvh - 60px)!important;
-    min-height:0!important;max-height:calc(100dvh - 60px)!important;
-    padding:0 0 calc(72px + env(safe-area-inset-bottom,0px))!important;
-    overflow:hidden!important;
+    height:calc(100dvh - 60px)!important;min-height:0!important;max-height:calc(100dvh - 60px)!important;
+    padding:0 0 calc(72px + env(safe-area-inset-bottom,0px))!important;overflow:hidden!important;
   }
   main:has(#view-kasir:not(.hidden)) #view-kasir,
   main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{
     width:100%!important;max-width:100%!important;min-width:0!important;
-    height:100%!important;min-height:0!important;max-height:100%!important;
-    overflow:hidden!important;
+    height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;
   }
   #view-kasir .kasir-shell{display:flex!important;flex-direction:column!important}
   #view-kasir .kasir-products-panel{
-    flex:1 1 58%!important;height:auto!important;min-height:0!important;
-    max-height:none!important;width:100%!important;min-width:0!important;
+    display:flex!important;flex-direction:column!important;flex:1 1 58%!important;
+    height:auto!important;min-height:0!important;max-height:none!important;width:100%!important;min-width:0!important;
     padding:6px 8px 0!important;overflow:hidden!important;
   }
   #view-kasir .kasir-transaction-tabs{
-    flex:0 0 34px!important;height:34px!important;min-height:34px!important;
-    width:100%!important;min-width:0!important;margin:0 0 7px!important;
-    overflow-x:auto!important;overflow-y:hidden!important;
+    position:sticky!important;top:0!important;z-index:40!important;flex:0 0 34px!important;
+    height:34px!important;min-height:34px!important;width:100%!important;min-width:0!important;
+    margin:0 0 7px!important;overflow-x:auto!important;overflow-y:hidden!important;background:#fff!important;
   }
   #view-kasir .kasir-toolbar{
-    position:relative!important;top:auto!important;
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) 44px minmax(0,1.2fr)!important;
-    grid-template-rows:38px 38px!important;
-    gap:7px!important;align-items:center!important;
-    flex:0 0 auto!important;width:100%!important;min-width:0!important;
-    padding:0 0 6px!important;margin:0!important;
+    position:sticky!important;top:40px!important;z-index:39!important;display:grid!important;
+    grid-template-columns:minmax(0,1fr) clamp(38px,11vw,48px) minmax(0,1.2fr)!important;
+    grid-template-rows:38px 38px!important;gap:clamp(5px,1.8vw,8px)!important;align-items:center!important;
+    flex:0 0 auto!important;flex-wrap:initial!important;width:100%!important;min-width:0!important;
+    padding:0 0 6px!important;margin:0!important;background:#fff!important;
   }
   #view-kasir .kasir-search-wrap{
-    grid-column:1/-1!important;grid-row:1!important;
-    width:100%!important;min-width:0!important;height:38px!important;
-    padding:0 10px!important;flex:none!important;
+    grid-column:1/-1!important;grid-row:1!important;width:100%!important;min-width:0!important;
+    height:38px!important;padding:0 10px!important;flex:none!important;
   }
-  #view-kasir .kasir-search-wrap input,
-  #view-kasir .kasir-barcode-wrap input{
+  #view-kasir .kasir-search-wrap input,#view-kasir .kasir-barcode-wrap input{
     width:100%!important;min-width:0!important;font-size:12px!important;
   }
-  #view-kasir .kasir-shift-picker{
-    grid-column:1!important;grid-row:2!important;
-    width:100%!important;min-width:0!important;
-  }
+  #view-kasir .kasir-shift-picker{grid-column:1!important;grid-row:2!important;width:100%!important;min-width:0!important}
   #view-kasir .kasir-shift-trigger{
-    width:100%!important;min-width:0!important;height:38px!important;
-    padding-left:5px!important;padding-right:5px!important;
+    width:100%!important;min-width:0!important;height:38px!important;padding-left:clamp(4px,1.2vw,6px)!important;padding-right:clamp(4px,1.2vw,6px)!important;
   }
   #view-kasir #kasir-refresh-btn{
-    grid-column:2!important;grid-row:2!important;
-    width:44px!important;min-width:44px!important;max-width:44px!important;
-    height:38px!important;padding:0!important;
-    display:flex!important;align-items:center!important;justify-content:center!important;
+    grid-column:2!important;grid-row:2!important;width:100%!important;min-width:0!important;max-width:100%!important;
+    height:38px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;
   }
   #view-kasir .kasir-barcode-wrap{
-    grid-column:3!important;grid-row:2!important;
-    width:100%!important;min-width:0!important;height:38px!important;
-    padding:0 7px!important;flex:none!important;
+    grid-column:3!important;grid-row:2!important;width:100%!important;min-width:0!important;height:38px!important;
+    padding:0 clamp(4px,1.5vw,7px)!important;flex:none!important;
+  }
+  #view-kasir .kasir-shift-menu{
+    left:0!important;right:auto!important;max-width:calc(100vw - 24px)!important;box-sizing:border-box!important;z-index:10000!important;
   }
   #view-kasir .kasir-product-grid{
-    display:grid!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    grid-template-rows:none!important;grid-auto-rows:max-content!important;
-    flex:1 1 0!important;height:0!important;min-height:0!important;
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:none!important;
+    grid-auto-rows:max-content!important;position:relative!important;flex:1 1 0!important;height:0!important;min-height:0!important;
     width:100%!important;min-width:0!important;margin-top:5px!important;
     padding:3px 2px calc(100px + env(safe-area-inset-bottom,0px))!important;
-    gap:clamp(5px,1.8vw,9px)!important;
-    overflow-y:auto!important;overflow-x:hidden!important;
+    gap:clamp(5px,1.8vw,9px)!important;align-content:start!important;overflow-y:auto!important;overflow-x:hidden!important;
     overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
   }
-  #view-kasir .kasir-product-card{min-width:0!important;padding:5px!important}
+  #view-kasir .kasir-product-card{min-width:0!important;padding:clamp(4px,1.3vw,5px)!important}
   #view-kasir .kasir-product-photo{
-    height:clamp(54px,20vw,80px)!important;
-    flex-basis:clamp(54px,20vw,80px)!important;min-width:0!important;
+    height:clamp(48px,18vw,76px)!important;flex-basis:clamp(48px,18vw,76px)!important;min-width:0!important;
   }
-  #view-kasir .kasir-product-name,
-  #view-kasir .kasir-product-category,
-  #view-kasir .kasir-product-data-box strong{
-    max-width:100%!important;min-width:0!important;
-    overflow:hidden!important;text-overflow:ellipsis!important;
+  #view-kasir .kasir-product-name,#view-kasir .kasir-product-category,#view-kasir .kasir-product-data-box strong{
+    max-width:100%!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;
   }
-  #view-kasir .kasir-product-data{
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:4px!important;min-width:0!important;
-  }
+  #view-kasir .kasir-product-data{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important;min-width:0!important}
   #view-kasir .kasir-product-data-box{min-width:0!important;padding:4px!important}
   #view-kasir .kasir-product-data-box small{font-size:8px!important}
   #view-kasir .kasir-product-data-box strong{font-size:clamp(9px,2.8vw,11px)!important}
   #view-kasir .kasir-cart-panel{
-    flex:0 0 auto!important;height:auto!important;min-height:0!important;
-    max-height:none!important;width:100%!important;min-width:0!important;
-    overflow:visible!important;
+    flex:0 0 auto!important;height:auto!important;min-height:0!important;max-height:none!important;
+    width:100%!important;min-width:0!important;overflow:visible!important;
   }
   #view-kasir .kasir-summary{min-width:0!important}
   #view-kasir .kasir-summary .kasir-action-row{
-    left:0!important;right:0!important;width:100%!important;
-    padding-left:8px!important;padding-right:8px!important;
+    left:0!important;right:0!important;width:100%!important;padding-left:8px!important;padding-right:8px!important;
     bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;
-  }
-}
-
-/* HP dengan lebar sangat kecil: tetap tiga kolom, tetapi kontrol tidak saling menekan. */
-@media (max-width:360px){
-  #view-kasir .kasir-toolbar{
-    grid-template-columns:minmax(0,1fr) 38px minmax(0,1fr)!important;
-    gap:6px!important;
-  }
-  #view-kasir #kasir-refresh-btn{
-    width:38px!important;min-width:38px!important;max-width:38px!important;
-  }
-  #view-kasir .kasir-product-grid{gap:5px!important}
-  #view-kasir .kasir-product-card{padding:4px!important}
-  #mobile-simplified-dock .mobile-dock-item span{font-size:8px!important}
-}
-
-/* Satu aturan panel produk untuk semua tinggi layar HP; tinggi kartu mengikuti lebar perangkat. */
-@media (max-width:767px){
-  #view-kasir .kasir-products-panel{flex:1 1 58%!important}
-  #view-kasir .kasir-product-photo{
-    height:clamp(48px,18vw,76px)!important;
-    flex-basis:clamp(48px,18vw,76px)!important;
-  }
-  #view-kasir .kasir-product-grid{
-    padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important;
-    align-content:start!important;
   }
 }
 </style>
