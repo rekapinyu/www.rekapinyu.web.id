@@ -25,6 +25,16 @@
 })();
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<!-- FIX MOBILE RELOAD: tetapkan view Beranda sebelum halaman dirender agar konten desktop/promosi mentah tidak sempat muncul. Desktop tidak berubah. -->
+<script id="rekapinyu-mobile-initial-view-fix">
+(function(){
+  try {
+    if (window.matchMedia && window.matchMedia("(max-width: 767px)").matches) {
+      document.documentElement.setAttribute("data-mobile-view", "home");
+    }
+  } catch (_) {}
+})();
+</script>
 
 <style id="rekapinyu-banner-no-old-flash">
   /* Jangan lukis banner bawaan sampai konfigurasi terbaru terkonfirmasi dari Firestore server. */
