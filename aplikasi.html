@@ -2,41 +2,6 @@
 
 <html lang="id">
 <head>
-<style id="rekapinyu-mobile-initial-view-canonical-css">
-@media (max-width:767px){
-  /* Header judul desktop lama memang tidak dipakai di layout mobile. */
-  #page-title-header,#page-subtitle-header{display:none!important}
-  /* Sebelum JS memilih view, cegah Input Data lama sempat terlihat saat first paint. */
-  html:not([data-mobile-view]) #view-input{display:none!important}
-  /* Saat Beranda aktif, seluruh view menu lain tidak boleh bocor saat reload. */
-  html[data-mobile-view="home"] #view-input,
-  html[data-mobile-view="home"] #view-pengeluaran,
-  html[data-mobile-view="home"] #view-kasbon,
-  html[data-mobile-view="home"] #view-history,
-  html[data-mobile-view="home"] #view-report,
-  html[data-mobile-view="home"] #view-backup,
-  html[data-mobile-view="home"] #view-kasir,
-  html[data-mobile-view="home"] #view-produk-kasir,
-  html[data-mobile-view="home"] #view-laporan-kasir,
-  html[data-mobile-view="home"] #view-activity,
-  html[data-mobile-view="home"] #view-settings,
-  html[data-mobile-view="home"] #view-cetak,
-  html[data-mobile-view="home"] #view-komunitas,
-  html[data-mobile-view="home"] #view-cek-paket,
-  html[data-mobile-view="home"] #activity-main-container{display:none!important}
-}
-</style>
-<script id="rekapinyu-mobile-initial-view-canonical-script">
-(function(){
-  try{
-    if(window.matchMedia && window.matchMedia('(max-width:767px)').matches){
-      var root=document.documentElement;
-      if(!root.hasAttribute('data-mobile-view'))root.setAttribute('data-mobile-view','home');
-    }
-  }catch(_){}
-})();
-</script>
-
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230f766e%27%2F%3E%3Cpath d=%27M18 34l10 10 20-24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%2F%3E%3C%2Fsvg%3E" />
 <meta charset="utf-8"/>
 <!-- REKAPINYU FOLDER SAFETY: aplikasi TIDAK BOLEH membuat folder otomatis.
@@ -1995,8 +1960,8 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
     height:100%!important;min-height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;box-sizing:border-box!important;
   }
   #view-kasir .kasir-products-panel{
-    flex:0 0 auto!important;width:100%!important;max-width:100%!important;height:min(69%,455px)!important;
-    min-height:0!important;padding:8px 0 0!important;margin:0!important;overflow:hidden!important;box-sizing:border-box!important;
+    flex:0 0 auto!important;width:100%!important;max-width:100%!important;height: min(69%, 455px)!important;
+    min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;box-sizing:border-box!important;
   }
   #view-kasir .kasir-toolbar{
     display:grid!important;grid-template-columns:minmax(0,1fr) 56px minmax(0,1.35fr)!important;
@@ -2039,6 +2004,17 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   #view-kasir .kasir-summary{flex:0 0 auto!important;padding:6px 0!important;}
 }
 </style>
+
+
+<style id="rekapinyu-mobile-remove-legacy-header">
+@media (max-width:767px){
+  #page-title-header,
+  #page-subtitle-header{
+    display:none!important;
+  }
+}
+</style>
+
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
