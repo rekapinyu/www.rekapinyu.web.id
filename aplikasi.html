@@ -14439,7 +14439,7 @@ async function initKasirViews(){
   #mobile-simplified-dock .mobile-dock-item span{font-size:9px!important;line-height:1.05!important;font-weight:800!important;white-space:nowrap!important}
   #mobile-simplified-dock #nav-mobile-home i{background:#e4f1ff!important;color:#087cf5!important}
   #mobile-simplified-dock #nav-mobile-history i{background:#edf0ff!important;color:#6379e8!important}
-  
+  #mobile-simplified-dock #nav-mobile-report i{width:43px!important;height:43px!important;margin-top:-18px!important;border:4px solid #fff!important;border-radius:50%!important;background:linear-gradient(145deg,#1498ff,#0757dc)!important;color:#fff!important;box-shadow:0 5px 14px #005bdc4d!important;font-size:17px!important}
   #mobile-simplified-dock #nav-mobile-komunitas i{background:#f2eaff!important;color:#8b5cf6!important}
   #view-kasir,#view-produk-kasir,#view-laporan-kasir,#view-history,#view-report,#view-input,#view-settings,#view-cetak,#view-pengeluaran,#view-kasbon,#view-activity,#view-komunitas,#view-backup,#view-cek-paket{box-sizing:border-box!important;max-width:100vw!important;overflow-x:hidden!important;padding-left:10px!important;padding-right:10px!important}
   #view-kasir input,#view-kasir select,#view-kasir textarea,#view-produk-kasir input,#view-produk-kasir select,#view-produk-kasir textarea,#view-input input,#view-input select,#view-input textarea{max-width:100%!important}
@@ -14773,5 +14773,17 @@ async function initKasirViews(){
     overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
     -webkit-overflow-scrolling:touch!important;
   }
+}
+</style>
+
+
+<style id="rekapinyu-mobile-home-desktop-visibility-fix">
+/* Perbaikan terarah: konten Beranda khusus mobile tidak boleh tampil di desktop.
+   Tampilan mobile hanya aktif saat mode Beranda mobile memang dipilih. */
+#mobile-home-view { display: none !important; }
+#rku-mobile-promo-body { display: none !important; }
+@media (max-width: 767px) {
+  html[data-mobile-view="home"] #mobile-home-view { display: block !important; }
+  html[data-mobile-view="home"] #rku-mobile-promo-body { display: block !important; }
 }
 </style>
