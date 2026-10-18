@@ -14929,22 +14929,17 @@ async function initKasirViews(){
   #mobile-simplified-dock .mobile-dock-item span{font-size:8px!important}
 }
 
-/* Layar yang lebih pendek: kurangi tinggi panel produk agar keranjang tetap terbaca. */
-@media (max-width:767px) and (max-height:700px){
-  #view-kasir .kasir-products-panel{flex:1 1 52%!important}
+/* Satu aturan panel produk untuk semua tinggi layar HP; tinggi kartu mengikuti lebar perangkat. */
+@media (max-width:767px){
+  #view-kasir .kasir-products-panel{flex:1 1 58%!important}
   #view-kasir .kasir-product-photo{
-    height:clamp(48px,15vw,66px)!important;
-    flex-basis:clamp(48px,15vw,66px)!important;
+    height:clamp(48px,18vw,76px)!important;
+    flex-basis:clamp(48px,18vw,76px)!important;
   }
   #view-kasir .kasir-product-grid{
-    padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;
+    padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important;
+    align-content:start!important;
   }
-}
-
-/* Layar tinggi tidak membuat ruang kosong atau jarak antarkontrol membesar. */
-@media (max-width:767px) and (min-height:850px){
-  #view-kasir .kasir-products-panel{flex:1 1 58%!important}
-  #view-kasir .kasir-product-grid{align-content:start!important}
 }
 </style>
 
