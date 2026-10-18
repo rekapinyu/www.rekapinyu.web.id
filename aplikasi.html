@@ -14714,3 +14714,30 @@ async function initKasirViews(){
   new MutationObserver(setup).observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
+
+<style id="rekapinyu-mobile-kasir-toolbar-order-only">
+@media (max-width:767px){
+  /* Hanya urutan toolbar Kasir mobile: Bluetooth, SHIFT, lalu barcode. */
+  #view-kasir .kasir-toolbar{
+    grid-template-columns:48px 92px minmax(0,1fr)!important;
+  }
+  #view-kasir #kasir-refresh-btn{
+    grid-column:1!important;grid-row:2!important;
+    width:48px!important;min-width:48px!important;max-width:48px!important;
+  }
+  #view-kasir .kasir-shift-picker{
+    grid-column:2!important;grid-row:2!important;
+    width:92px!important;min-width:0!important;
+  }
+  #view-kasir .kasir-shift-trigger{
+    width:100%!important;min-width:0!important;padding-left:6px!important;padding-right:6px!important;
+  }
+  #view-kasir .kasir-barcode-wrap{
+    grid-column:3!important;grid-row:2!important;width:100%!important;min-width:0!important;
+  }
+  #view-kasir .kasir-shift-menu{
+    left:0!important;right:auto!important;max-width:calc(100vw - 24px)!important;
+    box-sizing:border-box!important;z-index:10000!important;
+  }
+}
+</style>
