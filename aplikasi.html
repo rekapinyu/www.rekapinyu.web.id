@@ -14780,6 +14780,22 @@ async function initKasirViews(){
 })();
 </script>
 
+
+<!-- PATCH TERARAH: Beranda mobile dapat discroll melewati area dock agar teks menu terbaca utuh. -->
+<style id="rku-mobile-home-dock-clearance-fix">
+@media (max-width:767px){
+  html[data-mobile-view="home"] body{
+    padding-bottom:calc(104px + env(safe-area-inset-bottom, 0px))!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view{
+    padding-bottom:calc(140px + env(safe-area-inset-bottom, 0px))!important;
+    scroll-margin-bottom:calc(90px + env(safe-area-inset-bottom, 0px))!important;
+  }
+  html[data-mobile-view="home"] #mobile-simplified-dock{
+    z-index:2147482000!important;
+  }
+}
+</style>
 </body>
 </html>
 
