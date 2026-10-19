@@ -10986,42 +10986,48 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       }
       if(e.target.closest('[data-pk3-close]'))closeEdit();
     });
-    /* TAMBAH FOLDER — satu implementasi File System Access API.
-       Mobile membuka pemilih folder langsung dari gesture klik; desktop tetap
-       memakai alur inti yang sama. Tidak menggunakan IndexedDB sebagai pengganti folder. */
-    /* Delegasi di document capture agar tombol tetap merespons setelah dipindah
-       oleh layout mobile. Pemilih folder dipanggil langsung dari gesture pengguna. */
-    document.addEventListener('click', function(e){
+    /* TAMBAH FOLDER — handler tunggal untuk desktop dan Chrome mobile.
+       Mobile memakai pointerup agar aksi pemilih folder berjalan langsung dari
+       gesture sentuh; desktop tetap memakai click. */
+    let folderPickerBusy=false;
+    function handleProdukFolderGesture(e){
       const btn=e.target?.closest?.('#pk3-folder-pick');
       if(!btn)return;
-      e.preventDefault();
+      const mobile=!!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches);
+      if(mobile && e.type!=='pointerup')return;
+      if(!mobile && e.type!=='click')return;
+      if(e.cancelable)e.preventDefault();
       e.stopPropagation();
-      e.stopImmediatePropagation();
-      if(btn.dataset.folderBusy==='1')return;
+      if(folderPickerBusy || btn.dataset.folderBusy==='1')return;
       if(typeof window.showDirectoryPicker!=='function'){
-        if(typeof showModal==='function')showModal('Folder Produk Kasir','Browser ini tidak mendukung pemilihan folder perangkat. Buka aplikasi melalui HTTPS di browser yang mendukung pemilihan folder.');
+        if(typeof showModal==='function')showModal('Folder Produk Kasir','Chrome pada perangkat ini belum menyediakan pemilih folder perangkat.');
         return;
       }
-      let pickerPromise;
-      try{
-        pickerPromise=window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-documents-manager',startIn:'documents'});
-      }catch(err){
-        if(typeof showModal==='function')showModal('Folder Produk Kasir',err?.message||'Pemilih folder tidak dapat dibuka.');
-        return;
-      }
+      folderPickerBusy=true;
       btn.dataset.folderBusy='1';
-      btn.disabled=true;
-      Promise.resolve(pickerPromise)
-        .then(preselectedDirectory=>selectPhotoDirectory(preselectedDirectory))
-        .catch(err=>{
-          if(err?.name!=='AbortError' && typeof showModal==='function')showModal('Folder Produk Kasir',err?.message||'Folder toko belum dapat dibuat.');
-        })
-        .finally(()=>{
-          delete btn.dataset.folderBusy;
-          btn.disabled=false;
-          updateFolderStatus();
-        });
-    }, true);
+      try{
+        /* Wajib dipanggil sinkron dari pointerup/click, sebelum await atau timer. */
+        const pickerPromise=window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-documents-manager',startIn:'documents'});
+        Promise.resolve(pickerPromise)
+          .then(preselectedDirectory=>selectPhotoDirectory(preselectedDirectory))
+          .catch(err=>{
+            if(err?.name!=='AbortError' && typeof showModal==='function')showModal('Folder Produk Kasir',err?.message||'Folder toko belum dapat dibuat.');
+          })
+          .finally(()=>{
+            folderPickerBusy=false;
+            delete btn.dataset.folderBusy;
+            btn.disabled=false;
+            updateFolderStatus();
+          });
+      }catch(err){
+        folderPickerBusy=false;
+        delete btn.dataset.folderBusy;
+        btn.disabled=false;
+        if(typeof showModal==='function')showModal('Folder Produk Kasir',err?.message||'Pemilih folder tidak dapat dibuka.');
+      }
+    }
+    document.addEventListener('pointerup',handleProdukFolderGesture,true);
+    document.addEventListener('click',handleProdukFolderGesture,true);
     $('pk3-photo')?.addEventListener('change',e=>{
       addPhotoFile=e.target.files?.[0]||null;
       if($('pk3-photo-name'))$('pk3-photo-name').textContent=addPhotoFile?addPhotoFile.name:'Pilih foto';
