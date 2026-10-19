@@ -15258,3 +15258,25 @@ async function initKasirViews(){
   observer.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
+
+<style id="pk3-mobile-backup-above-add-fix">
+@media (max-width:767px){
+  #pk3-data-tools:not(.hidden){
+    position:fixed!important;
+    right:18px!important;
+    left:auto!important;
+    bottom:calc(154px + env(safe-area-inset-bottom))!important;
+    z-index:99997!important;
+    display:flex!important;
+    flex-direction:column-reverse!important;
+    align-items:center!important;
+    gap:10px!important;
+  }
+  #pk3-data-tools .pk3-data-tool{
+    width:58px!important;height:58px!important;
+    min-width:58px!important;min-height:58px!important;
+    flex:0 0 58px!important;
+    font-size:22px!important;
+  }
+}
+</style>
