@@ -10837,17 +10837,16 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       }
       if(e.target.closest('[data-pk3-close]'))closeEdit();
     });
-    $('pk3-folder-pick')?.addEventListener('click',async()=>{
+    $('pk3-folder-pick')?.addEventListener('click',async(e)=>{
       const btn=$('pk3-folder-pick');
-      let mobilePickerPromise=null;
+      /* Satu alur pemilihan folder untuk desktop dan mobile: gunakan logika utama
+         selectPhotoDirectory tanpa membuka dialog picker kedua atau jalur khusus mobile. */
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
+      if(btn?.disabled)return;
       try{
-        /* Di mobile, buka pemilih folder langsung dari gesture klik agar izin browser tidak kedaluwarsa saat proses async berjalan. */
-        if(window.matchMedia('(max-width:767px)').matches && 'showDirectoryPicker' in window){
-          mobilePickerPromise=window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-documents-manager',startIn:'documents'});
-        }
         if(btn)btn.disabled=true;
-        const preselectedDirectory=mobilePickerPromise?await mobilePickerPromise:undefined;
-        await selectPhotoDirectory(preselectedDirectory);
+        await selectPhotoDirectory();
         await updateFolderStatus();
       }catch(err){
         if(err?.name!=='AbortError' && typeof showModal==='function'){
