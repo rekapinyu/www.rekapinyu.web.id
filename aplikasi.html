@@ -15145,3 +15145,116 @@ async function initKasirViews(){
   }
 }
 </style>
+
+<style id="pk3-mobile-floating-add-only">
+@media (max-width:767px){
+  #view-produk-kasir #pk3-mobile-add-backdrop{
+    position:fixed!important;inset:0!important;z-index:100000!important;
+    background:rgba(15,23,42,.55)!important;display:none!important;
+  }
+  #view-produk-kasir #pk3-mobile-add-backdrop.is-open{display:block!important}
+  #view-produk-kasir .pk3-form-card{
+    display:none!important;
+  }
+  #view-produk-kasir .pk3-form-card.pk3-mobile-add-open{
+    display:block!important;position:fixed!important;z-index:100001!important;
+    left:12px!important;right:12px!important;top:50%!important;
+    transform:translateY(-50%)!important;width:auto!important;max-width:none!important;
+    max-height:calc(100dvh - 32px)!important;overflow:auto!important;
+    margin:0!important;box-sizing:border-box!important;
+    border-radius:18px!important;background:#fff!important;
+    box-shadow:0 24px 70px rgba(15,23,42,.28)!important;
+  }
+  #view-produk-kasir .pk3-form-card.pk3-mobile-add-open .pk3-heading{
+    position:sticky!important;top:0!important;z-index:2!important;background:#fff!important;
+    padding-top:12px!important;
+  }
+  #view-produk-kasir .pk3-mobile-add-close{
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    width:34px!important;height:34px!important;flex:0 0 34px!important;
+    border:0!important;border-radius:50%!important;background:#f1f5f9!important;
+    color:#475569!important;font-size:17px!important;margin-left:6px!important;
+  }
+  #pk3-mobile-add-button{
+    display:none!important;position:fixed!important;right:18px!important;bottom:calc(86px + env(safe-area-inset-bottom))!important;
+    z-index:99998!important;width:58px!important;height:58px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    border:0!important;border-radius:50%!important;background:#10a58c!important;color:#fff!important;
+    box-shadow:0 8px 24px rgba(16,165,140,.38)!important;font-size:25px!important;
+    cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;
+  }
+  #pk3-mobile-add-button:active{transform:scale(.96)!important}
+}
+@media (min-width:768px){
+  #pk3-mobile-add-button,#pk3-mobile-add-backdrop,.pk3-mobile-add-close{display:none!important}
+}
+</style>
+<script id="pk3-mobile-floating-add-only-js">
+(function(){
+  function initPk3MobileAdd(){
+    const view=document.getElementById('view-produk-kasir');
+    const card=view?.querySelector('.pk3-form-card');
+    if(!view||!card||document.getElementById('pk3-mobile-add-button'))return;
+    const backdrop=document.createElement('div');
+    backdrop.id='pk3-mobile-add-backdrop';
+    backdrop.setAttribute('aria-hidden','true');
+    view.appendChild(backdrop);
+    const button=document.createElement('button');
+    button.id='pk3-mobile-add-button';
+    button.type='button';
+    button.setAttribute('aria-label','Tambah produk');
+    button.title='Tambah Produk';
+    button.innerHTML='<i class="fa-solid fa-plus" aria-hidden="true"></i>';
+    document.body.appendChild(button);
+    const heading=card.querySelector('.pk3-heading');
+    if(heading){
+      const close=document.createElement('button');
+      close.type='button';close.className='pk3-mobile-add-close';
+      close.setAttribute('aria-label','Tutup popup tambah produk');
+      close.innerHTML='<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+      heading.appendChild(close);
+      close.addEventListener('click',closePopup);
+    }
+    function isMobile(){return window.matchMedia('(max-width:767px)').matches}
+    function openPopup(){
+      if(!isMobile())return;
+      card.classList.add('pk3-mobile-add-open');
+      backdrop.classList.add('is-open');
+      backdrop.setAttribute('aria-hidden','false');
+      button.style.setProperty('display','none','important');
+      document.body.style.overflow='hidden';
+      const first=card.querySelector('#pk3-name');
+      if(first)setTimeout(()=>first.focus({preventScroll:true}),80);
+    }
+    function closePopup(){
+      card.classList.remove('pk3-mobile-add-open');
+      backdrop.classList.remove('is-open');
+      backdrop.setAttribute('aria-hidden','true');
+      button.style.setProperty('display',(!view.classList.contains('hidden')&&isMobile())?'flex':'none','important');
+      document.body.style.overflow='';
+    }
+    button.addEventListener('click',openPopup);
+    backdrop.addEventListener('click',closePopup);
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closePopup()});
+    view.addEventListener('click',e=>{
+      if(e.target.closest('#pk3-submit'))return;
+    });
+    function syncButton(){
+      if(!isMobile()){button.style.setProperty('display','none','important');closePopup();return}
+      if(!card.classList.contains('pk3-mobile-add-open'))
+        button.style.setProperty('display',view.classList.contains('hidden')?'none':'flex','important');
+    }
+    window.addEventListener('resize',syncButton);
+    new MutationObserver(syncButton).observe(view,{attributes:true,attributeFilter:['class']});
+    syncButton();
+    window.__rekapinyuCloseMobileProdukKasirAdd=closePopup;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initPk3MobileAdd,{once:true});
+  else initPk3MobileAdd();
+  const observer=new MutationObserver(()=>{
+    const view=document.getElementById('view-produk-kasir');
+    if(view&&!document.getElementById('pk3-mobile-add-button'))initPk3MobileAdd();
+  });
+  observer.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
