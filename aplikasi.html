@@ -10987,6 +10987,8 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       e?.preventDefault?.();
       e?.stopPropagation?.();
       const mobile=!!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches);
+      /* Jangan biarkan atribut disabled lama mengunci aksi folder pada mobile. */
+      if(btn?.disabled&&mobile)btn.disabled=false;
       if(btn?.disabled)return;
       if(btn?.dataset.folderBusy==='1')return;
       let pickerPromise=null;
@@ -15400,8 +15402,22 @@ async function initKasirViews(){
     const search=toolbar?.querySelector('.pk3-search');
     function isMobile(){return window.matchMedia('(max-width:767px)').matches}
     function syncLayout(){
+      const popupOpen=card.classList.contains('pk3-mobile-add-open');
+      const folderButton=headingActions?.querySelector('#pk3-folder-pick');
       if(isMobile()){
-        if(toolbar&&search&&headingActions&&headingActions.parentElement!==toolbar)toolbar.insertBefore(headingActions,search);
+        /* Di mobile, saat popup Tambah Produk terbuka, letakkan aksi folder
+           kembali di dalam popup. Backdrop menutupi toolbar di belakangnya. */
+        if(popupOpen){
+          if(heading&&headingActions&&headingActions.parentElement!==heading)heading.appendChild(headingActions);
+        }else if(toolbar&&search&&headingActions&&headingActions.parentElement!==toolbar){
+          toolbar.insertBefore(headingActions,search);
+        }
+        /* Hilangkan status disabled lama yang bisa tertinggal setelah pergantian ukuran layar. */
+        if(folderButton){
+          folderButton.disabled=false;
+          folderButton.style.pointerEvents='auto';
+          folderButton.style.touchAction='manipulation';
+        }
       }else if(heading&&headingActions&&headingActions.parentElement!==heading){
         heading.appendChild(headingActions);
       }
@@ -15409,6 +15425,7 @@ async function initKasirViews(){
     function openPopup(){
       if(!isMobile())return;
       card.classList.add('pk3-mobile-add-open');
+      syncLayout();
       backdrop.classList.add('is-open');
       backdrop.setAttribute('aria-hidden','false');
       button.style.setProperty('display','none','important');
@@ -15418,6 +15435,7 @@ async function initKasirViews(){
     }
     function closePopup(){
       card.classList.remove('pk3-mobile-add-open');
+      syncLayout();
       backdrop.classList.remove('is-open');
       backdrop.setAttribute('aria-hidden','true');
       button.style.setProperty('display',(!view.classList.contains('hidden')&&isMobile())?'flex':'none','important');
