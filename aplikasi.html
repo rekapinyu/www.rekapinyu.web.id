@@ -9759,6 +9759,10 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     font-weight:900!important;line-height:1.2!important;white-space:nowrap!important;transform:translate(3px,4px)!important;
   }
   #view-produk-kasir .pk3-toolbar p{display:none!important}
+  #view-produk-kasir .pk3-folder-pick{
+    position:relative!important;z-index:50!important;pointer-events:auto!important;
+    touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
+  }
   #view-produk-kasir .pk3-heading-actions{
     grid-column:2!important;grid-row:1!important;position:static!important;
     display:flex!important;align-items:center!important;justify-content:flex-end!important;
@@ -10222,10 +10226,14 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     }
 
     const active=!!selectedFolderName;
+    const mobile=!!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches);
     btn.classList.toggle('is-active',active);
     btn.setAttribute('aria-pressed',active?'true':'false');
-    btn.disabled=active;
-    btn.style.cursor=active?'default':'pointer';
+    /* Mobile tetap mengizinkan tombol disentuh walaupun folder lama tersimpan,
+       agar pengguna dapat membuka pemilih folder lagi ketika aksesnya kedaluwarsa.
+       Desktop mempertahankan perilaku aslinya. */
+    btn.disabled=active&&!mobile;
+    btn.style.cursor=(active&&!mobile)?'default':'pointer';
     btn.title=active?`Folder penyimpanan: ${selectedFolderName}`:'Buat Folder';
     btn.innerHTML=active
       ? `<i class="fa-solid fa-folder-open" aria-hidden="true"></i><span>${escapeHtml(selectedFolderName)}</span>`
@@ -10978,38 +10986,38 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       const btn=$('pk3-folder-pick');
       e?.preventDefault?.();
       e?.stopPropagation?.();
+      const mobile=!!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches);
       if(btn?.disabled)return;
+      if(btn?.dataset.folderBusy==='1')return;
+      let pickerPromise=null;
       try{
-        if(btn)btn.disabled=true;
-        let preselectedDirectory;
-        const mobile=!!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches);
-        const cachedDocumentsRoot=window.__rekapinyuFolderManagerDocuments;
-        const hasCachedDocumentsRoot=!!cachedDocumentsRoot&&isDocumentsDirectoryName(cachedDocumentsRoot.name);
-
-        /* Di mobile, buka pemilih folder langsung dari gesture klik sebelum
-           alur bersama melakukan operasi async IndexedDB/permission. Ini mencegah
-           browser kehilangan user activation. Folder terpilih lalu diproses oleh
-           selectPhotoDirectory yang sama seperti desktop. Jika root Dokumen yang
-           valid sudah tersedia, alur desktop tetap digunakan tanpa picker tambahan. */
-        if(mobile&&!hasCachedDocumentsRoot){
+        if(mobile){
+          /* Panggil picker langsung pada gesture klik, sebelum operasi async lain.
+             Folder yang dipilih tetap melewati fungsi inti selectPhotoDirectory yang
+             sama dengan desktop; tidak ada jalur penyimpanan kedua. */
           if(typeof window.showDirectoryPicker!=='function'){
             throw new Error('Browser ini belum mendukung pemilihan folder perangkat. Buka aplikasi melalui browser yang mendukung akses folder, seperti Chrome atau Edge terbaru.');
           }
-          preselectedDirectory=await window.showDirectoryPicker({
+          pickerPromise=window.showDirectoryPicker({
             mode:'readwrite',
             id:'rekapinyu-documents-manager',
             startIn:'documents'
           });
         }
-
+        if(btn){btn.dataset.folderBusy='1';btn.disabled=true;}
+        const preselectedDirectory=mobile?await pickerPromise:undefined;
         await selectPhotoDirectory(preselectedDirectory);
-        /* Status folder diperbarui satu kali oleh selectPhotoDirectory. */
       }catch(err){
         if(err?.name!=='AbortError' && typeof showModal==='function'){
           showModal('Folder Produk Kasir',err?.message||'Folder toko belum dapat dibuat.');
         }
       }finally{
-        if(btn)btn.disabled=!!btn.classList.contains('is-active');
+        if(btn){
+          delete btn.dataset.folderBusy;
+          /* Di mobile tombol selalu dapat dipakai ulang, termasuk saat nama folder
+             lama tersimpan tetapi izin/handle perlu dipilih ulang. Desktop asli tetap. */
+          btn.disabled=!!btn.classList.contains('is-active')&&!mobile;
+        }
       }
     });
     $('pk3-photo')?.addEventListener('change',e=>{
