@@ -14781,15 +14781,24 @@ async function initKasirViews(){
 </script>
 
 
-<!-- PATCH TERARAH: Beranda mobile dapat discroll melewati area dock agar teks menu terbaca utuh. -->
+<!-- PATCH TERARAH: Beranda mobile dapat discroll penuh tanpa memotong menu bagian bawah. -->
 <style id="rku-mobile-home-dock-clearance-fix">
 @media (max-width:767px){
-  html[data-mobile-view="home"] body{
-    padding-bottom:calc(104px + env(safe-area-inset-bottom, 0px))!important;
-  }
   html[data-mobile-view="home"] #mobile-home-view{
-    padding-bottom:calc(140px + env(safe-area-inset-bottom, 0px))!important;
-    scroll-margin-bottom:calc(90px + env(safe-area-inset-bottom, 0px))!important;
+    height:calc(100dvh - 250px)!important;
+    max-height:calc(100dvh - 250px)!important;
+    min-height:0!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding-bottom:calc(190px + env(safe-area-inset-bottom, 0px))!important;
+    scroll-padding-bottom:calc(190px + env(safe-area-inset-bottom, 0px))!important;
+    box-sizing:border-box!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-section:last-of-type,
+  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-grid:last-child{
+    margin-bottom:calc(90px + env(safe-area-inset-bottom, 0px))!important;
   }
   html[data-mobile-view="home"] #mobile-simplified-dock{
     z-index:2147482000!important;
