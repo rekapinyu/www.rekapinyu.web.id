@@ -9759,15 +9759,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     font-weight:900!important;line-height:1.2!important;white-space:nowrap!important;transform:translate(3px,4px)!important;
   }
   #view-produk-kasir .pk3-toolbar p{display:none!important}
-  #view-produk-kasir .pk3-folder-pick{
-    position:relative!important;z-index:100010!important;pointer-events:auto!important;
-    touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
-  }
-  #view-produk-kasir .pk3-toolbar,
   #view-produk-kasir .pk3-heading-actions{
-    position:relative!important;z-index:100009!important;overflow:visible!important;
-  }
-  #view-produk-kasir .pk3-heading-actions{ 
     grid-column:2!important;grid-row:1!important;position:static!important;
     display:flex!important;align-items:center!important;justify-content:flex-end!important;
     gap:6px!important;width:auto!important;min-width:0!important;max-width:none!important;
@@ -10230,14 +10222,10 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     }
 
     const active=!!selectedFolderName;
-    const mobile=!!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches);
     btn.classList.toggle('is-active',active);
     btn.setAttribute('aria-pressed',active?'true':'false');
-    /* Mobile tetap mengizinkan tombol disentuh walaupun folder lama tersimpan,
-       agar pengguna dapat membuka pemilih folder lagi ketika aksesnya kedaluwarsa.
-       Desktop mempertahankan perilaku aslinya. */
-    btn.disabled=active&&!mobile;
-    btn.style.cursor=(active&&!mobile)?'default':'pointer';
+    btn.disabled=active;
+    btn.style.cursor=active?'default':'pointer';
     btn.title=active?`Folder penyimpanan: ${selectedFolderName}`:'Buat Folder';
     btn.innerHTML=active
       ? `<i class="fa-solid fa-folder-open" aria-hidden="true"></i><span>${escapeHtml(selectedFolderName)}</span>`
@@ -10986,48 +10974,25 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       }
       if(e.target.closest('[data-pk3-close]'))closeEdit();
     });
-    /* TAMBAH FOLDER — handler tunggal untuk desktop dan Chrome mobile.
-       Mobile memakai pointerup agar aksi pemilih folder berjalan langsung dari
-       gesture sentuh; desktop tetap memakai click. */
-    let folderPickerBusy=false;
-    function handleProdukFolderGesture(e){
-      const btn=e.target?.closest?.('#pk3-folder-pick');
-      if(!btn)return;
-      const mobile=!!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches);
-      if(mobile && e.type!=='pointerup')return;
-      if(!mobile && e.type!=='click')return;
-      if(e.cancelable)e.preventDefault();
-      e.stopPropagation();
-      if(folderPickerBusy || btn.dataset.folderBusy==='1')return;
-      if(typeof window.showDirectoryPicker!=='function'){
-        if(typeof showModal==='function')showModal('Folder Produk Kasir','Chrome pada perangkat ini belum menyediakan pemilih folder perangkat.');
-        return;
-      }
-      folderPickerBusy=true;
-      btn.dataset.folderBusy='1';
+    $('pk3-folder-pick')?.addEventListener('click',async(e)=>{
+      const btn=$('pk3-folder-pick');
+      /* Satu alur pemilihan folder untuk desktop dan mobile: gunakan logika utama
+         selectPhotoDirectory tanpa membuka dialog picker kedua atau jalur khusus mobile. */
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
+      if(btn?.disabled)return;
       try{
-        /* Wajib dipanggil sinkron dari pointerup/click, sebelum await atau timer. */
-        const pickerPromise=window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-documents-manager',startIn:'documents'});
-        Promise.resolve(pickerPromise)
-          .then(preselectedDirectory=>selectPhotoDirectory(preselectedDirectory))
-          .catch(err=>{
-            if(err?.name!=='AbortError' && typeof showModal==='function')showModal('Folder Produk Kasir',err?.message||'Folder toko belum dapat dibuat.');
-          })
-          .finally(()=>{
-            folderPickerBusy=false;
-            delete btn.dataset.folderBusy;
-            btn.disabled=false;
-            updateFolderStatus();
-          });
+        if(btn)btn.disabled=true;
+        await selectPhotoDirectory();
+        await updateFolderStatus();
       }catch(err){
-        folderPickerBusy=false;
-        delete btn.dataset.folderBusy;
-        btn.disabled=false;
-        if(typeof showModal==='function')showModal('Folder Produk Kasir',err?.message||'Pemilih folder tidak dapat dibuka.');
+        if(err?.name!=='AbortError' && typeof showModal==='function'){
+          showModal('Folder Produk Kasir',err?.message||'Folder toko belum dapat dibuat.');
+        }
+      }finally{
+        if(btn)btn.disabled=!!btn.classList.contains('is-active');
       }
-    }
-    document.addEventListener('pointerup',handleProdukFolderGesture,true);
-    document.addEventListener('click',handleProdukFolderGesture,true);
+    });
     $('pk3-photo')?.addEventListener('change',e=>{
       addPhotoFile=e.target.files?.[0]||null;
       if($('pk3-photo-name'))$('pk3-photo-name').textContent=addPhotoFile?addPhotoFile.name:'Pilih foto';
@@ -15334,160 +15299,3 @@ async function initKasirViews(){
 }
 </style>
 
-<style id="pk3-mobile-floating-add-only">
-@media (max-width:767px){
-  #view-produk-kasir #pk3-mobile-add-backdrop{
-    position:fixed!important;inset:0!important;z-index:100000!important;
-    background:rgba(15,23,42,.55)!important;display:none!important;
-  }
-  #view-produk-kasir #pk3-mobile-add-backdrop.is-open{display:block!important}
-  #view-produk-kasir .pk3-form-card{
-    display:none!important;
-  }
-  #view-produk-kasir .pk3-form-card.pk3-mobile-add-open{
-    display:block!important;position:fixed!important;z-index:100001!important;
-    left:12px!important;right:12px!important;top:50%!important;
-    transform:translateY(-50%)!important;width:auto!important;max-width:none!important;
-    max-height:calc(100dvh - 32px)!important;overflow:auto!important;
-    margin:0!important;box-sizing:border-box!important;
-    border-radius:18px!important;background:#fff!important;
-    box-shadow:0 24px 70px rgba(15,23,42,.28)!important;
-  }
-  #view-produk-kasir .pk3-form-card.pk3-mobile-add-open .pk3-heading{
-    position:sticky!important;top:0!important;z-index:2!important;background:#fff!important;
-    padding-top:12px!important;
-  }
-  #view-produk-kasir .pk3-mobile-add-close{
-    display:inline-flex!important;align-items:center!important;justify-content:center!important;
-    width:34px!important;height:34px!important;flex:0 0 34px!important;
-    border:0!important;border-radius:50%!important;background:#f1f5f9!important;
-    color:#475569!important;font-size:17px!important;margin-left:6px!important;
-  }
-  #pk3-mobile-add-button{
-    display:none!important;position:fixed!important;right:12px!important;bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;
-    z-index:99998!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
-    display:flex!important;align-items:center!important;justify-content:center!important;
-    border:0!important;border-radius:50%!important;background:#10a58c!important;color:#fff!important;
-    box-shadow:0 5px 14px rgba(16,165,140,.28)!important;font-size:17px!important;
-    cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;
-  }
-  #pk3-mobile-add-button:active{transform:scale(.96)!important}
-}
-@media (min-width:768px){
-  #pk3-mobile-add-button,#pk3-mobile-add-backdrop,.pk3-mobile-add-close{display:none!important}
-}
-</style>
-<script id="pk3-mobile-floating-add-only-js">
-(function(){
-  function initPk3MobileAdd(){
-    const view=document.getElementById('view-produk-kasir');
-    const card=view?.querySelector('.pk3-form-card');
-    if(!view||!card||document.getElementById('pk3-mobile-add-button'))return;
-    const backdrop=document.createElement('div');
-    backdrop.id='pk3-mobile-add-backdrop';
-    backdrop.setAttribute('aria-hidden','true');
-    view.appendChild(backdrop);
-    const button=document.createElement('button');
-    button.id='pk3-mobile-add-button';
-    button.type='button';
-    button.setAttribute('aria-label','Tambah produk');
-    button.title='Tambah Produk';
-    button.innerHTML='<i class="fa-solid fa-plus" aria-hidden="true"></i>';
-    document.body.appendChild(button);
-    const heading=card.querySelector('.pk3-heading');
-    if(heading){
-      const close=document.createElement('button');
-      close.type='button';close.className='pk3-mobile-add-close';
-      close.setAttribute('aria-label','Tutup popup tambah produk');
-      close.innerHTML='<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
-      heading.appendChild(close);
-      close.addEventListener('click',closePopup);
-    }
-    const headingActions=heading?.querySelector('.pk3-heading-actions');
-    const toolbar=view.querySelector('.pk3-toolbar');
-    const search=toolbar?.querySelector('.pk3-search');
-    function isMobile(){return window.matchMedia('(max-width:767px)').matches}
-    function syncLayout(){
-      const popupOpen=card.classList.contains('pk3-mobile-add-open');
-      const folderButton=headingActions?.querySelector('#pk3-folder-pick');
-      if(isMobile()){
-        /* Di mobile, saat popup Tambah Produk terbuka, letakkan aksi folder
-           kembali di dalam popup. Backdrop menutupi toolbar di belakangnya. */
-        if(popupOpen){
-          if(heading&&headingActions&&headingActions.parentElement!==heading)heading.appendChild(headingActions);
-        }else if(toolbar&&search&&headingActions&&headingActions.parentElement!==toolbar){
-          toolbar.insertBefore(headingActions,search);
-        }
-        /* Hilangkan status disabled lama yang bisa tertinggal setelah pergantian ukuran layar. */
-        if(folderButton){
-          folderButton.disabled=false;
-          folderButton.style.pointerEvents='auto';
-          folderButton.style.touchAction='manipulation';
-        }
-      }else if(heading&&headingActions&&headingActions.parentElement!==heading){
-        heading.appendChild(headingActions);
-      }
-    }
-    function openPopup(){
-      if(!isMobile())return;
-      card.classList.add('pk3-mobile-add-open');
-      syncLayout();
-      backdrop.classList.add('is-open');
-      backdrop.setAttribute('aria-hidden','false');
-      button.style.setProperty('display','none','important');
-      document.body.style.overflow='hidden';
-      const first=card.querySelector('#pk3-name');
-      if(first)setTimeout(()=>first.focus({preventScroll:true}),80);
-    }
-    function closePopup(){
-      card.classList.remove('pk3-mobile-add-open');
-      syncLayout();
-      backdrop.classList.remove('is-open');
-      backdrop.setAttribute('aria-hidden','true');
-      button.style.setProperty('display',(!view.classList.contains('hidden')&&isMobile())?'flex':'none','important');
-      document.body.style.overflow='';
-    }
-    button.addEventListener('click',openPopup);
-    backdrop.addEventListener('click',closePopup);
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')closePopup()});
-    view.addEventListener('click',e=>{
-      if(e.target.closest('#pk3-submit'))return;
-    });
-    function syncButton(){
-      syncLayout();
-      if(!isMobile()){button.style.setProperty('display','none','important');closePopup();return}
-      if(!card.classList.contains('pk3-mobile-add-open'))
-        button.style.setProperty('display',view.classList.contains('hidden')?'none':'flex','important');
-    }
-    window.addEventListener('resize',syncButton);
-    new MutationObserver(syncButton).observe(view,{attributes:true,attributeFilter:['class']});
-    syncButton();
-    window.__rekapinyuCloseMobileProdukKasirAdd=closePopup;
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initPk3MobileAdd,{once:true});
-  else initPk3MobileAdd();
-  const observer=new MutationObserver(()=>{
-    const view=document.getElementById('view-produk-kasir');
-    if(view&&!document.getElementById('pk3-mobile-add-button'))initPk3MobileAdd();
-  });
-  observer.observe(document.documentElement,{childList:true,subtree:true});
-})();
-</script>
-
-<style id="pk3-mobile-backup-above-add-fix">
-@media (max-width:767px){
-  #pk3-data-tools:not(.hidden){
-    position:static!important;right:auto!important;left:auto!important;bottom:auto!important;
-    z-index:99997!important;display:block!important;
-  }
-  #pk3-data-tools .pk3-data-tool{
-    position:fixed!important;right:12px!important;left:auto!important;
-    width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;max-width:36px!important;max-height:36px!important;
-    flex:0 0 36px!important;font-size:15px!important;z-index:99997!important;
-  }
-  /* Urutan dan jarak tombol mengacu pada foto: Import, Backup, Tambah Produk. */
-  #pk3-backup{bottom:calc(127px + env(safe-area-inset-bottom,0px))!important;}
-  #pk3-import{bottom:calc(168px + env(safe-area-inset-bottom,0px))!important;}
-  #pk3-mobile-add-button{right:12px!important;bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;z-index:99998!important;}
-}
-</style>
