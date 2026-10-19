@@ -14781,30 +14781,51 @@ async function initKasirViews(){
 </script>
 
 
-<!-- PATCH TERARAH: Beranda mobile dapat discroll penuh tanpa memotong menu bagian bawah. -->
-<style id="rku-mobile-home-dock-clearance-fix">
+
+<!-- PERBAIKAN KHUSUS MOBILE BERANDA: gulir konten penuh tanpa mengunci tinggi section. -->
+<style id="rku-mobile-beranda-scroll-rebuilt">
 @media (max-width:767px){
-  html[data-mobile-view="home"] #mobile-home-view{
-    height:calc(100dvh - 250px)!important;
-    max-height:calc(100dvh - 250px)!important;
-    min-height:0!important;
+  html[data-mobile-view="home"] body,
+  html[data-mobile-view="home"] body > .flex-1.flex.flex-col.h-screen.overflow-hidden,
+  html[data-mobile-view="home"] body > #app > .flex-1.flex.flex-col.h-screen.overflow-hidden{
+    height:auto!important;
+    min-height:100dvh!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  html[data-mobile-view="home"] main{
+    display:block!important;
+    height:auto!important;
+    min-height:calc(100dvh - 56px)!important;
+    max-height:none!important;
     overflow-x:hidden!important;
-    overflow-y:auto!important;
-    overscroll-behavior-y:contain!important;
-    -webkit-overflow-scrolling:touch!important;
-    padding-bottom:calc(190px + env(safe-area-inset-bottom, 0px))!important;
-    scroll-padding-bottom:calc(190px + env(safe-area-inset-bottom, 0px))!important;
+    overflow-y:visible!important;
+    padding-bottom:calc(96px + env(safe-area-inset-bottom, 0px))!important;
+    box-sizing:border-box!important;
+  }
+  html[data-mobile-view="home"] #mobile-home-view{
+    display:flex!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    flex:0 0 auto!important;
+    overflow:visible!important;
+    padding-bottom:calc(110px + env(safe-area-inset-bottom, 0px))!important;
+    margin-bottom:0!important;
     box-sizing:border-box!important;
   }
   html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-section:last-of-type,
   html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-grid:last-child{
-    margin-bottom:calc(90px + env(safe-area-inset-bottom, 0px))!important;
+    margin-bottom:0!important;
   }
   html[data-mobile-view="home"] #mobile-simplified-dock{
+    position:fixed!important;
+    bottom:0!important;
     z-index:2147482000!important;
   }
 }
 </style>
+
 </body>
 </html>
 
