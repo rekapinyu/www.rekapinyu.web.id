@@ -9894,7 +9894,18 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     const name=String(value||'').trim().toLowerCase();
     return /^(documents|dokumen)(?:\s+\d+)?$/i.test(name);
   }
-  async function getDocumentsRootForAutoCreate(){
+  async function getDocumentsRootForAutoCreate(preselectedDirectory){
+    /* Folder yang sudah dipilih langsung dari klik mobile dipakai tanpa membuka picker kedua kali. */
+    if(preselectedDirectory){
+      const picked=preselectedDirectory;
+      if(!(await requestDirectoryPermission(picked)))throw new Error('Izin akses folder ditolak.');
+      if(isDocumentsDirectoryName(picked.name)){
+        try{window.__rekapinyuFolderManagerDocuments=picked}catch(_){ }
+        try{await idbSetDocumentsRoot(picked)}catch(_){ }
+        return {root:picked,shopFolder:null};
+      }
+      return {root:null,shopFolder:picked};
+    }
     let docs=null;
     try{docs=window.__rekapinyuFolderManagerDocuments||null}catch(_){ }
     if(!docs){
@@ -9926,13 +9937,13 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     return {root:null,shopFolder:picked};
   }
 
-  async function selectPhotoDirectory(){
+  async function selectPhotoDirectory(preselectedDirectory){
     const owner=photoOwnerKey();
     if(!owner)throw new Error('Sesi pengguna belum tersedia. Silakan tunggu sampai akun selesai dimuat.');
     const shopName=safeFolderName(currentShopName());
     if(!shopName)throw new Error('Nama Toko belum tersedia. Folder belum dapat dibuat.');
 
-    const target=await getDocumentsRootForAutoCreate();
+    const target=await getDocumentsRootForAutoCreate(preselectedDirectory);
     let docs=target?.root||null;
     let shopFolder=target?.shopFolder||null;
 
@@ -10828,9 +10839,15 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     });
     $('pk3-folder-pick')?.addEventListener('click',async()=>{
       const btn=$('pk3-folder-pick');
+      let mobilePickerPromise=null;
       try{
+        /* Di mobile, buka pemilih folder langsung dari gesture klik agar izin browser tidak kedaluwarsa saat proses async berjalan. */
+        if(window.matchMedia('(max-width:767px)').matches && 'showDirectoryPicker' in window){
+          mobilePickerPromise=window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-documents-manager',startIn:'documents'});
+        }
         if(btn)btn.disabled=true;
-        await selectPhotoDirectory();
+        const preselectedDirectory=mobilePickerPromise?await mobilePickerPromise:undefined;
+        await selectPhotoDirectory(preselectedDirectory);
         await updateFolderStatus();
       }catch(err){
         if(err?.name!=='AbortError' && typeof showModal==='function'){
@@ -15262,21 +15279,18 @@ async function initKasirViews(){
 <style id="pk3-mobile-backup-above-add-fix">
 @media (max-width:767px){
   #pk3-data-tools:not(.hidden){
-    position:fixed!important;
-    right:18px!important;
-    left:auto!important;
-    bottom:calc(154px + env(safe-area-inset-bottom))!important;
-    z-index:99997!important;
-    display:flex!important;
-    flex-direction:column-reverse!important;
-    align-items:center!important;
-    gap:10px!important;
+    position:static!important;right:auto!important;left:auto!important;bottom:auto!important;
+    z-index:99997!important;display:block!important;
   }
   #pk3-data-tools .pk3-data-tool{
-    width:58px!important;height:58px!important;
-    min-width:58px!important;min-height:58px!important;
-    flex:0 0 58px!important;
-    font-size:22px!important;
+    position:fixed!important;right:18px!important;left:auto!important;
+    width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;
+    flex:0 0 58px!important;font-size:22px!important;z-index:99997!important;
   }
+  /* Backup tepat satu jarak tombol di atas tombol + Tambah Produk. */
+  #pk3-backup{bottom:calc(154px + env(safe-area-inset-bottom))!important;}
+  #pk3-import{bottom:calc(222px + env(safe-area-inset-bottom))!important;}
+  #pk3-mobile-add-button{bottom:calc(86px + env(safe-area-inset-bottom))!important;z-index:99998!important;}
+  #view-produk-kasir .pk3-form-card.pk3-mobile-add-open #pk3-folder-pick{position:relative!important;z-index:3!important;pointer-events:auto!important;}
 }
 </style>
