@@ -10976,15 +10976,34 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     });
     $('pk3-folder-pick')?.addEventListener('click',async(e)=>{
       const btn=$('pk3-folder-pick');
-      /* Satu alur pemilihan folder untuk desktop dan mobile: gunakan logika utama
-         selectPhotoDirectory tanpa membuka dialog picker kedua atau jalur khusus mobile. */
       e?.preventDefault?.();
       e?.stopPropagation?.();
       if(btn?.disabled)return;
       try{
         if(btn)btn.disabled=true;
-        await selectPhotoDirectory();
-        await updateFolderStatus();
+        let preselectedDirectory;
+        const mobile=!!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches);
+        const cachedDocumentsRoot=window.__rekapinyuFolderManagerDocuments;
+        const hasCachedDocumentsRoot=!!cachedDocumentsRoot&&isDocumentsDirectoryName(cachedDocumentsRoot.name);
+
+        /* Di mobile, buka pemilih folder langsung dari gesture klik sebelum
+           alur bersama melakukan operasi async IndexedDB/permission. Ini mencegah
+           browser kehilangan user activation. Folder terpilih lalu diproses oleh
+           selectPhotoDirectory yang sama seperti desktop. Jika root Dokumen yang
+           valid sudah tersedia, alur desktop tetap digunakan tanpa picker tambahan. */
+        if(mobile&&!hasCachedDocumentsRoot){
+          if(typeof window.showDirectoryPicker!=='function'){
+            throw new Error('Browser ini belum mendukung pemilihan folder perangkat. Buka aplikasi melalui browser yang mendukung akses folder, seperti Chrome atau Edge terbaru.');
+          }
+          preselectedDirectory=await window.showDirectoryPicker({
+            mode:'readwrite',
+            id:'rekapinyu-documents-manager',
+            startIn:'documents'
+          });
+        }
+
+        await selectPhotoDirectory(preselectedDirectory);
+        /* Status folder diperbarui satu kali oleh selectPhotoDirectory. */
       }catch(err){
         if(err?.name!=='AbortError' && typeof showModal==='function'){
           showModal('Folder Produk Kasir',err?.message||'Folder toko belum dapat dibuat.');
