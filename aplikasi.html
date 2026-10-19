@@ -14785,7 +14785,7 @@ async function initKasirViews(){
 
 
 
-<!-- IMPLEMENTASI TUNGGAL SCROLL BERANDA MOBILE: menggantikan patch scroll sebelumnya. -->
+<!-- IMPLEMENTASI TUNGGAL SCROLL BERANDA MOBILE: scroll penuh dengan jarak akhir proporsional. -->
 <style id="rku-mobile-beranda-scroll-single">
 @media (max-width:767px){
   html[data-mobile-view="home"]{
@@ -14794,7 +14794,7 @@ async function initKasirViews(){
   }
   html[data-mobile-view="home"] body{
     display:block!important;width:100%!important;height:auto!important;min-height:100vh!important;max-height:none!important;
-    margin:0!important;padding:0 0 calc(86px + env(safe-area-inset-bottom,0px))!important;
+    margin:0!important;padding:0 0 calc(76px + env(safe-area-inset-bottom,0px))!important;
     overflow-x:hidden!important;overflow-y:visible!important;
     box-sizing:border-box!important;-webkit-overflow-scrolling:touch!important;
   }
@@ -14804,7 +14804,7 @@ async function initKasirViews(){
   }
   html[data-mobile-view="home"] main:has(#mobile-home-view){
     display:block!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
-    margin:0!important;padding:0 0 calc(86px + env(safe-area-inset-bottom,0px))!important;
+    margin:0!important;padding:0!important;
     overflow:visible!important;position:static!important;flex:none!important;box-sizing:border-box!important;
   }
   html[data-mobile-view="home"] main:has(#mobile-home-view) > .max-w-4xl:has(#mobile-home-view){
@@ -14814,7 +14814,7 @@ async function initKasirViews(){
   html[data-mobile-view="home"] #mobile-home-view{
     display:flex!important;flex-direction:column!important;gap:12px!important;
     width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
-    margin:0!important;padding:198px 12px calc(100px + env(safe-area-inset-bottom,0px))!important;
+    margin:0!important;padding:198px 12px 10px!important;
     overflow:visible!important;flex:none!important;box-sizing:border-box!important;
   }
   html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-section,
