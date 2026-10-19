@@ -7259,12 +7259,11 @@ function updateUserAvatarUI() {
     </script>
 <!-- MOBILE ONLY: REPORT-ONLY BOTTOM DOCK -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 shadow-[0_-6px_20px_rgba(15,23,42,.08)] z-40" id="mobile-simplified-dock">
-<div class="max-w-md mx-auto grid grid-cols-5 px-2 py-2">
+<div class="max-w-md mx-auto grid grid-cols-4 px-2 py-2">
 <button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-emerald-600 transition" id="nav-mobile-home" onclick="switchTab('home')" type="button"><i class="fa-solid fa-house-chimney text-lg mb-0.5"></i><span class="text-[10px] font-semibold">Beranda</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-history" onclick="switchTab('input')" type="button"><i class="fa-solid fa-pen-to-square text-lg mb-0.5"></i><span class="text-[10px] font-medium">Input Data</span></button>
 <button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-report" onclick="switchTab('kasir')" type="button"><i class="fa-solid fa-cash-register text-lg mb-0.5"></i><span class="text-[10px] font-medium">Kasir</span></button>
+<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-history" onclick="switchTab('input')" type="button"><i class="fa-solid fa-pen-to-square text-lg mb-0.5"></i><span class="text-[10px] font-medium">Input Data</span></button>
 <button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-activity" onclick="switchTab('kasbon')" type="button"><i class="fa-solid fa-hand-holding-dollar text-lg mb-0.5"></i><span class="text-[10px] font-medium">Kasbon</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-komunitas" onclick="switchTab('pengeluaran')" type="button"><i class="fa-solid fa-money-bill-transfer text-lg mb-0.5"></i><span class="text-[10px] font-medium">Pengeluaran</span></button>
 </div>
 </nav>
 
@@ -15003,5 +15002,69 @@ async function initKasirViews(){
 @media (max-width: 767px) {
   html[data-mobile-view="home"] #mobile-home-view { display: block !important; }
   html[data-mobile-view="home"] #rku-mobile-promo-body { display: block !important; }
+}
+</style>
+
+
+<!-- PERBAIKAN KHUSUS MOBILE: ukuran tombol tambah tab Kasir dan dock bawah -->
+<style id="mobile-kasir-plus-and-dock-request">
+@media (max-width:767px){
+  #view-kasir .kasir-transaction-tabs .kasir-transaction-tab-add{
+    flex:0 0 44px!important;
+    width:44px!important;
+    min-width:44px!important;
+    max-width:44px!important;
+    height:34px!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  #view-kasir .kasir-transaction-tabs .kasir-transaction-tab-add i{
+    font-size:14px!important;
+    margin:0!important;
+  }
+  #mobile-simplified-dock > div{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    max-width:none!important;
+    gap:5px!important;
+  }
+  #mobile-simplified-dock .mobile-dock-item{
+    min-width:0!important;
+    min-height:52px!important;
+    padding:5px 2px!important;
+    border:0!important;
+    border-radius:12px!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    transition:background-color .18s ease,color .18s ease,transform .18s ease!important;
+  }
+  #mobile-simplified-dock #nav-mobile-home{--dock-color:#2563eb;--dock-bg:#dbeafe}
+  #mobile-simplified-dock #nav-mobile-report{--dock-color:#0d9488;--dock-bg:#ccfbf1}
+  #mobile-simplified-dock #nav-mobile-history{--dock-color:#7c3aed;--dock-bg:#ede9fe}
+  #mobile-simplified-dock #nav-mobile-activity{--dock-color:#d97706;--dock-bg:#fef3c7}
+  #mobile-simplified-dock .mobile-dock-item i{color:var(--dock-color)!important}
+  #mobile-simplified-dock .mobile-dock-item span{color:#64748b!important}
+  #mobile-simplified-dock .mobile-dock-item:hover,
+  #mobile-simplified-dock .mobile-dock-item:focus-visible,
+  #mobile-simplified-dock .mobile-dock-item:active{
+    background:var(--dock-bg)!important;
+    color:var(--dock-color)!important;
+    outline:none!important;
+  }
+  #mobile-simplified-dock .mobile-dock-item:hover span,
+  #mobile-simplified-dock .mobile-dock-item:focus-visible span,
+  #mobile-simplified-dock .mobile-dock-item:active span{
+    color:var(--dock-color)!important;
+  }
+  #mobile-simplified-dock #nav-mobile-report{
+    transform:none!important;
+    margin-top:0!important;
+    width:auto!important;
+    height:auto!important;
+    border-radius:12px!important;
+  }
 }
 </style>
