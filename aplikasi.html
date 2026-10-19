@@ -2015,6 +2015,171 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 }
 </style>
 
+
+<style id="pk3-mobile-product-reference-layout">
+@media (max-width:767px){
+  /* Khusus menu Produk Kasir mobile; desktop dan logika data tidak disentuh. */
+  #view-produk-kasir.pk3-view{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:8px 5px 90px!important;
+    box-sizing:border-box!important;
+    overflow-x:hidden!important;
+  }
+  #view-produk-kasir .pk3-form-card{display:none!important}
+  #view-produk-kasir .pk3-list-card{
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
+    box-sizing:border-box!important;
+  }
+  #view-produk-kasir .pk3-toolbar{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:7px!important;
+    margin:0 0 7px!important;
+    padding:0 10px!important;
+  }
+  #view-produk-kasir .pk3-toolbar>div:first-child{
+    display:none!important;
+  }
+  #view-produk-kasir .pk3-search{
+    display:flex!important;
+    position:relative!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    flex:none!important;
+    height:37px!important;
+  }
+  #view-produk-kasir .pk3-search input{
+    width:100%!important;
+    height:37px!important;
+    padding-left:30px!important;
+    border:1px solid #cbd5e1!important;
+    border-radius:11px!important;
+    background:#fff!important;
+    font-size:12px!important;
+    box-sizing:border-box!important;
+  }
+  #view-produk-kasir .pk3-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    align-items:stretch!important;
+    gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:17px 0 8px!important;
+    box-sizing:border-box!important;
+  }
+  #view-produk-kasir .pk3-card{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    min-width:0!important;
+    height:100%!important;
+    margin:0!important;
+    padding:8px!important;
+    border:1px solid #dbe4ef!important;
+    border-radius:15px!important;
+    background:#fff!important;
+    box-shadow:0 2px 5px rgba(15,23,42,.035)!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+  }
+  #view-produk-kasir .pk3-photo{
+    width:100%!important;
+    height:auto!important;
+    aspect-ratio:1.35/1!important;
+    flex:0 0 auto!important;
+    border-radius:12px!important;
+    border:1px solid #e2e8f0!important;
+    background:#f8fafc!important;
+  }
+  #view-produk-kasir .pk3-info{padding-top:8px!important}
+  #view-produk-kasir .pk3-product-name{
+    font-size:13px!important;
+    line-height:1.25!important;
+    font-weight:900!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  #view-produk-kasir .pk3-category{
+    margin-top:6px!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  #view-produk-kasir .pk3-data{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:5px!important;
+    margin-top:8px!important;
+  }
+  #view-produk-kasir .pk3-data-box{
+    min-width:0!important;
+    padding:9px 7px!important;
+    border-radius:13px!important;
+    box-sizing:border-box!important;
+  }
+  #view-produk-kasir .pk3-data-box small{
+    font-size:9px!important;
+    line-height:1.2!important;
+    min-height:22px!important;
+    overflow-wrap:anywhere!important;
+  }
+  #view-produk-kasir .pk3-data-box strong{
+    margin-top:4px!important;
+    font-size:12px!important;
+    line-height:1.2!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  #view-produk-kasir .pk3-data-box.hpp,
+  #view-produk-kasir .pk3-data-box.sell{grid-column:1/-1!important}
+  #view-produk-kasir .pk3-data-box.hpp{
+    background:#eff6ff!important;border-color:#bfdbfe!important
+  }
+  #view-produk-kasir .pk3-data-box.sell{
+    background:#ecfdf5!important;border-color:#bbf7d0!important
+  }
+  #view-produk-kasir .pk3-actions{
+    grid-template-columns:1fr 1fr!important;
+    gap:5px!important;
+    margin-top:8px!important;
+  }
+  #view-produk-kasir .pk3-actions button{
+    min-width:0!important;
+    height:34px!important;
+    padding:0 3px!important;
+    border-radius:10px!important;
+    font-size:10px!important;
+    line-height:1.1!important;
+    white-space:normal!important;
+  }
+  #view-produk-kasir .pk3-empty{grid-column:1/-1!important}
+}
+@media (max-width:370px){
+  #view-produk-kasir .pk3-grid{gap:5px!important}
+  #view-produk-kasir .pk3-card{padding:5px!important}
+  #view-produk-kasir .pk3-product-name{font-size:11px!important}
+  #view-produk-kasir .pk3-data-box{padding:7px 5px!important}
+  #view-produk-kasir .pk3-data-box strong{font-size:11px!important}
+  #view-produk-kasir .pk3-actions button{font-size:9px!important}
+}
+</style>
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
