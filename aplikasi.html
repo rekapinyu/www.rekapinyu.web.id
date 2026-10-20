@@ -26,43 +26,8 @@
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <!-- Mobile reload first-paint guard: cegah view Input Data dan header lama terlihat sebelum Beranda siap. -->
-<style id="rekapinyu-mobile-first-paint-guard">
-@media (max-width:767px){
- html.rku-mobile-first-paint-pending #view-input,
- html.rku-mobile-first-paint-pending #mobile-home-view,
- html.rku-mobile-first-paint-pending #rku-mobile-promo-body,
- html.rku-mobile-first-paint-pending #page-title-header,
- html.rku-mobile-first-paint-pending #page-subtitle-header{
-   visibility:hidden!important;
- }
- html[data-mobile-view="home"] #view-input{display:none!important;}
- html[data-mobile-view="home"] #mobile-home-view{display:block!important;}
-}
-</style>
-<script id="rekapinyu-mobile-first-paint-guard-script">
-(function(){
- var root=document.documentElement;
- if(!(window.matchMedia&&window.matchMedia('(max-width:767px)').matches))return;
- /* Tentukan state Beranda sebelum browser melukis isi halaman, bukan setelah skrip akhir berjalan. */
- root.classList.add('rku-mobile-first-paint-pending');
- root.setAttribute('data-mobile-view','home');
- function reveal(){
-   requestAnimationFrame(function(){
-     requestAnimationFrame(function(){
-       /* Pastikan judul yang muncul sudah judul Beranda, bukan judul Input Data lama. */
-       var title=document.getElementById('page-title-header');
-       var subtitle=document.getElementById('page-subtitle-header');
-       if(title)title.textContent='Beranda';
-       if(subtitle)subtitle.textContent='Ringkasan laporan 7 hari terakhir.';
-       root.classList.remove('rku-mobile-first-paint-pending');
-     });
-   });
- }
- if(document.readyState==='complete') reveal();
- else window.addEventListener('load',reveal,{once:true});
- window.addEventListener('pageshow',reveal);
-})();
-</script>
+
+
 
 <style id="rekapinyu-banner-no-old-flash">
   /* Jangan lukis banner bawaan sampai konfigurasi terbaru terkonfirmasi dari Firestore server. */
@@ -657,300 +622,8 @@
     </style>
 <!-- PATCH MOBILE TERAKHIR: hanya perbaikan tampilan mobile.
      Tidak mengubah HTML, JavaScript, Firebase, event, data, atau tampilan desktop. -->
-<style id="rekapinyu-mobile-only-final-fix">
-@media (max-width:767px){
 
-  /* Area mobile lebih rapi dan tidak tertutup dock bawah. */
-  html,body{
-    width:100%!important;
-    max-width:100%!important;
-    overflow:hidden!important;
-  }
-  body{
-    min-height:100dvh!important;
-  }
-  #app-container{
-    width:100%!important;
-    max-width:100%!important;
-  }
-  main{
-    width:100%!important;
-    min-width:0!important;
-    overflow-x:hidden!important;
-    padding-left:12px!important;
-    padding-right:12px!important;
-    padding-bottom:88px!important;
-  }
 
-  /* Header mobile tetap ringkas dan tidak membuat isi bergeser. */
-  header{
-    width:100%!important;
-    min-width:0!important;
-    height:60px!important;
-    padding:8px 12px!important;
-    box-sizing:border-box!important;
-  }
-  header > div{
-    min-width:0!important;
-  }
-  #page-title-header{
-    font-size:15px!important;
-    line-height:1.2!important;
-    white-space:nowrap!important;
-    overflow:hidden!important;
-    text-overflow:ellipsis!important;
-  }
-  #page-subtitle-header{
-    font-size:10px!important;
-    line-height:1.25!important;
-    white-space:nowrap!important;
-    overflow:hidden!important;
-    text-overflow:ellipsis!important;
-  }
-
-  /* Beranda: grid tidak melebar dan jarak antar kotak konsisten. */
-  #mobile-home-view{
-    width:100%!important;
-    min-width:0!important;
-    box-sizing:border-box!important;
-  }
-  .mobile-home-grid{
-    width:100%!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:10px!important;
-  }
-  .mobile-home-card{
-    width:100%!important;
-    min-width:0!important;
-    min-height:116px!important;
-    box-sizing:border-box!important;
-    border-radius:14px!important;
-    padding:12px 7px!important;
-    overflow:hidden!important;
-  }
-  .mobile-home-card-main{
-    width:100%!important;
-    min-width:0!important;
-    border-radius:inherit!important;
-    padding:12px 7px!important;
-  }
-  .mobile-home-card-content{
-    max-width:100%!important;
-    gap:8px!important;
-  }
-  .mobile-home-card-content>span{
-    font-size:11px!important;
-    line-height:1.25!important;
-    white-space:normal!important;
-    overflow-wrap:anywhere!important;
-  }
-  .mobile-home-icon{
-    width:40px!important;
-    height:40px!important;
-    border-radius:11px!important;
-    flex:0 0 40px!important;
-  }
-  .mobile-home-watermark{
-    right:2px!important;
-    bottom:2px!important;
-    width:48px!important;
-    height:48px!important;
-    max-width:48px!important;
-    max-height:48px!important;
-    font-size:48px!important;
-    line-height:48px!important;
-    object-fit:contain!important;
-    transform:none!important;
-    opacity:.16!important;
-  }
-
-  /* Ringkasan admin tidak terlalu tinggi di layar kecil. */
-  #mobile-admin-summary{
-    width:100%!important;
-    box-sizing:border-box!important;
-    margin-bottom:10px!important;
-    border-radius:14px!important;
-    padding:10px!important;
-  }
-  .mobile-admin-title-row{
-    margin-bottom:8px!important;
-  }
-  .mobile-admin-grid{
-    gap:6px!important;
-  }
-  .mobile-admin-card{
-    padding:8px 4px!important;
-    border-radius:10px!important;
-  }
-
-  /* Input Data: satu panel penuh, tidak keluar layar. */
-  #view-input{
-    width:100%!important;
-    min-width:0!important;
-    box-sizing:border-box!important;
-    overflow:visible!important;
-  }
-  #view-input > div{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-    display:block!important;
-  }
-  #view-input > div > div:first-child{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-    padding:16px 13px!important;
-    border-radius:14px!important;
-    overflow:visible!important;
-  }
-  #view-input h3{
-    margin-bottom:14px!important;
-    font-size:12px!important;
-  }
-  #finance-form{
-    width:100%!important;
-    max-width:none!important;
-  }
-  #finance-form > div{
-    min-width:0!important;
-  }
-  #view-input input,
-  #view-input select,
-  #view-input textarea{
-    width:100%!important;
-    max-width:100%!important;
-    min-width:0!important;
-    box-sizing:border-box!important;
-    min-height:44px!important;
-    border-radius:11px!important;
-    font-size:13px!important;
-  }
-  #finance-form button[type="submit"]{
-    min-height:45px!important;
-    border-radius:11px!important;
-    font-size:12px!important;
-  }
-
-  /* Kartu Pengeluaran/Kasbon/History/Laporan/Backup tidak memotong isi. */
-  #pengeluaran-grid > div,
-  #kasbon-grid > div,
-  #report-grid > div,
-  #backup-grid > div{
-    width:100%!important;
-    max-width:100%!important;
-    min-width:0!important;
-    box-sizing:border-box!important;
-    overflow:hidden!important;
-    border-radius:14px!important;
-  }
-
-  /* Filter/sticky di mobile tidak boleh menutupi dock bawah. */
-  #kasbon-sticky-container > div,
-  #backup-sticky-container > div{
-    max-width:calc(100vw - 24px)!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-    box-sizing:border-box!important;
-    border-radius:14px!important;
-  }
-
-  /* Modal mengikuti lebar layar tanpa horizontal overflow. */
-  #custom-modal > div,
-  #pdf-modal > div,
-  #profile-modal > div{
-    width:calc(100vw - 24px)!important;
-    max-width:calc(100vw - 24px)!important;
-    max-height:calc(100dvh - 24px)!important;
-    box-sizing:border-box!important;
-    border-radius:14px!important;
-    overflow:auto!important;
-  }
-
-  /* Dock bawah: tombol tidak saling bertabrakan dan aman dengan gesture bar. */
-  #mobile-simplified-dock{
-    height:68px!important;
-    padding:0 12px!important;
-    padding-bottom:env(safe-area-inset-bottom)!important;
-    box-sizing:content-box!important;
-  }
-  #mobile-simplified-dock > div{
-    width:100%!important;
-    min-width:0!important;
-  }
-  #mobile-simplified-dock .mobile-dock-item{
-    min-width:0!important;
-  }
-
-  /* Ukuran layar sangat kecil. */
-  @media (max-width:370px){
-    main{
-      padding-left:9px!important;
-      padding-right:9px!important;
-    }
-    .mobile-home-grid{
-      gap:8px!important;
-    }
-    .mobile-home-card{
-      min-height:108px!important;
-      padding-left:5px!important;
-      padding-right:5px!important;
-    }
-    .mobile-home-icon{
-      width:36px!important;
-      height:36px!important;
-      flex-basis:36px!important;
-      font-size:16px!important;
-    }
-    .mobile-home-card-content>span{
-      font-size:10px!important;
-    }
-    .mobile-home-watermark{
-      width:43px!important;
-      height:43px!important;
-      max-width:43px!important;
-      max-height:43px!important;
-      font-size:43px!important;
-      line-height:43px!important;
-    }
-  }
-}
-</style>
-<style id="mobile-no-sidebar-fix">
-@media (max-width: 767px) {
-  /* Mobile only: remove sidebar from the mobile layout. */
-  #sidebar,
-  .sidebar,
-  aside.sidebar,
-  nav.sidebar,
-  [class*="sidebar"] {
-    display: none !important;
-    width: 0 !important;
-    min-width: 0 !important;
-    max-width: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    transform: none !important;
-  }
-
-  /* Ensure the main app uses the entire mobile viewport. */
-  main,
-  #main,
-  .main-content,
-  .content,
-  #content {
-    margin-left: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  body {
-    padding-left: 0 !important;
-    margin-left: 0 !important;
-  }
-}
-</style>
 <style id="kasir-final-css">
 
 /* KASIR: putih full frame, menempel ke seluruh sisi area setelah header */
@@ -1024,7 +697,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #view-settings .shift-settings-item input{min-width:0;box-sizing:border-box}
 @media(max-width:760px){#view-settings .shift-settings-grid{grid-template-columns:minmax(0,1fr);gap:10px}#view-settings .shift-settings-item{padding:13px}#view-settings .shift-settings-time-grid{gap:8px}}
 </style>
-<style id="patch-mobile-admin-income-chooser">@media(max-width:767px){#mobile-admin-settings-button{appearance:none!important;border:0!important;background:transparent!important;padding:4px!important;margin:0!important;width:34px!important;height:34px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#aab4c1!important;opacity:.75!important;border-radius:10px!important}#mobile-admin-settings-button i{font-size:20px!important}.mobile-admin-income-chooser{position:fixed!important;z-index:99999!important;width:205px!important;background:#fff!important;border:1px solid #e5eaf0!important;border-radius:14px!important;padding:6px!important;box-shadow:0 14px 35px rgba(15,23,42,.16)!important}.mobile-admin-income-chooser button{width:100%!important;min-height:42px!important;border:0!important;background:#fff!important;color:#334155!important;border-radius:10px!important;display:flex!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;font-size:12px!important;font-weight:700!important;text-align:left!important}.mobile-admin-income-chooser button:active{background:#f1f5f9!important}.mobile-admin-income-chooser button i{width:20px!important;text-align:center!important;color:#64748b!important}}@media(min-width:768px){#mobile-admin-settings-button{display:none!important}}</style>
+
 <style id="kasir-payment-popup-css">
 #kasir-payment-popup{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.58)}
 #kasir-payment-popup.is-open{display:flex}
@@ -1789,56 +1462,13 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #cetak-module-content > .flex-1{min-height:0;}
 </style>
 
-<style id="rekapinyu-mobile-home-layout">
-@media (max-width:767px){
-  #mobile-home-view{width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow:hidden!important;}
-  #mobile-home-view #mobile-admin-summary{display:none!important;}
-  #mobile-home-view .mobile-home-grid-secondary{display:none!important;}
-}
-</style>
+
 <style id="rekapinyu-cek-paket-sidebar-style">
 #nav-cek-paket{transition:background-color .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease}
 #nav-cek-paket:hover{transform:translateX(3px);background-color:rgba(226,232,240,.55)}
 #nav-cek-paket:active{transform:translateX(1px) scale(.99)}
 </style>
-<style id="rekapinyu-mobile-home-grid-center-dock-order">
-@media (max-width:767px){
-  /* Dock mobile: pulihkan layout asli yang stabil, penuh selebar layar.
-     Jangan batasi lebar wrapper dock; lima item mendapat ruang sama. */
-  #mobile-simplified-dock{
-    left:0!important;right:0!important;width:100%!important;
-    height:68px!important;padding:0 8px!important;
-    box-sizing:border-box!important;overflow:visible!important;
-  }
-  #mobile-simplified-dock > div{
-    display:grid!important;
-    width:100%!important;max-width:none!important;
-    height:100%!important;margin:0!important;padding:0!important;
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
-    align-items:center!important;justify-items:stretch!important;
-    gap:0!important;box-sizing:border-box!important;
-  }
-  #mobile-simplified-dock .mobile-dock-item{
-    display:flex!important;flex-direction:column!important;
-    align-items:center!important;justify-content:center!important;
-    width:100%!important;min-width:0!important;max-width:none!important;
-    height:58px!important;margin:0!important;padding:6px 1px!important;
-    gap:3px!important;box-sizing:border-box!important;
-    overflow:hidden!important;white-space:nowrap!important;
-    line-height:1!important;text-align:center!important;
-  }
-  #mobile-simplified-dock .mobile-dock-item i{
-    display:block!important;flex:0 0 auto!important;
-    margin:0!important;font-size:18px!important;line-height:1!important;
-  }
-  #mobile-simplified-dock .mobile-dock-item span{
-    display:block!important;max-width:100%!important;
-    margin:0!important;font-size:9px!important;line-height:1.2!important;
-    font-weight:600!important;white-space:nowrap!important;
-    overflow:hidden!important;text-overflow:clip!important;
-  }
-}
-</style>
+
 <style id="fix-sidebar-report-backup-label-wrap">
 /* Hanya menjaga label Laporan Bulanan dan Backup Otomatis tetap dua baris saat berpindah menu/reload. */
 #nav-report .sidebar-text,
@@ -1883,137 +1513,12 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 
 
 
-<style id="rekapinyu-mobile-kasir-toolbar-and-dock-fix">
-@media (max-width:767px){
-  /* Menu Kasir: kolom cari produk dibuat panjang; tombol Bluetooth berbentuk kotak. */
-  #view-kasir .kasir-toolbar{
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) 38px 82px 38px!important;
-    gap:7px!important;
-    align-items:center!important;
-    width:100%!important;
-    min-width:0!important;
-  }
-  #view-kasir .kasir-search-wrap{
-    grid-column:1 / -1!important;
-    width:100%!important;
-    min-width:0!important;
-    height:42px!important;
-    flex:none!important;
-    box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-barcode-wrap{
-    grid-column:1 / 2!important;
-    width:100%!important;
-    min-width:0!important;
-    height:38px!important;
-    flex:none!important;
-    padding-left:9px!important;
-    padding-right:9px!important;
-  }
-  #view-kasir .kasir-shift-picker{
-    grid-column:3 / 4!important;
-    width:82px!important;
-    min-width:0!important;
-  }
-  #view-kasir .kasir-shift-trigger{
-    width:82px!important;
-    min-width:0!important;
-    padding-left:7px!important;
-    padding-right:7px!important;
-  }
-  #view-kasir #kasir-refresh-btn{
-    grid-column:4 / 5!important;
-    width:38px!important;
-    min-width:38px!important;
-    max-width:38px!important;
-    height:38px!important;
-    padding:0!important;
-    display:flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-    flex:none!important;
-    border-radius:9px!important;
-  }
-  #view-kasir #kasir-refresh-btn i{margin:0!important;font-size:16px!important}
-  #mobile-simplified-dock .mobile-dock-item span{
-    font-size:9px!important;
-    white-space:nowrap!important;
-  }
-}
-</style>
-
-<style id="rekapinyu-mobile-kasir-screenshot-layout">
-@media (max-width:767px){
-  /* Layout Kasir mobile mengikuti referensi: pencarian satu baris, lalu shift/Bluetooth/barcode. */
-  /* Kasir mobile: isi memenuhi lebar dan tinggi area layar, tanpa padding luar. */
-  main:has(#view-kasir:not(.hidden)){
-    width:100%!important;max-width:100%!important;height:calc(100dvh - 60px)!important;
-    min-height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;box-sizing:border-box!important;
-  }
-  main:has(#view-kasir:not(.hidden)) #view-kasir{
-    width:100%!important;max-width:100%!important;height:100%!important;min-height:0!important;
-    overflow:hidden!important;padding:0!important;margin:0!important;box-sizing:border-box!important;
-  }
-  main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{
-    display:flex!important;flex-direction:column!important;width:100%!important;max-width:100%!important;
-    height:100%!important;min-height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-products-panel{
-    flex:0 0 auto!important;width:100%!important;max-width:100%!important;height: min(69%, 455px)!important;
-    min-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-toolbar{
-    display:grid!important;grid-template-columns:minmax(0,1fr) 56px minmax(0,1.35fr)!important;
-    grid-template-rows:38px 38px!important;gap:9px 7px!important;align-items:center!important;
-    width:100%!important;min-width:0!important;margin:0!important;
-  }
-  #view-kasir .kasir-search-wrap{
-    grid-column:1/-1!important;grid-row:1!important;width:100%!important;min-width:0!important;
-    height:38px!important;flex:none!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-shift-picker{grid-column:1!important;grid-row:2!important;width:100%!important;min-width:0!important;}
-  #view-kasir .kasir-shift-trigger{width:100%!important;min-width:0!important;height:38px!important;padding:0 8px!important;}
-  #view-kasir #kasir-refresh-btn{
-    grid-column:2!important;grid-row:2!important;width:56px!important;min-width:56px!important;max-width:56px!important;
-    height:38px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;
-    flex:none!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-barcode-wrap{
-    grid-column:3!important;grid-row:2!important;width:100%!important;min-width:0!important;height:38px!important;
-    padding:0 10px!important;flex:none!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-search-wrap input,#view-kasir .kasir-barcode-wrap input{min-width:0!important;font-size:12px!important;}
-  #view-kasir .kasir-product-grid{
-    flex:1 1 auto!important;height:auto!important;min-height:0!important;margin-top:12px!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:none!important;
-    grid-auto-rows:max-content!important;gap:9px!important;overflow-y:auto!important;overflow-x:hidden!important;
-  }
-  #view-kasir .kasir-product-card{padding:7px!important;border-radius:12px!important;}
-  #view-kasir .kasir-product-photo{height:82px!important;flex-basis:82px!important;border-radius:10px!important;}
-  #view-kasir .kasir-product-data{gap:4px!important;}
-  #view-kasir .kasir-product-data-box{padding:5px!important;}
-  #view-kasir .kasir-product-data-box small{font-size:8px!important;}
-  #view-kasir .kasir-product-data-box strong{font-size:11px!important;}
-  #view-kasir .kasir-cart-panel{flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;border-top:1px solid #e2e8f0!important;}
-  #view-kasir .kasir-cart-head{padding:8px 0 6px!important;flex:0 0 auto!important;}
-  #view-kasir .kasir-cart-meta{padding:6px 0!important;flex:0 0 auto!important;}
-  #view-kasir .kasir-cart-list{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;padding:4px 0!important;}
-  #view-kasir .kasir-cart-empty{min-height:45px!important;height:auto!important;padding:8px 0!important;}
-  #view-kasir .kasir-cart-empty i{display:none!important;}
-  #view-kasir .kasir-summary{flex:0 0 auto!important;padding:6px 0!important;}
-}
-</style>
 
 
-<style id="rekapinyu-mobile-remove-legacy-header">
-@media (max-width:767px){
-  #page-title-header,
-  #page-subtitle-header{
-    display:none!important;
-  }
-}
-</style>
+
+
+
+
 
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
@@ -2174,7 +1679,6 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <i class="fa-solid fa-wallet text-sm"></i>
 </div>
 <div>
-<h1 class="font-bold text-slate-800 text-sm md:hidden">REKAPIN</h1>
 <h2 class="text-base font-bold text-slate-800 hidden md:block" id="page-title-header">Form Input Keuangan Harian</h2>
 <p class="text-xs text-slate-400 hidden md:block" id="page-subtitle-header">Catat pendapatan, belanja, dan pengeluaran harian dengan cepat &amp; akurat.</p>
 </div>
@@ -2187,15 +1691,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <button class="md:hidden bg-rose-50 text-rose-600 p-2 rounded-lg text-xs" onclick="handleLogout()">
 <i class="fa-solid fa-right-from-bracket"></i>
 </button>
-<div class="hidden md:hidden relative" id="mobile-profile-menu-container">
-<button aria-label="Menu profil" class="mobile-profile-button" id="mobile-profile-button" onclick="toggleMobileProfileMenu(event)" type="button">
-<i class="fa-solid fa-user"></i>
-</button>
-<div class="mobile-profile-menu hidden" id="mobile-profile-menu">
-<button onclick="openProfileModal('ganti-nama');closeMobileProfileMenu()" type="button"><i class="fa-solid fa-user-pen"></i><span>Ganti Nama</span></button>
-<button onclick="handleLogout();closeMobileProfileMenu()" type="button"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
-</div>
-</div>
+
 </div>
 </header>
 <!-- Scrollable Main View Area -->
@@ -2550,63 +2046,7 @@ bind();
 </div>
 <div class="max-w-4xl mx-auto w-full my-auto">
 <!-- MOBILE ONLY: BERANDA -->
-<section class="hidden md:hidden space-y-4" id="mobile-home-view">
-  <div class="rku-mobile-brand-row">
-    <button type="button" class="rku-mobile-hamburger" aria-label="Menu" onclick="document.getElementById('mobile-home-view')?.scrollIntoView({behavior:'smooth',block:'start'})"><span></span><span></span><span></span></button>
-    <div class="rku-mobile-brand-word">REKAP<span>INYU</span></div>
-    <div class="rku-mobile-header-actions">
-      <button type="button" class="rku-mobile-notification" aria-label="Notifikasi" onclick="switchTab('activity')"><i class="fa-regular fa-bell"></i><span class="rku-mobile-notification-dot" aria-hidden="true"></span></button>
-      <button type="button" class="rku-mobile-profile" onclick="document.getElementById('mobile-profile-menu-container')?.classList.toggle('hidden')" aria-label="Profil"><i class="fa-solid fa-user"></i></button>
-    </div>
-  </div>
-  <section class="rku-mobile-promo-carousel" id="rku-mobile-promo-carousel" aria-label="Promosi Rekapinyu">
-    <div class="rku-mobile-promo-track">
-      <article class="rku-mobile-promo-slide rku-mobile-promo-slide-1" aria-label="Slide 1">
-        <div class="rku-mobile-promo-copy"><small>REKAPINYU</small><strong>Kelola Usaha Lebih Mudah</strong><span>Semua rekap harian dalam satu aplikasi.</span></div>
-        <div class="rku-mobile-promo-art"><i class="fa-solid fa-chart-line"></i></div>
-      </article>
-      <article class="rku-mobile-promo-slide rku-mobile-promo-slide-2" aria-label="Slide 2">
-        <div class="rku-mobile-promo-copy"><small>KASIR MODERN</small><strong>Transaksi Cepat & Praktis</strong><span>Kelola produk dan penjualan dengan mudah.</span></div>
-        <div class="rku-mobile-promo-art"><i class="fa-solid fa-cart-shopping"></i></div>
-      </article>
-      <article class="rku-mobile-promo-slide rku-mobile-promo-slide-3" aria-label="Slide 3">
-        <div class="rku-mobile-promo-copy"><small>LAPORAN USAHA</small><strong>Pantau Hasil Usaha</strong><span>Ringkasan dan laporan lebih teratur.</span></div>
-        <div class="rku-mobile-promo-art"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-      </article>
-    </div>
-    <div class="rku-mobile-promo-dots" aria-label="Pilih slide"><button type="button" aria-label="Slide 1"></button><button type="button" aria-label="Slide 2"></button><button type="button" class="active" aria-label="Slide 3"></button></div>
-  </section>
-  <div class="rku-mobile-search"><i class="fa-solid fa-magnifying-glass"></i><input id="rku-mobile-menu-search" type="search" placeholder="Cari menu..." autocomplete="off" oninput="(function(v){document.querySelectorAll('#mobile-home-view .rku-mobile-menu-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().includes(v.toLowerCase())?'':'none'})})(this.value)"></div>
-  <section class="rku-mobile-menu-section" aria-labelledby="rku-kasir-heading">
-    <h2 class="rku-mobile-section-heading" id="rku-kasir-heading">KASIR</h2>
-    <div class="rku-mobile-menu-grid" id="rku-mobile-kasir-grid">
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('kasir')"><i class="fa-solid fa-cart-shopping"></i><span>Kasir</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('produk-kasir')"><i class="fa-solid fa-box-open"></i><span>Produk Kasir</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('laporan-kasir')"><i class="fa-solid fa-chart-column"></i><span>Laporan Kasir</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('cek-paket')"><i class="fa-solid fa-gift"></i><span>Cek Paket</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('activity')"><i class="fa-solid fa-users"></i><span>Aktifitas</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('komunitas')"><i class="fa-solid fa-users"></i><span>Komunitas</span></button>
-    </div>
-  </section>
-  <section class="rku-mobile-menu-section" aria-labelledby="rku-management-heading">
-    <h2 class="rku-mobile-section-heading" id="rku-management-heading">MANAGEMENT</h2>
-    <div class="rku-mobile-menu-grid" id="rku-mobile-management-grid">
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('input')"><i class="fa-solid fa-file-pen"></i><span>Input Data</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('history')"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('report')"><i class="fa-solid fa-file-lines"></i><span>Laporan Bulanan</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('kasbon')"><i class="fa-solid fa-wallet"></i><span>Kasbon</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('pengeluaran')"><i class="fa-solid fa-receipt"></i><span>Pengeluaran</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('backup')"><i class="fa-solid fa-database"></i><span>Backup Data</span></button>
-    </div>
-  </section>
-  <section class="rku-mobile-menu-section" aria-labelledby="rku-settings-heading">
-    <h2 class="rku-mobile-section-heading" id="rku-settings-heading">SETING</h2>
-    <div class="rku-mobile-menu-grid" id="rku-mobile-settings-grid">
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i><span>Seting</span></button>
-      <button class="rku-mobile-menu-card" type="button" onclick="switchTab('cetak')"><i class="fa-solid fa-print"></i><span>Cetak</span></button>
-    </div>
-  </section>
-</section>
+
 <!-- VIEW 1: INPUT DATA -->
 <section class="space-y-6" id="view-input">
 <div class="flex justify-center items-center w-full">
@@ -7266,33 +6706,10 @@ function updateUserAvatarUI() {
         }
     </script>
 <!-- MOBILE ONLY: REPORT-ONLY BOTTOM DOCK -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 shadow-[0_-6px_20px_rgba(15,23,42,.08)] z-40" id="mobile-simplified-dock">
-<div class="max-w-md mx-auto grid grid-cols-4 px-2 py-2">
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-emerald-600 transition" id="nav-mobile-home" onclick="switchTab('home')" type="button"><i class="fa-solid fa-house-chimney text-lg mb-0.5"></i><span class="text-[10px] font-semibold">Beranda</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-report" onclick="switchTab('kasir')" type="button"><i class="fa-solid fa-cash-register text-lg mb-0.5"></i><span class="text-[10px] font-medium">Kasir</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-history" onclick="switchTab('input')" type="button"><i class="fa-solid fa-pen-to-square text-lg mb-0.5"></i><span class="text-[10px] font-medium">Input Data</span></button>
-<button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-activity" onclick="switchTab('kasbon')" type="button"><i class="fa-solid fa-hand-holding-dollar text-lg mb-0.5"></i><span class="text-[10px] font-medium">Kasbon</span></button>
-</div>
-</nav>
+
 
 <!-- MOBILE-ONLY OVERRIDE: original desktop UI is not changed -->
-<style id="mobile-remove-rekap-menus-single">
-@media (max-width:767px){
-  /* Input Data, Kasbon, dan Pengeluaran tidak tersedia di mobile.
-     Desktop/Tablet (>=768px) tetap menggunakan menu asli tanpa perubahan. */
-  #nav-input,
-  #nav-kasbon,
-  #nav-pengeluaran,
-  #nav-kasbon-wrapper,
-  #view-input,
-  #view-kasbon,
-  #view-pengeluaran,
-  #pengeluaran-sticky-container,
-  #kasbon-sticky-container{
-    display:none!important;
-  }
-}
-</style>
+
 <style>
     @media (max-width:767px){
       body{overflow:hidden} main{padding-bottom:92px!important}
@@ -7524,22 +6941,7 @@ function updateUserAvatarUI() {
     })();
     </script>
 <!-- HISTORY LAYOUT: posisi tepat di bawah header dengan jarak kecil -->
-<style id="mobile-view-guard-single">
-@media(max-width:767px){
-  /* Hanya mengatur tampilan mobile. #view-input tetap ada untuk desktop. */
-  html[data-mobile-view="home"] #view-input{display:none!important;}
-  html[data-mobile-view="home"] #mobile-home-view{display:block!important;}
-  /* FIX: jangan biarkan isi Beranda tetap tampil di belakang view dock lain. */
-  html[data-mobile-view]:not([data-mobile-view="home"]) #mobile-home-view{display:none!important;}
-  html[data-mobile-view="history"] #view-history,
-  html[data-mobile-view="report"] #view-report,
-  html[data-mobile-view="activity"] #activity-main-container,
-  html[data-mobile-view="komunitas"] #view-komunitas,
-  html[data-mobile-view="cek-paket"] #view-cek-paket{display:block!important;}
-  #rekapinyu-welcome-popup,
-  #rekapinyu-welcome-popup.is-open{display:none!important;}
-}
-</style>
+
 <style id="history-layout-single">
 #view-history{
   width:100%!important;
@@ -13007,37 +12409,7 @@ async function initKasirViews(){
 })();
 </script>
 
-<style id="mobile-dock-laporan-history-style">
-@media(max-width:767px){
-  #view-report #report-grid{display:none!important}
-  #view-laporan-kasir{padding:12px!important;background:#f1f4f8!important}
-  #mobile-laporan-kasir-firestore-grid{display:block!important;width:100%;max-width:1100px;margin:0 auto}
-  .mobile-laporan-kasir-day-card{background:#fff;border:1px solid #e5eaf0;border-radius:18px;padding:12px;box-shadow:0 8px 22px rgba(15,23,42,.055)}
-  .mobile-laporan-kasir-day-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
-  .mobile-laporan-kasir-day-title{display:flex;align-items:center;gap:7px;color:#172033;font-size:13px;font-weight:900}
-  .mobile-laporan-kasir-day-title i{color:#16a085}
-  .mobile-laporan-kasir-day-head small{display:block;margin-top:3px;color:#94a3b8;font-size:9px}
-  .mobile-laporan-kasir-day-icon{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#e9f8f4;color:#16a085;font-size:15px}
-  .mobile-laporan-kasir-day-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #edf0f3}
-  .mobile-laporan-kasir-stat{min-width:0;padding:9px;border:1px solid #e8edf2;border-radius:12px;background:#f7f9fb}
-  .mobile-laporan-kasir-stat>div{display:flex;align-items:center;gap:5px;color:#64748b;font-size:9px;font-weight:800}
-  .mobile-laporan-kasir-stat:first-child>div i{color:#16a085}
-  .mobile-laporan-kasir-stat:last-child>div i{color:#d97706}
-  .mobile-laporan-kasir-stat strong{display:block;margin-top:5px;font-size:11px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #mobile-laporan-bulanan-history-grid{display:flex;flex-direction:column;gap:10px;width:100%;max-width:1100px;margin:0 auto}
-  .mobile-laporan-bulanan-card{background:#fff;border:1px solid #e5eaf0;border-radius:16px;padding:12px;box-shadow:0 8px 22px rgba(15,23,42,.055)}
-  .mobile-laporan-bulanan-title{display:flex;align-items:center;gap:7px;color:#172033;font-size:13px;font-weight:900}
-  .mobile-laporan-bulanan-title i{color:#16a085}
-  .mobile-laporan-bulanan-head small{display:block;margin-top:3px;color:#94a3b8;font-size:9px}
-  .mobile-laporan-bulanan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #edf0f3}
-  .mobile-laporan-bulanan-grid>div{min-width:0;padding:9px;border:1px solid #e8edf2;border-radius:12px;background:#f7f9fb}
-  .mobile-laporan-bulanan-grid>div>div{display:flex;align-items:center;gap:5px;color:#64748b;font-size:9px;font-weight:800}
-  .mobile-laporan-bulanan-grid>div:nth-child(1)>div i{color:#16a085}.mobile-laporan-bulanan-grid>div:nth-child(2)>div i{color:#2563eb}.mobile-laporan-bulanan-grid>div:nth-child(3)>div i{color:#ef4444}.mobile-laporan-bulanan-grid>div:nth-child(4)>div i{color:#d97706}
-  .mobile-laporan-bulanan-grid strong{display:block;margin-top:5px;font-size:11px;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .mobile-laporan-bulanan-empty{padding:45px 16px;text-align:center;background:#fff;border:1px dashed #cbd5e1;border-radius:16px;color:#94a3b8;display:flex;flex-direction:column;align-items:center;gap:7px}
-  .mobile-laporan-bulanan-empty i{font-size:32px;color:#cbd5e1}.mobile-laporan-bulanan-empty strong{font-size:12px;color:#64748b}.mobile-laporan-bulanan-empty span{font-size:10px}
-}
-</style>
+
 
 <style id="laporan-kasir-baru-v16-css">
 #view-laporan-kasir{width:100%;min-height:100%;padding:18px 14px;box-sizing:border-box;overflow:auto;background:#f1f4f8}
@@ -13141,21 +12513,7 @@ async function initKasirViews(){
   btn.addEventListener('click',function(e){e.preventDefault();if(window.matchMedia&&window.matchMedia('(max-width:767px)').matches)return;popup.classList.add('is-open');popup.setAttribute('aria-hidden','false')});
 })();
 </script>
-<script id="mobile-kasir-scanner-menu-only">
-(function(){
-  'use strict';
-  window.openMobileKasirScanner=function(){
-    if(!window.matchMedia || !window.matchMedia('(max-width:767px)').matches)return;
-    try{
-      if(typeof window.switchTab==='function') window.switchTab('kasir');
-      window.setTimeout(function(){
-        var btn=document.getElementById('kasir-barcode-scan-btn');
-        if(btn) btn.click();
-      },250);
-    }catch(e){}
-  };
-})();
-</script>
+
 
 <style id="rekapinyu-folder-manager-patch">
 .rk-folder-manager{position:fixed;inset:0;z-index:100000;background:rgba(15,23,42,.48);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}.rk-folder-manager[hidden]{display:none!important}.rk-folder-dialog{width:min(900px,96vw);height:min(680px,92vh);background:#fff;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 25px 70px rgba(15,23,42,.25);display:flex;flex-direction:column;overflow:hidden}.rk-folder-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 18px;border-bottom:1px solid #e2e8f0}.rk-folder-head strong{display:block;font-size:15px;color:#0f172a}.rk-folder-head span{display:block;margin-top:3px;font-size:10px;color:#64748b}.rk-folder-head button{width:34px;height:34px;border:0;border-radius:9px;background:#f1f5f9;color:#475569;cursor:pointer}.rk-folder-toolbar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #e2e8f0;background:#f8fafc}.rk-folder-toolbar button{border:0;border-radius:9px;background:#059669;color:#fff;padding:9px 12px;font-size:11px;font-weight:800;cursor:pointer}.rk-folder-toolbar span{font-size:10px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rk-folder-tree{flex:1;min-height:0;overflow:auto;padding:14px}.rk-folder-node{margin:2px 0}.rk-folder-row{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:8px;color:#334155;font-size:11px}.rk-folder-row.folder{font-weight:800}.rk-folder-row.file{font-weight:500}.rk-folder-row:hover{background:#f1f5f9}.rk-folder-row i{width:18px;text-align:center;color:#059669}.rk-folder-children{margin-left:25px;border-left:1px solid #e2e8f0;padding-left:7px}.rk-folder-empty{height:100%;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#94a3b8;font-size:11px;gap:10px}.rk-folder-empty i{font-size:34px;color:#cbd5e1}.rk-folder-manager .rk-folder-file-meta{margin-left:auto;color:#94a3b8;font-size:9px}@media(max-width:600px){.rk-folder-manager{padding:8px}.rk-folder-dialog{width:100%;height:94vh;border-radius:14px}.rk-folder-toolbar{align-items:flex-start;flex-direction:column}.rk-folder-toolbar span{max-width:100%}}
@@ -14356,65 +13714,8 @@ async function initKasirViews(){
 </script>
 
 
-<style id="rekapinyu-mobile-community-single-implementation">
-/* Implementasi tunggal untuk rail dan kolom posting Komunitas di mobile. */
-@media (max-width:767px){
-  #view-komunitas .komunitas-feed-heading{display:none!important}
-  #view-komunitas{width:100%!important;min-height:0!important;overflow:visible!important}
-  #view-komunitas .komunitas-shell{display:block!important;width:100%!important;height:auto!important;min-height:0!important;overflow:visible!important}
-  #view-komunitas .komunitas-rail{
-    position:fixed!important;top:var(--rk-community-rail-top,134px)!important;left:0!important;right:0!important;
-    z-index:100!important;width:100%!important;height:60px!important;min-height:60px!important;
-    display:flex!important;flex-direction:row!important;align-items:stretch!important;justify-content:space-around!important;
-    gap:0!important;overflow-x:auto!important;overflow-y:hidden!important;margin:0!important;padding:0!important;
-    border:0!important;border-bottom:1px solid #e2e8f0!important;background:rgba(255,255,255,.99)!important;
-    box-shadow:0 4px 12px rgba(15,23,42,.05)!important;scrollbar-width:none!important;box-sizing:border-box!important;
-  }
-  #view-komunitas .komunitas-rail::-webkit-scrollbar{display:none!important}
-  #view-komunitas .komunitas-rail-item{
-    position:relative!important;flex:1 1 20%!important;min-width:0!important;width:20%!important;height:60px!important;min-height:60px!important;
-    margin:0!important;padding:5px 2px!important;border:0!important;border-bottom:2px solid transparent!important;
-    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
-    gap:3px!important;font-size:10px!important;line-height:1.1!important;white-space:nowrap!important;box-sizing:border-box!important;
-  }
-  #view-komunitas .komunitas-rail-item i{font-size:17px!important}
-  #view-komunitas #komunitas-rail-home{order:1!important}
-  #view-komunitas #komunitas-rail-profile{order:2!important}
-  #view-komunitas #komunitas-rail-bio{order:3!important}
-  #view-komunitas #komunitas-rail-friends{order:4!important}
-  #view-komunitas #komunitas-rail-notif{order:5!important}
-  #view-komunitas #komunitas-rail-group{display:none!important}
-  #view-komunitas .komunitas-notif-badge{top:2px!important;right:calc(50% - 22px)!important;min-width:16px!important;height:16px!important;font-size:8px!important}
-  #view-komunitas .komunitas-content{width:100%!important;height:auto!important;min-height:0!important;overflow:visible!important;padding-top:60px!important;padding-bottom:calc(var(--rk-community-composer-space,100px) + 12px)!important;box-sizing:border-box!important}
-  #view-komunitas .komunitas-post-box{
-    position:fixed!important;left:0!important;right:0!important;bottom:var(--rk-community-dock-height,76px)!important;z-index:95!important;
-    width:100%!important;max-width:none!important;margin:0!important;padding:10px 12px!important;box-sizing:border-box!important;
-    background:rgba(255,255,255,.99)!important;border-top:1px solid #e2e8f0!important;box-shadow:0 -5px 16px rgba(15,23,42,.07)!important;
-  }
-  #view-komunitas .komunitas-post-controls{width:100%!important;max-width:none!important}
-}
-</style>
-<script id="rekapinyu-mobile-community-sticky-measure">
-(()=>{
-  const updateCommunityStickyOffsets=()=>{
-    if(!window.matchMedia('(max-width:767px)').matches)return;
-    const header=document.querySelector('header');
-    const dock=document.getElementById('mobile-simplified-dock');
-    const headerBottom=header?Math.max(0,Math.round(header.getBoundingClientRect().bottom)):134;
-    const dockHeight=dock?Math.max(0,Math.round(window.innerHeight-dock.getBoundingClientRect().top)):76;
-    document.documentElement.style.setProperty('--rk-community-rail-top',headerBottom+'px');
-    document.documentElement.style.setProperty('--rk-community-dock-height',dockHeight+'px');
-    const composer=document.querySelector('#view-komunitas .komunitas-post-box');
-    const composerHeight=composer?Math.ceil(composer.getBoundingClientRect().height):70;
-    document.documentElement.style.setProperty('--rk-community-composer-space',(dockHeight+composerHeight)+'px');
-  };
-  window.addEventListener('resize',updateCommunityStickyOffsets,{passive:true});
-  window.addEventListener('orientationchange',updateCommunityStickyOffsets,{passive:true});
-  document.addEventListener('DOMContentLoaded',updateCommunityStickyOffsets,{once:true});
-  updateCommunityStickyOffsets();
-  let tries=0;const retry=setInterval(()=>{updateCommunityStickyOffsets();if(++tries>=8)clearInterval(retry)},300);
-})();
-</script>
+
+
 
 
 <style id="rekapinyu-kasir-shift-menu-patch">
@@ -14597,97 +13898,7 @@ async function initKasirViews(){
 <!-- Removed duplicate mobile override: rekapinyu-mobile-promotional-ui-refresh -->
 
 <!-- MOBILE UI REBUILD: satu implementasi mobile baru; desktop tidak disentuh -->
-<style id="rekapinyu-mobile-ui-single-canonical">
-@media (max-width:767px){
-  :root{--rku-blue:#087cf5;--rku-navy:#082f68;--rku-pale:#eef7ff;--rku-line:#dcecff}
-  html,body{width:100%;max-width:100%;overflow-x:hidden!important;background:#eaf4ff!important;color:var(--rku-navy)!important}
-  body{overflow-y:auto!important;padding-bottom:78px!important;background:linear-gradient(180deg,#d8ecff 0,#f4f9ff 260px,#f7fbff 100%)!important}
-  header{position:sticky!important;top:0!important;z-index:90!important;min-height:58px!important;padding:8px 12px!important;background:rgba(255,255,255,.97)!important;border-bottom:1px solid #d7e8fb!important;box-shadow:0 3px 13px rgba(10,64,132,.08)!important;backdrop-filter:blur(14px)!important}
-  header h1,header h2,#page-title-header{font-size:15px!important;font-weight:900!important;color:#082f68!important;letter-spacing:-.25px!important}
-  header p,header small,#page-subtitle-header{font-size:10px!important;color:#7188a8!important}
-  #sidebar{display:none!important}
-  main{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0 0 86px!important;background:transparent!important;overflow-x:hidden!important}
-  main>.max-w-4xl,main>.max-w-7xl,main>.container{width:100%!important;max-width:none!important;margin:0!important;padding-left:12px!important;padding-right:12px!important;box-sizing:border-box!important}
-  #mobile-home-view{display:flex!important;flex-direction:column!important;gap:12px!important;width:100%!important;max-width:100%!important;margin:0!important;padding:12px 12px 100px!important;box-sizing:border-box!important;background:transparent!important}
-  #mobile-home-view.hidden{display:none!important}
-  body > .flex-1.flex.flex-col.h-screen.overflow-hidden > header,body > #app > .flex-1.flex.flex-col.h-screen.overflow-hidden > header{display:none!important}
-  header button[onclick*="handleLogout"]{display:none!important}
-  #mobile-home-view{padding-top:68px!important}
-  .rku-mobile-brand-row{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:2147483000!important;display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;width:100%!important;max-width:100%!important;height:56px!important;min-height:56px!important;flex:0 0 56px!important;margin:0!important;padding:5px 48px 7px!important;box-sizing:border-box!important;background:rgba(220,239,255,.97)!important;border-bottom:1px solid rgba(255,255,255,.98)!important;box-shadow:none!important;backdrop-filter:blur(12px)!important}
-  .rku-mobile-hamburger{position:absolute!important;left:12px!important;top:50%!important;transform:translateY(-50%)!important;z-index:5!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:4px!important;width:28px!important;height:32px!important;min-width:28px!important;min-height:32px!important;padding:4px!important;margin:0!important;border:0!important;border-radius:7px!important;background:transparent!important;box-shadow:none!important;opacity:1!important;visibility:visible!important;cursor:pointer!important}
-  .rku-mobile-hamburger span{display:block!important;height:3px!important;border-radius:3px!important;background:#102b45!important;opacity:1!important;visibility:visible!important;flex:none!important}
-  .rku-mobile-hamburger span:nth-child(1){width:19px!important}
-  .rku-mobile-hamburger span:nth-child(2){width:13px!important}
-  .rku-mobile-hamburger span:nth-child(3){width:18px!important}
-  .rku-mobile-notification{display:flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important;flex:0 0 32px!important;width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important;padding:0!important;border:1px solid #d9e9fb!important;border-radius:50%!important;background:#fff!important;color:#087cf5!important;box-shadow:0 3px 9px #164c8a12!important;box-sizing:border-box!important;position:relative!important}
-  .rku-mobile-header-actions{position:absolute!important;right:12px!important;top:50%!important;transform:translateY(-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;height:32px!important}
-  .rku-mobile-header-actions .rku-mobile-notification,.rku-mobile-header-actions .rku-mobile-profile{position:relative!important;inset:auto!important;top:auto!important;right:auto!important;transform:none!important;flex:0 0 32px!important;width:32px!important;height:32px!important;margin:0!important}
-  .rku-mobile-brand-word{font-size:22px;line-height:1;font-weight:1000;letter-spacing:-.7px;color:#082f68;text-align:center}
-  .rku-mobile-brand-word>span{color:#08a9e8}
-  .rku-mobile-profile{position:relative;width:32px;height:32px;border:1px solid #d9e9fb;border-radius:50%;background:#fff;color:#087cf5;box-shadow:0 3px 9px #164c8a12}
-  .rku-mobile-search{height:42px;display:flex;align-items:center;gap:9px;padding:0 13px;border:1px solid #e0edfb;border-radius:15px;background:#fff;box-shadow:0 4px 12px #1b5da30b;color:#8198b6}
-  .rku-mobile-search input{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;font-size:12px!important;color:#163e73!important;padding:0!important}
-  .rku-mobile-hero-card{position:relative;display:flex;align-items:center;justify-content:space-between;min-height:104px;width:100%;padding:16px 18px;border:0;border-radius:20px;text-align:left;color:#fff;background:linear-gradient(115deg,#0789ff 0%,#0756d8 65%,#0643b4 100%);box-shadow:0 9px 20px #0766d633;overflow:hidden}
-  .rku-mobile-hero-card:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:18px;top:-28px;background:#ffffff12}
-  .rku-mobile-hero-copy,.rku-mobile-hero-icon{position:relative;z-index:1}
-  .rku-mobile-hero-copy{display:flex;flex-direction:column;gap:7px}
-  .rku-mobile-hero-copy strong{font-size:21px;font-weight:950;line-height:1.1}
-  .rku-mobile-hero-copy>span{font-size:12px;line-height:1.35;font-weight:600;opacity:.96}
-  .rku-mobile-hero-icon{width:62px;height:62px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#ffffff22;color:#fff;font-size:31px}
-  .rku-mobile-menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;width:100%;min-width:0}
-  .rku-mobile-menu-section{display:flex;flex-direction:column;gap:10px;width:100%;min-width:0}
-  .rku-mobile-section-heading{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;margin:0;padding:10px 14px;box-sizing:border-box;border:1px solid #dbeafe;border-radius:14px;background:linear-gradient(145deg,#fff,#f5f9ff);box-shadow:0 5px 14px #1c559312;color:#0b3268;font-size:13px;font-weight:900;letter-spacing:.12em;text-align:center;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
-  .rku-mobile-section-heading:hover{transform:translateY(-1px);border-color:#93c5fd;box-shadow:0 8px 18px #1c55931c}
 
-  .rku-mobile-menu-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:98px;padding:10px 4px;border:1px solid #e4eefb;border-radius:17px;background:linear-gradient(150deg,#fff,#fafdff);box-shadow:0 5px 13px #1c55930e;color:#0b3268;text-align:center;transition:transform .15s ease,box-shadow .15s ease}
-  .rku-mobile-menu-card:active{transform:scale(.97);box-shadow:0 2px 6px #1c55931a}
-  .rku-mobile-menu-card>i{width:43px;height:43px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#e4f1ff;color:#1684ff;font-size:20px;box-shadow:0 4px 9px #176ac714}
-  .rku-mobile-menu-card:nth-child(6n+1)>i{background:#e4f1ff;color:#1684ff}
-  .rku-mobile-menu-card:nth-child(6n+2)>i{background:#ffe9e8;color:#f04444}
-  .rku-mobile-menu-card:nth-child(6n+3)>i{background:#e0faeb;color:#12b76a}
-  .rku-mobile-menu-card:nth-child(6n+4)>i{background:#fff0d9;color:#ee9b09}
-  .rku-mobile-menu-card:nth-child(6n+5)>i{background:#f0e8ff;color:#8b5cf6}
-  .rku-mobile-menu-card:nth-child(6n)>i{background:#dff9fb;color:#06a9c7}
-  .rku-mobile-menu-card>span{display:block;max-width:100%;font-size:10px;line-height:1.2;font-weight:850;overflow-wrap:anywhere}
-  #mobile-simplified-dock{position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:999!important;height:72px!important;padding:0 6px env(safe-area-inset-bottom,0px)!important;background:#fffffff5!important;border-top:1px solid #d9e8fa!important;box-shadow:0 -6px 22px #0c3b821f!important;backdrop-filter:blur(16px)!important;overflow:visible!important}
-  #mobile-simplified-dock>div{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;align-items:center!important;height:100%!important;max-width:520px!important;margin:0 auto!important;padding:0!important}
-  #mobile-simplified-dock .mobile-dock-item{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;min-width:0!important;height:61px!important;padding:4px 1px!important;border-radius:13px!important;color:#8196b3!important;background:transparent!important}
-  #mobile-simplified-dock .mobile-dock-item i{display:flex!important;align-items:center!important;justify-content:center!important;width:30px!important;height:30px!important;margin:0!important;border-radius:10px!important;background:#eff5fc!important;color:#8197b5!important;font-size:15px!important;line-height:1!important}
-  #mobile-simplified-dock .mobile-dock-item span{font-size:9px!important;line-height:1.05!important;font-weight:800!important;white-space:nowrap!important}
-  #mobile-simplified-dock #nav-mobile-home i{background:#e4f1ff!important;color:#087cf5!important}
-  #mobile-simplified-dock #nav-mobile-history i{background:#edf0ff!important;color:#6379e8!important}
-  #mobile-simplified-dock #nav-mobile-report i{width:43px!important;height:43px!important;margin-top:-18px!important;border:4px solid #fff!important;border-radius:50%!important;background:linear-gradient(145deg,#1498ff,#0757dc)!important;color:#fff!important;box-shadow:0 5px 14px #005bdc4d!important;font-size:17px!important}
-  #mobile-simplified-dock #nav-mobile-komunitas i{background:#f2eaff!important;color:#8b5cf6!important}
-  #view-kasir,#view-produk-kasir,#view-laporan-kasir,#view-history,#view-report,#view-input,#view-settings,#view-cetak,#view-pengeluaran,#view-kasbon,#view-activity,#view-komunitas,#view-backup,#view-cek-paket{box-sizing:border-box!important;max-width:100vw!important;overflow-x:hidden!important;padding-left:10px!important;padding-right:10px!important}
-  #view-kasir input,#view-kasir select,#view-kasir textarea,#view-produk-kasir input,#view-produk-kasir select,#view-produk-kasir textarea,#view-input input,#view-input select,#view-input textarea{max-width:100%!important}
-  [role=dialog],.modal-content,.modal-card{max-width:calc(100vw - 16px)!important}
-  #history-io-floating{display:none!important}
-  /* Carousel dipisahkan ke lapisan body mandiri agar tidak terpotong padding/overflow kontainer Beranda. */
-  #rku-mobile-promo-body{display:none;position:fixed!important;top:56px!important;left:0!important;right:0!important;width:100vw!important;max-width:100vw!important;margin:0!important;padding:0!important;box-sizing:border-box!important;overflow:visible!important;background:#eaf4ff!important;z-index:85!important}
-  html[data-mobile-view="home"] #rku-mobile-promo-body{display:block!important}
-  #mobile-home-view{padding-top:198px!important}
-  @supports(width:100dvw){#rku-mobile-promo-body{width:100dvw!important;max-width:100dvw!important}}
-    /* Promo carousel mobile: full bleed dalam body mandiri, 3 slides, responsive dan touch-scrollable. */
-  #rku-mobile-promo-body .rku-mobile-promo-carousel{position:relative!important;display:block!important;left:auto!important;right:auto!important;transform:none!important;width:100%!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;box-sizing:border-box!important;align-self:stretch!important;background:transparent!important}
-  #rku-mobile-promo-body .rku-mobile-promo-track{display:flex!important;width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;scroll-behavior:smooth!important;overscroll-behavior-x:contain!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch!important}
-  #rku-mobile-promo-body .rku-mobile-promo-track::-webkit-scrollbar{display:none!important}
-  #rku-mobile-promo-body .rku-mobile-promo-slide{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex:0 0 100%!important;width:100%!important;min-width:100%!important;height:142px!important;min-height:142px!important;padding:18px 22px!important;box-sizing:border-box!important;overflow:hidden!important;color:#fff!important;scroll-snap-align:start!important}
-  #rku-mobile-promo-body .rku-mobile-promo-slide-1{background:linear-gradient(112deg,#087cf5 0%,#0756d8 65%,#063da9 100%)!important}
-  #rku-mobile-promo-body .rku-mobile-promo-slide-2{background:linear-gradient(112deg,#07a985 0%,#078fbb 55%,#0755c7 100%)!important}
-  #rku-mobile-promo-body .rku-mobile-promo-slide-3{background:linear-gradient(112deg,#7148ed 0%,#4b45d5 55%,#153da8 100%)!important}
-  #rku-mobile-promo-body .rku-mobile-promo-slide:after{content:""!important;position:absolute!important;right:-32px!important;top:-58px!important;width:210px!important;height:210px!important;border-radius:50%!important;background:#ffffff12!important}
-  #rku-mobile-promo-body .rku-mobile-promo-copy{position:relative!important;z-index:1!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:5px!important;max-width:74%!important}
-  #rku-mobile-promo-body .rku-mobile-promo-copy small{font-size:9px!important;letter-spacing:1.2px!important;font-weight:900!important;color:#dbeafe!important}
-  #rku-mobile-promo-body .rku-mobile-promo-copy strong{font-size:19px!important;line-height:1.13!important;font-weight:950!important;color:#fff!important}
-  #rku-mobile-promo-body .rku-mobile-promo-copy span{font-size:10px!important;line-height:1.35!important;font-weight:600!important;color:#f1f7ff!important}
-  #rku-mobile-promo-body .rku-mobile-promo-art{position:relative!important;z-index:1!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 66px!important;width:66px!important;height:66px!important;border:1px solid #ffffff30!important;border-radius:22px!important;background:#ffffff20!important;color:#fff!important;font-size:34px!important;transform:rotate(5deg)!important}
-  #rku-mobile-promo-body .rku-mobile-promo-dots{position:absolute!important;left:auto!important;right:12px!important;bottom:10px!important;z-index:3!important;display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:6px!important;padding:5px 7px!important;border-radius:99px!important;background:#ffffffd9!important;box-shadow:0 2px 8px #12345a22!important}
-  #rku-mobile-promo-body .rku-mobile-promo-dots button{width:6px!important;height:6px!important;min-width:6px!important;padding:0!important;border:0!important;border-radius:99px!important;background:#9abce5!important;box-shadow:none!important}
-  #rku-mobile-promo-body .rku-mobile-promo-dots button.active{width:19px!important;background:#087cf5!important}
-  #mobile-home-view .rku-mobile-hero-card{display:none!important}
-}
-@media(max-width:390px){#mobile-home-view{padding-top:188px!important;padding-left:9px!important;padding-right:9px!important}.rku-mobile-menu-grid{gap:7px!important}.rku-mobile-menu-card{min-height:92px!important;border-radius:15px!important}.rku-mobile-menu-card>i{width:38px!important;height:38px!important;font-size:18px!important}.rku-mobile-menu-card>span{font-size:9.5px!important}#mobile-simplified-dock .mobile-dock-item span{font-size:8px!important}#rku-mobile-promo-body .rku-mobile-promo-slide{height:132px!important;min-height:132px!important;padding-left:18px!important;padding-right:18px!important}#rku-mobile-promo-body .rku-mobile-promo-copy strong{font-size:17px!important}}
-</style>
 
 <!-- Header mobile ditangani oleh implementasi CSS mobile tunggal. -->
 
@@ -14696,606 +13907,50 @@ async function initKasirViews(){
 <!-- PATCH TERARAH: kunci header Beranda mobile ke viewport agar tetap terlihat saat konten digulir. -->
 <!-- Removed duplicate mobile override: rekapinyu-mobile-header-fixed-final -->
 
-<script id="rekapinyu-mobile-promo-body-isolation">
-(function(){
-  function isolatePromoCarousel(){
-    var carousel=document.getElementById('rku-mobile-promo-carousel');
-    if(!carousel)return;
-    var shell=document.getElementById('rku-mobile-promo-body');
-    if(!shell){shell=document.createElement('div');shell.id='rku-mobile-promo-body';shell.setAttribute('aria-label','Area carousel promosi mobile');document.body.appendChild(shell);}
-    if(carousel.parentElement!==shell)shell.appendChild(carousel);
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',isolatePromoCarousel,{once:true});else isolatePromoCarousel();
-  window.addEventListener('pageshow',isolatePromoCarousel);
-})();
-</script>
 
-<script id="rekapinyu-mobile-promo-carousel-controller">
-(function(){
-  function initRekapinyuMobilePromoCarousel(){
-    var root=document.getElementById('rku-mobile-promo-carousel');
-    if(!root||root.dataset.carouselReady==='1')return;
-    var track=root.querySelector('.rku-mobile-promo-track');
-    var slides=Array.from(root.querySelectorAll('.rku-mobile-promo-slide'));
-    var dots=Array.from(root.querySelectorAll('.rku-mobile-promo-dots button'));
-    if(!track||slides.length!==3)return;
-    root.dataset.carouselReady='1';
-    var current=2, timer=null, touching=false;
-    function go(index){current=(index+slides.length)%slides.length;track.scrollTo({left:slides[current].offsetLeft,behavior:'smooth'});dots.forEach(function(dot,i){dot.classList.toggle('active',i===current);});}
-    dots.forEach(function(dot,i){dot.addEventListener('click',function(){go(i);restart();});});
-    track.addEventListener('scroll',function(){var width=track.clientWidth;if(width){current=Math.max(0,Math.min(2,Math.round(track.scrollLeft/width)));dots.forEach(function(dot,i){dot.classList.toggle('active',i===current);});}},{passive:true});
-    root.addEventListener('touchstart',function(){touching=true;},{passive:true});
-    root.addEventListener('touchend',function(){touching=false;restart();},{passive:true});
-    function restart(){if(timer)clearInterval(timer);timer=setInterval(function(){if(!touching&&window.matchMedia('(max-width: 767px)').matches)go(current+1);},4200);}
-    go(current);
-    restart();
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initRekapinyuMobilePromoCarousel,{once:true});else initRekapinyuMobilePromoCarousel();
-  window.addEventListener('pageshow',initRekapinyuMobilePromoCarousel);
-})();
-</script>
+
+
 
 <!-- PATCH KHUSUS MOBILE: tombol aksi transaksi selalu terlihat tepat di atas dock. -->
-<style id="kasir-mobile-sticky-transaction-actions">
-@media (max-width:767px){
-  #view-kasir .kasir-summary{
-    padding-bottom:calc(66px + env(safe-area-inset-bottom, 0px))!important;
-  }
-  #view-kasir .kasir-summary .kasir-action-row{
-    position:fixed!important;
-    left:0!important;
-    right:0!important;
-    bottom:calc(72px + env(safe-area-inset-bottom, 0px))!important;
-    z-index:998!important;
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-    gap:8px!important;
-    width:100%!important;
-    margin:0!important;
-    padding:8px 12px!important;
-    box-sizing:border-box!important;
-    background:rgba(255,255,255,.98)!important;
-    border-top:1px solid #e2e8f0!important;
-    box-shadow:0 -5px 14px rgba(15,23,42,.05)!important;
-  }
-  #view-kasir .kasir-summary .kasir-action-row button{
-    width:100%!important;
-    min-width:0!important;
-    height:44px!important;
-    min-height:44px!important;
-    margin:0!important;
-    box-sizing:border-box!important;
-    white-space:nowrap!important;
-  }
-}
-</style>
+
 
 <!-- PATCH TERARAH: tata letak menu Kasir mobile mengikuti foto referensi. Desktop tidak disentuh. -->
-<style id="kasir-mobile-reference-photo-layout">
-@media(max-width:767px){
-  main:has(#view-kasir:not(.hidden)){
-    height:calc(100dvh - 60px)!important;
-    min-height:0!important;
-    padding:0 0 calc(72px + env(safe-area-inset-bottom,0px))!important;
-    overflow:hidden!important;
-    background:#fff!important;
-  }
-  main:has(#view-kasir:not(.hidden)) #view-kasir{
-    height:100%!important;min-height:0!important;overflow:hidden!important;
-  }
-  #view-kasir .kasir-shell{
-    display:flex!important;flex-direction:column!important;
-    width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important;
-  }
-  #view-kasir .kasir-products-panel{
-    flex:1 1 auto!important;height:auto!important;min-height:0!important;
-    padding:6px 8px 0!important;border:0!important;overflow:hidden!important;
-  }
-  /* Pulihkan bar tab transaksi di bagian paling atas panel Kasir mobile. */
-  #view-kasir .kasir-products-panel > #kasir-transaction-tabs,
-  #view-kasir #kasir-transaction-tabs.kasir-transaction-tabs{
-    display:flex!important;visibility:visible!important;opacity:1!important;
-    position:relative!important;inset:auto!important;order:0!important;
-    flex:0 0 40px!important;height:40px!important;min-height:40px!important;max-height:40px!important;
-    width:100%!important;max-width:100%!important;min-width:0!important;
-    margin:0 0 7px!important;padding:0 0 2px!important;
-    align-items:flex-end!important;gap:6px!important;
-    overflow-x:auto!important;overflow-y:hidden!important;
-    background:#fff!important;border-bottom:1px solid #e2e8f0!important;
-    box-sizing:border-box!important;z-index:40!important;
-  }
-  #view-kasir #kasir-transaction-tabs > .kasir-transaction-tab{
-    display:flex!important;visibility:visible!important;opacity:1!important;
-    position:relative!important;flex:0 0 auto!important;
-    height:32px!important;min-height:32px!important;min-width:100px!important;max-width:160px!important;
-    align-items:center!important;justify-content:space-between!important;
-  }
-  #view-kasir .kasir-toolbar{
-    flex:0 0 auto!important;display:grid!important;
-    grid-template-columns:minmax(0,1fr) 56px minmax(0,1.35fr)!important;
-    grid-template-rows:38px 38px!important;gap:9px 7px!important;
-    align-items:center!important;width:100%!important;margin:0!important;
-  }
-  #view-kasir .kasir-search-wrap{
-    grid-column:1/-1!important;grid-row:1!important;width:100%!important;
-    min-width:0!important;height:38px!important;flex:none!important;
-  }
-  #view-kasir .kasir-shift-picker{grid-column:1!important;grid-row:2!important;width:100%!important;min-width:0!important}
-  #view-kasir .kasir-shift-trigger{width:100%!important;height:38px!important;min-width:0!important;padding:0 8px!important}
-  #view-kasir #kasir-refresh-btn{
-    grid-column:2!important;grid-row:2!important;width:56px!important;min-width:56px!important;
-    max-width:56px!important;height:38px!important;padding:0!important;display:flex!important;
-    align-items:center!important;justify-content:center!important;flex:none!important;
-  }
-  #view-kasir .kasir-barcode-wrap{
-    grid-column:3!important;grid-row:2!important;width:100%!important;min-width:0!important;
-    height:38px!important;padding:0 10px!important;flex:none!important;
-  }
-  #view-kasir .kasir-product-grid{
-    flex:1 1 auto!important;height:auto!important;min-height:0!important;
-    margin-top:10px!important;padding:3px 2px 90px!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    grid-template-rows:none!important;grid-auto-rows:max-content!important;
-    gap:9px!important;overflow-y:auto!important;overflow-x:hidden!important;
-  }
-  #view-kasir .kasir-product-card{padding:6px!important;border-radius:12px!important}
-  #view-kasir .kasir-product-photo{height:80px!important;flex-basis:80px!important;border-radius:9px!important}
-  #view-kasir .kasir-product-data{gap:4px!important}
-  #view-kasir .kasir-product-data-box{padding:5px!important;border-radius:9px!important}
-  #view-kasir .kasir-product-data-box small{font-size:8px!important}
-  #view-kasir .kasir-product-data-box strong{font-size:10px!important}
-  #view-kasir .kasir-cart-panel{
-    flex:0 0 auto!important;min-height:0!important;height:auto!important;overflow:visible!important;
-    border-top:1px solid #dbe3eb!important;background:#fff!important;
-  }
-  #view-kasir .kasir-cart-head,
-  #view-kasir .kasir-cart-meta,
-  #view-kasir .kasir-cart-list{display:none!important}
-  #view-kasir .kasir-summary{
-    display:block!important;flex:0 0 auto!important;padding:8px 9px 60px!important;
-    border-top:0!important;background:#fff!important;
-  }
-  #view-kasir .kasir-summary>div:first-child{
-    min-height:28px!important;padding:0 8px 7px!important;
-    border-bottom:1px solid #dbe3eb!important;
-  }
-  #view-kasir .kasir-summary>div:first-child span{font-size:11px!important;color:#111827!important}
-  #view-kasir .kasir-summary>div:first-child strong{font-size:12px!important;color:#111827!important}
-  #view-kasir .kasir-summary .kasir-action-row{
-    position:fixed!important;left:0!important;right:0!important;
-    bottom:calc(72px + env(safe-area-inset-bottom,0px))!important;z-index:998!important;
-    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-    gap:8px!important;width:100%!important;margin:0!important;padding:7px 9px!important;
-    box-sizing:border-box!important;background:#fff!important;border-top:1px solid #dbe3eb!important;
-    box-shadow:0 -4px 12px rgba(15,23,42,.05)!important;
-  }
-  #view-kasir .kasir-summary .kasir-action-row button{
-    width:100%!important;min-width:0!important;height:44px!important;min-height:44px!important;
-    margin:0!important;box-sizing:border-box!important;white-space:nowrap!important;
-  }
-}
-</style>
+
 
 
 <!-- PATCH MINIMAL: baris TOTAL PRODUK tetap terlihat di atas tombol transaksi pada mobile. -->
-<style id="kasir-mobile-total-products-sticky">
-@media (max-width:767px){
-  #view-kasir .kasir-summary>div:first-child{
-    position:fixed!important;
-    left:0!important;right:0!important;
-    bottom:calc(130px + env(safe-area-inset-bottom,0px))!important;
-    z-index:997!important;
-    min-height:36px!important;
-    padding:8px 18px!important;
-    box-sizing:border-box!important;
-    background:#fff!important;
-    border-top:1px solid #dbe3eb!important;
-    border-bottom:1px solid #dbe3eb!important;
-  }
-}
-</style>
+
 
 
 
 <!-- IMPLEMENTASI TUNGGAL: reload mobile + posisi atas menu Kasir. Tidak mengubah desktop atau logika menu lain. -->
-<style id="rekapinyu-mobile-reload-kasir-single">
-@media (max-width:767px){
-  html.rku-mobile-initializing #mobile-home-view,
-  html.rku-mobile-initializing #rku-mobile-promo-body{
-    visibility:hidden!important;
-  }
-  main:has(#view-kasir:not(.hidden)){
-    padding-top:0!important;
-  }
-  main:has(#view-kasir:not(.hidden)) #view-kasir:not(.hidden){
-    padding-top:8px!important;
-    scroll-margin-top:64px!important;
-  }
-}
-</style>
-<script id="rekapinyu-mobile-reload-kasir-single-script">
-(function(){
-  var root=document.documentElement;
-  var mobile=!!(window.matchMedia&&window.matchMedia("(max-width:767px)").matches);
-  if(!mobile)return;
 
-  root.classList.add("rku-mobile-initializing");
 
-  // Hanya tetapkan Beranda bila belum ada pilihan tampilan mobile.
-  // Jangan menimpa menu mobile yang sudah dipilih oleh aplikasi.
-  if(!root.hasAttribute("data-mobile-view")){
-    root.setAttribute("data-mobile-view","home");
-  }
-
-  function finish(){
-    root.classList.remove("rku-mobile-initializing");
-  }
-
-  if(document.readyState==="complete"){
-    requestAnimationFrame(function(){requestAnimationFrame(finish);});
-  }else{
-    window.addEventListener("load",function(){
-      requestAnimationFrame(function(){requestAnimationFrame(finish);});
-    },{once:true});
-  }
-})();
-</script>
 
 
 
 
 
 <!-- IMPLEMENTASI TUNGGAL SCROLL BERANDA MOBILE: scroll penuh dengan jarak akhir proporsional. -->
-<style id="rku-mobile-beranda-scroll-single">
-@media (max-width:767px){
-  html[data-mobile-view="home"]{
-    height:auto!important;min-height:100%!important;max-height:none!important;
-    overflow-x:hidden!important;overflow-y:auto!important;
-  }
-  html[data-mobile-view="home"] body{
-    display:block!important;width:100%!important;height:auto!important;min-height:100vh!important;max-height:none!important;
-    margin:0!important;padding:0 0 calc(76px + env(safe-area-inset-bottom,0px))!important;
-    overflow-x:hidden!important;overflow-y:visible!important;
-    box-sizing:border-box!important;-webkit-overflow-scrolling:touch!important;
-  }
-  html[data-mobile-view="home"] body > .flex-1.flex.flex-col.h-screen.overflow-hidden:has(#mobile-home-view){
-    display:block!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
-    margin:0!important;padding:0!important;overflow:visible!important;flex:none!important;
-  }
-  html[data-mobile-view="home"] main:has(#mobile-home-view){
-    display:block!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
-    margin:0!important;padding:0!important;
-    overflow:visible!important;position:static!important;flex:none!important;box-sizing:border-box!important;
-  }
-  html[data-mobile-view="home"] main:has(#mobile-home-view) > .max-w-4xl:has(#mobile-home-view){
-    display:block!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
-    margin:0!important;padding:0!important;overflow:visible!important;box-sizing:border-box!important;
-  }
-  html[data-mobile-view="home"] #mobile-home-view{
-    display:flex!important;flex-direction:column!important;gap:12px!important;
-    width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
-    margin:0!important;padding:198px 12px 10px!important;
-    overflow:visible!important;flex:none!important;box-sizing:border-box!important;
-  }
-  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-section,
-  html[data-mobile-view="home"] #mobile-home-view .rku-mobile-menu-grid{
-    height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;flex:none!important;
-  }
-  html[data-mobile-view="home"] #mobile-simplified-dock{
-    position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:2147482000!important;
-  }
-}
-@media (max-width:390px){
-  html[data-mobile-view="home"] #mobile-home-view{padding-top:188px!important;padding-left:9px!important;padding-right:9px!important}
-}
-</style>
+
 </body>
 </html>
 
 <!-- PATCH MINIMAL: ikon keranjang bulat di atas baris TOTAL PRODUK, khusus Kasir mobile. -->
-<style id="kasir-mobile-floating-cart-icon-only">
-@media(max-width:767px){
-  #kasir-mobile-cart-fab{display:none;position:fixed;right:12px;bottom:calc(174px + env(safe-area-inset-bottom,0px));z-index:1001;width:48px;height:48px;border:0;border-radius:50%;background:#16a34a;color:#fff;box-shadow:0 5px 16px rgba(22,163,74,.3);align-items:center;justify-content:center;font-size:19px}
-  #view-kasir:not(.hidden) #kasir-mobile-cart-fab{display:flex}
-  #kasir-mobile-cart-fab span{position:absolute;right:-3px;top:-4px;min-width:19px;height:19px;padding:0 4px;border-radius:99px;background:#ef4444;color:#fff;border:2px solid #fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
-  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-panel{position:fixed!important;left:12px!important;right:12px!important;top:12%!important;bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;z-index:10000!important;display:flex!important;min-height:0!important;height:auto!important;overflow:hidden!important;border:1px solid #dbe3eb!important;border-radius:16px!important;box-shadow:0 20px 60px rgba(15,23,42,.28)!important}
-  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-head{display:flex!important;flex:0 0 auto!important;padding:14px!important}
-  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-meta{display:flex!important;flex:0 0 auto!important;padding:10px 14px!important}
-  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-list{display:block!important;flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;padding:10px 14px!important}
-  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-item{display:grid!important;grid-template-columns:42px minmax(0,1fr) auto!important;align-items:center!important;gap:8px!important}
-  #view-kasir.kasir-mobile-cart-popup-open .kasir-cart-thumb{width:42px!important;height:42px!important;min-width:42px!important;object-fit:cover!important;border-radius:8px!important}
-  #view-kasir.kasir-mobile-cart-popup-open .kasir-summary{display:none!important}
-  #kasir-mobile-cart-popup-close{width:30px;height:30px;flex:0 0 30px;border:0;border-radius:9px;background:#f1f5f9;color:#475569;display:flex;align-items:center;justify-content:center}
-}
-@media(min-width:768px){#kasir-mobile-cart-fab{display:none!important}}
-</style>
-<script id="kasir-mobile-floating-cart-icon-script">
-(function(){
-  function setup(){
-    const view=document.getElementById('view-kasir');
-    if(!view)return;
-    let fab=document.getElementById('kasir-mobile-cart-fab');
-    if(!fab){
-      fab=document.createElement('button');fab.type='button';fab.id='kasir-mobile-cart-fab';fab.setAttribute('aria-label','Buka keranjang');fab.innerHTML='<i class="fa-solid fa-cart-shopping"></i><span id="kasir-mobile-cart-fab-count">0</span>';
-      view.appendChild(fab);
-      fab.addEventListener('click',function(){view.classList.add('kasir-mobile-cart-popup-open');});
-    }
-    const head=view.querySelector('.kasir-cart-head');
-    if(head&&!head.querySelector('#kasir-mobile-cart-popup-close')){
-      const close=document.createElement('button');close.type='button';close.id='kasir-mobile-cart-popup-close';close.setAttribute('aria-label','Tutup keranjang');close.innerHTML='<i class="fa-solid fa-xmark"></i>';head.appendChild(close);
-      close.addEventListener('click',function(){view.classList.remove('kasir-mobile-cart-popup-open');});
-    }
-    if(!document.documentElement.dataset.kasirCartPopupOutsideBound){
-      document.addEventListener('click',function(e){if(e.target.closest('#kasir-mobile-cart-fab')||e.target.closest('.kasir-cart-panel'))return;if(view.classList.contains('kasir-mobile-cart-popup-open')&&!e.target.closest('#view-kasir'))view.classList.remove('kasir-mobile-cart-popup-open');});
-      document.addEventListener('keydown',function(e){if(e.key==='Escape')view.classList.remove('kasir-mobile-cart-popup-open');});
-      document.documentElement.dataset.kasirCartPopupOutsideBound='1';
-    }
-    const count=document.getElementById('kasir-cart-count');const badge=document.getElementById('kasir-mobile-cart-fab-count');
-    if(count&&badge&&!count.dataset.kasirFabObserver){count.dataset.kasirFabObserver='1';const observer=new MutationObserver(function(){badge.textContent=(count.textContent.match(/\d+/)||['0'])[0];});observer.observe(count,{childList:true,subtree:true,characterData:true});badge.textContent=(count.textContent.match(/\d+/)||['0'])[0];}
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
-  new MutationObserver(setup).observe(document.documentElement,{childList:true,subtree:true});
-})();
-</script>
-
-<style id="rekapinyu-mobile-kasir-toolbar-order-only">
-@media (max-width:767px){
-  /* Hanya urutan toolbar Kasir mobile: Bluetooth, SHIFT, lalu barcode. */
-  #view-kasir .kasir-toolbar{
-    grid-template-columns:48px 92px minmax(0,1fr)!important;
-  }
-  #view-kasir #kasir-refresh-btn{
-    grid-column:1!important;grid-row:2!important;
-    width:48px!important;min-width:48px!important;max-width:48px!important;
-  }
-  #view-kasir .kasir-shift-picker{
-    grid-column:2!important;grid-row:2!important;
-    width:92px!important;min-width:0!important;
-  }
-  #view-kasir .kasir-shift-trigger{
-    width:100%!important;min-width:0!important;padding-left:6px!important;padding-right:6px!important;
-  }
-  #view-kasir .kasir-barcode-wrap{
-    grid-column:3!important;grid-row:2!important;width:100%!important;min-width:0!important;
-  }
-  #view-kasir .kasir-shift-menu{
-    left:0!important;right:auto!important;max-width:calc(100vw - 24px)!important;
-    box-sizing:border-box!important;z-index:10000!important;
-  }
-}
-</style>
-
-<style id="rekapinyu-mobile-kasir-sticky-toolbar-only">
-/* MOBILE KASIR SAJA: toolbar dan kartu produk menyesuaikan lebar serta tinggi layar HP. */
-@media (max-width:767px){
-  #view-kasir .kasir-products-panel{
-    display:flex!important;flex-direction:column!important;
-    width:100%!important;max-width:100%!important;min-width:0!important;
-    min-height:0!important;overflow:hidden!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-transaction-tabs{
-    position:sticky!important;top:0!important;z-index:40!important;
-    flex:0 0 auto!important;width:100%!important;max-width:100%!important;
-    min-width:0!important;overflow-x:auto!important;overflow-y:hidden!important;
-    background:#fff!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-toolbar{
-    position:sticky!important;top:40px!important;z-index:39!important;
-    display:grid!important;grid-template-columns:clamp(38px,12vw,48px) clamp(68px,23vw,92px) minmax(0,1fr)!important;
-    grid-template-rows:auto auto!important;flex:0 0 auto!important;
-    width:100%!important;max-width:100%!important;min-width:0!important;
-    flex-wrap:initial!important;gap:clamp(5px,1.8vw,8px)!important;
-    padding:0 0 8px!important;margin:0!important;
-    background:#fff!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-search-wrap{
-    grid-column:1/-1!important;grid-row:1!important;
-    width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;
-  }
-  #view-kasir #kasir-refresh-btn{
-    grid-column:1!important;grid-row:2!important;width:100%!important;
-    min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-shift-picker{
-    grid-column:2!important;grid-row:2!important;width:100%!important;
-    min-width:0!important;max-width:100%!important;
-  }
-  #view-kasir .kasir-shift-trigger{
-    width:100%!important;min-width:0!important;max-width:100%!important;
-    padding-left:clamp(4px,1.5vw,8px)!important;padding-right:clamp(4px,1.5vw,8px)!important;
-    overflow:hidden!important;text-overflow:ellipsis!important;
-  }
-  #view-kasir .kasir-barcode-wrap{
-    grid-column:3!important;grid-row:2!important;width:100%!important;
-    min-width:0!important;max-width:100%!important;box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-barcode-wrap input,
-  #view-kasir .kasir-search-wrap input{width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;}
-  #view-kasir .kasir-shift-menu{
-    left:0!important;right:auto!important;max-width:calc(100vw - 24px)!important;
-    box-sizing:border-box!important;z-index:10000!important;
-  }
-  #view-kasir .kasir-product-grid{
-    position:relative!important;display:grid!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    grid-auto-rows:max-content!important;flex:1 1 0!important;
-    width:100%!important;max-width:100%!important;min-width:0!important;
-    min-height:0!important;height:0!important;overflow-y:auto!important;overflow-x:hidden!important;
-    overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;
-    box-sizing:border-box!important;
-  }
-  #view-kasir .kasir-product-card{min-width:0!important;max-width:100%!important;box-sizing:border-box!important;}
-  #view-kasir .kasir-product-photo{width:100%!important;max-width:100%!important;object-fit:cover!important;}
-  #view-kasir .kasir-product-data,
-  #view-kasir .kasir-product-data-box{min-width:0!important;max-width:100%!important;box-sizing:border-box!important;}
-  #view-kasir .kasir-product-data-box strong{overflow-wrap:anywhere!important;}
-}
-@media (max-width:380px){
-  #view-kasir .kasir-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;padding-left:2px!important;padding-right:2px!important;}
-  #view-kasir .kasir-product-photo{height:clamp(62px,20vw,76px)!important;flex-basis:clamp(62px,20vw,76px)!important;}
-  #view-kasir .kasir-product-card{padding:5px!important;}
-}
-@media (min-width:381px) and (max-width:767px){
-  #view-kasir .kasir-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
-  #view-kasir .kasir-product-photo{height:clamp(64px,19vw,84px)!important;flex-basis:clamp(64px,19vw,84px)!important;}
-}
-@media (max-height:650px) and (max-width:767px){
-  #view-kasir .kasir-transaction-tabs{margin-bottom:4px!important;}
-  #view-kasir .kasir-toolbar{gap:5px!important;padding-bottom:5px!important;}
-  #view-kasir .kasir-product-grid{margin-top:5px!important;padding-bottom:76px!important;gap:6px!important;}
-  #view-kasir .kasir-product-photo{height:clamp(52px,14vh,70px)!important;flex-basis:clamp(52px,14vh,70px)!important;}
-}
-/* MOBILE SAJA: setiap menu memiliki area scroll sendiri; body bukan scroll global. */
-@media (max-width:767px){
-  html, body {
-    width:100%!important;max-width:100%!important;min-width:0!important;
-    margin:0!important;overflow-x:hidden!important;
-  }
-  body { box-sizing:border-box!important; }
-  /* Main hanya menjadi bingkai di antara header dan dock, bukan pemilik scroll isi menu. */
-  main {
-    display:flex!important;flex-direction:column!important;
-    width:100%!important;max-width:100%!important;min-width:0!important;
-    min-height:0!important;height:auto!important;flex:1 1 auto!important;
-    margin:0!important;padding:0!important;box-sizing:border-box!important;
-    align-self:stretch!important;overflow:hidden!important;position:relative!important;
-  }
-  main::-webkit-scrollbar, body::-webkit-scrollbar {
-    width:0!important;height:0!important;display:none!important;
-  }
-  /* Semua panel menu diberi aturan masing-masing lewat selector ID, bukan aturan body global. */
-  main > section[id^="view-"],
-  main > div[id^="view-"],
-  main section[id^="view-"],
-  main div[id^="view-"] {
-    max-width:100%!important;min-width:0!important;
-    margin-left:0!important;margin-right:0!important;
-    box-sizing:border-box!important;
-  }
-  main > section[id^="view-"]:not(.hidden),
-  main > div[id^="view-"]:not(.hidden),
-  main section[id^="view-"]:not(.hidden),
-  main div[id^="view-"]:not(.hidden) {
-    width:100%!important;max-width:100%!important;min-width:0!important;
-    min-height:0!important;max-height:100%!important;
-    margin:0!important;padding-left:0!important;padding-right:0!important;
-    box-sizing:border-box!important;align-self:stretch!important;
-    overflow-x:hidden!important;overflow-y:auto!important;
-    overscroll-behavior-y:contain!important;
-    -webkit-overflow-scrolling:touch!important;
-  }
-  /* Bungkus isi tiap menu tidak memaksakan lebar melebihi panel aktif. */
-  main > section[id^="view-"]:not(.hidden) > :first-child,
-  main > div[id^="view-"]:not(.hidden) > :first-child,
-  main section[id^="view-"]:not(.hidden) > :first-child,
-  main div[id^="view-"]:not(.hidden) > :first-child {
-    max-width:100%!important;box-sizing:border-box!important;
-  }
-  /* Kasir tetap memakai lebar penuh; scroll katalog dan keranjang internal dipertahankan. */
-  #view-kasir:not(.hidden),
-  #view-kasir:not(.hidden) .kasir-shell,
-  #view-kasir:not(.hidden) .kasir-products-panel {
-    width:100%!important;max-width:100%!important;min-width:0!important;
-    margin-left:0!important;margin-right:0!important;
-    box-sizing:border-box!important;
-  }
-}
-</style>
 
 
-<style id="rekapinyu-mobile-home-desktop-visibility-fix">
-/* Perbaikan terarah: konten Beranda khusus mobile tidak boleh tampil di desktop.
-   Tampilan mobile hanya aktif saat mode Beranda mobile memang dipilih. */
-#mobile-home-view { display: none !important; }
-#rku-mobile-promo-body { display: none !important; }
-@media (max-width: 767px) {
-  html[data-mobile-view="home"] #mobile-home-view { display: block !important; }
-  html[data-mobile-view="home"] #rku-mobile-promo-body { display: block !important; }
-}
-</style>
+
+
+
+
+
+
+
 
 
 <!-- Existing mobile dock styling preserved unchanged. -->
-<style id="mobile-dock-existing-styles-preserved">
-@media (max-width:767px){
-  #mobile-simplified-dock > div{
-    display:grid!important;
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-    max-width:none!important;
-    gap:5px!important;
-  }
-  #mobile-simplified-dock .mobile-dock-item{
-    min-width:0!important;
-    min-height:52px!important;
-    padding:5px 2px!important;
-    border:0!important;
-    border-radius:12px!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    transition:background-color .18s ease,color .18s ease,transform .18s ease!important;
-  }
-  #mobile-simplified-dock #nav-mobile-home{--dock-color:#2563eb;--dock-bg:#dbeafe}
-  #mobile-simplified-dock #nav-mobile-report{--dock-color:#0d9488;--dock-bg:#ccfbf1}
-  #mobile-simplified-dock #nav-mobile-history{--dock-color:#7c3aed;--dock-bg:#ede9fe}
-  #mobile-simplified-dock #nav-mobile-activity{--dock-color:#d97706;--dock-bg:#fef3c7}
-  #mobile-simplified-dock .mobile-dock-item i{color:var(--dock-color)!important}
-  #mobile-simplified-dock .mobile-dock-item span{color:#64748b!important}
-  #mobile-simplified-dock .mobile-dock-item:hover,
-  #mobile-simplified-dock .mobile-dock-item:focus-visible,
-  #mobile-simplified-dock .mobile-dock-item:active{
-    background:var(--dock-bg)!important;
-    color:var(--dock-color)!important;
-    outline:none!important;
-  }
-  #mobile-simplified-dock .mobile-dock-item:hover span,
-  #mobile-simplified-dock .mobile-dock-item:focus-visible span,
-  #mobile-simplified-dock .mobile-dock-item:active span{
-    color:var(--dock-color)!important;
-  }
-  #mobile-simplified-dock #nav-mobile-report{
-    transform:none!important;
-    margin-top:0!important;
-    width:auto!important;
-    height:auto!important;
-    border-radius:12px!important;
-  }
-  /* Kasir memakai bentuk ikon dock yang sama seperti menu lainnya. */
-  #mobile-simplified-dock #nav-mobile-report i{
-    width:30px!important;
-    height:30px!important;
-    margin:0!important;
-    border:0!important;
-    border-radius:10px!important;
-    background:#ccfbf1!important;
-    color:#0d9488!important;
-    box-shadow:none!important;
-    transform:none!important;
-  }
-}
-</style>
+
 
 <!-- PERBAIKAN TUNGGAL: ukuran tombol (+) tab transaksi Kasir khusus mobile. Desktop tetap memakai aturan asli. -->
-<style id="kasir-mobile-add-tab-single-fix">
-@media (max-width: 767px) {
-  #view-kasir #kasir-transaction-tabs > #kasir-add-transaction-tab {
-    flex: 0 0 33px !important;
-    width: 33px !important;
-    min-width: 33px !important;
-    max-width: 33px !important;
-    height: 32px !important;
-    min-height: 32px !important;
-    max-height: 32px !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  #view-kasir #kasir-transaction-tabs > #kasir-add-transaction-tab > i {
-    font-size: 13px !important;
-    line-height: 1 !important;
-    margin: 0 !important;
-  }
-}
-</style>
+
 
