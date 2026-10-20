@@ -2,7 +2,7 @@
 
 <html lang="id">
 <head>
-<link href="data:image/svg+xml,%3Csvg xmlns=%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230f766e%27%2F%3E%3Cpath d=%27M18 34l10 10 20-24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%2F%3E%3C%2Fsvg%3E" rel="icon"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230f766e%27%2F%3E%3Cpath d=%27M18 34l10 10 20-24%27 fill=%27none%27 stroke=%27white%27 stroke-width=%278%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%2F%3E%3C%2Fsvg%3E" />
 <meta charset="utf-8"/>
 <!-- REKAPINYU FOLDER SAFETY: aplikasi TIDAK BOLEH membuat folder otomatis.
      Semua getDirectoryHandle dipaksa membaca folder yang sudah ada (create:false).
@@ -24,6 +24,7 @@
 }
 </style>
 
+
 <style id="rekapinyu-banner-no-old-flash">
   /* Jangan lukis banner bawaan sampai konfigurasi terbaru terkonfirmasi dari Firestore server. */
   html:not([data-rekapinyu-banner-settings-ready="1"]) #view-input > div{
@@ -36,13 +37,14 @@
     visibility:hidden!important;
   }
 </style>
+
 <title>Aplikasi Keuangan Toko</title>
 <!-- Tailwind CSS -->
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 <!-- SheetJS for Excel Export (Dibiarkan untuk fungsi lain jika diperlukan) -->
 <style>
-        body { font-family: "Inter", system-ui, -apple-system, sans-serif; touch-action: manipulation; -webkit-text-size-adjust: 100%; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; touch-action: manipulation; -webkit-text-size-adjust: 100%; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
@@ -110,13 +112,104 @@
   #foto-sampul-toko{touch-action:none;}
 </style>
 
+
 <!-- PATCH LOGIN: desktop full-screen seperti banner referensi, tanpa mengubah markup/event form. -->
 <style>
-            
+            @media (min-width:768px){
+                #auth-container{
+                    align-items:stretch!important;
+                    justify-content:flex-start!important;
+                    padding:0!important;
+                    overflow:hidden!important;
+                    background:#f8fafc url('https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20INPUT%20DATA.jpg?raw=true') right center / auto 100% no-repeat!important;
+                }
+                #auth-container::after{
+                    content:"";
+                    position:absolute;
+                    inset:0 0 0 45%!important;
+                    background:linear-gradient(90deg,rgba(248,250,252,.12),rgba(15,23,42,.08));
+                    pointer-events:none;
+                }
+                #login-card,#register-card{
+                    position:relative!important;
+                    z-index:1!important;
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:center;
+                    align-items:center!important;
+                    width:45%!important;
+                    min-width:0!important;
+                    max-width:none!important;
+                    height:100vh!important;
+                    margin:0!important;
+                    padding:clamp(2.5rem,6vw,6rem) clamp(2rem,5vw,5rem)!important;
+                    border:0!important;
+                    border-radius:0!important;
+                    box-shadow:18px 0 45px rgba(15,23,42,.12)!important;
+                }
+                #login-card > div,
+                #register-card > div{
+                    width:100%!important;
+                    max-width:500px!important;
+                }
+                #login-card form,
+                #register-card form{
+                    width:100%!important;
+                }
+                #login-card.hidden,#register-card.hidden{display:none!important}
+                #login-card h2,#register-card h2{font-size:clamp(1.6rem,2.2vw,2.25rem)!important}
+                #login-card input,#register-card input{
+                    min-height:3.35rem;
+                    background:#f8fafc!important;
+                    border-color:#dbe4ee!important;
+                    border-radius:.85rem!important;
+                }
+                #login-card form button[type="submit"],#register-card form button[type="submit"]{
+                    min-height:3.35rem;
+                    border-radius:.85rem!important;
+                    box-shadow:0 10px 22px rgba(5,150,105,.18)!important;
+                }
+            }
         </style>
 <!-- PATCH MINIMAL: rapikan logo + tagline login/daftar, desktop & mobile -->
 <style>
-      
+      @media (min-width:768px){
+        #login-card .login-brand-header,
+        #register-card .login-brand-header{
+          width:100%!important;
+          display:flex!important;
+          flex-direction:column!important;
+          align-items:flex-start!important;
+          justify-content:center!important;
+          text-align:left!important;
+          margin-left:0!important;
+          margin-right:auto!important;
+        }
+        #login-card .login-brand-logo,
+        #register-card .login-brand-logo{
+          display:block!important;
+          width:min(100%, 320px)!important;
+          max-width:320px!important;
+          height:auto!important;
+          max-height:82px!important;
+          object-fit:contain!important;
+          object-position:center!important;
+          margin:0 0 9px 0!important;
+        }
+        #login-card .login-brand-tagline,
+        #register-card .login-brand-tagline{
+          display:block!important;
+          width:min(100%, 285px)!important;
+          max-width:285px!important;
+          margin:0 0 0 0!important;
+          padding:0!important;
+          color:#94a3b8!important;
+          font-size:11px!important;
+          line-height:1.45!important;
+          font-weight:500!important;
+          text-align:left!important;
+        }
+      }
       @media (max-width:767px){
         #login-card .login-brand-header,
         #register-card .login-brand-header{
@@ -144,7 +237,13 @@
 <!-- PATCH MINIMAL: koreksi posisi Photo Banner hanya saat dibuka langsung di browser desktop.
          Mode installed/standalone dibiarkan memakai tampilan original yang sudah benar. -->
 <style>
-      
+      @media (min-width:768px) and (display-mode: browser){
+        #auth-container{
+          background-position:right center!important;
+          background-size:55vw auto!important;
+          background-repeat:no-repeat!important;
+        }
+      }
     </style>
 <!-- PATCH STYLE REFERENSI: hanya tampilan visual dashboard.
          Menu, ID, event, fungsi, data, dan logika aplikasi tidak diubah. -->
@@ -387,13 +486,103 @@
       }
     </style>
 <style id="patch-logo-header-footer-center">
-  
+  @media (min-width:768px){
+    /* Logo baru di pojok kanan header, proporsional dan tidak gepeng. */
+    #mobile-date-header{
+      width:161px!important;
+      height:41px!important;
+      padding:0!important;
+      border:0!important;
+      background:transparent!important;
+      border-radius:0!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:flex-end!important;
+      overflow:hidden!important;
+    }
+    #mobile-date-header > *{display:none!important;}
+    #mobile-date-header::before{
+      content:""!important;
+      display:block!important;
+      width:161px!important;
+      height:41px!important;
+       background-image:url('https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGOHEADERAPLIKASI.jpg?raw=true')!important;
+      background-position:right center!important;
+      background-repeat:no-repeat!important;
+      background-size:contain!important;
+      transform:none!important;
+    }
+  }
 
 
 </style>
 <!-- PATCH INPUT DATA: panel input kiri + Photo Banner kanan, mengikuti style halaman login. -->
 <style id="patch-input-banner-login-style">
-      
+      @media (min-width:768px){
+        /* Area Input Data mengisi tepat area kerja di antara sidebar dan header. */
+        #view-input{
+          position:absolute!important;
+          inset:0!important;
+          width:100%!important;
+          height:100%!important;
+          min-height:0!important;
+          max-height:none!important;
+          margin:0!important;
+          padding:0!important;
+          overflow:hidden!important;
+        }
+        #view-input > div{
+          position:absolute!important;
+          inset:0!important;
+          display:flex!important;
+          align-items:stretch!important;
+          justify-content:flex-start!important;
+          width:100%!important;
+          max-width:none!important;
+          height:100%!important;
+          min-height:0!important;
+          margin:0!important;
+          padding:0!important;
+          overflow:hidden!important;
+          border-radius:0!important;
+          background:#fff url('https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGO%20BANNER%20INPUT%20DATA.jpg?raw=true') right center / auto 100% no-repeat!important;
+          background-color:#fff!important;
+          box-shadow:none!important;
+        }
+        /* Kontainer putih benar-benar menempel kiri, atas, bawah dan ke banner. */
+        #view-input > div > div:first-child{
+          position:relative!important;
+          z-index:1!important;
+          flex:0 0 42%!important;
+          width:42%!important;
+          max-width:none!important;
+          height:100%!important;
+          min-height:0!important;
+          margin:0!important;
+          padding:clamp(2rem,4vw,3.5rem)!important;
+          display:flex!important;
+          flex-direction:column!important;
+          justify-content:center!important;
+          background:#fff!important;
+          border:0!important;
+          border-radius:0!important;
+          box-shadow:18px 0 45px rgba(15,23,42,.10)!important;
+          box-sizing:border-box!important;
+        }
+        #view-input > div > div:first-child form{
+          width:100%!important;
+          max-width:560px!important;
+          margin:0 auto!important;
+        }
+        #view-input > div > div:first-child h3{
+          width:100%!important;
+          max-width:560px!important;
+          margin-left:auto!important;
+          margin-right:auto!important;
+        }
+        /* Sembunyikan elemen profit yang memang tidak ditampilkan. */
+        #view-input > div > div.hidden{display:none!important;}
+      }
       @media (max-width:767px){
         #view-input > div{width:100%!important;max-width:none!important;}
         #view-input > div > div:first-child{width:100%!important;max-width:none!important;}
@@ -733,7 +922,28 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 @media(max-width:560px){.kasir-transaction-tabs{height:40px;margin-bottom:8px}.kasir-transaction-tab{height:34px;min-width:100px;padding:0 10px;font-size:10px}}
 </style>
 <style id="fix-kasir-cart-fixed-box-only">
-
+@media (min-width:901px){
+  #view-kasir .kasir-cart-list{
+    flex:1 1 auto!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    box-sizing:border-box!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+  }
+  #view-kasir .kasir-cart-list .kasir-cart-item{box-sizing:border-box!important}
+  #view-kasir .kasir-cart-item{
+    display:grid!important;
+    grid-template-columns:42px minmax(0,1fr) auto!important;
+    align-items:center!important;
+    column-gap:10px!important;
+  }
+  #view-kasir .kasir-cart-thumb{
+    width:42px!important;height:42px!important;min-width:42px!important;
+    border-radius:7px!important;object-fit:cover!important;display:block!important;background:#f1f5f9!important;
+  }
+}
 </style>
 <style id="rekapinyu-shift-settings-css">
 /* Styling khusus panel Shift di menu Setting. */
@@ -747,7 +957,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #view-settings .shift-settings-item input{min-width:0;box-sizing:border-box}
 @media(max-width:760px){#view-settings .shift-settings-grid{grid-template-columns:minmax(0,1fr);gap:10px}#view-settings .shift-settings-item{padding:13px}#view-settings .shift-settings-time-grid{gap:8px}}
 </style>
-<style id="patch-mobile-admin-income-chooser">@media(max-width:767px){#mobile-admin-settings-button{appearance:none!important;border:0!important;background:transparent!important;padding:4px!important;margin:0!important;width:34px!important;height:34px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#aab4c1!important;opacity:.75!important;border-radius:10px!important}#mobile-admin-settings-button i{font-size:20px!important}.mobile-admin-income-chooser{position:fixed!important;z-index:99999!important;width:205px!important;background:#fff!important;border:1px solid #e5eaf0!important;border-radius:14px!important;padding:6px!important;box-shadow:0 14px 35px rgba(15,23,42,.16)!important}.mobile-admin-income-chooser button{width:100%!important;min-height:42px!important;border:0!important;background:#fff!important;color:#334155!important;border-radius:10px!important;display:flex!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;font-size:12px!important;font-weight:700!important;text-align:left!important}.mobile-admin-income-chooser button:active{background:#f1f5f9!important}.mobile-admin-income-chooser button i{width:20px!important;text-align:center!important;color:#64748b!important}}</style>
+<style id="patch-mobile-admin-income-chooser">@media(max-width:767px){#mobile-admin-settings-button{appearance:none!important;border:0!important;background:transparent!important;padding:4px!important;margin:0!important;width:34px!important;height:34px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#aab4c1!important;opacity:.75!important;border-radius:10px!important}#mobile-admin-settings-button i{font-size:20px!important}.mobile-admin-income-chooser{position:fixed!important;z-index:99999!important;width:205px!important;background:#fff!important;border:1px solid #e5eaf0!important;border-radius:14px!important;padding:6px!important;box-shadow:0 14px 35px rgba(15,23,42,.16)!important}.mobile-admin-income-chooser button{width:100%!important;min-height:42px!important;border:0!important;background:#fff!important;color:#334155!important;border-radius:10px!important;display:flex!important;align-items:center!important;gap:10px!important;padding:9px 10px!important;font-size:12px!important;font-weight:700!important;text-align:left!important}.mobile-admin-income-chooser button:active{background:#f1f5f9!important}.mobile-admin-income-chooser button i{width:20px!important;text-align:center!important;color:#64748b!important}}@media(min-width:768px){#mobile-admin-settings-button{display:none!important}}</style>
 <style id="kasir-payment-popup-css">
 #kasir-payment-popup{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.58)}
 #kasir-payment-popup.is-open{display:flex}
@@ -845,6 +1055,8 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #kasir-payment-popup .kasir-bluetooth-status.is-connecting{color:#2563eb}
 #kasir-payment-popup .kasir-bluetooth-status i{font-size:14px;line-height:1}
 </style>
+
+
 <style id="rekapinyu-pengeluaran-single-implementation">
 /* PENGELUARAN — SATU IMPLEMENTASI: sticky dan view berada langsung sebagai satu rangkaian di MAIN. */
 #pengeluaran-sticky-container{
@@ -936,9 +1148,155 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   #sidebar{display:none!important;width:0!important;min-width:0!important;max-width:0!important;}
 }
 
+@media (min-width:768px){
+  #sidebar nav{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+    align-content:start!important;
+    align-items:stretch!important;
+    padding:12px!important;
+    overflow-y:auto!important;
+  }
+  #sidebar nav > button[id^="nav-"],
+  #sidebar nav > .toggle-kasbon-menu-container{
+    width:100%!important;
+    min-width:0!important;
+    min-height:116px!important;
+    height:116px!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+    border:0!important;
+    border-radius:0!important;
+    background:#fff!important;
+    color:#334155!important;
+    box-shadow:0 4px 12px rgba(15,23,42,.11)!important;
+    transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease!important;
+  }
+  #sidebar nav > button[id^="nav-"]:hover,
+  #sidebar nav > .toggle-kasbon-menu-container:hover{
+    transform:translateY(-3px)!important;
+    background:#f8fafc!important;
+    box-shadow:0 9px 20px rgba(15,23,42,.16)!important;
+  }
+  #sidebar nav > button[id^="nav-"]{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:9px!important;
+    padding:14px 8px!important;
+    text-align:center!important;
+    cursor:pointer!important;
+  }
+  #sidebar nav > .toggle-kasbon-menu-container{
+    position:relative!important;
+    overflow:hidden!important;
+  }
+  ,
+  #sidebar nav > .toggle-kasbon-menu-container #nav-kasbon{
+    width:100%!important;
+    height:100%!important;
+    min-height:116px!important;
+    box-sizing:border-box!important;
+  }
+  #sidebar nav > .toggle-kasbon-menu-container #nav-kasbon{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:9px!important;
+    padding:14px 8px!important;
+    text-align:center!important;
+    cursor:pointer!important;
+  }
+  /* Dua icon yang sama dalam satu kotak menu: icon belakang opacity + icon depan original. */
+  #sidebar nav > button[id^="nav-"] > .sidebar-icon-overlay,
+  #sidebar nav > .toggle-kasbon-menu-container #nav-kasbon > .sidebar-icon-overlay{
+    position:relative!important;
+    width:32px!important;
+    height:32px!important;
+    flex:0 0 32px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  #sidebar nav > button[id^="nav-"] > .sidebar-icon-overlay > i,
+  #sidebar nav > .toggle-kasbon-menu-container #nav-kasbon > .sidebar-icon-overlay > i{
+    position:absolute!important;
+    left:50%!important;
+    top:50%!important;
+    margin:0!important;
+    padding:0!important;
+    width:auto!important;
+    transform:translate(-50%,-50%)!important;
+    line-height:1!important;
+    text-align:center!important;
+    display:block!important;
+    pointer-events:none!important;
+    transition:opacity .2s ease,transform .2s ease,filter .2s ease!important;
+  }
+  #sidebar nav > button[id^="nav-"] > .sidebar-icon-overlay > i:first-child,
+  #sidebar nav > .toggle-kasbon-menu-container #nav-kasbon > .sidebar-icon-overlay > i:first-child{
+    opacity:.08!important;
+    font-size:60px!important;
+    z-index:1!important;
+  }
+  #sidebar nav > button[id^="nav-"] > .sidebar-icon-overlay > i:last-child,
+  #sidebar nav > .toggle-kasbon-menu-container #nav-kasbon > .sidebar-icon-overlay > i:last-child{
+    opacity:1!important;
+    font-size:23px!important;
+    z-index:2!important;
+  }
+  #sidebar nav > button[id^="nav-"]:hover > .sidebar-icon-overlay > i:first-child,
+  #sidebar nav > .toggle-kasbon-menu-container:hover #nav-kasbon > .sidebar-icon-overlay > i:first-child{
+    opacity:.12!important;
+    transform:translate(-50%,-50%) scale(1.04)!important;
+  }
+  #sidebar nav > button[id^="nav-"]:hover > .sidebar-icon-overlay > i:last-child,
+  #sidebar nav > .toggle-kasbon-menu-container:hover #nav-kasbon > .sidebar-icon-overlay > i:last-child{
+    transform:translate(-50%,-50%) scale(1.03)!important;
+  }
+  #sidebar nav > button[id^="nav-"] > span,
+  #sidebar nav > .toggle-kasbon-menu-container #nav-kasbon .sidebar-text{
+    display:block!important;
+    width:100%!important;
+    font-size:12px!important;
+    line-height:1.25!important;
+    font-weight:700!important;
+    text-align:center!important;
+    color:#334155!important;
+  }
+}
 
-
-
+@media (min-width:768px){
+  #sidebar nav > .sidebar-menu-placeholder{
+    grid-column:1 / -1!important;
+    width:100%!important;
+    min-height:42px!important;
+    height:42px!important;
+    margin:2px 0 0!important;
+    padding:0 10px!important;
+    box-sizing:border-box!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border:1px solid #cbd5e1!important;
+    border-radius:10px!important;
+    background:#f8fafc!important;
+    color:#64748b!important;
+    font-size:10px!important;
+    font-weight:800!important;
+    letter-spacing:.08em!important;
+    text-align:center!important;
+    pointer-events:none!important;
+  }
+}
 
 /* SIDEBAR FINAL: satu implementasi untuk warna, profil, ikon sosial, dan Refresh/Logout. */
 #sidebar{
@@ -1060,6 +1418,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 }
 #sidebar .sidebar-logout-box button i{color:inherit!important;}
 </style>
+
 <style id="kasir-produk-barcode-profit-final-css">
 .pk3-field select{display:block;width:100%;height:38px;box-sizing:border-box;padding:0 10px;border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;color:#0f172a;font-size:12px;outline:none}.pk3-field select:focus{border-color:#10b981;box-shadow:0 0 0 2px rgba(16,185,129,.12)}
 .pk3-barcode-field{position:relative!important}.pk3-barcode-list:empty{display:none!important}.pk3-barcode-list{position:absolute!important;left:0!important;right:0!important;top:calc(100% + 4px)!important;display:flex!important;flex-direction:column!important;gap:2px!important;margin:0!important;padding:4px!important;max-height:132px!important;overflow-y:auto!important;overflow-x:hidden!important;background:#fff!important;border:1px solid #cbd5e1!important;border-radius:10px!important;box-shadow:0 10px 24px rgba(15,23,42,.12)!important;z-index:200!important;box-sizing:border-box!important}.pk3-barcode-chip{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;width:100%!important;min-height:30px!important;box-sizing:border-box!important;padding:6px 8px!important;border:0!important;border-radius:7px!important;background:#f8fafc!important;color:#1e3a8a!important;font-size:10px!important;font-weight:800!important}.pk3-barcode-chip:hover{background:#eff6ff!important}.pk3-barcode-chip span{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}.pk3-barcode-chip button{flex:0 0 auto!important;border:0!important;background:transparent!important;color:#dc2626!important;font-size:14px!important;line-height:1!important;cursor:pointer!important;padding:2px 4px!important;border-radius:5px!important}.pk3-barcode-chip button:hover{background:#fee2e2!important}.pk3-edit-row .pk3-barcode-field{position:relative!important}.pk3-edit-row .pk3-barcode-list{z-index:300!important}.kasir-search-wrap{position:relative}.kasir-search-wrap input{padding-right:28px!important}
@@ -1175,9 +1534,37 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   .pk3-form .pk3-add{width:100%!important;min-width:0!important;}
 }
 </style>
-<style id="patch-settings-full-no-scroll">
 
+<style id="patch-settings-full-no-scroll">
+@media (min-width:768px){
+  #view-settings{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+  #view-settings .app-settings-layout{
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    margin:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+  #view-settings .app-settings-content{
+    min-height:0!important;
+    height:100%!important;
+    overflow:hidden!important;
+  }
+}
 </style>
+
 <style id="report-monthly-empty-position">
 #view-report { margin-top: 0; }
 #view-report .report-monthly-area {
@@ -1202,10 +1589,23 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
     box-sizing: border-box;
 }
 </style>
+
 <style id="spacing-laporan-backup-kasbon-final">
 /* PERBAIKAN SPACING TERFOKUS: hanya menaikkan area isi
    Laporan Bulanan, Backup Otomatis, dan Kasbon. */
+@media (min-width:768px){
+  main > .max-w-4xl:has(#view-report:not(.hidden)),
+  main > .max-w-4xl:has(#view-backup:not(.hidden)),
+  main > .max-w-4xl:has(#view-kasbon:not(.hidden)){
+    margin-top:0!important;
+    margin-bottom:auto!important;
+  }
 
+  #kasbon-sticky-container,
+  #backup-sticky-container{
+    margin-bottom:8px!important;
+  }
+}
 
 @media (max-width:767px){
   main > .max-w-4xl:has(#view-report:not(.hidden)),
@@ -1230,7 +1630,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
             max-width: 290px;
             background-color: #ffffff;
             color: #111827;
-            font-family: "Space Mono", "Courier New", Courier, monospace;
+            font-family: 'Space Mono', 'Courier New', Courier, monospace;
             font-size: 11px;
             line-height: 1.35;
             box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.12);
@@ -1312,6 +1712,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #cetak-module-content{width:100%;min-height:100%;background:#f1f5f9;}
 #cetak-module-content > .flex-1{min-height:0;}
 </style>
+
 <style id="rekapinyu-mobile-home-layout">
 @media (max-width:767px){
   #mobile-home-view{width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow:hidden!important;}
@@ -1380,6 +1781,9 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 }
 </style>
 
+
+
+
 <style id="rekapinyu-mobile-kasir-toolbar-and-dock-fix">
 @media (max-width:767px){
   /* Menu Kasir: kolom cari produk dibuat panjang; tombol Bluetooth berbentuk kotak. */
@@ -1439,6 +1843,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   }
 }
 </style>
+
 <style id="rekapinyu-mobile-kasir-screenshot-layout">
 @media (max-width:767px){
   /* Layout Kasir mobile mengikuti referensi: pencarian satu baris, lalu shift/Bluetooth/barcode. */
@@ -1500,6 +1905,8 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   #view-kasir .kasir-summary{flex:0 0 auto!important;padding:6px 0!important;}
 }
 </style>
+
+
 <style id="rekapinyu-mobile-remove-legacy-header">
 @media (max-width:767px){
   #page-title-header,
@@ -1508,6 +1915,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   }
 }
 </style>
+
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
@@ -1528,6 +1936,8 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </div>
 <div id="kasir-print-area" style="display:none"></div>
 <!-- AUTHENTICATION OVERLAY / PAGES -->
+
+
 <!-- Main Content Wrapper -->
 <div class="flex-1 flex flex-col h-screen overflow-hidden">
 <!-- Top Navigation Bar -->
@@ -1538,6 +1948,8 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </div>
 <div>
 <h1 class="font-bold text-slate-800 text-sm md:hidden">REKAPIN</h1>
+
+
 </div>
 </div>
 <div class="flex items-center gap-3">
@@ -1595,7 +2007,81 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #activity-main-container .rk-activity-action{font-size:11px;font-weight:400;color:#334155;line-height:1.4}
 #activity-main-container .rk-activity-list-empty{padding:24px 16px;text-align:center;color:#94a3b8;font-size:11px}
 @media(max-width:900px){#activity-main-container .rk-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-
+@media(min-width:901px){
+  /* Aktifitas desktop: filter di atas dan grid kartu memenuhi area kerja seperti referensi. */
+  #activity-main-container{
+    width:100%!important;
+    max-width:900px!important;
+    margin:32px auto 0!important;
+    gap:16px!important;
+  }
+  #activity-main-container .rk-activity-final-filter{
+    position:relative!important;
+    top:auto!important;
+    z-index:5!important;
+  }
+  #activity-main-container .rk-activity-final-filter-box{
+    padding:10px!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    border-color:#e2e8f0!important;
+    box-shadow:0 10px 28px rgba(15,23,42,.07)!important;
+  }
+  #activity-main-container .rk-activity-final-filter-grid{
+    grid-template-columns:minmax(0,5fr) minmax(90px,1.2fr) minmax(125px,1.8fr) minmax(100px,1.4fr)!important;
+    gap:7px!important;
+  }
+  #activity-main-container .rk-activity-final-filter input,
+  #activity-main-container .rk-activity-final-filter select{
+    height:38px!important;
+    background:#f8fafc!important;
+    border:1px solid #e2e8f0!important;
+    border-radius:9999px!important;
+    font-size:11px!important;
+  }
+  #activity-main-container .rk-activity-grid{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-auto-rows:72px!important;
+    grid-template-rows:none!important;
+    align-content:start!important;
+    gap:10px!important;
+    height:calc(100vh - 285px)!important;
+    min-height:300px!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    padding:2px!important;
+    box-sizing:border-box!important;
+  }
+  #activity-main-container .rk-activity-24h-card{
+    height:72px!important;
+    min-height:72px!important;
+    padding:8px 10px!important;
+    border-radius:12px!important;
+    background:#f8fafc!important;
+    border-color:#eef2f7!important;
+  }
+  #activity-main-container .rk-activity-24h-card.is-current{
+    border-color:#cbd5e1!important;
+  }
+  #activity-main-container .rk-activity-24h-title{
+    font-size:11px!important;
+    color:#334155!important;
+    padding-right:36px!important;
+  }
+  #activity-main-container .rk-activity-view-btn{
+    right:8px!important;
+    top:8px!important;
+    width:30px!important;
+    height:30px!important;
+    border-radius:9px!important;
+    background:#e2e8f0!important;
+    color:#475569!important;
+  }
+}
 @media(max-width:600px){
   #activity-main-container{flex:1 1 auto;min-height:0;height:auto;max-width:none;margin:0;gap:12px}
   #activity-main-container .rk-activity-grid{grid-template-columns:1fr;grid-auto-rows:72px;align-content:start;align-items:start;flex:1 1 auto;height:auto;min-height:0;max-height:none;overflow-y:auto;gap:10px}
@@ -1609,28 +2095,33 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   #activity-main-container .rk-activity-final-filter-grid>select{border-left:1px solid #e2e8f0!important}
 }
 </style>
+
 <div class="rk-activity-final-filter">
-<div class="rk-activity-final-filter-box">
-<div class="rk-activity-final-filter-grid">
-<div class="rk-activity-search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input autocomplete="off" id="rk-activity-search" placeholder="Cari aktifitas..." type="search"/></div>
-<select aria-label="Tanggal" id="rk-activity-date"><option value="">Tanggal</option></select>
-<select aria-label="Bulan" id="rk-activity-month"><option value="">Bulan</option></select>
-<select aria-label="Tahun" id="rk-activity-year"><option value="">Tahun</option></select>
-</div>
-</div>
-</div>
-<div class="rk-activity-grid" id="activity-history-list"></div>
-<div aria-hidden="true" class="rk-activity-popup" id="activity-activity-popup">
-<div aria-labelledby="activity-popup-title" aria-modal="true" class="rk-activity-popup-box" role="dialog">
-<div class="rk-activity-popup-head">
-<div class="rk-activity-popup-title" id="activity-popup-title">List History Aktifitas</div>
-<button aria-label="Tutup" class="rk-activity-popup-close" id="activity-popup-close" type="button"><i class="fa-solid fa-xmark"></i></button>
-</div>
-<div class="rk-activity-popup-list" id="activity-popup-list"></div>
-</div>
+  <div class="rk-activity-final-filter-box">
+    <div class="rk-activity-final-filter-grid">
+      <div class="rk-activity-search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="rk-activity-search" type="search" placeholder="Cari aktifitas..." autocomplete="off"></div>
+      <select id="rk-activity-date" aria-label="Tanggal"><option value="">Tanggal</option></select>
+      <select id="rk-activity-month" aria-label="Bulan"><option value="">Bulan</option></select>
+      <select id="rk-activity-year" aria-label="Tahun"><option value="">Tahun</option></select>
+    </div>
+  </div>
 </div>
 
+<div id="activity-history-list" class="rk-activity-grid"></div>
+
+<div id="activity-activity-popup" class="rk-activity-popup" aria-hidden="true">
+  <div class="rk-activity-popup-box" role="dialog" aria-modal="true" aria-labelledby="activity-popup-title">
+    <div class="rk-activity-popup-head">
+      <div id="activity-popup-title" class="rk-activity-popup-title">List History Aktifitas</div>
+      <button type="button" id="activity-popup-close" class="rk-activity-popup-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="activity-popup-list" class="rk-activity-popup-list"></div>
+  </div>
 </div>
+
+
+</div>
+
 <!-- PENGELUARAN STICKY — satu implementasi, langsung di bawah header -->
 <div aria-label="Input Pengeluaran" class="hidden" id="pengeluaran-sticky-container">
 <div class="rk-pengeluaran-sticky-box">
@@ -1639,12 +2130,12 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs md:text-sm">
 <i class="fa-solid fa-receipt"></i>
 </span>
-<input class="w-full pl-8 md:pl-10 pr-2 md:pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-[11px] md:text-xs font-semibold transition" id="pengeluaran-nama" placeholder="Nama Pengeluaran" required="" type="text"/>
-</div>
+<input class="w-full pl-8 md:pl-10 pr-2 md:pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-[11px] md:text-xs font-semibold transition" id="pengeluaran-nama" placeholder="Nama Pengeluaran" required="" type="text">
+</input></div>
 <div class="col-span-4 relative">
 <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-400 font-semibold text-[10px] md:text-xs">Rp</span>
-<input class="w-full pl-7 md:pl-9 pr-2 md:pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-[11px] md:text-xs font-semibold transition" id="pengeluaran-nominal" inputmode="numeric" placeholder="Nominal" required="" type="text">
-</input></div>
+<input class="w-full pl-7 md:pl-9 pr-2 md:pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-[11px] md:text-xs font-semibold transition" id="pengeluaran-nominal" inputmode="numeric" placeholder="Nominal" required="" type="text"/>
+</div>
 <div class="col-span-3">
 <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-2 md:px-4 rounded-full shadow-sm shadow-emerald-200 flex items-center justify-center gap-1.5 text-[11px] md:text-xs" type="submit">
 <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Tambah</span><span class="sm:hidden">Simpan</span>
@@ -1713,62 +2204,62 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </div>
 <div class="max-w-4xl mx-auto w-full my-auto">
 <!-- MOBILE ONLY: BERANDA -->
-<section class="md:hidden space-y-4" id="mobile-home-view">
-<div class="rku-mobile-brand-row">
-<button aria-label="Menu" class="rku-mobile-hamburger" type="button"><span></span><span></span><span></span></button>
-<div class="rku-mobile-brand-word">REKAP<span>INYU</span></div>
-<div class="rku-mobile-header-actions">
-<button aria-label="Notifikasi" class="rku-mobile-notification" type="button"><i class="fa-regular fa-bell"></i><span aria-hidden="true" class="rku-mobile-notification-dot"></span></button>
-<button aria-label="Profil" class="rku-mobile-profile" type="button"><i class="fa-solid fa-user"></i></button>
-</div>
-</div>
-<section aria-label="Promosi Rekapinyu" class="rku-mobile-promo-carousel" id="rku-mobile-promo-carousel">
-<div class="rku-mobile-promo-track">
-<article aria-label="Slide 1" class="rku-mobile-promo-slide rku-mobile-promo-slide-1">
-<div class="rku-mobile-promo-copy"><small>REKAPINYU</small><strong>Kelola Usaha Lebih Mudah</strong><span>Semua rekap harian dalam satu aplikasi.</span></div>
-<div class="rku-mobile-promo-art"><i class="fa-solid fa-chart-line"></i></div>
-</article>
-<article aria-label="Slide 2" class="rku-mobile-promo-slide rku-mobile-promo-slide-2">
-<div class="rku-mobile-promo-copy"><small>KASIR MODERN</small><strong>Transaksi Cepat &amp; Praktis</strong><span>Kelola produk dan penjualan dengan mudah.</span></div>
-<div class="rku-mobile-promo-art"><i class="fa-solid fa-cart-shopping"></i></div>
-</article>
-<article aria-label="Slide 3" class="rku-mobile-promo-slide rku-mobile-promo-slide-3">
-<div class="rku-mobile-promo-copy"><small>LAPORAN USAHA</small><strong>Pantau Hasil Usaha</strong><span>Ringkasan dan laporan lebih teratur.</span></div>
-<div class="rku-mobile-promo-art"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-</article>
-</div>
-<div aria-label="Pilih slide" class="rku-mobile-promo-dots"><button aria-label="Slide 1" type="button"></button><button aria-label="Slide 2" type="button"></button><button aria-label="Slide 3" class="active" type="button"></button></div>
-</section>
-<div class="rku-mobile-search"><i class="fa-solid fa-magnifying-glass"></i><input autocomplete="off" id="rku-mobile-menu-search" placeholder="Cari menu..." type="search"/></div>
-<section aria-labelledby="rku-kasir-heading" class="rku-mobile-menu-section">
-<h2 class="rku-mobile-section-heading" id="rku-kasir-heading">KASIR</h2>
-<div class="rku-mobile-menu-grid" id="rku-mobile-kasir-grid">
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-cart-shopping"></i><span>Kasir</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-box-open"></i><span>Produk Kasir</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-chart-column"></i><span>Laporan Kasir</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-gift"></i><span>Cek Paket</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-users"></i><span>Aktifitas</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-users"></i><span>Komunitas</span></button>
-</div>
-</section>
-<section aria-labelledby="rku-management-heading" class="rku-mobile-menu-section">
-<h2 class="rku-mobile-section-heading" id="rku-management-heading">MANAGEMENT</h2>
-<div class="rku-mobile-menu-grid" id="rku-mobile-management-grid">
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-file-pen"></i><span>Input Data</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-file-lines"></i><span>Laporan Bulanan</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-wallet"></i><span>Kasbon</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-receipt"></i><span>Pengeluaran</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-database"></i><span>Backup Data</span></button>
-</div>
-</section>
-<section aria-labelledby="rku-settings-heading" class="rku-mobile-menu-section">
-<h2 class="rku-mobile-section-heading" id="rku-settings-heading">SETING</h2>
-<div class="rku-mobile-menu-grid" id="rku-mobile-settings-grid">
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-gear"></i><span>Seting</span></button>
-<button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-print"></i><span>Cetak</span></button>
-</div>
-</section>
+<section class="hidden md:hidden space-y-4" id="mobile-home-view">
+  <div class="rku-mobile-brand-row">
+    <button type="button" class="rku-mobile-hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="rku-mobile-brand-word">REKAP<span>INYU</span></div>
+    <div class="rku-mobile-header-actions">
+      <button type="button" class="rku-mobile-notification" aria-label="Notifikasi"><i class="fa-regular fa-bell"></i><span class="rku-mobile-notification-dot" aria-hidden="true"></span></button>
+      <button type="button" class="rku-mobile-profile" aria-label="Profil"><i class="fa-solid fa-user"></i></button>
+    </div>
+  </div>
+  <section class="rku-mobile-promo-carousel" id="rku-mobile-promo-carousel" aria-label="Promosi Rekapinyu">
+    <div class="rku-mobile-promo-track">
+      <article class="rku-mobile-promo-slide rku-mobile-promo-slide-1" aria-label="Slide 1">
+        <div class="rku-mobile-promo-copy"><small>REKAPINYU</small><strong>Kelola Usaha Lebih Mudah</strong><span>Semua rekap harian dalam satu aplikasi.</span></div>
+        <div class="rku-mobile-promo-art"><i class="fa-solid fa-chart-line"></i></div>
+      </article>
+      <article class="rku-mobile-promo-slide rku-mobile-promo-slide-2" aria-label="Slide 2">
+        <div class="rku-mobile-promo-copy"><small>KASIR MODERN</small><strong>Transaksi Cepat & Praktis</strong><span>Kelola produk dan penjualan dengan mudah.</span></div>
+        <div class="rku-mobile-promo-art"><i class="fa-solid fa-cart-shopping"></i></div>
+      </article>
+      <article class="rku-mobile-promo-slide rku-mobile-promo-slide-3" aria-label="Slide 3">
+        <div class="rku-mobile-promo-copy"><small>LAPORAN USAHA</small><strong>Pantau Hasil Usaha</strong><span>Ringkasan dan laporan lebih teratur.</span></div>
+        <div class="rku-mobile-promo-art"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      </article>
+    </div>
+    <div class="rku-mobile-promo-dots" aria-label="Pilih slide"><button type="button" aria-label="Slide 1"></button><button type="button" aria-label="Slide 2"></button><button type="button" class="active" aria-label="Slide 3"></button></div>
+  </section>
+  <div class="rku-mobile-search"><i class="fa-solid fa-magnifying-glass"></i><input id="rku-mobile-menu-search" type="search" placeholder="Cari menu..." autocomplete="off"></div>
+  <section class="rku-mobile-menu-section" aria-labelledby="rku-kasir-heading">
+    <h2 class="rku-mobile-section-heading" id="rku-kasir-heading">KASIR</h2>
+    <div class="rku-mobile-menu-grid" id="rku-mobile-kasir-grid">
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-cart-shopping"></i><span>Kasir</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-box-open"></i><span>Produk Kasir</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-chart-column"></i><span>Laporan Kasir</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-gift"></i><span>Cek Paket</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-users"></i><span>Aktifitas</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-users"></i><span>Komunitas</span></button>
+    </div>
+  </section>
+  <section class="rku-mobile-menu-section" aria-labelledby="rku-management-heading">
+    <h2 class="rku-mobile-section-heading" id="rku-management-heading">MANAGEMENT</h2>
+    <div class="rku-mobile-menu-grid" id="rku-mobile-management-grid">
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-file-pen"></i><span>Input Data</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-file-lines"></i><span>Laporan Bulanan</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-wallet"></i><span>Kasbon</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-receipt"></i><span>Pengeluaran</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-database"></i><span>Backup Data</span></button>
+    </div>
+  </section>
+  <section class="rku-mobile-menu-section" aria-labelledby="rku-settings-heading">
+    <h2 class="rku-mobile-section-heading" id="rku-settings-heading">SETING</h2>
+    <div class="rku-mobile-menu-grid" id="rku-mobile-settings-grid">
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-gear"></i><span>Seting</span></button>
+      <button class="rku-mobile-menu-card" type="button"><i class="fa-solid fa-print"></i><span>Cetak</span></button>
+    </div>
+  </section>
 </section>
 <!-- VIEW 1: INPUT DATA -->
 <section class="space-y-6" id="view-input">
@@ -1782,8 +2273,8 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Pendapatan Hari Ini</label>
 <div class="relative">
 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-semibold text-sm">Rp</span>
-<input class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-sm font-semibold transition" id="income" inputmode="numeric" placeholder="0" required="" type="text">
-</input></div>
+<input class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-sm font-semibold transition" id="income" inputmode="numeric" placeholder="0" required="" type="text"/>
+</div>
 </div>
 <div>
 <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Total Belanja Hari Ini</label>
@@ -1812,20 +2303,20 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <label class="block text-xs font-bold uppercase text-slate-500 mb-1.5">Atur Hari Tanggal Bulan Tahun</label>
 <div class="w-full h-12 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 grid grid-cols-4 divide-x divide-slate-200">
 <div class="flex items-center justify-center">
-<select aria-label="Hari" class="w-full h-full px-2 bg-transparent border-0 outline-none text-center text-xs font-semibold text-slate-600 focus:ring-0 appearance-auto" id="input-manual-day">
+<select id="input-manual-day" aria-label="Hari" class="w-full h-full px-2 bg-transparent border-0 outline-none text-center text-xs font-semibold text-slate-600 focus:ring-0 appearance-auto">
 <option value="Minggu">Hari</option><option value="Minggu">Minggu</option><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option>
 </select>
 </div>
 <div class="flex items-center justify-center">
-<input aria-label="Tanggal" class="w-full h-full px-2 bg-transparent border-0 outline-none text-center text-xs font-semibold text-slate-600 focus:ring-0" id="input-manual-date" max="31" min="1" placeholder="Tgl" type="number"/>
+<input id="input-manual-date" aria-label="Tanggal" min="1" max="31" type="number" class="w-full h-full px-2 bg-transparent border-0 outline-none text-center text-xs font-semibold text-slate-600 focus:ring-0" placeholder="Tgl"/>
 </div>
 <div class="flex items-center justify-center">
-<select aria-label="Bulan" class="w-full h-full px-2 bg-transparent border-0 outline-none text-center text-xs font-semibold text-slate-600 focus:ring-0 appearance-auto" id="input-manual-month">
+<select id="input-manual-month" aria-label="Bulan" class="w-full h-full px-2 bg-transparent border-0 outline-none text-center text-xs font-semibold text-slate-600 focus:ring-0 appearance-auto">
 <option value="0">Bulan</option><option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option><option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option><option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option><option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
 </select>
 </div>
 <div class="flex items-center justify-center">
-<input aria-label="Tahun" class="w-full h-full px-2 bg-transparent border-0 outline-none text-center text-xs font-semibold text-slate-600 focus:ring-0" id="input-manual-year" min="1" placeholder="Tahun" type="number"/>
+<input id="input-manual-year" aria-label="Tahun" min="1" type="number" class="w-full h-full px-2 bg-transparent border-0 outline-none text-center text-xs font-semibold text-slate-600 focus:ring-0" placeholder="Tahun"/>
 </div>
 </div>
 </div>
@@ -1840,18 +2331,20 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </div>
 </section>
 <!-- VIEW NEW: PENGELUARAN -->
+
 <!-- VIEW NEW: KASBON -->
 <section class="hidden space-y-6" id="view-kasbon">
 <div class="grid grid-cols-1 gap-4" id="kasbon-grid"></div>
 </section>
 <!-- VIEW SETTING STRUK -->
+
 <section class="hidden receipt-settings-view" id="view-settings">
 <div class="app-settings-layout">
-<aside aria-label="Menu pengaturan" class="app-settings-menu">
-<button class="app-settings-menu-item is-active" data-settings-panel="receipt" type="button"><i class="fa-solid fa-receipt"></i><span>Seting <br/>Struk</span></button>
-<button class="app-settings-menu-item" data-settings-panel="printer" type="button"><i class="fa-solid fa-print"></i><span>Seting <br/>Printer</span></button>
-<button class="app-settings-menu-item" data-settings-panel="shift" type="button"><i class="fa-solid fa-clock"></i><span>Shift</span></button>
-<button class="app-settings-menu-item" data-settings-panel="toko" type="button"><i class="fa-solid fa-store"></i><span>Informasi Toko</span></button>
+<aside class="app-settings-menu" aria-label="Menu pengaturan">
+<button class="app-settings-menu-item is-active" type="button" data-settings-panel="receipt"><i class="fa-solid fa-receipt"></i><span>Seting <br>Struk</span></button>
+<button class="app-settings-menu-item" type="button" data-settings-panel="printer"><i class="fa-solid fa-print"></i><span>Seting <br>Printer</span></button>
+<button class="app-settings-menu-item" type="button" data-settings-panel="shift"><i class="fa-solid fa-clock"></i><span>Shift</span></button>
+<button class="app-settings-menu-item" type="button" data-settings-panel="toko"><i class="fa-solid fa-store"></i><span>Informasi Toko</span></button>
 </aside>
 <div class="app-settings-content">
 <div class="app-settings-panel is-active" data-settings-content="receipt">
@@ -1891,45 +2384,45 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <div class="receipt-settings-heading"><div><h3>Seting Printer</h3><p>Kelola koneksi printer Bluetooth dan pengaturan cetak struk kasir.</p></div><i aria-hidden="true" class="fa-solid fa-print"></i></div>
 <div class="printer-settings-body">
 <div class="printer-status-box" id="settings-printer-status"><span class="printer-status-dot"></span><div><strong id="settings-printer-status-title">Printer belum tersambung</strong><small id="settings-printer-status-text">Hubungkan printer Bluetooth untuk mulai mencetak.</small></div></div>
-<div class="printer-settings-actions"><button class="printer-action-primary" id="settings-printer-connect" type="button"><i class="fa-brands fa-bluetooth-b"></i><span>Hubungkan Printer</span></button><button class="printer-action-secondary" id="settings-printer-disconnect" type="button"><i class="fa-solid fa-link-slash"></i><span>Putuskan</span></button><button class="printer-action-secondary" id="settings-printer-test" type="button"><i class="fa-solid fa-print"></i><span>Test Print</span></button></div>
+<div class="printer-settings-actions"><button type="button" class="printer-action-primary" id="settings-printer-connect"><i class="fa-brands fa-bluetooth-b"></i><span>Hubungkan Printer</span></button><button type="button" class="printer-action-secondary" id="settings-printer-disconnect"><i class="fa-solid fa-link-slash"></i><span>Putuskan</span></button><button type="button" class="printer-action-secondary" id="settings-printer-test"><i class="fa-solid fa-print"></i><span>Test Print</span></button></div>
 <div class="printer-settings-grid">
 <div class="receipt-settings-field"><label for="printer-paper-width">Ukuran Kertas</label><select id="printer-paper-width"><option value="32">58 mm (32 karakter)</option><option value="48">80 mm (48 karakter)</option></select></div>
-<div class="receipt-settings-field"><label for="printer-copy-count">Jumlah Salinan</label><input id="printer-copy-count" inputmode="numeric" max="5" min="1" type="number" value="1"/></div>
+<div class="receipt-settings-field"><label for="printer-copy-count">Jumlah Salinan</label><input id="printer-copy-count" type="number" min="1" max="5" value="1" inputmode="numeric"/></div>
 </div>
-<button class="receipt-settings-save" id="settings-printer-save" type="button"><i class="fa-solid fa-floppy-disk"></i><span>Simpan Pengaturan Printer</span></button>
+<button type="button" class="receipt-settings-save" id="settings-printer-save"><i class="fa-solid fa-floppy-disk"></i><span>Simpan Pengaturan Printer</span></button>
 </div>
 </div>
 </div>
 <div class="app-settings-panel" data-settings-content="shift">
 <div class="printer-settings-card shift-settings-card">
-<div class="receipt-settings-heading"><div><h3>Pengaturan Shift Karyawan</h3><p>Atur jam mulai, jam selesai, dan nama karyawan yang bertugas pada setiap shift Kasir.</p></div><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
-<div class="printer-settings-body">
-<div class="shift-settings-grid">
-<section aria-labelledby="shift-settings-title-1" class="shift-settings-item">
-<div class="shift-settings-item-title"><span>SHIFT 1</span><small>Jadwal dan karyawan shift pertama</small></div>
-<div class="receipt-settings-field"><label for="shift-1-employee">Nama Karyawan</label><input autocomplete="off" id="shift-1-employee" maxlength="100" placeholder="Masukkan nama karyawan SHIFT 1" type="text"/></div>
-<div class="shift-settings-time-grid">
-<div class="receipt-settings-field"><label for="shift-1-start">Jam Mulai</label><input id="shift-1-start" type="time" value="06:00"/></div>
-<div class="receipt-settings-field"><label for="shift-1-end">Jam Selesai</label><input id="shift-1-end" type="time" value="14:00"/></div>
-</div>
-<p class="shift-settings-duration" id="shift-1-duration">Durasi: 8 jam</p>
-</section>
-<section aria-labelledby="shift-settings-title-2" class="shift-settings-item">
-<div class="shift-settings-item-title"><span>SHIFT 2</span><small>Jadwal dan karyawan shift kedua</small></div>
-<div class="receipt-settings-field"><label for="shift-2-employee">Nama Karyawan</label><input autocomplete="off" id="shift-2-employee" maxlength="100" placeholder="Masukkan nama karyawan SHIFT 2" type="text"/></div>
-<div class="shift-settings-time-grid">
-<div class="receipt-settings-field"><label for="shift-2-start">Jam Mulai</label><input id="shift-2-start" type="time" value="14:00"/></div>
-<div class="receipt-settings-field"><label for="shift-2-end">Jam Selesai</label><input id="shift-2-end" type="time" value="22:00"/></div>
-</div>
-<p class="shift-settings-duration" id="shift-2-duration">Durasi: 8 jam</p>
-</section>
-</div>
-<button class="receipt-settings-save" id="settings-shift-save" type="button"><i class="fa-solid fa-floppy-disk"></i><span>Simpan Pengaturan Shift</span></button>
-</div>
+  <div class="receipt-settings-heading"><div><h3>Pengaturan Shift Karyawan</h3><p>Atur jam mulai, jam selesai, dan nama karyawan yang bertugas pada setiap shift Kasir.</p></div><i aria-hidden="true" class="fa-solid fa-clock"></i></div>
+  <div class="printer-settings-body">
+    <div class="shift-settings-grid">
+      <section class="shift-settings-item" aria-labelledby="shift-settings-title-1">
+        <div class="shift-settings-item-title"><span>SHIFT 1</span><small>Jadwal dan karyawan shift pertama</small></div>
+        <div class="receipt-settings-field"><label for="shift-1-employee">Nama Karyawan</label><input id="shift-1-employee" type="text" autocomplete="off" placeholder="Masukkan nama karyawan SHIFT 1" maxlength="100"/></div>
+        <div class="shift-settings-time-grid">
+          <div class="receipt-settings-field"><label for="shift-1-start">Jam Mulai</label><input id="shift-1-start" type="time" value="06:00"/></div>
+          <div class="receipt-settings-field"><label for="shift-1-end">Jam Selesai</label><input id="shift-1-end" type="time" value="14:00"/></div>
+        </div>
+        <p class="shift-settings-duration" id="shift-1-duration">Durasi: 8 jam</p>
+      </section>
+      <section class="shift-settings-item" aria-labelledby="shift-settings-title-2">
+        <div class="shift-settings-item-title"><span>SHIFT 2</span><small>Jadwal dan karyawan shift kedua</small></div>
+        <div class="receipt-settings-field"><label for="shift-2-employee">Nama Karyawan</label><input id="shift-2-employee" type="text" autocomplete="off" placeholder="Masukkan nama karyawan SHIFT 2" maxlength="100"/></div>
+        <div class="shift-settings-time-grid">
+          <div class="receipt-settings-field"><label for="shift-2-start">Jam Mulai</label><input id="shift-2-start" type="time" value="14:00"/></div>
+          <div class="receipt-settings-field"><label for="shift-2-end">Jam Selesai</label><input id="shift-2-end" type="time" value="22:00"/></div>
+        </div>
+        <p class="shift-settings-duration" id="shift-2-duration">Durasi: 8 jam</p>
+      </section>
+    </div>
+    <button type="button" class="receipt-settings-save" id="settings-shift-save"><i class="fa-solid fa-floppy-disk"></i><span>Simpan Pengaturan Shift</span></button>
+  </div>
 </div>
 </div>
 <div class="app-settings-panel" data-settings-content="toko">
-<div class="printer-settings-card"><div class="receipt-settings-heading"><div><h3>Informasi Toko</h3><p>Informasi toko yang digunakan aplikasi dan dapat disesuaikan dari pengaturan struk.</p></div><i aria-hidden="true" class="fa-solid fa-store"></i></div><div class="printer-settings-body"><div class="settings-info-list"><div><span>Nama Toko</span><strong id="settings-info-store-name">-</strong></div><div><span>Alamat</span><strong id="settings-info-store-address">-</strong></div><div><span>Nomor Handphone</span><strong id="settings-info-store-phone">-</strong></div></div><button class="receipt-settings-save" data-settings-open="receipt" type="button"><i class="fa-solid fa-receipt"></i><span>Ubah Informasi Struk</span></button></div></div>
+<div class="printer-settings-card"><div class="receipt-settings-heading"><div><h3>Informasi Toko</h3><p>Informasi toko yang digunakan aplikasi dan dapat disesuaikan dari pengaturan struk.</p></div><i aria-hidden="true" class="fa-solid fa-store"></i></div><div class="printer-settings-body"><div class="settings-info-list"><div><span>Nama Toko</span><strong id="settings-info-store-name">-</strong></div><div><span>Alamat</span><strong id="settings-info-store-address">-</strong></div><div><span>Nomor Handphone</span><strong id="settings-info-store-phone">-</strong></div></div><button type="button" class="receipt-settings-save" data-settings-open="receipt"><i class="fa-solid fa-receipt"></i><span>Ubah Informasi Struk</span></button></div></div>
 </div>
 </div>
 </div>
@@ -1937,208 +2430,239 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </div>
 <!-- VIEW CETAK — isi dari cetakstruk.html, tanpa header cetakstruk -->
 <section class="hidden" id="view-cetak">
-<div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-4 py-2.5 rounded-2xl text-xs font-semibold shadow-2xl z-[100001] opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2" id="cetak-toast">
-<i class="fa-solid fa-circle-info text-emerald-400" id="cetak-toast-icon"></i>
+<div id="cetak-toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-4 py-2.5 rounded-2xl text-xs font-semibold shadow-2xl z-[100001] opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2">
+<i id="cetak-toast-icon" class="fa-solid fa-circle-info text-emerald-400"></i>
 <span id="cetak-toast-message">Pesan notifikasi</span>
 </div>
-<div class="w-full min-h-full p-0 max-w-[1120px] mx-auto" id="cetak-module-content">
-<!-- TAB 1: KASIR & INPUT PRODUK -->
-<section class="tab-content space-y-4" id="tab-kasir">
-<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-5 items-start">
-<div class="space-y-4 min-w-0">
-<!-- Action Row: Tambah Manual / Quick Catalog -->
-<div class="flex justify-end items-center gap-2">
-<button class="bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 hover:border-rose-200 rounded-2xl px-4 py-3 text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm">
-<i class="fa-solid fa-rotate-left"></i> Reset
+        <div id="cetak-module-content" class="w-full min-h-full p-0 max-w-[1120px] mx-auto">
+
+            <!-- TAB 1: KASIR & INPUT PRODUK -->
+            <section id="tab-kasir" class="tab-content space-y-4">
+                <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-5 items-start">
+                <div class="space-y-4 min-w-0">
+                <!-- Action Row: Tambah Manual / Quick Catalog -->
+                <div class="flex justify-end items-center gap-2">
+                    <button class="bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 hover:border-rose-200 rounded-2xl px-4 py-3 text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
                     </button>
-<button aria-label="Bluetooth printer belum tersambung" class="w-[75px] h-[42px] shrink-0 border rounded-2xl bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition active:scale-95 shadow-sm" id="cetak-bluetooth-box" style="color:#dc2626;border-color:#fecaca;background:#fff1f2;" title="Bluetooth printer belum tersambung" type="button">
-<i class="fa-brands fa-bluetooth-b text-lg"></i>
-</button>
-</div>
-<!-- Input Nama Pelanggan -->
-<div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-2">
-<label class="text-xs font-semibold text-slate-600 block" for="input-customer-name">Nama Pelanggan</label>
-<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition" id="input-customer-name" placeholder="Masukkan nama pelanggan (opsional)" type="text"/>
-</div>
-<!-- Form Quick Add Product Item -->
-<div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-3">
-<div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-<span class="flex items-center gap-1.5 text-slate-700"><i class="fa-solid fa-circle-plus text-emerald-500"></i> Tambah Item Produk</span>
-<span class="text-[10px] bg-slate-100 px-2 py-0.5 rounded-full text-slate-500 font-medium">Input Manual</span>
-</div>
-<form class="space-y-3" id="add-item-form">
-<div>
-<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition" id="input-item-name" placeholder="Nama Produk (mis: Es Teh Manis)" required="" type="text"/>
-</div>
-<div class="grid grid-cols-12 gap-2">
-<div class="col-span-4">
-<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition text-center" id="input-item-qty" min="1" placeholder="Qty" required="" type="number" value="1"/>
-</div>
-<div class="col-span-8">
-<div class="relative">
-<span class="absolute left-3.5 top-2.5 text-xs text-slate-400 font-bold">Rp</span>
-<input autocomplete="off" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition" id="input-item-price" inputmode="numeric" placeholder="Harga Satuan" required="" type="text"/>
-</div>
-</div>
-</div>
-<button class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl py-3 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-95 transition" id="cetak-add-item-button" type="button">
-<i class="fa-solid fa-plus text-sm"></i> Tambahkan ke Struk
+                    <button id="cetak-bluetooth-box" type="button" aria-label="Bluetooth printer belum tersambung" title="Bluetooth printer belum tersambung" class="w-[75px] h-[42px] shrink-0 border rounded-2xl bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100 flex items-center justify-center transition active:scale-95 shadow-sm"
+                        style="color:#dc2626;border-color:#fecaca;background:#fff1f2;">
+                        <i class="fa-brands fa-bluetooth-b text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Input Nama Pelanggan -->
+                <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-2">
+                    <label for="input-customer-name" class="text-xs font-semibold text-slate-600 block">Nama Pelanggan</label>
+                    <input type="text" id="input-customer-name" placeholder="Masukkan nama pelanggan (opsional)"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition">
+                </div>
+
+                <!-- Form Quick Add Product Item -->
+                <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-3">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                        <span class="flex items-center gap-1.5 text-slate-700"><i class="fa-solid fa-circle-plus text-emerald-500"></i> Tambah Item Produk</span>
+                        <span class="text-[10px] bg-slate-100 px-2 py-0.5 rounded-full text-slate-500 font-medium">Input Manual</span>
+                    </div>
+                    <form id="add-item-form" class="space-y-3">
+                        <div>
+                            <input type="text" id="input-item-name" placeholder="Nama Produk (mis: Es Teh Manis)" required
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition">
+                        </div>
+                        <div class="grid grid-cols-12 gap-2">
+                            <div class="col-span-4">
+                                <input type="number" id="input-item-qty" placeholder="Qty" min="1" value="1" required
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition text-center">
+                            </div>
+                            <div class="col-span-8">
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-2.5 text-xs text-slate-400 font-bold">Rp</span>
+                                    <input type="text" id="input-item-price" inputmode="numeric" autocomplete="off" placeholder="Harga Satuan" required
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="cetak-add-item-button" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl py-3 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-95 transition">
+                            <i class="fa-solid fa-plus text-sm"></i> Tambahkan ke Struk
                         </button>
-</form>
-</div>
-<!-- Shopping List (Keranjang) -->
-<div class="space-y-2">
-<div class="flex items-center justify-between text-xs font-semibold text-slate-500 px-1">
-<span>Daftar Item (<span id="cart-count">0</span>)</span>
-<span class="text-emerald-600 font-bold" id="cart-total-badge">Rp 0</span>
-</div>
-<div class="space-y-2 max-h-52 overflow-y-auto pr-1" id="cart-items-container">
-<!-- Dynamic items inserted here -->
-<div class="text-center py-7 border border-dashed border-slate-200 bg-slate-50/50 rounded-2xl text-slate-400 text-xs">
-<i class="fa-solid fa-basket-shopping text-3xl mb-2 text-slate-300 block"></i>
+                    </form>
+                </div>
+
+                <!-- Shopping List (Keranjang) -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs font-semibold text-slate-500 px-1">
+                        <span>Daftar Item (<span id="cart-count">0</span>)</span>
+                        <span id="cart-total-badge" class="text-emerald-600 font-bold">Rp 0</span>
+                    </div>
+
+                    <div id="cart-items-container" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+                        <!-- Dynamic items inserted here -->
+                        <div class="text-center py-7 border border-dashed border-slate-200 bg-slate-50/50 rounded-2xl text-slate-400 text-xs">
+                            <i class="fa-solid fa-basket-shopping text-3xl mb-2 text-slate-300 block"></i>
                             Keranjang kosong. Tambahkan item di atas.
                         </div>
-</div>
-</div>
-<!-- Payment & Change Calculator Section -->
-<div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-3.5">
-<div class="flex items-center justify-between">
-<span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-calculator text-emerald-600"></i> Pembayaran &amp; Kembalian</span>
-<span class="text-[10px] font-semibold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Tunai / Cash</span>
-</div>
-<!-- Total Tagihan Display -->
-<div class="flex justify-between items-center bg-slate-50 rounded-xl p-3.5 border border-slate-200/60">
-<span class="text-xs font-medium text-slate-500">Total Tagihan:</span>
-<span class="text-lg font-extrabold text-emerald-600" id="display-total-amount">Rp 0</span>
-</div>
-<!-- Input Cash Paid -->
-<div class="space-y-2">
-<label class="text-xs font-medium text-slate-600 block">Uang Diterima (Bayar):</label>
-<div class="relative">
-<span class="absolute left-3.5 top-2.5 text-sm font-extrabold text-slate-400">Rp</span>
-<input autocomplete="off" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3 py-2.5 text-base font-extrabold text-slate-800 placeholder-slate-300 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition" id="input-cash-paid" inputmode="numeric" placeholder="0" type="text"/>
-</div>
-<!-- Quick Nominal Buttons -->
-<div class="grid grid-cols-4 gap-1.5 pt-1">
-<button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95">Uang Pas</button>
-<button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95">10rb</button>
-<button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95">20rb</button>
-<button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95">50rb</button>
-<button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95 col-span-2">100rb</button>
-<button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95 col-span-2">Bulatkan</button>
-</div>
-</div>
-<!-- Calculated Change Display -->
-<div class="flex justify-between items-center rounded-xl p-3.5 border transition bg-slate-50 border-slate-200/60" id="change-status-box">
-<span class="text-xs font-semibold text-slate-500">Kembalian:</span>
-<span class="text-base font-bold text-slate-700" id="display-change-amount">Rp 0</span>
-</div>
-</div>
-</div>
-<!-- Live Preview Struk 58mm Header & Trigger Modal/Print -->
-<div class="pt-2 xl:sticky xl:top-4 min-w-0">
-<div class="flex items-center justify-between mb-2">
-<span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-<i class="fa-solid fa-eye text-emerald-600"></i> Preview Struk 58mm
+                    </div>
+                </div>
+
+                <!-- Payment & Change Calculator Section -->
+                <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-calculator text-emerald-600"></i> Pembayaran & Kembalian</span>
+                        <span class="text-[10px] font-semibold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Tunai / Cash</span>
+                    </div>
+
+                    <!-- Total Tagihan Display -->
+                    <div class="flex justify-between items-center bg-slate-50 rounded-xl p-3.5 border border-slate-200/60">
+                        <span class="text-xs font-medium text-slate-500">Total Tagihan:</span>
+                        <span id="display-total-amount" class="text-lg font-extrabold text-emerald-600">Rp 0</span>
+                    </div>
+
+                    <!-- Input Cash Paid -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-600 block">Uang Diterima (Bayar):</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-2.5 text-sm font-extrabold text-slate-400">Rp</span>
+                            <input type="text" id="input-cash-paid" inputmode="numeric" autocomplete="off" placeholder="0"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3 py-2.5 text-base font-extrabold text-slate-800 placeholder-slate-300 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition">
+                        </div>
+
+                        <!-- Quick Nominal Buttons -->
+                        <div class="grid grid-cols-4 gap-1.5 pt-1">
+                            <button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95">Uang Pas</button>
+                            <button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95">10rb</button>
+                            <button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95">20rb</button>
+                            <button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95">50rb</button>
+                            <button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95 col-span-2">100rb</button>
+                            <button class="bg-slate-100 hover:bg-slate-200/80 text-slate-700 py-2 rounded-xl text-[11px] font-bold transition active:scale-95 col-span-2">Bulatkan</button>
+                        </div>
+                    </div>
+
+                    <!-- Calculated Change Display -->
+                    <div id="change-status-box" class="flex justify-between items-center rounded-xl p-3.5 border transition bg-slate-50 border-slate-200/60">
+                        <span class="text-xs font-semibold text-slate-500">Kembalian:</span>
+                        <span id="display-change-amount" class="text-base font-bold text-slate-700">Rp 0</span>
+                    </div>
+                </div>
+
+                </div>
+
+                <!-- Live Preview Struk 58mm Header & Trigger Modal/Print -->
+                <div class="pt-2 xl:sticky xl:top-4 min-w-0">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-eye text-emerald-600"></i> Preview Struk 58mm
                         </span>
-<span class="text-[10px] bg-slate-100 border border-slate-200 text-slate-600 px-2.5 py-0.5 rounded-full font-mono font-medium">58mm</span>
-</div>
-<!-- Thermal Paper Simulation Container -->
-<div class="cetak-receipt-scroll p-4 bg-slate-100 rounded-2xl border border-slate-200/80 shadow-inner">
-<div class="thermal-receipt" id="printable-receipt-area">
-<!-- Live receipt rendered via JavaScript -->
-</div>
-</div>
-<!-- Print Action Buttons -->
-<div class="grid grid-cols-2 gap-2 mt-4">
-<button class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-2xl py-3 px-3 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 transition active:scale-95">
-<i class="fa-bluetooth fab text-sm"></i> Cetak Bluetooth
+                        <span class="text-[10px] bg-slate-100 border border-slate-200 text-slate-600 px-2.5 py-0.5 rounded-full font-mono font-medium">58mm</span>
+                    </div>
+
+                    <!-- Thermal Paper Simulation Container -->
+                    <div class="cetak-receipt-scroll p-4 bg-slate-100 rounded-2xl border border-slate-200/80 shadow-inner">
+                        <div id="printable-receipt-area" class="thermal-receipt">
+                            <!-- Live receipt rendered via JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Print Action Buttons -->
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <button class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-2xl py-3 px-3 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 transition active:scale-95">
+                            <i class="fa-bluetooth fab text-sm"></i> Cetak Bluetooth
                         </button>
-<button class="bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-2xl py-3 px-3 text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-md shadow-slate-900/10">
-<i class="fa-solid fa-print text-sm"></i> Cetak System
+                        <button class="bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-2xl py-3 px-3 text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-md shadow-slate-900/10">
+                            <i class="fa-solid fa-print text-sm"></i> Cetak System
                         </button>
-</div>
-<button class="w-full mt-2 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 font-bold rounded-2xl py-2.5 text-xs flex items-center justify-center gap-2 transition">
-<i class="fa-solid fa-circle-check text-emerald-600"></i> Simpan Transaksi &amp; Selesai
+                    </div>
+                    <button class="w-full mt-2 bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 font-bold rounded-2xl py-2.5 text-xs flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i> Simpan Transaksi & Selesai
                     </button>
-</div>
-</div>
-</section>
-<!-- TAB 2: KATALOG PRODUK -->
-<section class="tab-content hidden space-y-4" id="tab-katalog">
-<div class="flex items-center justify-between">
-<h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-<i class="fa-solid fa-boxes-stacked text-emerald-600"></i> Katalog Produk
+                </div>
+                </div>
+
+            </section>
+
+            <!-- TAB 2: KATALOG PRODUK -->
+            <section id="tab-katalog" class="tab-content hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-stacked text-emerald-600"></i> Katalog Produk
                     </h2>
-<button class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition">
-<i class="fa-solid fa-plus"></i> Tambah Produk
+                    <button class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition">
+                        <i class="fa-solid fa-plus"></i> Tambah Produk
                     </button>
-</div>
-<!-- Catalog Item List -->
-<div class="space-y-2" id="catalog-list">
-<!-- Dynamic catalog items -->
-</div>
-</section>
-<!-- TAB 3: RIWAYAT TRANSAKSI -->
-<section class="tab-content hidden space-y-4" id="tab-riwayat">
-<div class="flex items-center justify-between">
-<h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-<i class="fa-solid fa-clock-rotate-left text-emerald-600"></i> Riwayat Transaksi
+                </div>
+
+                <!-- Catalog Item List -->
+                <div id="catalog-list" class="space-y-2">
+                    <!-- Dynamic catalog items -->
+                </div>
+            </section>
+
+            <!-- TAB 3: RIWAYAT TRANSAKSI -->
+            <section id="tab-riwayat" class="tab-content hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i> Riwayat Transaksi
                     </h2>
-<button class="text-xs font-semibold text-rose-500 hover:underline">Hapus Semua</button>
-</div>
-<!-- Summary Card -->
-<div class="grid grid-cols-2 gap-2">
-<div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
-<span class="text-[10px] font-bold text-slate-400 block uppercase">Total Struk</span>
-<span class="text-lg font-extrabold text-slate-800" id="summary-total-count">0</span>
-</div>
-<div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
-<span class="text-[10px] font-bold text-slate-400 block uppercase">Total Omset</span>
-<span class="text-lg font-extrabold text-emerald-600" id="summary-total-sales">Rp 0</span>
-</div>
-</div>
-<!-- History List -->
-<div class="space-y-2" id="history-list">
-<!-- Dynamic history items -->
-</div>
-</section>
-<!-- TAB 4: PENGATURAN TOKO -->
-<section class="tab-content hidden space-y-4" id="tab-pengaturan">
-<h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-<i class="fa-solid fa-store text-emerald-600"></i> Profil Toko &amp; Header Struk
+                    <button class="text-xs font-semibold text-rose-500 hover:underline">Hapus Semua</button>
+                </div>
+
+                <!-- Summary Card -->
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-400 block uppercase">Total Struk</span>
+                        <span id="summary-total-count" class="text-lg font-extrabold text-slate-800">0</span>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-400 block uppercase">Total Omset</span>
+                        <span id="summary-total-sales" class="text-lg font-extrabold text-emerald-600">Rp 0</span>
+                    </div>
+                </div>
+
+                <!-- History List -->
+                <div id="history-list" class="space-y-2">
+                    <!-- Dynamic history items -->
+                </div>
+            </section>
+
+            <!-- TAB 4: PENGATURAN TOKO -->
+            <section id="tab-pengaturan" class="tab-content hidden space-y-4">
+                <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-store text-emerald-600"></i> Profil Toko & Header Struk
                 </h2>
-<form class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-3" id="store-settings-form">
-<div>
-<label class="text-xs font-semibold text-slate-600 block mb-1">Nama Toko / Usaha</label>
-<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10" id="setting-store-name" required="" type="text"/>
-</div>
-<div>
-<label class="text-xs font-semibold text-slate-600 block mb-1">Alamat Toko</label>
-<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10" id="setting-store-address" type="text"/>
-</div>
-<div>
-<label class="text-xs font-semibold text-slate-600 block mb-1">Nomor Telepon / WA</label>
-<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10" id="setting-store-phone" type="text"/>
-</div>
-<div>
-<label class="text-xs font-semibold text-slate-600 block mb-1">Pesan Footer Struk (Terima Kasih)</label>
-<textarea class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10" id="setting-store-footer" rows="2"></textarea>
-</div>
-<button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl py-2.5 text-xs shadow-md shadow-emerald-600/20" type="submit">
+
+                <form id="store-settings-form" class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm space-y-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-1">Nama Toko / Usaha</label>
+                        <input type="text" id="setting-store-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-1">Alamat Toko</label>
+                        <input type="text" id="setting-store-address" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-1">Nomor Telepon / WA</label>
+                        <input type="text" id="setting-store-phone" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-1">Pesan Footer Struk (Terima Kasih)</label>
+                        <textarea id="setting-store-footer" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl py-2.5 text-xs shadow-md shadow-emerald-600/20">
                         Simpan Pengaturan
                     </button>
-</form>
-</section>
-</div>
+                </form>
+
+
+            </section>
+
+        </div>
 </section>
 <!-- PATCH: FILE MANAGER FOLDER TARGET, hanya area Atur Folder -->
-<div class="rk-folder-manager" hidden="" id="rk-folder-manager">
-<div class="rk-folder-dialog">
-<div class="rk-folder-head"><div><strong>Atur Folder</strong><span>Dokumen → Data → Rekap / Produk / Kasir (beserta seluruh file di dalamnya)</span></div><button aria-label="Tutup" id="rk-folder-close" type="button"><i class="fa-solid fa-xmark"></i></button></div>
-<div class="rk-folder-toolbar"><button id="rk-folder-open-doc" type="button"><i class="fa-solid fa-folder-open"></i> Buka Dokumen</button><span id="rk-folder-current">Belum ada folder Dokumen yang dibuka</span></div>
-<div class="rk-folder-tree" id="rk-folder-tree"><div class="rk-folder-empty"><i class="fa-solid fa-folder-tree"></i><span>Pilih folder Dokumen. Aplikasi hanya membaca Data/Rekap, Data/Produk, dan Data/Kasir beserta file di dalamnya; tidak mengubah folder lain.</span></div></div>
-</div>
+<div id="rk-folder-manager" class="rk-folder-manager" hidden>
+  <div class="rk-folder-dialog">
+    <div class="rk-folder-head"><div><strong>Atur Folder</strong><span>Dokumen → Data → Rekap / Produk / Kasir (beserta seluruh file di dalamnya)</span></div><button type="button" id="rk-folder-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="rk-folder-toolbar"><button type="button" id="rk-folder-open-doc"><i class="fa-solid fa-folder-open"></i> Buka Dokumen</button><span id="rk-folder-current">Belum ada folder Dokumen yang dibuka</span></div>
+    <div id="rk-folder-tree" class="rk-folder-tree"><div class="rk-folder-empty"><i class="fa-solid fa-folder-tree"></i><span>Pilih folder Dokumen. Aplikasi hanya membaca Data/Rekap, Data/Produk, dan Data/Kasir beserta file di dalamnya; tidak mengubah folder lain.</span></div></div>
+  </div>
 </div>
 <!-- VIEW PRODUK KASIR -->
 <section class="hidden pk3-view" id="view-produk-kasir">
@@ -2146,14 +2670,14 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <div class="pk3-heading">
 <div><h3>Produk Kasir</h3><p>Semua data produk tersimpan di perangkat ini.</p></div>
 <div class="pk3-heading-actions">
-<button aria-pressed="false" class="pk3-folder-pick" id="pk3-folder-pick" title="Buat Folder" type="button"><i aria-hidden="true" class="fa-solid fa-folder-open"></i><span>Buat Folder</span></button>
+<button type="button" class="pk3-folder-pick" id="pk3-folder-pick" title="Buat Folder" aria-pressed="false"><i class="fa-solid fa-folder-open" aria-hidden="true"></i><span>Buat Folder</span></button>
 <span id="pk3-count">0 produk</span>
 </div>
 </div>
 <form autocomplete="off" class="pk3-form" id="pk3-form">
 <div class="pk3-field pk3-name"><label for="pk3-name">Nama Produk</label><input id="pk3-name" placeholder="Contoh: Kopi Susu" required="" type="text"/></div>
-<div class="pk3-field"><label for="pk3-category">Kategori Produk</label><select id="pk3-category"><option value="Makanan">Makanan</option><option value="Minuman">Minuman</option><option value="Snack">Snack</option><option value="Sembako">Sembako</option><option value="Rokok">Rokok</option><option value="Bahan Pokok">Bahan Pokok</option><option value="Frozen Food">Frozen Food</option><option value="Bakery">Bakery</option><option value="Buah">Buah</option><option value="Sayur">Sayur</option><option value="Daging &amp; Seafood">Daging &amp; Seafood</option><option value="Bumbu &amp; Rempah">Bumbu &amp; Rempah</option><option value="Susu &amp; Dairy">Susu &amp; Dairy</option><option value="Kebutuhan Rumah Tangga">Kebutuhan Rumah Tangga</option><option value="Kebersihan">Kebersihan</option><option value="Perawatan Diri">Perawatan Diri</option><option value="Kesehatan">Kesehatan</option><option value="ATK">ATK</option><option value="Elektronik">Elektronik</option><option value="Fashion">Fashion</option><option value="Aksesoris">Aksesoris</option><option value="Pulsa &amp; Token">Pulsa &amp; Token</option><option value="Jasa">Jasa</option><option selected="" value="Lainnya">Lainnya</option></select></div>
-<div class="pk3-field pk3-barcode-field"><label for="pk3-barcode">Multi Barcode+</label><input autocomplete="off" id="pk3-barcode" placeholder="Ketik, Enter" type="text"><div class="pk3-barcode-list" id="pk3-barcode-list"></div></input></div>
+<div class="pk3-field"><label for="pk3-category">Kategori Produk</label><select id="pk3-category"><option value="Makanan">Makanan</option><option value="Minuman">Minuman</option><option value="Snack">Snack</option><option value="Sembako">Sembako</option><option value="Rokok">Rokok</option><option value="Bahan Pokok">Bahan Pokok</option><option value="Frozen Food">Frozen Food</option><option value="Bakery">Bakery</option><option value="Buah">Buah</option><option value="Sayur">Sayur</option><option value="Daging & Seafood">Daging & Seafood</option><option value="Bumbu & Rempah">Bumbu & Rempah</option><option value="Susu & Dairy">Susu & Dairy</option><option value="Kebutuhan Rumah Tangga">Kebutuhan Rumah Tangga</option><option value="Kebersihan">Kebersihan</option><option value="Perawatan Diri">Perawatan Diri</option><option value="Kesehatan">Kesehatan</option><option value="ATK">ATK</option><option value="Elektronik">Elektronik</option><option value="Fashion">Fashion</option><option value="Aksesoris">Aksesoris</option><option value="Pulsa & Token">Pulsa & Token</option><option value="Jasa">Jasa</option><option value="Lainnya" selected>Lainnya</option></select></div>
+<div class="pk3-field pk3-barcode-field"><label for="pk3-barcode">Multi Barcode+</label><input id="pk3-barcode" placeholder="Ketik, Enter" type="text" autocomplete="off"/><div class="pk3-barcode-list" id="pk3-barcode-list"></div></div>
 <div class="pk3-field"><label for="pk3-cost">HPP / Grosir</label><input id="pk3-cost" inputmode="numeric" placeholder="0" type="text"/></div>
 <div class="pk3-field"><label for="pk3-price">Harga Jual</label><input id="pk3-price" inputmode="numeric" placeholder="0" required="" type="text"/></div>
 <div class="pk3-field"><label for="pk3-stock">Stok</label><input id="pk3-stock" inputmode="numeric" min="0" placeholder="0" type="text"/></div>
@@ -2171,7 +2695,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <div class="pk3-modal-head"><div><h3 id="pk3-modal-title">Edit Produk</h3><p>Perbarui data produk.</p></div><button aria-label="Tutup" class="pk3-modal-close" data-pk3-close="" type="button"><i class="fa-solid fa-xmark"></i></button></div>
 <form autocomplete="off" class="pk3-edit-form" id="pk3-edit-form">
 <div class="pk3-field"><label for="pk3-edit-name">Nama Produk</label><input id="pk3-edit-name" required=""/></div>
-<div class="pk3-edit-row pk3-edit-barcode-row"><div class="pk3-field pk3-edit-category-field"><label for="pk3-edit-category">Kategori Produk</label><select id="pk3-edit-category"><option value="Makanan">Makanan</option><option value="Minuman">Minuman</option><option value="Snack">Snack</option><option value="Sembako">Sembako</option><option value="Bahan Pokok">Bahan Pokok</option><option value="Frozen Food">Frozen Food</option><option value="Bakery">Bakery</option><option value="Buah">Buah</option><option value="Sayur">Sayur</option><option value="Daging &amp; Seafood">Daging &amp; Seafood</option><option value="Bumbu &amp; Rempah">Bumbu &amp; Rempah</option><option value="Susu &amp; Dairy">Susu &amp; Dairy</option><option value="Kebutuhan Rumah Tangga">Kebutuhan Rumah Tangga</option><option value="Kebersihan">Kebersihan</option><option value="Perawatan Diri">Perawatan Diri</option><option value="Kesehatan">Kesehatan</option><option value="ATK">ATK</option><option value="Elektronik">Elektronik</option><option value="Fashion">Fashion</option><option value="Aksesoris">Aksesoris</option><option value="Pulsa &amp; Token">Pulsa &amp; Token</option><option value="Jasa">Jasa</option><option value="Lainnya">Lainnya</option></select></div><div class="pk3-field pk3-barcode-field"><label for="pk3-edit-barcode">Barcode (bisa banyak)</label><input autocomplete="off" id="pk3-edit-barcode" placeholder="Ketik barcode lalu Enter"/></div><div class="pk3-field pk3-barcode-picker-field"><label>Barcode Aktif</label><div class="pk3-barcode-picker" id="pk3-edit-barcode-picker"><button aria-expanded="false" class="pk3-barcode-picker-btn" id="pk3-edit-barcode-picker-btn" type="button"><i aria-hidden="true" class="fa-solid fa-barcode"></i><span>Barcode</span><i aria-hidden="true" class="fa-solid fa-chevron-down pk3-barcode-picker-chevron"></i></button><div class="pk3-barcode-picker-menu" hidden="" id="pk3-edit-barcode-picker-menu"></div></div></div></div>
+<div class="pk3-edit-row pk3-edit-barcode-row"><div class="pk3-field pk3-edit-category-field"><label for="pk3-edit-category">Kategori Produk</label><select id="pk3-edit-category"><option value="Makanan">Makanan</option><option value="Minuman">Minuman</option><option value="Snack">Snack</option><option value="Sembako">Sembako</option><option value="Bahan Pokok">Bahan Pokok</option><option value="Frozen Food">Frozen Food</option><option value="Bakery">Bakery</option><option value="Buah">Buah</option><option value="Sayur">Sayur</option><option value="Daging & Seafood">Daging & Seafood</option><option value="Bumbu & Rempah">Bumbu & Rempah</option><option value="Susu & Dairy">Susu & Dairy</option><option value="Kebutuhan Rumah Tangga">Kebutuhan Rumah Tangga</option><option value="Kebersihan">Kebersihan</option><option value="Perawatan Diri">Perawatan Diri</option><option value="Kesehatan">Kesehatan</option><option value="ATK">ATK</option><option value="Elektronik">Elektronik</option><option value="Fashion">Fashion</option><option value="Aksesoris">Aksesoris</option><option value="Pulsa & Token">Pulsa & Token</option><option value="Jasa">Jasa</option><option value="Lainnya">Lainnya</option></select></div><div class="pk3-field pk3-barcode-field"><label for="pk3-edit-barcode">Barcode (bisa banyak)</label><input id="pk3-edit-barcode" placeholder="Ketik barcode lalu Enter" autocomplete="off"/></div><div class="pk3-field pk3-barcode-picker-field"><label>Barcode Aktif</label><div class="pk3-barcode-picker" id="pk3-edit-barcode-picker"><button type="button" class="pk3-barcode-picker-btn" id="pk3-edit-barcode-picker-btn" aria-expanded="false"><i class="fa-solid fa-barcode" aria-hidden="true"></i><span>Barcode</span><i class="fa-solid fa-chevron-down pk3-barcode-picker-chevron" aria-hidden="true"></i></button><div class="pk3-barcode-picker-menu" id="pk3-edit-barcode-picker-menu" hidden></div></div></div></div>
 <div class="pk3-edit-row"><div class="pk3-field"><label for="pk3-edit-cost">HPP / Grosir</label><input id="pk3-edit-cost" inputmode="numeric"/></div><div class="pk3-field"><label for="pk3-edit-price">Harga Jual</label><input id="pk3-edit-price" inputmode="numeric" required=""/></div><div class="pk3-field"><label for="pk3-edit-stock">Stok</label><input id="pk3-edit-stock" inputmode="numeric" required=""/></div></div>
 <div class="pk3-field"><label>Foto Produk</label><div class="pk3-photo-tools"><label class="pk3-photo-btn" for="pk3-edit-photo"><i class="fa-solid fa-camera"></i><span id="pk3-edit-photo-name">Pertahankan foto</span></label></div><input accept="image/jpeg,image/png,image/webp" hidden="" id="pk3-edit-photo" type="file"/></div>
 <div class="pk3-modal-actions"><button class="pk3-cancel" data-pk3-close="" type="button">Batal</button><button class="pk3-save" type="submit"><i class="fa-solid fa-floppy-disk"></i> Simpan</button></div>
@@ -2905,130 +3429,132 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 #view-komunitas .komunitas-feed-heading{display:block!important}
 </style>
 <section class="hidden space-y-4" id="view-cek-paket">
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-<div class="bg-gradient-to-r from-emerald-600 to-teal-500 p-5 text-white sm:p-7">
-<div class="flex items-center gap-3"><div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20"><i class="fa-solid fa-route text-2xl"></i></div><div><h2 class="text-xl font-extrabold">Cek Paket</h2><p class="mt-1 text-sm text-white/90">Status dan masa aktif paket Rekapinyu Anda</p></div></div>
-<div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"><div class="rounded-xl bg-white/15 p-4"><div class="text-xs font-semibold uppercase tracking-wide text-white/80">Paket Anda</div><div class="mt-1 text-xl font-extrabold" id="cek-paket-nama">Memuat data paket…</div></div><div class="rounded-xl bg-white/15 p-4"><div class="text-xs font-semibold uppercase tracking-wide text-white/80">Status Paket</div><div class="mt-1 text-xl font-extrabold" id="cek-paket-status">Memeriksa…</div></div></div>
-</div>
-<div class="space-y-5 p-5 sm:p-7">
-<div class="grid grid-cols-1 gap-3 sm:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="text-sm text-slate-500">Sisa masa aktif</div><div class="mt-1 flex items-baseline gap-2"><span class="text-3xl font-black text-slate-800" id="cek-paket-sisa">—</span><span class="text-sm font-semibold text-slate-500" id="cek-paket-satuan">hari</span></div><p class="mt-1 text-xs text-slate-500" id="cek-paket-keterangan-sisa">Mengambil data dari akun Anda</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Tanggal berakhir</div><div class="mt-2 text-base font-bold text-slate-800" id="cek-paket-berakhir">—</div><p class="mt-1 text-xs text-slate-500" id="cek-paket-keterangan-berakhir">Dihitung sejak tanggal mulai masa aktif</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Nama toko</div><div class="mt-2 break-words text-base font-bold text-slate-800" id="cek-paket-toko">—</div><p class="mt-1 text-xs text-slate-500">Akun yang sedang masuk</p></div></div>
-<div><div class="mb-2 flex items-center justify-between gap-3"><span class="text-sm font-bold text-slate-700">Masa aktif paket</span><span class="text-xs font-semibold text-slate-500" id="cek-paket-progress-label">—</span></div><div class="h-3 overflow-hidden rounded-full bg-slate-100"><div class="h-full rounded-full bg-emerald-500 transition-all duration-500" id="cek-paket-progress" style="width:0%"></div></div><p class="mt-3 text-sm text-slate-600" id="cek-paket-info">Status paket akan diperbarui otomatis dari data akun.</p></div>
-<div class="flex flex-col gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 sm:flex-row sm:items-center sm:justify-between"><div><div class="font-bold text-slate-800">Butuh perpanjangan paket?</div><p class="mt-1 text-sm text-slate-600">Hubungi admin Rekapinyu untuk mengaktifkan atau memperpanjang paket Anda.</p></div><a class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-green-700" href="https://wa.me/message/FCDFMUUH7KDWC1" id="cek-paket-wa" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-whatsapp text-lg"></i> Hubungi Admin</a></div>
-<p class="text-xs text-slate-400"><i class="fa-solid fa-rotate mr-1"></i>Data diperbarui otomatis saat status paket pada akun berubah.</p>
-</div>
-</div>
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div class="bg-gradient-to-r from-emerald-600 to-teal-500 p-5 text-white sm:p-7">
+      <div class="flex items-center gap-3"><div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20"><i class="fa-solid fa-route text-2xl"></i></div><div><h2 class="text-xl font-extrabold">Cek Paket</h2><p class="mt-1 text-sm text-white/90">Status dan masa aktif paket Rekapinyu Anda</p></div></div>
+      <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"><div class="rounded-xl bg-white/15 p-4"><div class="text-xs font-semibold uppercase tracking-wide text-white/80">Paket Anda</div><div id="cek-paket-nama" class="mt-1 text-xl font-extrabold">Memuat data paket…</div></div><div class="rounded-xl bg-white/15 p-4"><div class="text-xs font-semibold uppercase tracking-wide text-white/80">Status Paket</div><div id="cek-paket-status" class="mt-1 text-xl font-extrabold">Memeriksa…</div></div></div>
+    </div>
+    <div class="space-y-5 p-5 sm:p-7">
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="text-sm text-slate-500">Sisa masa aktif</div><div class="mt-1 flex items-baseline gap-2"><span id="cek-paket-sisa" class="text-3xl font-black text-slate-800">—</span><span id="cek-paket-satuan" class="text-sm font-semibold text-slate-500">hari</span></div><p id="cek-paket-keterangan-sisa" class="mt-1 text-xs text-slate-500">Mengambil data dari akun Anda</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Tanggal berakhir</div><div id="cek-paket-berakhir" class="mt-2 text-base font-bold text-slate-800">—</div><p id="cek-paket-keterangan-berakhir" class="mt-1 text-xs text-slate-500">Dihitung sejak tanggal mulai masa aktif</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Nama toko</div><div id="cek-paket-toko" class="mt-2 break-words text-base font-bold text-slate-800">—</div><p class="mt-1 text-xs text-slate-500">Akun yang sedang masuk</p></div></div>
+      <div><div class="mb-2 flex items-center justify-between gap-3"><span class="text-sm font-bold text-slate-700">Masa aktif paket</span><span id="cek-paket-progress-label" class="text-xs font-semibold text-slate-500">—</span></div><div class="h-3 overflow-hidden rounded-full bg-slate-100"><div id="cek-paket-progress" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width:0%"></div></div><p id="cek-paket-info" class="mt-3 text-sm text-slate-600">Status paket akan diperbarui otomatis dari data akun.</p></div>
+      <div class="flex flex-col gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 sm:flex-row sm:items-center sm:justify-between"><div><div class="font-bold text-slate-800">Butuh perpanjangan paket?</div><p class="mt-1 text-sm text-slate-600">Hubungi admin Rekapinyu untuk mengaktifkan atau memperpanjang paket Anda.</p></div><a id="cek-paket-wa" href="https://wa.me/message/FCDFMUUH7KDWC1" target="_blank" rel="noopener noreferrer" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-green-700"><i class="fa-brands fa-whatsapp text-lg"></i> Hubungi Admin</a></div>
+      <p class="text-xs text-slate-400"><i class="fa-solid fa-rotate mr-1"></i>Data diperbarui otomatis saat status paket pada akun berubah.</p>
+    </div>
+  </div>
 </section>
 <section class="hidden" id="view-komunitas">
-<div class="komunitas-shell">
-<aside aria-label="Navigasi komunitas" class="komunitas-rail">
-<button aria-label="Notifikasi komunitas" class="komunitas-rail-item komunitas-rail-notif" id="komunitas-rail-notif" type="button"><span class="komunitas-notif-badge" hidden="" id="komunitas-notif-badge">0</span><i aria-hidden="true" class="fa-solid fa-bell"></i><span>Notif</span></button>
-<div class="komunitas-rail-item" id="komunitas-rail-home"><i aria-hidden="true" class="fa-solid fa-house"></i><span>Beranda</span></div>
-<div class="komunitas-rail-item" id="komunitas-rail-profile"><i aria-hidden="true" class="fa-solid fa-user"></i><span>Profil</span></div>
-<div class="komunitas-rail-item" id="komunitas-rail-bio"><i aria-hidden="true" class="fa-solid fa-id-card"></i><span>Bio</span></div>
-<div class="komunitas-rail-item" id="komunitas-rail-friends"><i aria-hidden="true" class="fa-solid fa-user-group"></i><span>Teman</span></div>
-<div class="komunitas-rail-item" id="komunitas-rail-group"><i aria-hidden="true" class="fa-solid fa-cloud-arrow-down"></i><span>Update App</span></div>
-</aside>
-<div class="komunitas-content">
-<div class="komunitas-feed-heading" style="padding:10px 0 8px;">
-<div style="font-size:17px;font-weight:900;color:#0f172a;">Feed Komunitas</div>
-<div style="margin-top:3px;font-size:11px;font-weight:600;color:#64748b;">Postingan diFeed Hanya Menampilkan Tanggal Terbaru Saja</div>
-</div>
-<div class="komunitas-post-list" id="komunitas-post-list"></div>
-<div class="komunitas-post-box" id="komunitas-post-box">
-<div class="komunitas-post-preview" hidden="" id="komunitas-post-photo-preview">
-<img alt="Pratinjau foto postingan" id="komunitas-post-photo-preview-img"/>
-<span class="komunitas-post-preview-name" id="komunitas-post-photo-preview-name">Foto siap diposting</span>
-<button aria-label="Batalkan foto" class="komunitas-photo-remove" id="komunitas-post-photo-remove" title="Batalkan foto" type="button"><i aria-hidden="true" class="fa-solid fa-xmark"></i></button>
-</div>
-<div class="komunitas-post-controls">
-<input autocomplete="off" class="komunitas-post-input" id="komunitas-post-input" placeholder="Buat Postingan dengan Komunitas Lain....." type="text"/>
-<input accept="image/jpeg,image/png,image/webp" hidden="" id="komunitas-post-photo-input" type="file"/>
-<button aria-label="Tambah foto postingan" class="komunitas-photo-pick-btn" id="komunitas-post-photo-pick" title="Tambah foto postingan" type="button"><i aria-hidden="true" class="fa-solid fa-image"></i></button>
-<button class="komunitas-publish-btn" id="komunitas-publish-btn" type="button">Publikasikan</button>
-</div>
-</div>
-<div aria-hidden="true" class="komunitas-profile-page" id="komunitas-profile-page">
-<div class="komunitas-profile-main">
-<div class="komunitas-profile-topline"><div class="komunitas-profile-avatar" id="komunitas-profile-avatar"></div></div>
-<div class="komunitas-profile-name" id="komunitas-profile-name">Toko</div>
-<div class="komunitas-profile-label">BIO &amp; ALAMAT</div>
-<div class="komunitas-profile-bio" id="komunitas-profile-bio">Belum ada bio.</div>
-</div>
-<div class="komunitas-profile-stats">
-<button data-profile-tab="posts" type="button"><strong id="komunitas-profile-post-count">0</strong><span>POST</span></button>
-<button data-profile-tab="comments" type="button"><strong id="komunitas-profile-comment-count">0</strong><span>KOMENTAR</span></button>
-<div class="komunitas-profile-social-cell"><button data-profile-tab="friends" type="button"><strong id="komunitas-profile-friend-count">0</strong><span>RELASI (TEMAN)</span></button><button class="komunitas-add-friend-btn" id="komunitas-add-friend-btn" type="button"><i aria-hidden="true" class="fa-solid fa-user-plus"></i> Tambah Teman</button></div>
-</div>
-<div aria-live="polite" class="komunitas-profile-tab-content" id="komunitas-profile-tab-content"></div>
-</div>
-<div aria-hidden="true" class="komunitas-bio-page" id="komunitas-bio-page">
-<div class="komunitas-bio-card">
-<div class="komunitas-bio-head">
-<div>
-<div class="komunitas-bio-title">Setting Bio Profil</div>
-<div class="komunitas-bio-subtitle">Atur keterangan singkat yang tampil pada profil komunitas Anda.</div>
-</div>
-</div>
-<label class="komunitas-bio-label" for="komunitas-bio-input">Bio Profil</label>
-<textarea class="komunitas-bio-input" id="komunitas-bio-input" maxlength="160" placeholder="Tulis bio profil Anda..."></textarea>
-<div class="komunitas-bio-foot"><span id="komunitas-bio-counter">0/160</span><button class="komunitas-bio-save" id="komunitas-bio-save" type="button"><i aria-hidden="true" class="fa-solid fa-floppy-disk"></i><span>Simpan Bio</span></button></div>
-</div>
-</div>
-<div aria-hidden="true" class="komunitas-friends-page" id="komunitas-friends-page">
-<div class="komunitas-friends-head">
-<div class="komunitas-friends-title" id="komunitas-friends-count">Teman (0)</div>
-<div aria-label="Daftar relasi teman" class="komunitas-friends-tabs" role="tablist">
-<button class="komunitas-friends-tab is-active" data-community-friends-tab="friends" type="button">Teman</button>
-<button class="komunitas-friends-tab" data-community-friends-tab="following" type="button">Mengikuti</button>
-<button class="komunitas-friends-tab" data-community-friends-tab="followers" type="button">Mengikuti Anda</button>
-</div>
-</div>
-<div aria-live="polite" class="komunitas-friends-grid" id="komunitas-friends-grid"></div>
-</div>
-<div aria-hidden="true" class="komunitas-notif-page" id="komunitas-notification-page">
-<div class="komunitas-notif-page-head">
-<div class="komunitas-notif-page-title">Notifikasi Komunitas</div>
-<div class="komunitas-notif-page-subtitle">Komentar, balasan, dan permintaan pertemanan Anda.</div>
-</div>
-<div class="komunitas-notif-list" id="komunitas-notif-list"></div>
-</div>
-</div>
-</div>
+  <div class="komunitas-shell">
+    <aside class="komunitas-rail" aria-label="Navigasi komunitas">
+      <button class="komunitas-rail-item komunitas-rail-notif" id="komunitas-rail-notif" type="button" aria-label="Notifikasi komunitas"><span class="komunitas-notif-badge" id="komunitas-notif-badge" hidden>0</span><i class="fa-solid fa-bell" aria-hidden="true"></i><span>Notif</span></button>
+      <div class="komunitas-rail-item" id="komunitas-rail-home"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Beranda</span></div>
+      <div class="komunitas-rail-item" id="komunitas-rail-profile"><i class="fa-solid fa-user" aria-hidden="true"></i><span>Profil</span></div>
+      <div class="komunitas-rail-item" id="komunitas-rail-bio"><i class="fa-solid fa-id-card" aria-hidden="true"></i><span>Bio</span></div>
+      <div class="komunitas-rail-item" id="komunitas-rail-friends"><i class="fa-solid fa-user-group" aria-hidden="true"></i><span>Teman</span></div>
+      <div class="komunitas-rail-item" id="komunitas-rail-group"><i class="fa-solid fa-cloud-arrow-down" aria-hidden="true"></i><span>Update App</span></div>
+    </aside>
+    <div class="komunitas-content">
+      <div class="komunitas-feed-heading" style="padding:10px 0 8px;">
+        <div style="font-size:17px;font-weight:900;color:#0f172a;">Feed Komunitas</div>
+        <div style="margin-top:3px;font-size:11px;font-weight:600;color:#64748b;">Postingan diFeed Hanya Menampilkan Tanggal Terbaru Saja</div>
+      </div>
+      <div class="komunitas-post-list" id="komunitas-post-list"></div>
+      <div class="komunitas-post-box" id="komunitas-post-box">
+        <div class="komunitas-post-preview" id="komunitas-post-photo-preview" hidden>
+          <img id="komunitas-post-photo-preview-img" alt="Pratinjau foto postingan">
+          <span class="komunitas-post-preview-name" id="komunitas-post-photo-preview-name">Foto siap diposting</span>
+          <button class="komunitas-photo-remove" id="komunitas-post-photo-remove" type="button" aria-label="Batalkan foto" title="Batalkan foto"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <div class="komunitas-post-controls">
+          <input class="komunitas-post-input" id="komunitas-post-input" type="text" placeholder="Buat Postingan dengan Komunitas Lain....." autocomplete="off">
+          <input id="komunitas-post-photo-input" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+          <button class="komunitas-photo-pick-btn" id="komunitas-post-photo-pick" type="button" aria-label="Tambah foto postingan" title="Tambah foto postingan"><i class="fa-solid fa-image" aria-hidden="true"></i></button>
+          <button class="komunitas-publish-btn" id="komunitas-publish-btn" type="button">Publikasikan</button>
+        </div>
+      </div>
+      <div class="komunitas-profile-page" id="komunitas-profile-page" aria-hidden="true">
+        <div class="komunitas-profile-main">
+          <div class="komunitas-profile-topline"><div class="komunitas-profile-avatar" id="komunitas-profile-avatar"></div></div>
+          <div class="komunitas-profile-name" id="komunitas-profile-name">Toko</div>
+          <div class="komunitas-profile-label">BIO & ALAMAT</div>
+          <div class="komunitas-profile-bio" id="komunitas-profile-bio">Belum ada bio.</div>
+        </div>
+        <div class="komunitas-profile-stats">
+          <button type="button" data-profile-tab="posts"><strong id="komunitas-profile-post-count">0</strong><span>POST</span></button>
+          <button type="button" data-profile-tab="comments"><strong id="komunitas-profile-comment-count">0</strong><span>KOMENTAR</span></button>
+          <div class="komunitas-profile-social-cell"><button type="button" data-profile-tab="friends"><strong id="komunitas-profile-friend-count">0</strong><span>RELASI (TEMAN)</span></button><button class="komunitas-add-friend-btn" id="komunitas-add-friend-btn" type="button"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Tambah Teman</button></div>
+        </div>
+        <div class="komunitas-profile-tab-content" id="komunitas-profile-tab-content" aria-live="polite"></div>
+      </div>
+      <div class="komunitas-bio-page" id="komunitas-bio-page" aria-hidden="true">
+        <div class="komunitas-bio-card">
+          <div class="komunitas-bio-head">
+            <div>
+              <div class="komunitas-bio-title">Setting Bio Profil</div>
+              <div class="komunitas-bio-subtitle">Atur keterangan singkat yang tampil pada profil komunitas Anda.</div>
+            </div>
+          </div>
+          <label class="komunitas-bio-label" for="komunitas-bio-input">Bio Profil</label>
+          <textarea class="komunitas-bio-input" id="komunitas-bio-input" maxlength="160" placeholder="Tulis bio profil Anda..."></textarea>
+          <div class="komunitas-bio-foot"><span id="komunitas-bio-counter">0/160</span><button class="komunitas-bio-save" id="komunitas-bio-save" type="button"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span>Simpan Bio</span></button></div>
+        </div>
+      </div>
+      <div class="komunitas-friends-page" id="komunitas-friends-page" aria-hidden="true">
+        <div class="komunitas-friends-head">
+          <div class="komunitas-friends-title" id="komunitas-friends-count">Teman (0)</div>
+          <div class="komunitas-friends-tabs" role="tablist" aria-label="Daftar relasi teman">
+            <button type="button" class="komunitas-friends-tab is-active" data-community-friends-tab="friends">Teman</button>
+            <button type="button" class="komunitas-friends-tab" data-community-friends-tab="following">Mengikuti</button>
+            <button type="button" class="komunitas-friends-tab" data-community-friends-tab="followers">Mengikuti Anda</button>
+          </div>
+        </div>
+        <div class="komunitas-friends-grid" id="komunitas-friends-grid" aria-live="polite"></div>
+      </div>
+      <div class="komunitas-notif-page" id="komunitas-notification-page" aria-hidden="true">
+        <div class="komunitas-notif-page-head">
+          <div class="komunitas-notif-page-title">Notifikasi Komunitas</div>
+          <div class="komunitas-notif-page-subtitle">Komentar, balasan, dan permintaan pertemanan Anda.</div>
+        </div>
+        <div class="komunitas-notif-list" id="komunitas-notif-list"></div>
+      </div>
+    </div>
+  </div>
 </section>
+
 
 <!-- VIEW KASIR -->
 <section class="hidden kasir-view space-y-4" id="view-kasir"><div aria-hidden="true" id="kasir-stock-zero-modal">
-<div aria-labelledby="kasir-stock-zero-title" aria-modal="true" class="kasir-stock-zero-card" role="dialog">
-<div class="kasir-stock-zero-head">
-<div>
-<h3 id="kasir-stock-zero-title">Stok habis</h3>
-<p id="kasir-stock-zero-message">Stok habis silahkan perbaharui stok.</p>
+  <div class="kasir-stock-zero-card" role="dialog" aria-modal="true" aria-labelledby="kasir-stock-zero-title">
+    <div class="kasir-stock-zero-head">
+      <div>
+        <h3 id="kasir-stock-zero-title">Stok habis</h3>
+        <p id="kasir-stock-zero-message">Stok habis silahkan perbaharui stok.</p>
+      </div>
+      <button aria-label="Tutup" class="kasir-stock-zero-close" id="kasir-stock-zero-close" type="button"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="kasir-stock-zero-field">
+      <label for="kasir-stock-zero-input">Perbarui Stok</label>
+      <input id="kasir-stock-zero-input" inputmode="numeric" min="0" type="text" value="0"/>
+    </div>
+    <div class="kasir-stock-zero-actions">
+      <button class="kasir-stock-zero-cancel" id="kasir-stock-zero-cancel" type="button">Batal</button>
+      <button class="kasir-stock-zero-save" id="kasir-stock-zero-save" type="button"><i class="fa-solid fa-floppy-disk"></i> Simpan Stok</button>
+    </div>
+  </div>
 </div>
-<button aria-label="Tutup" class="kasir-stock-zero-close" id="kasir-stock-zero-close" type="button"><i class="fa-solid fa-xmark"></i></button>
-</div>
-<div class="kasir-stock-zero-field">
-<label for="kasir-stock-zero-input">Perbarui Stok</label>
-<input id="kasir-stock-zero-input" inputmode="numeric" min="0" type="text" value="0">
-</input></div>
-<div class="kasir-stock-zero-actions">
-<button class="kasir-stock-zero-cancel" id="kasir-stock-zero-cancel" type="button">Batal</button>
-<button class="kasir-stock-zero-save" id="kasir-stock-zero-save" type="button"><i class="fa-solid fa-floppy-disk"></i> Simpan Stok</button>
-</div>
-</div>
-</div>
+
 <div class="kasir-shell">
 <div class="kasir-products-panel">
-<div aria-label="Tab transaksi" class="kasir-transaction-tabs" id="kasir-transaction-tabs"></div>
+<div class="kasir-transaction-tabs" id="kasir-transaction-tabs" aria-label="Tab transaksi"></div>
 <div class="kasir-toolbar">
 <div class="kasir-search-wrap">
-<input autocomplete="off" id="kasir-search" placeholder="Cari nama produk" type="text"/>
+<input autocomplete="off" id="kasir-search" placeholder="Cari nama produk" type="text">
 </div>
 <div aria-label="Kotak ketik barcode" class="kasir-barcode-wrap kasir-barcode-input-wrap">
-<input aria-label="Ketik barcode produk" autocomplete="off" id="kasir-barcode" inputmode="numeric" placeholder="Ketik barcode" type="text"/>
+<input autocomplete="off" id="kasir-barcode" placeholder="Ketik barcode" type="text" inputmode="numeric" aria-label="Ketik barcode produk">
 </div>
 <div class="kasir-shift-picker" id="kasir-shift-picker">
-<button aria-expanded="false" aria-haspopup="true" class="kasir-tool-btn kasir-shift-trigger" id="kasir-shift-btn" type="button"><span id="kasir-shift-label">SHIFT</span><i aria-hidden="true" class="fa-solid fa-chevron-down"></i></button>
-<div class="kasir-shift-menu" hidden="" id="kasir-shift-menu"><button data-kasir-shift="SHIFT 1" type="button">SHIFT 1</button><button data-kasir-shift="SHIFT 2" type="button">SHIFT 2</button></div>
+<button class="kasir-tool-btn kasir-shift-trigger" id="kasir-shift-btn" type="button" aria-haspopup="true" aria-expanded="false"><span id="kasir-shift-label">SHIFT</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+<div class="kasir-shift-menu" id="kasir-shift-menu" hidden><button type="button" data-kasir-shift="SHIFT 1">SHIFT 1</button><button type="button" data-kasir-shift="SHIFT 2">SHIFT 2</button></div>
 </div>
 <button aria-label="Hubungkan printer Bluetooth" class="kasir-tool-btn" id="kasir-refresh-btn" title="Hubungkan printer Bluetooth" type="button"><i class="fa-brands fa-bluetooth-b"></i></button>
 </div>
@@ -3050,9 +3576,9 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 </section>
 <!-- VIEW LAPORAN KASIR -->
 <section class="hidden laporan-kasir-view" id="view-laporan-kasir">
-<div class="lk16-report-wrap">
-<div class="lk16-report-list" id="lk16-report-list"></div>
-</div>
+  <div class="lk16-report-wrap">
+    <div class="lk16-report-list" id="lk16-report-list"></div>
+  </div>
 </section>
 <section class="hidden space-y-4 w-full" id="view-history">
 <div class="flex flex-col items-center gap-4 w-full" id="history-grid"></div>
@@ -3144,6 +3670,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 <button class="mobile-dock-item flex flex-col items-center justify-center py-2 px-1 text-slate-400 transition" id="nav-mobile-activity" type="button"><i class="fa-solid fa-hand-holding-dollar text-lg mb-0.5"></i><span class="text-[10px] font-medium">Kasbon</span></button>
 </div>
 </nav>
+
 <!-- MOBILE-ONLY OVERRIDE: original desktop UI is not changed -->
 <style id="mobile-remove-rekap-menus-single">
 @media (max-width:767px){
@@ -3250,7 +3777,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 </style>
 <!-- REKAPIN HISTORY FILTER + IMPORT -->
 <style id="history-filter-popup-css">
-
+@media (min-width:768px){
+}
 #history-io-floating{
   position:fixed;
   right:18px;
@@ -3387,7 +3915,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 <div aria-label="Filter, Import dan Backup History" id="history-io-floating">
 <button aria-label="Buka Filter History" id="history-filter-button" title="Filter History" type="button"><i class="fa-solid fa-filter"></i></button>
 <button aria-label="Import History dari BackupHistory atau InputData JSON" id="history-io-import" title="Import History dari BackupHistory atau InputData JSON" type="button"><i class="fa-solid fa-file-import"></i></button>
-<input accept=".json,application/json" hidden="" id="history-io-import-file" type="file"/>
+<input accept=".json,application/json" hidden id="history-io-import-file" type="file">
 </div>
 <div aria-hidden="true" id="history-filter-popup">
 <div class="history-filter-title">
@@ -3395,11 +3923,11 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 <button aria-label="Tutup Filter History" class="history-filter-close" id="history-filter-close" type="button"><i class="fa-solid fa-xmark"></i></button>
 </div>
 <div class="history-filter-grid">
-<input id="history-filter-search" placeholder="Cari History..." type="text">
+<input id="history-filter-search" placeholder="Cari History..." type="text"/>
 <select id="history-filter-date"><option value="">Semua Tgl</option></select>
 <select id="history-filter-month"><option value="">Semua Bln</option></select>
 <select id="history-filter-year"><option value="">Semua Thn</option></select>
-</input></div>
+</div>
 <button class="history-filter-reset" id="history-filter-reset" type="button"><i class="fa-solid fa-rotate-left mr-1"></i> Reset Filter</button>
 </div>
 
@@ -3624,6 +4152,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 
 
 
+
+
 <style id="mobile-dock-laporan-history-style">
 @media(max-width:767px){
   #view-report #report-grid{display:none!important}
@@ -3655,6 +4185,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   .mobile-laporan-bulanan-empty i{font-size:32px;color:#cbd5e1}.mobile-laporan-bulanan-empty strong{font-size:12px;color:#64748b}.mobile-laporan-bulanan-empty span{font-size:10px}
 }
 </style>
+
 <style id="laporan-kasir-baru-v16-css">
 #view-laporan-kasir{width:100%;min-height:100%;padding:18px 14px;box-sizing:border-box;overflow:auto;background:#f1f4f8}
 #view-laporan-kasir .lk16-report-wrap{width:100%;max-width:900px;margin:0 auto}
@@ -3683,6 +4214,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 #view-laporan-kasir .lk16-empty span{font-size:10px;color:#94a3b8}
 @media(max-width:760px){#view-laporan-kasir{padding:12px 10px 80px}#view-laporan-kasir .lk16-card{padding:16px;border-radius:15px}#view-laporan-kasir .lk16-date{font-size:13px}#view-laporan-kasir .lk16-shift-heading strong{font-size:10px}#view-laporan-kasir .lk16-shift-heading span{font-size:9px}#view-laporan-kasir .lk16-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px;padding-top:12px}#view-laporan-kasir .lk16-shift-section .lk16-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px;padding-top:0}#view-laporan-kasir .lk16-stats>div{min-height:62px;padding:9px 10px}#view-laporan-kasir .lk16-stats strong{font-size:12px}}
 </style>
+
 <style id="rekapinyu-welcome-popup-css">
 #rekapinyu-welcome-popup{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.62)}
 #rekapinyu-welcome-popup.is-open{display:flex}
@@ -3709,6 +4241,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 <div class="rw-left">
 <h3 class="rw-brand" id="rw-title">REKAPINYU</h3>
 <p class="rw-guide">Panduan Lengkap Aplikasi Rekapinyu</p>
+  
 <section class="rw-section"><h4>SETUP AWAL</h4><ol>
 <li>➤ Ketika Sudah Berhasil Mendaftar dan Login, Langkah Selanjutya</li>
 <li>➤ Masuk Ke Menu Produk Kasir dan Buat Folder Di Pojok Kanan Atas</li>
@@ -3716,8 +4249,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 <li>➤ Buat Nama Folder Sesuai Nama Toko Anda, Contoh Nama Folder TOKO INOYA</li>
 <li>➤ Akan Otomatis Membuat sub Folder di Folder yg Anda Buat Tadi, Sub Folder: Rekap, Produk, Kasir</li>
 <li>➤ Semua Data Transaksi Kasir, Rekap, Backup Manual akan Masuk ke dalam Folder yang sudah di buat oleh Anda</li>
-<li>➤ Jika Data Produk Tehapus Di folder Yg Anda Buat, Maka secara Otomatis Menampilkan Data dari Database Online yg tersimpan, &amp; Lakukan Backup Manual Kembali, di file yang terhapus</li>
-<li>➤ Disaranakan Membuat Folder di Data : D komputer &amp; Di Data: C komputer (tidak Disarankan)</li>
+<li>➤ Jika Data Produk Tehapus Di folder Yg Anda Buat, Maka secara Otomatis Menampilkan Data dari Database Online yg tersimpan, & Lakukan Backup Manual Kembali, di file yang terhapus</li>
+<li>➤ Disaranakan Membuat Folder di Data : D komputer & Di Data: C komputer (tidak Disarankan)</li>
 </ol></section>
 <section class="rw-section"><h4>MENU PRODUK KASIR</h4><ol>
 <li>➤ Icon Backup Warna Biru di pojok kanan bawah (Untuk Membackup Data Produk) Disarankan Rutin Membackup data Produk, Jika Menambahkan Produk baru.</li>
@@ -3727,11 +4260,14 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 <li>➤ Kehilangan data bukan Tanggung Jawab Developer, Developer Sudah Menghimbau.</li>
 </ol></section>
 <section class="rw-section"><h4>MENU SETING</h4><ol><li>➤ Atur Nama Toko, Alamat Toko, Nomor Handpone (Untuk Dicetak Di Struk)</li></ol></section>
-<div class="rw-sign">Hormat Kami,<br><strong>DEVELOPER REKAPINYU.</strong></br></div>
+<div class="rw-sign">Hormat Kami,<br/><strong>DEVELOPER REKAPINYU.</strong></div>
 </div>
 <div class="rw-right"><div class="rw-photo-wrap" id="rw-photo-wrap"><img alt="Foto Popup Rekapinyu" class="rw-photo" src="https://raw.githubusercontent.com/rekapinyu/rekapinyu.github.io/main/Galery/FotoPopupLogin.jpg"/></div></div>
 </div>
 </div>
+
+
+</input>
 
 
 
@@ -3745,6 +4281,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   box-sizing:border-box!important;
 }
 </style>
+
 
 
 <!-- REKAPINYU PAKET GATE: kunci semua fitur selain Komunitas saat masa paket habis. -->
@@ -3774,7 +4311,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   #rekapinyu-package-expired-screen .rk-expired-promo img{width:100%;height:100%;min-height:100%;object-fit:cover;object-position:center;display:block}
   body.rk-package-expired #sidebar nav > button:not(#nav-komunitas):not(#nav-cek-paket),
   body.rk-package-expired #sidebar nav > .toggle-kasbon-menu-container{opacity:.72!important;position:relative!important}
-  body.rk-package-expired #sidebar nav > button:not(#nav-komunitas):not(#nav-cek-paket)::after{content:"🔒";position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;line-height:1}
+  body.rk-package-expired #sidebar nav > button:not(#nav-komunitas):not(#nav-cek-paket)::after{content:'🔒';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;line-height:1}
   body.rk-package-expired #sidebar nav > button#nav-komunitas,
   body.rk-package-expired #sidebar nav > button#nav-cek-paket{opacity:1!important;filter:none!important}
   @media(max-width:767px){
@@ -3786,6 +4323,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     #rekapinyu-package-expired-screen .rk-expired-promo img{height:auto;min-height:0;object-fit:contain}
   }
 </style>
+
+
 
 <style id="rekapinyu-mobile-community-single-implementation">
 /* Implementasi tunggal untuk rail dan kolom posting Komunitas di mobile. */
@@ -3826,6 +4365,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 }
 </style>
 
+
+
 <style id="rekapinyu-kasir-shift-menu-patch">
 /* Perubahan terbatas pada kontrol toolbar Menu Kasir. */
 .kasir-shift-picker{position:relative;flex:0 0 auto;}
@@ -3838,6 +4379,11 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 .kasir-shift-menu button:hover,.kasir-shift-menu button.is-selected{background:#e9f8f4;color:#11806b;}
 @media(max-width:560px){.kasir-shift-trigger{min-width:82px;padding-left:10px;padding-right:10px;}}
 </style>
+
+
+
+
+
 
 
 <!-- PATCH WARNA IKON MENU: hanya ikon dan ikon opacity pada enam menu yang diminta. -->
@@ -3865,13 +4411,24 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 #sidebar nav > #nav-settings .sidebar-icon-overlay > i{color:#065F46!important;}
 #sidebar nav > #nav-cetak .sidebar-icon-overlay > i{color:#9A3412!important;}
 </style>
+
+
+
 <!-- PATCH MOBILE: sembunyikan header global dan tombol ikon logout hanya pada mobile. -->
 <!-- Removed duplicate mobile override: rekapinyu-mobile-hide-global-header-logout -->
+
+
 <!-- MOBILE HOME FINAL ALIGNMENT: mengikuti referensi UI yang diberikan; hanya tampilan mobile Beranda -->
+
+
+
 <!-- SINGLE CANONICAL MOBILE HOME UI: replaces overlapping home-specific overrides; desktop untouched -->
 <!-- Removed duplicate mobile override: rekapinyu-mobile-home-single-implementation -->
+
+
 <!-- REKAPINYU MOBILE UI REFRESH — mobile-only overrides; desktop untouched -->
 <!-- Removed duplicate mobile override: rekapinyu-mobile-promotional-ui-refresh -->
+
 <!-- MOBILE UI REBUILD: satu implementasi mobile baru; desktop tidak disentuh -->
 <style id="rekapinyu-mobile-ui-single-canonical">
 @media (max-width:767px){
@@ -3918,11 +4475,11 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   .rku-mobile-menu-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:98px;padding:10px 4px;border:1px solid #e4eefb;border-radius:17px;background:linear-gradient(150deg,#fff,#fafdff);box-shadow:0 5px 13px #1c55930e;color:#0b3268;text-align:center;transition:transform .15s ease,box-shadow .15s ease}
   .rku-mobile-menu-card:active{transform:scale(.97);box-shadow:0 2px 6px #1c55931a}
   .rku-mobile-menu-card>i{width:43px;height:43px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#e4f1ff;color:#1684ff;font-size:20px;box-shadow:0 4px 9px #176ac714}
-  .rku-mobile-menu-card:nth-child(6n/**/+1)>i{background:#e4f1ff;color:#1684ff}
-  .rku-mobile-menu-card:nth-child(6n/**/+2)>i{background:#ffe9e8;color:#f04444}
-  .rku-mobile-menu-card:nth-child(6n/**/+3)>i{background:#e0faeb;color:#12b76a}
-  .rku-mobile-menu-card:nth-child(6n/**/+4)>i{background:#fff0d9;color:#ee9b09}
-  .rku-mobile-menu-card:nth-child(6n/**/+5)>i{background:#f0e8ff;color:#8b5cf6}
+  .rku-mobile-menu-card:nth-child(6n+1)>i{background:#e4f1ff;color:#1684ff}
+  .rku-mobile-menu-card:nth-child(6n+2)>i{background:#ffe9e8;color:#f04444}
+  .rku-mobile-menu-card:nth-child(6n+3)>i{background:#e0faeb;color:#12b76a}
+  .rku-mobile-menu-card:nth-child(6n+4)>i{background:#fff0d9;color:#ee9b09}
+  .rku-mobile-menu-card:nth-child(6n+5)>i{background:#f0e8ff;color:#8b5cf6}
   .rku-mobile-menu-card:nth-child(6n)>i{background:#dff9fb;color:#06a9c7}
   .rku-mobile-menu-card>span{display:block;max-width:100%;font-size:10px;line-height:1.2;font-weight:850;overflow-wrap:anywhere}
   #mobile-simplified-dock{position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:999!important;height:72px!important;padding:0 6px env(safe-area-inset-bottom,0px)!important;background:#fffffff5!important;border-top:1px solid #d9e8fa!important;box-shadow:0 -6px 22px #0c3b821f!important;backdrop-filter:blur(16px)!important;overflow:visible!important}
@@ -3964,9 +4521,16 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 }
 @media(max-width:390px){#mobile-home-view{padding-top:188px!important;padding-left:9px!important;padding-right:9px!important}.rku-mobile-menu-grid{gap:7px!important}.rku-mobile-menu-card{min-height:92px!important;border-radius:15px!important}.rku-mobile-menu-card>i{width:38px!important;height:38px!important;font-size:18px!important}.rku-mobile-menu-card>span{font-size:9.5px!important}#mobile-simplified-dock .mobile-dock-item span{font-size:8px!important}#rku-mobile-promo-body .rku-mobile-promo-slide{height:132px!important;min-height:132px!important;padding-left:18px!important;padding-right:18px!important}#rku-mobile-promo-body .rku-mobile-promo-copy strong{font-size:17px!important}}
 </style>
+
 <!-- Header mobile ditangani oleh implementasi CSS mobile tunggal. -->
+
+
+
 <!-- PATCH TERARAH: kunci header Beranda mobile ke viewport agar tetap terlihat saat konten digulir. -->
 <!-- Removed duplicate mobile override: rekapinyu-mobile-header-fixed-final -->
+
+
+
 
 
 <!-- PATCH KHUSUS MOBILE: tombol aksi transaksi selalu terlihat tepat di atas dock. -->
@@ -4003,6 +4567,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   }
 }
 </style>
+
 <!-- PATCH TERARAH: tata letak menu Kasir mobile mengikuti foto referensi. Desktop tidak disentuh. -->
 <style id="kasir-mobile-reference-photo-layout">
 @media(max-width:767px){
@@ -4108,6 +4673,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   }
 }
 </style>
+
+
 <!-- PATCH MINIMAL: baris TOTAL PRODUK tetap terlihat di atas tombol transaksi pada mobile. -->
 <style id="kasir-mobile-total-products-sticky">
 @media (max-width:767px){
@@ -4125,6 +4692,9 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   }
 }
 </style>
+
+
+
 <!-- IMPLEMENTASI TUNGGAL: reload mobile + posisi atas menu Kasir. Tidak mengubah desktop atau logika menu lain. -->
 <style id="rekapinyu-mobile-reload-kasir-single">
 @media (max-width:767px){
@@ -4141,6 +4711,11 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   }
 }
 </style>
+
+
+
+
+
 
 <!-- IMPLEMENTASI TUNGGAL SCROLL BERANDA MOBILE: scroll penuh dengan jarak akhir proporsional. -->
 <style id="rku-mobile-beranda-scroll-single">
@@ -4188,6 +4763,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 </style>
 </body>
 </html>
+
 <!-- PATCH MINIMAL: ikon keranjang bulat di atas baris TOTAL PRODUK, khusus Kasir mobile. -->
 <style id="kasir-mobile-floating-cart-icon-only">
 @media(max-width:767px){
@@ -4203,8 +4779,9 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   #view-kasir.kasir-mobile-cart-popup-open .kasir-summary{display:none!important}
   #kasir-mobile-cart-popup-close{width:30px;height:30px;flex:0 0 30px;border:0;border-radius:9px;background:#f1f5f9;color:#475569;display:flex;align-items:center;justify-content:center}
 }
-
+@media(min-width:768px){#kasir-mobile-cart-fab{display:none!important}}
 </style>
+
 
 <style id="rekapinyu-mobile-kasir-toolbar-order-only">
 @media (max-width:767px){
@@ -4232,6 +4809,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   }
 }
 </style>
+
 <style id="rekapinyu-mobile-kasir-sticky-toolbar-only">
 /* MOBILE KASIR SAJA: toolbar dan kartu produk menyesuaikan lebar serta tinggi layar HP. */
 @media (max-width:767px){
@@ -4302,7 +4880,10 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   #view-kasir .kasir-product-photo{height:clamp(62px,20vw,76px)!important;flex-basis:clamp(62px,20vw,76px)!important;}
   #view-kasir .kasir-product-card{padding:5px!important;}
 }
-
+@media (min-width:381px) and (max-width:767px){
+  #view-kasir .kasir-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+  #view-kasir .kasir-product-photo{height:clamp(64px,19vw,84px)!important;flex-basis:clamp(64px,19vw,84px)!important;}
+}
 @media (max-height:650px) and (max-width:767px){
   #view-kasir .kasir-transaction-tabs{margin-bottom:4px!important;}
   #view-kasir .kasir-toolbar{gap:5px!important;padding-bottom:5px!important;}
@@ -4365,6 +4946,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   }
 }
 </style>
+
+
 <style id="rekapinyu-mobile-home-desktop-visibility-fix">
 /* Perbaikan terarah: konten Beranda khusus mobile tidak boleh tampil di desktop.
    Tampilan mobile hanya aktif saat mode Beranda mobile memang dipilih. */
@@ -4375,6 +4958,8 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   html[data-mobile-view="home"] #rku-mobile-promo-body { display: block !important; }
 }
 </style>
+
+
 <!-- Existing mobile dock styling preserved unchanged. -->
 <style id="mobile-dock-existing-styles-preserved">
 @media (max-width:767px){
@@ -4433,6 +5018,7 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
   }
 }
 </style>
+
 <!-- PERBAIKAN TUNGGAL: ukuran tombol (+) tab transaksi Kasir khusus mobile. Desktop tetap memakai aturan asli. -->
 <style id="kasir-mobile-add-tab-single-fix">
 @media (max-width: 767px) {
@@ -4456,4 +5042,15 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     margin: 0 !important;
   }
 }
+</style>
+
+
+
+<style id="mobile-static-home-visible-fix">
+@media (max-width: 767px) {
+  #view-input { display: none !important; }
+  #mobile-home-view { display: flex !important; visibility: visible !important; opacity: 1 !important; }
+  #mobile-home-view.hidden { display: flex !important; }
+}
+@media (min-width: 768px) { #mobile-home-view { display: none !important; } }
 </style>
