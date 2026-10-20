@@ -4,19 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <meta http-equiv="refresh" content="0; url=/login">
-  <title>Mengarahkan ke Login Rekapinyu</title>
-  <link rel="canonical" href="https://www.rekapinyu.web.id/login">
+  <title>Mengarahkan Rekapinyu sesuai perangkat</title>
   <script>
-    // Arahkan domain utama ke halaman login.
-    window.location.replace("https://www.rekapinyu.web.id/login");
+    (function () {
+      // Smartphone dan tablet/iPad diarahkan ke versi mobile.
+      // Perangkat desktop/laptop diarahkan ke versi desktop.
+      var ua = navigator.userAgent || "";
+      var platform = navigator.platform || "";
+      var isIPadOS = platform === "MacIntel" && navigator.maxTouchPoints > 1;
+      var isTablet = /iPad|Tablet|PlayBook|Silk/i.test(ua) || isIPadOS;
+      var isPhone = /Android.*Mobile|iPhone|iPod|Windows Phone|IEMobile|Opera Mini/i.test(ua);
+      var isMobileDevice = isPhone || isTablet;
+
+      var target = isMobileDevice ? "/mobile.html" : "/desktop.html";
+      var fallbackText = isMobileDevice
+        ? "Buka Rekapinyu versi mobile"
+        : "Buka Rekapinyu versi desktop";
+
+      window.location.replace(target);
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var link = document.getElementById("redirect-fallback");
+        var message = document.getElementById("redirect-message");
+        if (link) {
+          link.href = target;
+          link.textContent = fallbackText;
+        }
+        if (message) message.textContent = "Mengarahkan Anda ke Rekapinyu...";
+      });
+    })();
   </script>
 </head>
 <body>
   <main>
     <h1>Rekapinyu</h1>
-    <p>Mengarahkan Anda ke halaman login...</p>
-    <p>Jika halaman tidak berpindah otomatis, <a href="https://www.rekapinyu.web.id/login">klik di sini untuk masuk ke Rekapinyu</a>.</p>
+    <p id="redirect-message">Mengarahkan Anda ke Rekapinyu...</p>
+    <p>Jika halaman tidak berpindah otomatis, <a id="redirect-fallback" href="/desktop.html">klik di sini untuk membuka Rekapinyu</a>.</p>
   </main>
 </body>
 </html>
