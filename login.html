@@ -275,7 +275,15 @@ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const phoneOf=v=>String(v??"").replace(/\D/g,"");
 const emailOf=p=>`${phoneOf(p)}@rekapinyu.app`;
 const sessionKey="finance_active_session";
-const goApp=()=>window.location.replace("https://www.rekapinyu.web.id/aplikasi");
+const goApp=()=>{
+  const isMobile = /Android|iPhone|iPod|Windows Phone|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  window.location.replace(
+    isMobile
+      ? "https://www.rekapinyu.web.id/mobile.html"
+      : "https://www.rekapinyu.web.id/desktop.html"
+  );
+};
 const show=(title,msg)=>window.alert(`${title}\n\n${msg}`);
 
 function toggleAuthView(view){
