@@ -1916,6 +1916,67 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 }
 </style>
 
+
+<style id="pk3-mobile-backup-above-add-fix">
+@media (max-width:767px){
+  #pk3-data-tools:not(.hidden){
+    position:static!important;right:auto!important;left:auto!important;bottom:auto!important;
+    z-index:99997!important;display:block!important;
+  }
+  #pk3-data-tools .pk3-data-tool{
+    position:fixed!important;right:12px!important;left:auto!important;
+    width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;max-width:36px!important;max-height:36px!important;
+    flex:0 0 36px!important;font-size:15px!important;z-index:99997!important;
+  }
+  /* Urutan dan jarak tombol mengacu pada foto: Import, Backup, Tambah Produk. */
+  #pk3-backup{bottom:calc(127px + env(safe-area-inset-bottom,0px))!important;}
+  #pk3-import{bottom:calc(168px + env(safe-area-inset-bottom,0px))!important;}
+  #pk3-mobile-add-button{right:12px!important;bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;z-index:99998!important;}
+}
+</style>
+<style id="pk3-mobile-floating-add-only">
+@media (max-width:767px){
+  #view-produk-kasir #pk3-mobile-add-backdrop{
+    position:fixed!important;inset:0!important;z-index:100000!important;
+    background:rgba(15,23,42,.55)!important;display:none!important;
+  }
+  #view-produk-kasir #pk3-mobile-add-backdrop.is-open{display:block!important}
+  #view-produk-kasir .pk3-form-card{
+    display:none!important;
+  }
+  #view-produk-kasir .pk3-form-card.pk3-mobile-add-open{
+    display:block!important;position:fixed!important;z-index:100001!important;
+    left:12px!important;right:12px!important;top:50%!important;
+    transform:translateY(-50%)!important;width:auto!important;max-width:none!important;
+    max-height:calc(100dvh - 32px)!important;overflow:auto!important;
+    margin:0!important;box-sizing:border-box!important;
+    border-radius:18px!important;background:#fff!important;
+    box-shadow:0 24px 70px rgba(15,23,42,.28)!important;
+  }
+  #view-produk-kasir .pk3-form-card.pk3-mobile-add-open .pk3-heading{
+    position:sticky!important;top:0!important;z-index:2!important;background:#fff!important;
+    padding-top:12px!important;
+  }
+  #view-produk-kasir .pk3-mobile-add-close{
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;
+    width:34px!important;height:34px!important;flex:0 0 34px!important;
+    border:0!important;border-radius:50%!important;background:#f1f5f9!important;
+    color:#475569!important;font-size:17px!important;margin-left:6px!important;
+  }
+  #pk3-mobile-add-button{
+    display:none!important;position:fixed!important;right:12px!important;bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;
+    z-index:99998!important;width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    border:0!important;border-radius:50%!important;background:#10a58c!important;color:#fff!important;
+    box-shadow:0 5px 14px rgba(16,165,140,.28)!important;font-size:17px!important;
+    cursor:pointer!important;-webkit-tap-highlight-color:transparent!important;
+  }
+  #pk3-mobile-add-button:active{transform:scale(.96)!important}
+}
+@media (min-width:768px){
+  #pk3-mobile-add-button,#pk3-mobile-add-backdrop,.pk3-mobile-add-close{display:none!important}
+}
+</style>
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
@@ -4040,7 +4101,15 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
     font-weight:900!important;line-height:1.2!important;white-space:nowrap!important;transform:translate(3px,4px)!important;
   }
   #view-produk-kasir .pk3-toolbar p{display:none!important}
+  #view-produk-kasir .pk3-folder-pick{
+    position:relative!important;z-index:100010!important;pointer-events:auto!important;
+    touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;
+  }
+  #view-produk-kasir .pk3-toolbar,
   #view-produk-kasir .pk3-heading-actions{
+    position:relative!important;z-index:100009!important;overflow:visible!important;
+  }
+  #view-produk-kasir .pk3-heading-actions{ 
     grid-column:2!important;grid-row:1!important;position:static!important;
     display:flex!important;align-items:center!important;justify-content:flex-end!important;
     gap:6px!important;width:auto!important;min-width:0!important;max-width:none!important;
