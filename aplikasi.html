@@ -13822,6 +13822,13 @@ async function initKasirViews(){
 
 <!-- IMPLEMENTASI TUNGGAL SCROLL BERANDA MOBILE: scroll penuh dengan jarak akhir proporsional. -->
 
+
+<!-- DESKTOP FILE FIX: cegah Input Data muncul pada viewport mobile saat reload/first paint. -->
+<style id="desktop-only-input-view-guard">
+@media screen and (max-width: 767px) {
+  #view-input { display: none !important; visibility: hidden !important; }
+}
+</style>
 </body>
 </html>
 
