@@ -25,6 +25,12 @@
 })();
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<!-- DESKTOP FILE: satu pengunci awal untuk mencegah Input Data tampil pada viewport mobile saat first paint/reload. -->
+<style id="desktop-only-input-view-guard">
+@media screen and (max-width: 767px) {
+  #view-input { display: none !important; visibility: hidden !important; }
+}
+</style>
 <!-- Mobile reload first-paint guard: cegah view Input Data dan header lama terlihat sebelum Beranda siap. -->
 
 
@@ -4747,9 +4753,11 @@ function updateUserAvatarUI() {
         });
 
         function updateHeaderDate() {
+            const dateElement = document.getElementById('current-date-header');
+            // Header telah dihapus dari file desktop; jangan menulis ke elemen yang tidak ada.
+            if (!dateElement) return;
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateStr = new Date().toLocaleDateString('id-ID', options);
-            document.getElementById('current-date-header').innerText = dateStr;
+            dateElement.textContent = new Date().toLocaleDateString('id-ID', options);
         }
         updateHeaderDate();
 
@@ -13823,12 +13831,6 @@ async function initKasirViews(){
 <!-- IMPLEMENTASI TUNGGAL SCROLL BERANDA MOBILE: scroll penuh dengan jarak akhir proporsional. -->
 
 
-<!-- DESKTOP FILE FIX: cegah Input Data muncul pada viewport mobile saat reload/first paint. -->
-<style id="desktop-only-input-view-guard">
-@media screen and (max-width: 767px) {
-  #view-input { display: none !important; visibility: hidden !important; }
-}
-</style>
 </body>
 </html>
 
