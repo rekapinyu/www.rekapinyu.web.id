@@ -16,7 +16,7 @@
       var isPhone = /Android.*Mobile|iPhone|iPod|Windows Phone|IEMobile|Opera Mini/i.test(ua);
       var isMobileDevice = isPhone || isTablet;
 
-      var target = isMobileDevice ? "/mobile.html" : "/desktop.html";
+      var target = isMobileDevice ? "/mobile" : "/desktop";
       var fallbackText = isMobileDevice
         ? "Buka Rekapinyu versi mobile"
         : "Buka Rekapinyu versi desktop";
