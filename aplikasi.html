@@ -298,29 +298,8 @@
         color:var(--rk-text)!important;
       }
 
-      /* Header: bersih, ringan, seperti panel dashboard referensi. */
-      header{
-        background:rgba(255,255,255,.96)!important;
-        border-bottom:1px solid var(--rk-border)!important;
-        box-shadow:0 2px 14px rgba(15,23,42,.035)!important;
-      }
-      header .bg-emerald-600{
-        background:var(--rk-green)!important;
-      }
-      #page-title-header{
-        color:#182235!important;
-        letter-spacing:-.01em;
-      }
-      #page-subtitle-header{
-        color:#8b96a6!important;
-      }
-      #mobile-date-header{
-        background:var(--rk-green-soft)!important;
-        color:var(--rk-green-dark)!important;
-        border-color:#ccefe5!important;
-      }
-
-      /* Area konten utama. */
+      
+/* Area konten utama. */
       main{
         background:var(--rk-bg)!important;
       }
@@ -452,12 +431,7 @@
       /* Mobile: tetap mempertahankan menu/dock yang ada, hanya visualnya diselaraskan. */
       @media (max-width:767px){
         body{background:#f1f4f8!important}
-        header{
-          height:60px!important;
-          padding-left:14px!important;
-          padding-right:14px!important;
-        }
-        main{
+main{
           padding-left:12px!important;
           padding-right:12px!important;
           background:#f1f4f8!important;
@@ -1618,21 +1592,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </aside>
 <!-- Main Content Wrapper -->
 <div class="flex-1 flex flex-col h-screen overflow-hidden">
-<!-- Top Navigation Bar -->
-<header class="bg-white border-b border-slate-200 h-16 px-6 flex items-center justify-between shrink-0 z-10 shadow-xs">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold">
-<i class="fa-solid fa-wallet text-sm"></i>
-</div>
-<div>
-<h2 class="text-base font-bold text-slate-800 hidden md:block" id="page-title-header">Form Input Keuangan Harian</h2>
-<p class="text-xs text-slate-400 hidden md:block" id="page-subtitle-header">Catat pendapatan, belanja, dan pengeluaran harian dengan cepat &amp; akurat.</p>
-</div>
-</div>
-<div class="flex items-center gap-3">
-
-</div>
-</header>
+<!-- Top Navigation Bar dihapus dari file desktop sesuai permintaan. -->
 <!-- Scrollable Main View Area -->
 <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-100 pb-28 md:pb-24 relative flex flex-col">
 <!-- AKTIFITAS — IMPLEMENTASI BARU: seluruh UI langsung di area MAIN. -->
@@ -4833,8 +4793,6 @@ function updateUserAvatarUI() {
                 };
                 const mt=mobileTitles[tab];
                 if(mt){
-                    document.getElementById('page-title-header').innerText=mt[0];
-                    document.getElementById('page-subtitle-header').innerText=mt[1];
                 }
                 const mobileActiveId=tab==='history'?'nav-mobile-history':tab==='activity'?'nav-mobile-activity':tab==='komunitas'?'nav-mobile-komunitas':tab==='home'?'nav-mobile-home':'nav-mobile-report';
                 ['nav-mobile-home','nav-mobile-history','nav-mobile-activity','nav-mobile-komunitas','nav-mobile-report'].forEach(id=>{
@@ -4993,8 +4951,6 @@ function updateUserAvatarUI() {
                 const activityMain = document.getElementById('activity-main-container');
                 if (activityMain) activityMain.classList.remove('hidden');
             }
-            document.getElementById('page-title-header').innerText = titles[tab].title;
-            document.getElementById('page-subtitle-header').innerText = titles[tab].subtitle;
 
             if (pengeluaranStickyContainer) pengeluaranStickyContainer.classList.add('hidden');
             if (kasbonStickyContainer) kasbonStickyContainer.classList.add('hidden');
@@ -6653,12 +6609,9 @@ function updateUserAvatarUI() {
     @media (max-width:767px){
       body{overflow:hidden} main{padding-bottom:92px!important}
       body > nav.md\:hidden.fixed.bottom-0:not(#mobile-simplified-dock){display:none!important}
-            #mobile-date-header{display:none!important}
-            header .md\:hidden.bg-rose-50{display:none!important}
-            .mobile-home-settings,
+.mobile-home-settings,
             #mobile-profile-menu-container{display:block!important}
-            header{position:relative;z-index:60!important}
-            .mobile-profile-button{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#ecfdf5;color:#059669;border:2px solid #a7f3d0;overflow:hidden;font-size:15px;box-shadow:0 3px 10px rgba(5,150,105,.15)}
+.mobile-profile-button{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#ecfdf5;color:#059669;border:2px solid #a7f3d0;overflow:hidden;font-size:15px;box-shadow:0 3px 10px rgba(5,150,105,.15)}
             .mobile-profile-button img{width:100%;height:100%;object-fit:cover}
             .mobile-profile-menu{position:absolute;right:0;top:44px;bottom:auto;width:142px;padding:6px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 14px 30px rgba(15,23,42,.16);z-index:70}
             .mobile-profile-menu button{width:100%;display:flex;align-items:center;gap:9px;padding:10px 9px;border-radius:10px;color:#475569;font-size:11px;font-weight:700;text-align:left}
@@ -6844,8 +6797,6 @@ function updateUserAvatarUI() {
           const e=document.getElementById(id); if(e)e.classList.add('hidden');
         });
         const h=document.getElementById('mobile-home-view'); if(h)h.classList.remove('hidden');
-        const t=document.getElementById('page-title-header'),sub=document.getElementById('page-subtitle-header');
-        if(t)t.innerText='Beranda'; if(sub)sub.innerText='Ringkasan laporan 7 hari terakhir.';
         active('nav-mobile-home');
 
       }
