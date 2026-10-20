@@ -517,37 +517,6 @@
         }
       }
     </style>
-<style id="patch-logo-header-footer-center">
-  @media (min-width:768px){
-    /* Logo baru di pojok kanan header, proporsional dan tidak gepeng. */
-    #mobile-date-header{
-      width:161px!important;
-      height:41px!important;
-      padding:0!important;
-      border:0!important;
-      background:transparent!important;
-      border-radius:0!important;
-      display:flex!important;
-      align-items:center!important;
-      justify-content:flex-end!important;
-      overflow:hidden!important;
-    }
-    #mobile-date-header > *{display:none!important;}
-    #mobile-date-header::before{
-      content:""!important;
-      display:block!important;
-      width:161px!important;
-      height:41px!important;
-       background-image:url('https://github.com/rekapinyu/rekapinyu.github.io/blob/main/Galery/LOGOHEADERAPLIKASI.jpg?raw=true')!important;
-      background-position:right center!important;
-      background-repeat:no-repeat!important;
-      background-size:contain!important;
-      transform:none!important;
-    }
-  }
-
-
-</style>
 <!-- PATCH INPUT DATA: panel input kiri + Photo Banner kanan, mengikuti style halaman login. -->
 <style id="patch-input-banner-login-style">
       @media (min-width:768px){
@@ -1684,13 +1653,6 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </div>
 </div>
 <div class="flex items-center gap-3">
-<div class="bg-emerald-50 text-emerald-700 border border-emerald-200/60 px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2" id="mobile-date-header">
-<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-<span id="current-date-header">Memuat...</span>
-</div>
-<button class="md:hidden bg-rose-50 text-rose-600 p-2 rounded-lg text-xs" onclick="handleLogout()">
-<i class="fa-solid fa-right-from-bracket"></i>
-</button>
 
 </div>
 </header>
@@ -13882,8 +13844,7 @@ async function initKasirViews(){
 
 
 
-<!-- PATCH MOBILE: sembunyikan header global dan tombol ikon logout hanya pada mobile. -->
-<!-- Removed duplicate mobile override: rekapinyu-mobile-hide-global-header-logout -->
+
 
 
 <!-- MOBILE HOME FINAL ALIGNMENT: mengikuti referensi UI yang diberikan; hanya tampilan mobile Beranda -->
