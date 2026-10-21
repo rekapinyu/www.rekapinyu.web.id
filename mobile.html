@@ -503,6 +503,67 @@ body { min-height: 100%; }
 }
 
 
+/* Produk Kasir: Edit/Hapus actions and edit popup. */
+.product-admin-actions { display:flex; width:100%; gap:4px; margin-top:5px; }
+.product-admin-actions button {
+  flex:1 1 0; min-width:0; height:24px; padding:0 4px; border-radius:6px;
+  font:600 9px/1 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  cursor:pointer; box-sizing:border-box; transition:background .16s ease, transform .16s ease;
+}
+.product-admin-actions .product-edit-btn { background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }
+.product-admin-actions .product-edit-btn:hover { background:#dbeafe; }
+.product-admin-actions .product-delete-btn { background:#fff1f2; color:#be123c; border:1px solid #fecdd3; }
+.product-admin-actions .product-delete-btn:hover { background:#ffe4e6; }
+.product-admin-actions button:active { transform:scale(.97); }
+@media screen and (orientation:landscape) and (max-width:600px) {
+  .product-admin-actions { gap:3px; margin-top:4px; }
+  .product-admin-actions button { height:21px; padding:0 2px; font-size:7px; border-radius:5px; }
+}
+.product-edit-modal {
+  position:fixed; inset:0; z-index:3000; display:none; align-items:center; justify-content:center;
+  padding:12px; background:rgba(15,23,42,.48); box-sizing:border-box;
+}
+.product-edit-modal.is-open { display:flex; }
+.product-edit-dialog {
+  display:flex; flex-direction:column; width:min(440px,100%); max-height:calc(100dvh - 24px); min-height:0;
+  overflow:hidden; border:1px solid #e5eaf1; border-radius:13px; background:#fff;
+  box-shadow:0 18px 55px rgba(15,23,42,.24); color:#172033;
+}
+.product-edit-heading { display:flex; align-items:center; justify-content:space-between; flex:0 0 auto; gap:12px; padding:11px 13px; border-bottom:1px solid #edf1f5; }
+.product-edit-heading h2 { margin:0; font-size:13px; font-weight:700; }
+.product-edit-close { display:grid; place-items:center; width:27px; height:27px; border:1px solid #e5eaf1; border-radius:7px; background:#fff; color:#64748b; font-size:18px; line-height:1; }
+.product-edit-form { display:flex; flex-direction:column; gap:10px; min-height:0; overflow:auto; padding:12px; }
+.product-edit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.product-edit-field { display:flex; flex-direction:column; min-width:0; gap:4px; color:#586273; font-size:9px; font-weight:600; }
+.product-edit-field.full { grid-column:1 / -1; }
+.product-edit-field input,.product-edit-field select {
+  width:100%; min-width:0; height:32px; padding:0 8px; border:1px solid #dce4ee; border-radius:7px;
+  outline:none; background:#fff; color:#172033; font:400 11px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; box-sizing:border-box;
+}
+.product-edit-field input:focus,.product-edit-field select:focus { border-color:#8fb4ff; box-shadow:0 0 0 2px #2563eb14; }
+.product-edit-photo-row { display:flex; align-items:center; gap:9px; min-width:0; }
+.product-edit-preview { display:grid; place-items:center; flex:0 0 44px; width:44px; height:44px; overflow:hidden; border:1px solid #e5eaf1; border-radius:9px; background:#fff; }
+.product-edit-preview img { display:none; width:100%; height:100%; object-fit:contain; padding:2px; box-sizing:border-box; }
+.product-edit-preview span { font-size:20px; line-height:1; }
+.product-edit-photo-row input[type=file] { height:auto; padding:5px; font-size:9px; }
+.product-edit-actions { position:sticky; bottom:0; display:flex; flex:0 0 auto; gap:8px; padding:9px 12px; border-top:1px solid #edf1f5; background:#fff; }
+.product-edit-actions button { flex:1 1 0; min-height:35px; border-radius:8px; font:600 11px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; cursor:pointer; }
+.product-edit-cancel { border:1px solid #cbd5e1; background:#f8fafc; color:#475569; }
+.product-edit-save { border:1px solid #2563eb; background:#2563eb; color:#fff; }
+.product-edit-save:hover { background:#1d4ed8; }
+@media screen and (orientation:landscape) and (max-width:600px) {
+  .product-edit-modal { padding:7px; }
+  .product-edit-dialog { width:min(370px,100%); max-height:calc(100dvh - 14px); border-radius:10px; }
+  .product-edit-heading { padding:8px 10px; }
+  .product-edit-form { gap:7px; padding:9px; }
+  .product-edit-grid { gap:6px; }
+  .product-edit-field { gap:3px; font-size:8px; }
+  .product-edit-field input,.product-edit-field select { height:28px; padding:0 6px; font-size:10px; }
+  .product-edit-preview { flex-basis:36px; width:36px; height:36px; }
+  .product-edit-actions { gap:6px; padding:7px 9px; }
+  .product-edit-actions button { min-height:30px; font-size:10px; }
+}
+
 /* Empty inventory state when no target folder or product JSON is selected. */
 .products-empty { grid-column:1 / -1; width:100%; padding:18px 12px; color:#8a929d; font-size:11px; line-height:1.45; text-align:center; border:1px dashed #dfe6ef; border-radius:10px; background:#fff; }
 </style>
@@ -585,6 +646,27 @@ body { min-height: 100%; }
  <span id="cartFabCount" class="cart-fab-count">0</span>
 </button>
 <div class="toast" id="toast"></div>
+<div id="productEditModal" class="product-edit-modal" aria-hidden="true">
+ <section class="product-edit-dialog" role="dialog" aria-modal="true" aria-labelledby="productEditTitle">
+  <div class="product-edit-heading"><h2 id="productEditTitle">Edit Produk</h2><button type="button" class="product-edit-close" id="productEditClose" aria-label="Tutup">×</button></div>
+  <form id="productEditForm" class="product-edit-form">
+   <div class="product-edit-grid">
+    <label class="product-edit-field full">Nama Produk<input id="editProductName" type="text" required autocomplete="off"></label>
+    <label class="product-edit-field">Kategori<select id="editProductCategory" required><option value="">Pilih kategori</option><option>Nigiri Sushi</option><option>Maki Sushi</option><option>Uramaki Sushi</option><option>Gunkan Maki</option><option>Temaki Sushi</option><option>Oshi Sushi</option><option>Chirashi Sushi</option><option>Lainnya</option></select></label>
+    <label class="product-edit-field">Barcode<input id="editProductBarcode" type="text" autocomplete="off"></label>
+    <label class="product-edit-field">HPP (Rp)<input id="editProductHpp" type="number" min="0" step="1" required></label>
+    <label class="product-edit-field">Harga Jual (Rp)<input id="editProductPrice" type="number" min="1" step="1" required></label>
+    <label class="product-edit-field">Stok Manual<input id="editProductStockManual" type="number" min="0" step="1" required></label>
+    <label class="product-edit-field">Stok Barcode<input id="editProductStockBarcode" type="number" min="0" step="1" required></label>
+   </div>
+   <div class="product-edit-photo-row">
+    <div class="product-edit-preview"><img id="editProductPhotoPreview" alt="Pratinjau foto produk"><span id="editProductPhotoFallback">📦</span></div>
+    <label class="product-edit-field" style="flex:1 1 auto">Ganti Foto (opsional)<input id="editProductPhotoInput" type="file" accept="image/*"></label>
+   </div>
+  </form>
+  <div class="product-edit-actions"><button type="button" class="product-edit-cancel" id="productEditCancel">Batalkan</button><button type="submit" form="productEditForm" class="product-edit-save" id="productEditSave">Simpan Perubahan</button></div>
+ </section>
+</div>
 <script>
 const categories=[
  {name:'Nigiri Sushi',icon:'🍣'},{name:'Maki Sushi',icon:'🍙'},{name:'Uramaki Sushi',icon:'🍘'},{name:'Gunkan Maki',icon:'🍱'},{name:'Temaki Sushi',icon:'🥗'},{name:'Oshi Sushi',icon:'🍣'},{name:'Chirashi Sushi',icon:'🍛'}
@@ -853,10 +935,16 @@ function renderProducts(){
   filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));
   if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));
  }
- host.innerHTML=filtered.map(p=>{const photoSrc=productPhotoSource(p);return `<article class="product" data-product-card="${escapeHtml(p.id)}"><div class="productpic">${photoSrc?`<img class="product-photo-img" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`:`<span class="sushi">${escapeHtml(p.icon)}</span>`}</div><div class="productbody"><div class="productname" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div><div class="inventory-state"><span>Stok Manual<br><b>${Math.floor(Number(p.stockManual)||0)}</b></span><span>Stok Barcode<br><b>${Math.floor(Number(p.stockBarcode)||0)}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${escapeHtml(p.id)}">＋ &nbsp;Add to cart</button></div></article>`}).join('');
+ host.innerHTML=filtered.map(p=>{
+  const photoSrc=productPhotoSource(p);
+  const managementActions=isInventoryMenu?`<div class="product-admin-actions"><button type="button" class="product-edit-btn" data-edit-product="${escapeHtml(p.id)}">Edit</button><button type="button" class="product-delete-btn" data-delete-product="${escapeHtml(p.id)}">Hapus</button></div>`:'';
+  return `<article class="product" data-product-card="${escapeHtml(p.id)}"><div class="productpic">${photoSrc?`<img class="product-photo-img" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`:`<span class="sushi">${escapeHtml(p.icon)}</span>`}</div><div class="productbody"><div class="productname" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div><div class="inventory-state"><span>Stok Manual<br><b>${Math.floor(Number(p.stockManual)||0)}</b></span><span>Stok Barcode<br><b>${Math.floor(Number(p.stockBarcode)||0)}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div>${managementActions}<button class="add" data-add="${escapeHtml(p.id)}">＋ &nbsp;Add to cart</button></div></article>`;
+ }).join('');
  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();addToCart(b.dataset.add,'manual')});
+ document.querySelectorAll('[data-edit-product]').forEach(b=>b.onclick=e=>{e.stopPropagation();openProductEdit(b.dataset.editProduct)});
+ document.querySelectorAll('[data-delete-product]').forEach(b=>b.onclick=e=>{e.stopPropagation();deleteManagedProduct(b.dataset.deleteProduct)});
  document.querySelectorAll('[data-product-card]').forEach(card=>card.addEventListener('click',e=>{
-  if(e.target.closest('[data-add]'))return;
+  if(e.target.closest('[data-add],[data-edit-product],[data-delete-product]'))return;
   if(!isInventoryMenu&&window.matchMedia('(orientation: landscape) and (max-width: 1100px)').matches)addToCart(card.dataset.productCard,'manual');
  }));
 }
@@ -950,6 +1038,90 @@ async function saveManagedProduct(){
  toast('Produk disimpan ke Folder Target/Produk/Produk.json');
 }
 document.getElementById('saveProductBtn').addEventListener('click',saveManagedProduct);
+
+let editingProductId=null, editedPhotoDataUrl=null;
+const productEditModal=document.getElementById('productEditModal');
+function setProductEditPhotoPreview(src,icon='📦'){
+ const img=document.getElementById('editProductPhotoPreview');
+ const fallback=document.getElementById('editProductPhotoFallback');
+ if(src){img.src=src;img.style.display='block';fallback.style.display='none';}
+ else{img.removeAttribute('src');img.style.display='none';fallback.textContent=icon||'📦';fallback.style.display='block';}
+}
+function openProductEdit(id){
+ if(!productFolderReady||!productDirectoryHandle){toast('Pilih Folder Target terlebih dahulu');return;}
+ const product=findProductById(id);if(!product){toast('Produk tidak ditemukan');return;}
+ editingProductId=product.id;editedPhotoDataUrl=null;
+ document.getElementById('editProductName').value=product.name||'';
+ const categorySelect=document.getElementById('editProductCategory');
+ const categoryValue=product.category||'Lainnya';
+ if(![...categorySelect.options].some(option=>option.value===categoryValue)){
+  const categoryOption=document.createElement('option');categoryOption.value=categoryValue;categoryOption.textContent=categoryValue;categorySelect.appendChild(categoryOption);
+ }
+ categorySelect.value=categoryValue;
+ document.getElementById('editProductBarcode').value=product.barcode||'';
+ document.getElementById('editProductHpp').value=String(Math.round(Number(product.cost??product.price*.8)*1000));
+ document.getElementById('editProductPrice').value=String(Math.round(Number(product.price||0)*1000));
+ document.getElementById('editProductStockManual').value=String(Math.max(0,Math.floor(Number(product.stockManual)||0)));
+ document.getElementById('editProductStockBarcode').value=String(Math.max(0,Math.floor(Number(product.stockBarcode)||0)));
+ document.getElementById('editProductPhotoInput').value='';
+ setProductEditPhotoPreview(productPhotoSource(product),product.icon);
+ productEditModal.classList.add('is-open');productEditModal.setAttribute('aria-hidden','false');
+ document.body.classList.add('product-edit-open');
+ document.getElementById('editProductName').focus({preventScroll:true});
+}
+function closeProductEdit(){
+ productEditModal.classList.remove('is-open');productEditModal.setAttribute('aria-hidden','true');
+ document.body.classList.remove('product-edit-open');editingProductId=null;editedPhotoDataUrl=null;
+ document.getElementById('editProductPhotoInput').value='';
+}
+document.getElementById('productEditClose').addEventListener('click',closeProductEdit);
+document.getElementById('productEditCancel').addEventListener('click',closeProductEdit);
+productEditModal.addEventListener('click',e=>{if(e.target===productEditModal)closeProductEdit();});
+document.getElementById('editProductPhotoInput').addEventListener('change',event=>{
+ const file=event.target.files&&event.target.files[0];if(!file)return;
+ if(!file.type.startsWith('image/')){event.target.value='';toast('Pilih file gambar yang valid');return;}
+ const reader=new FileReader();reader.onload=()=>{editedPhotoDataUrl=typeof reader.result==='string'?reader.result:null;if(editedPhotoDataUrl)setProductEditPhotoPreview(editedPhotoDataUrl);};
+ reader.onerror=()=>toast('Foto produk gagal dibaca');reader.readAsDataURL(file);
+});
+document.getElementById('productEditForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ if(editingProductId===null)return;
+ if(!productFolderReady||!productDirectoryHandle){toast('Folder Target/Produk belum aktif');return;}
+ const product=findProductById(editingProductId);if(!product){toast('Produk tidak ditemukan');closeProductEdit();return;}
+ const name=document.getElementById('editProductName').value.trim();
+ const category=document.getElementById('editProductCategory').value;
+ const barcode=document.getElementById('editProductBarcode').value.trim();
+ const hppRaw=document.getElementById('editProductHpp').value.trim();
+ const priceRaw=document.getElementById('editProductPrice').value.trim();
+ const stockManualRaw=document.getElementById('editProductStockManual').value;
+ const stockBarcodeRaw=document.getElementById('editProductStockBarcode').value;
+ const hpp=Number(hppRaw),price=Number(priceRaw),stockManual=Number(stockManualRaw),stockBarcode=Number(stockBarcodeRaw);
+ if(!name){toast('Nama produk wajib diisi');document.getElementById('editProductName').focus();return;}
+ if(!category){toast('Kategori produk wajib dipilih');document.getElementById('editProductCategory').focus();return;}
+ if(hppRaw===''||!Number.isFinite(hpp)||hpp<0){toast('HPP tidak valid');document.getElementById('editProductHpp').focus();return;}
+ if(priceRaw===''||!Number.isFinite(price)||price<=0){toast('Harga jual tidak valid');document.getElementById('editProductPrice').focus();return;}
+ if(!Number.isInteger(stockManual)||stockManual<0||!Number.isInteger(stockBarcode)||stockBarcode<0){toast('Stok harus berupa bilangan bulat nol atau lebih');return;}
+ if(products.some(p=>String(p.id)!==String(editingProductId)&&p.name.toLowerCase()===name.toLowerCase()&&p.category===category)){toast('Produk dengan nama dan kategori tersebut sudah ada');return;}
+ const before={...product};
+ Object.assign(product,{name,category,barcode,cost:hpp/1000,price:price/1000,stockManual,stockBarcode,photo:editedPhotoDataUrl!==null?editedPhotoDataUrl:(product.photo||'')});
+ try{await writeProductsToJson();}
+ catch(error){Object.assign(product,before);renderProducts();renderCart();toast('Edit gagal disimpan ke Produk.json. Periksa izin folder target.');return;}
+ closeProductEdit();renderProducts();renderCart();toast('Perubahan produk berhasil disimpan ke Produk.json');
+});
+async function deleteManagedProduct(id){
+ const product=findProductById(id);if(!product){toast('Produk tidak ditemukan');return;}
+ if(!productFolderReady||!productDirectoryHandle){toast('Pilih Folder Target dahulu');return;}
+ if(!window.confirm(`Hapus produk "${product.name}" dari Folder Target/Produk?`))return;
+ const beforeProducts=products.map(p=>({...p}));
+ const beforeCart=new Map(cart),beforeSources=new Map([...cartSources].map(([key,value])=>[key,{...value}]));
+ products=products.filter(p=>String(p.id)!==String(id));
+ try{await writeProductsToJson();}
+ catch(error){products=beforeProducts;cart=beforeCart;cartSources=beforeSources;renderProducts();renderCart();toast('Hapus gagal disimpan ke Produk.json. Periksa izin folder target.');return;}
+ for(const key of [...cart.keys()])if(String(key)===String(id)){cart.delete(key);cartSources.delete(key);}
+ renderProducts();renderCart();toast('Produk berhasil dihapus dari Produk.json');
+}
+window.addEventListener('keydown',event=>{if(event.key==='Escape'&&productEditModal.classList.contains('is-open'))closeProductEdit();});
+
 async function chooseProductTargetFolder(){
  if(typeof window.showDirectoryPicker!=='function'){toast('Browser ini tidak mendukung pemilihan folder. Gunakan Chrome atau Edge terbaru.');return;}
  try{
