@@ -297,8 +297,9 @@ body { min-height: 100%; }
   }
   .order.cart-drawer-panel.is-open { transform:translate3d(0,0,0); pointer-events:auto; }
   .cart-drawer-actions {
-    display:flex !important; flex:0 0 auto; gap:8px; padding:10px 13px;
-    border-bottom:1px solid #edf1f5; background:#fff;
+    display:flex !important; flex:0 0 auto; gap:8px; padding:10px 13px calc(10px + env(safe-area-inset-bottom));
+    border-top:1px solid #edf1f5; background:#fff;
+    position:relative; z-index:1;
   }
   .cart-drawer-actions button {
     min-height:36px; flex:1 1 0; border:1px solid #2563eb; border-radius:8px;
@@ -311,6 +312,7 @@ body { min-height: 100%; }
   .cart-drawer-cancel:hover { background:#dbeafe; }
   .cart-drawer-actions button:active { transform:scale(.98); }
   .order.cart-drawer-panel .orderhead { flex:0 0 auto; padding-top:12px; padding-bottom:10px; }
+  .order.cart-drawer-panel .orderselectors { display:none !important; }
   .order.cart-drawer-panel .cartitems { flex:1 1 auto; min-height:38px; overscroll-behavior:contain; }
   .order.cart-drawer-panel .summary { flex:0 0 auto; max-height:48dvh; overflow-y:auto; overscroll-behavior:contain; }
   body.cart-drawer-body-open { overflow:hidden !important; }
@@ -321,7 +323,7 @@ body { min-height: 100%; }
   .order.cart-drawer-panel { width:min(355px, calc(100vw - 44px)) !important; }
   .order.cart-drawer-panel .orderhead { padding:9px 10px; }
   .order.cart-drawer-panel .orderhead h2 { font-size:14px; }
-  .cart-drawer-actions { padding:8px 10px; }
+  .cart-drawer-actions { padding:8px 10px calc(8px + env(safe-area-inset-bottom)); }
   .order.cart-drawer-panel .summary { max-height:50dvh; padding-left:10px; padding-right:10px; }
 }
 @media (prefers-reduced-motion:reduce) {
@@ -363,10 +365,6 @@ body { min-height: 100%; }
    </main>
    <aside class="order cart-drawer-panel" id="cartDrawer">
     <div class="orderhead"><h2>Order Details</h2><button class="more" title="More options">···</button></div>
-    <div class="cart-drawer-actions" aria-label="Aksi keranjang">
-     <button type="button" id="cartCancelBtn" class="cart-drawer-cancel">Batalkan</button>
-     <button type="button" id="cartSaveBtn" class="cart-drawer-save">Simpan</button>
-    </div>
     <div class="orderselectors"><select aria-label="Order type"><option>Dine In</option><option>Take Away</option><option>Delivery</option></select><select aria-label="Table"><option>Table 21</option><option>Table 01</option><option>Table 02</option><option>Table 03</option><option>Table 04</option></select></div>
     <div class="itemshead"><strong>Items</strong><button class="clear" id="clear">▤ &nbsp;Clear All</button></div>
     <div class="cartitems" id="cart"></div>
@@ -378,6 +376,10 @@ body { min-height: 100%; }
      <div class="promo"><input id="promo" placeholder="Enter promo code..."><button id="apply">Apply</button></div>
      <select class="payment" id="payment"><option value="">Select payment method</option><option>Cash</option><option>Credit / Debit Card</option><option>E-Wallet</option></select>
      <button class="placeorder" id="place">Place Order</button>
+    </div>
+    <div class="cart-drawer-actions" aria-label="Aksi keranjang">
+     <button type="button" id="cartCancelBtn" class="cart-drawer-cancel">Batalkan</button>
+     <button type="button" id="cartSaveBtn" class="cart-drawer-save">Simpan</button>
     </div>
    </aside>
   </div>
