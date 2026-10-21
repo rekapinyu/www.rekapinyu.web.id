@@ -447,13 +447,17 @@ body { min-height: 100%; }
   }
   .product-manager-toolbar input,
   .product-manager-toolbar select,
-  .product-manager-toolbar button {
+  .product-manager-toolbar button,
+  .product-manager-toolbar .pm-photo {
     display:block; flex:1 1 0; width:0; min-width:0; height:36px; margin:0; padding:0 7px;
     border:1px solid #e1e6ec; border-radius:8px; outline:none; background:#fff;
     color:#202936; box-sizing:border-box; font:400 10px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-    text-overflow:clip; white-space:nowrap;
+    text-overflow:clip; white-space:nowrap; overflow:hidden;
   }
-  .product-manager-toolbar .pm-name { flex-grow:1.7; }
+  .product-manager-toolbar .pm-photo { display:flex; align-items:center; justify-content:center; position:relative; flex-grow:.65; cursor:pointer; }
+  .product-manager-toolbar .pm-photo span { display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .product-manager-toolbar .pm-photo input[type="file"] { position:absolute; inset:0; width:100%; height:100%; padding:0; opacity:0; cursor:pointer; }
+  .product-manager-toolbar .pm-name { flex-grow:1.35; }
   .product-manager-toolbar .pm-category { flex-grow:.85; appearance:auto; }
   .product-manager-toolbar .pm-hpp { flex-grow:1.05; }
   .product-manager-toolbar .pm-price { flex-grow:1; }
@@ -477,8 +481,11 @@ body { min-height: 100%; }
   body.mobile-product-menu .main { padding-right:6px !important; }
   .product-manager-toolbar input,
   .product-manager-toolbar select,
-  .product-manager-toolbar button { height:35px; padding:0 3px; font-size:8px; border-radius:6px; }
-  .product-manager-toolbar .pm-name { flex-grow:1.65; }
+  .product-manager-toolbar button,
+  .product-manager-toolbar .pm-photo { height:35px; padding:0 3px; font-size:8px; border-radius:6px; }
+  .product-manager-toolbar .pm-photo input[type="file"] { padding:0; }
+  .product-manager-toolbar .pm-name { flex-grow:1.2; }
+  .product-manager-toolbar .pm-photo { flex-grow:.62; }
   .product-manager-toolbar .pm-category { flex-grow:.85; }
   .product-manager-toolbar .pm-hpp { flex-grow:1.05; }
   .product-manager-toolbar .pm-price { flex-grow:1; }
@@ -529,6 +536,10 @@ body { min-height: 100%; }
     <div class="mobile-toolbar"><button class="mobile-bluetooth" title="Bluetooth">ᛒ</button><button class="mobile-shift" id="shiftMobile">SHIFT</button><input id="mobileSearch" placeholder="cari produk" aria-label="Cari produk"><input id="mobileBarcode" placeholder="barcode" aria-label="Barcode"></div>
     <div class="product-manager-toolbar" aria-label="Form Produk Kasir">
       <input id="newProductName" class="pm-name" type="text" placeholder="Nama Produk" aria-label="Nama Produk" autocomplete="off">
+      <label class="pm-photo" for="newProductPhoto" aria-label="Foto produk">
+        <span id="newProductPhotoLabel">Foto</span>
+        <input id="newProductPhoto" type="file" accept="image/*" aria-label="Pilih foto produk">
+      </label>
       <select id="newProductCategory" class="pm-category" aria-label="Kategori">
         <option value="" selected>Kategori</option>
         <option>Nigiri Sushi</option><option>Maki Sushi</option><option>Uramaki Sushi</option><option>Gunkan Maki</option><option>Temaki Sushi</option><option>Oshi Sushi</option><option>Chirashi Sushi</option>
@@ -608,7 +619,7 @@ function renderProducts(){
   filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));
   if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));
  }
- document.getElementById('products').innerHTML=filtered.map(p=>`<article class="product" data-product-card="${p.id}"><div class="productpic"><span class="sushi">${p.icon}</span></div><div class="productbody"><div class="productname" title="${p.name}">${p.name}</div><div class="inventory-state"><span>Stok Manual<br><b>${p.stockManual??90}</b></span><span>Stok Barcode<br><b>${p.stockBarcode??0}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${p.id}">＋ &nbsp;Add to cart</button></div></article>`).join('');
+ document.getElementById('products').innerHTML=filtered.map(p=>`<article class="product" data-product-card="${p.id}"><div class="productpic">${p.photo?`<img class="product-photo-img" src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`:`<span class="sushi">${p.icon}</span>`}</div><div class="productbody"><div class="productname" title="${p.name}">${p.name}</div><div class="inventory-state"><span>Stok Manual<br><b>${p.stockManual??90}</b></span><span>Stok Barcode<br><b>${p.stockBarcode??0}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${p.id}">＋ &nbsp;Add to cart</button></div></article>`).join('');
  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();addToCart(+b.dataset.add)});
  document.querySelectorAll('[data-product-card]').forEach(card=>card.addEventListener('click',e=>{
   if(e.target.closest('[data-add]'))return;
@@ -627,7 +638,7 @@ function renderCart(){
    const photo=(p.photo||p.imageUrl||p.image)?`<img src="${p.photo||p.imageUrl||p.image}" alt="${p.name}">`:`<span class="sushi" aria-hidden="true">${p.icon}</span>`;
    return `<div class="cartitem cartitem-compact"><div class="cart-item-photo">${photo}</div><div class="cart-item-info"><div class="cart-item-name" title="${p.name}">${p.name}</div><div class="cart-item-unit">${qty} x ${money(p.price)}</div><div class="cart-item-quantity"><span class="cart-item-quantity-label">Jumlah</span><button type="button" data-minus="${id}" aria-label="Kurangi ${p.name}">−</button><span class="cart-item-qty-num">${qty}</span><button type="button" data-plus="${id}" aria-label="Tambah ${p.name}">+</button></div></div><div class="cart-item-total">${money(p.price*qty)}</div></div>`;
   }
-  return `<div class="cartitem"><div class="carttop"><div class="cartpic">${p.icon}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`;
+  return `<div class="cartitem"><div class="carttop"><div class="cartpic">${p.photo?`<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:6px">`:p.icon}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`;
  }).join(''):'<div class="empty">Your order is empty.<br>Add sushi to get started.</div>';
  document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>changeQty(+b.dataset.minus,-1));
  document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>changeQty(+b.dataset.plus,1));
@@ -650,6 +661,22 @@ document.getElementById('mobileBarcode').addEventListener('keydown',e=>{if(e.key
 document.getElementById('shiftMobile').onclick=()=>toast('SHIFT');
 
 // Produk Kasir: product creation inputs only affect the product-management view.
+let selectedProductPhoto = '';
+document.getElementById('newProductPhoto').addEventListener('change', event => {
+ const file = event.target.files && event.target.files[0];
+ const label = document.getElementById('newProductPhotoLabel');
+ if (!file) { selectedProductPhoto = ''; label.textContent = 'Foto'; return; }
+ if (!file.type.startsWith('image/')) {
+   event.target.value = ''; selectedProductPhoto = ''; label.textContent = 'Foto'; toast('Pilih file gambar untuk foto produk'); return;
+ }
+ const reader = new FileReader();
+ reader.onload = () => {
+   selectedProductPhoto = typeof reader.result === 'string' ? reader.result : '';
+   label.textContent = selectedProductPhoto ? 'Foto ✓' : 'Foto';
+ };
+ reader.onerror = () => { selectedProductPhoto = ''; label.textContent = 'Foto'; toast('Foto produk gagal dibaca'); };
+ reader.readAsDataURL(file);
+});
 function saveManagedProduct(){
  const name=document.getElementById('newProductName').value.trim();
  const category=document.getElementById('newProductCategory').value;
@@ -663,12 +690,15 @@ function saveManagedProduct(){
  if(!hppRaw||!Number.isFinite(hpp)||hpp<0){toast('Masukkan HPP yang valid');document.getElementById('newProductHpp').focus();return}
  if(!priceRaw||!Number.isFinite(price)||price<=0){toast('Masukkan harga jual yang valid');document.getElementById('newProductPrice').focus();return}
  const id=products.reduce((max,p)=>Math.max(max,Number(p.id)||0),0)+1;
- products.push({id,name,category,desc:'1 pcs',cost:hpp/1000,price:price/1000,barcode,stockManual:0,stockBarcode:0,icon:'📦'});
+ products.push({id,name,category,desc:'1 pcs',cost:hpp/1000,price:price/1000,barcode,stockManual:0,stockBarcode:0,photo:selectedProductPhoto,icon:'📦'});
  document.getElementById('newProductName').value='';
  document.getElementById('newProductCategory').value='';
  document.getElementById('newProductHpp').value='';
  document.getElementById('newProductPrice').value='';
  document.getElementById('newProductBarcode').value='';
+ document.getElementById('newProductPhoto').value='';
+ selectedProductPhoto='';
+ document.getElementById('newProductPhotoLabel').textContent='Foto';
  renderProducts();toast('Produk berhasil ditambahkan');
 }
 document.getElementById('saveProductBtn').addEventListener('click',saveManagedProduct);
