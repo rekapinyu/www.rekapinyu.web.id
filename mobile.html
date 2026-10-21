@@ -457,6 +457,241 @@ body { min-height: 100%; }
   .inventory-state span, .inventory-price span { font-size:6.5px; }
 }
 
+
+/* Product-cashier CSS refinement: stable card sizing and readable stock/price fields */
+@media screen and (orientation: landscape) and (max-width: 1100px) {
+  .main { box-sizing:border-box; }
+  .products {
+    width:100%;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    grid-auto-rows:max-content;
+    align-items:stretch;
+    justify-items:stretch;
+    gap:7px;
+  }
+  .product {
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    min-width:0;
+    height:auto;
+    align-self:stretch;
+    padding:6px;
+    box-sizing:border-box;
+    border:1px solid #dce5ee;
+    border-radius:10px;
+    background:#fff;
+  }
+  .productpic {
+    width:100%;
+    height:clamp(66px, 13vh, 92px);
+    min-height:0;
+    flex:0 0 auto;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    background:#f8fafb;
+    border-radius:7px;
+  }
+  .productpic::after { display:none; }
+  .sushi {
+    max-width:100%;
+    font-size:clamp(32px, 6.5vh, 50px);
+    line-height:1;
+    transform:none;
+  }
+  .productbody {
+    width:100%;
+    min-width:0;
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    padding:4px 1px 1px;
+    box-sizing:border-box;
+  }
+  .productname {
+    display:block;
+    width:100%;
+    min-width:0;
+    min-height:13px;
+    margin:0;
+    font-size:clamp(8px, 1.15vw, 10px);
+    line-height:1.25;
+    font-weight:650;
+    color:#17191b;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .inventory-state {
+    display:grid;
+    width:100%;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:4px;
+  }
+  .inventory-state span,
+  .inventory-price span {
+    display:block;
+    width:100%;
+    min-width:0;
+    min-height:0;
+    padding:4px 4px;
+    box-sizing:border-box;
+    border:1px solid #b9eacb;
+    border-radius:7px;
+    background:#effbf3;
+    color:#77877e;
+    font-size:clamp(6px, .78vw, 8px);
+    line-height:1.25;
+    overflow-wrap:anywhere;
+  }
+  .inventory-state span:first-child {
+    background:#fff8ef;
+    border-color:#ffd6a8;
+  }
+  .inventory-state b,
+  .inventory-price b {
+    display:block;
+    margin-top:3px;
+    font-size:clamp(7px, .9vw, 9px);
+    line-height:1.15;
+    font-weight:600;
+    color:#078b6d;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+  .inventory-state span:first-child b { color:#e05d13; }
+  .inventory-price { display:block; width:100%; min-width:0; }
+  .inventory-price span {
+    background:#eff6ff;
+    border-color:#c8ddff;
+    color:#8293a9;
+  }
+  .inventory-price b { color:#1756c7; }
+  .inventory-price.sell span {
+    background:#effbf3;
+    border-color:#bcebc9;
+  }
+  .inventory-price.sell b { color:#07936c; }
+}
+@media screen and (orientation: landscape) and (max-width: 600px) {
+  .products { grid-template-columns:repeat(4, minmax(0,1fr)); gap:4px; }
+  .product { padding:4px; border-radius:8px; }
+  .productpic { height:clamp(52px, 12vh, 72px); }
+  .productbody { gap:3px; }
+  .productname { font-size:8px; }
+  .inventory-state { gap:3px; }
+  .inventory-state span, .inventory-price span { padding:3px 2px; font-size:6px; }
+  .inventory-state b, .inventory-price b { font-size:7px; }
+}
+
+
+/* Final reference-match overrides: product cards only */
+@media screen and (orientation: landscape) and (max-width: 1100px) {
+  .main {
+    padding: 62px 8px 8px !important;
+  }
+  .products {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    align-items: stretch !important;
+  }
+  .product {
+    padding: 6px !important;
+    border: 1px solid #dce5ee !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  .productpic {
+    height: clamp(70px, 14vh, 96px) !important;
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+  }
+  .productpic::after { display: none !important; }
+  .sushi {
+    font-size: clamp(34px, 6vh, 48px) !important;
+    line-height: 1 !important;
+    transform: none !important;
+  }
+  .productbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    padding: 4px 1px 1px !important;
+  }
+  .productname {
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    min-height: 13px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .inventory-state {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+  }
+  .inventory-state span,
+  .inventory-price span {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 4px 4px !important;
+    border-radius: 7px !important;
+    font-size: 7px !important;
+    line-height: 1.25 !important;
+    overflow-wrap: anywhere !important;
+  }
+  .inventory-state span:first-child {
+    background: #fff8ef !important;
+    border-color: #ffd6a8 !important;
+  }
+  .inventory-state span:last-child {
+    background: #effbf3 !important;
+    border-color: #b9eacb !important;
+  }
+  .inventory-state b,
+  .inventory-price b {
+    display: block !important;
+    margin-top: 3px !important;
+    font-size: 8px !important;
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+  }
+  .inventory-state span:first-child b { color: #e05d13 !important; }
+  .inventory-state span:last-child b { color: #078b6d !important; }
+  .inventory-price { display: block !important; width: 100% !important; }
+  .inventory-price span {
+    background: #eff6ff !important;
+    border-color: #c8ddff !important;
+    color: #8293a9 !important;
+  }
+  .inventory-price b { color: #1756c7 !important; }
+  .inventory-price.sell span {
+    background: #effbf3 !important;
+    border-color: #bcebc9 !important;
+  }
+  .inventory-price.sell b { color: #07936c !important; }
+}
+@media screen and (orientation: landscape) and (max-width: 600px) {
+  .products { gap: 5px !important; }
+  .product { padding: 4px !important; }
+  .productpic { height: clamp(56px, 12vh, 76px) !important; }
+  .productbody { gap: 3px !important; }
+  .productname { font-size: 8px !important; }
+  .inventory-state { gap: 3px !important; }
+  .inventory-state span,
+  .inventory-price span { padding: 3px 2px !important; font-size: 6px !important; }
+  .inventory-state b,
+  .inventory-price b { font-size: 7px !important; }
+}
+
 </style>
 </head>
 <body>
