@@ -119,7 +119,14 @@ body { min-height: 100%; }
     width: 100% !important; height: 52px !important; min-height: 52px !important;
     margin: 0 !important; padding: 0 !important; border: 0 !important;
     border-bottom: 1px solid #e9edef !important; border-radius: 0 !important;
-    background: #fff !important; box-sizing: border-box !important; font-size: 25px !important;
+    background: #fff !important; box-sizing: border-box !important; font-size: 0 !important;
+    overflow: hidden !important;
+  }
+  .sidebar .mobile-brand img {
+    display: block !important; flex: 0 0 auto !important;
+    width: 145% !important; height: 145% !important; max-width: none !important; max-height: none !important;
+    object-fit: contain !important; object-position: center !important;
+    margin: 0 !important; padding: 0 !important; border: 0 !important;
   }
   .sidebar .mobile-nav {
     display: flex !important; flex: 0 0 auto !important; flex-direction: column !important;
@@ -257,7 +264,7 @@ body { min-height: 100%; }
   <div class="browserbar"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i><span class="browsericon">▣</span><span style="margin-left:8px">‹</span><span>›</span><div class="address">♙ https://sushiban/dashboard/order.com</div><span>⟳</span><span>⇧</span><span>＋</span><span>▢</span></div>
   <div class="app">
    <aside class="sidebar">
-    <div class="mobile-brand">💧</div>
+    <div class="mobile-brand"><img src="https://raw.githubusercontent.com/rekapinyu/www.rekapinyu.web.id/main/Galery/Logo%20Mobile.png" alt="Logo Rekapinyu" /></div>
     <div class="mobile-nav">
       <button title="Kasir" aria-label="Kasir">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="11" rx="2"/><path d="M6.5 9V5.5A1.5 1.5 0 0 1 8 4h8a1.5 1.5 0 0 1 1.5 1.5V9M6.5 13h4v3h-4zM14 13h3M14 16h3M7 20v1M17 20v1"/></svg>
