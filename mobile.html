@@ -685,10 +685,80 @@ async function getJsonFileHandles(){
  });
  return files;
 }
-async function currentJsonSignature(files=null){
- const list=files||await getJsonFileHandles(),parts=[];
- for(const item of list){try{const file=await item.handle.getFile();parts.push(`${item.name}:${file.size}:${file.lastModified}`);}catch(_){parts.push(`${item.name}:unreadable`);}}
+const PRODUCT_IMAGE_EXTENSIONS=/\.(jpe?g|png|webp|gif|bmp|avif|svg)$/i;
+async function getProductImageFileHandles(){
+ const images=[];
+ const collect=async(directory,path)=>{
+  if(!directory)return;
+  try{
+   for await(const [name,handle] of directory.entries()){
+    if(handle.kind==='file'&&PRODUCT_IMAGE_EXTENSIONS.test(name))images.push({name,path,handle});
+   }
+  }catch(_){/* Folder may be readable only partially; JSON products remain usable. */}
+ };
+ // Search both the selected target folder and its Produk subfolder.
+ await collect(targetDirectoryHandle,'target');
+ if(productDirectoryHandle&&productDirectoryHandle!==targetDirectoryHandle)await collect(productDirectoryHandle,'Produk');
+ // Prefer an image inside Produk when duplicate filenames exist.
+ images.sort((a,b)=>Number(a.path==='Produk')-Number(b.path==='Produk')||a.name.localeCompare(b.name));
+ return images;
+}
+function normalizedPhotoKey(value){
+ let name=String(value??'').trim().split(/[?#]/)[0].replace(/\\/g,'/').split('/').pop()||'';
+ name=name.replace(/\.(jpe?g|png|webp|gif|bmp|avif|svg)$/i,'');
+ try{name=decodeURIComponent(name);}catch(_){}
+ return name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+}
+function readImageAsDataUrl(file){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onload=()=>resolve(typeof reader.result==='string'?reader.result:'');
+  reader.onerror=()=>reject(reader.error||new Error('Foto tidak bisa dibaca'));
+  reader.readAsDataURL(file);
+ });
+}
+async function currentJsonSignature(files=null,imageFiles=null){
+ const list=files||await getJsonFileHandles(),images=imageFiles||await getProductImageFileHandles(),parts=[];
+ for(const item of list){try{const file=await item.handle.getFile();parts.push(`json:${item.name}:${file.size}:${file.lastModified}`);}catch(_){parts.push(`json:${item.name}:unreadable`);}}
+ for(const item of images){try{const file=await item.handle.getFile();parts.push(`img:${item.path}/${item.name}:${file.size}:${file.lastModified}`);}catch(_){parts.push(`img:${item.path}/${item.name}:unreadable`);}}
  return parts.join('|');
+}
+async function attachFolderPhotos(productList,imageFiles){
+ const byName=new Map(),loaded=[];
+ for(const item of imageFiles){
+  try{
+   const file=await item.handle.getFile();
+   const dataUrl=await readImageAsDataUrl(file);
+   if(!dataUrl)continue;
+   const key=normalizedPhotoKey(item.name);
+   const image={name:item.name,key,dataUrl,path:item.path};
+   loaded.push(image);
+   if(key)byName.set(key,image);
+  }catch(_){/* Ignore unreadable image files; continue with other images. */}
+ }
+ const sharedPhoto=byName.get('fotoproduk')||byName.get('fotoprodukdefault')||byName.get('produkfoto')||null;
+ for(const product of productList){
+  product.folderPhoto='';
+  const saved=String(product.photo||'').trim();
+  // Photos embedded in JSON or explicitly hosted keep priority.
+  if(/^(data:image\/|https?:\/\/|blob:|file:)/i.test(saved))continue;
+  const candidates=[];
+  if(saved)candidates.push(saved);
+  if(product.barcode)candidates.push(product.barcode);
+  if(product.id!==undefined&&product.id!==null)candidates.push(String(product.id));
+  if(product.name)candidates.push(product.name);
+  if(product.name){
+   candidates.push(`foto produk ${product.name}`,`foto ${product.name}`,`${product.name} foto`,`produk ${product.name}`);
+  }
+  let match=null;
+  for(const candidate of candidates){
+   match=byName.get(normalizedPhotoKey(candidate));
+   if(match)break;
+  }
+  // A shared file named "foto produk.jpg" is supported as a fallback when no product-specific image exists.
+  if(!match)match=sharedPhoto;
+  if(match)product.folderPhoto=match.dataUrl;
+ }
 }
 async function refreshProductsFromFolder(force=false,showError=false){
  if(folderReadBusy)return false;
@@ -699,7 +769,8 @@ async function refreshProductsFromFolder(force=false,showError=false){
  folderReadBusy=true;
  try{
   const files=await getJsonFileHandles();
-  const signature=await currentJsonSignature(files);
+  const imageFiles=await getProductImageFileHandles();
+  const signature=await currentJsonSignature(files,imageFiles);
   if(!force&&signature===lastJsonSignature)return false;
   const merged=new Map();let sequence=0;
   for(const item of files){
@@ -720,12 +791,13 @@ async function refreshProductsFromFolder(force=false,showError=false){
    used.add(String(p.id));
    p.stockManual=Math.max(0,numberValue(p.stockManual));p.stockBarcode=Math.max(0,numberValue(p.stockBarcode));
   }
+  await attachFolderPhotos(next,imageFiles);
   products=next;
   lastJsonSignature=signature;
   renderProducts();renderCart();
   return true;
  }catch(error){
-  if(showError)toast('Gagal membaca JSON dari folder Produk');
+  if(showError)toast('Gagal membaca JSON/foto dari folder Produk');
   return false;
  }finally{folderReadBusy=false;}
 }
@@ -765,6 +837,7 @@ async function restoreProductFolderOnStartup(){
  }catch(error){products=[];productFolderReady=false;renderProducts();renderCart();}
 }
 function renderCategories(){document.getElementById('categories').innerHTML=categories.map(c=>`<button class="category ${activeCategory===c.name?'active':''}" data-cat="${c.name}"><span class="food">${c.icon}</span><span>${c.name}</span></button>`).join('');document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{activeCategory=b.dataset.cat;renderCategories();renderProducts()})}
+function productPhotoSource(p){const saved=String(p.photo||'').trim();if(/^(data:image\/|https?:\/\/|blob:|file:)/i.test(saved))return saved;return p.folderPhoto||saved;}
 function renderProducts(){
  const isInventoryMenu=currentMobileMenu==='produk'&&window.matchMedia('(orientation: landscape) and (max-width: 1100px)').matches;
  const host=document.getElementById('products');
@@ -780,7 +853,7 @@ function renderProducts(){
   filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));
   if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));
  }
- host.innerHTML=filtered.map(p=>`<article class="product" data-product-card="${escapeHtml(p.id)}"><div class="productpic">${p.photo?`<img class="product-photo-img" src="${escapeHtml(p.photo)}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`:`<span class="sushi">${escapeHtml(p.icon)}</span>`}</div><div class="productbody"><div class="productname" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div><div class="inventory-state"><span>Stok Manual<br><b>${Math.floor(Number(p.stockManual)||0)}</b></span><span>Stok Barcode<br><b>${Math.floor(Number(p.stockBarcode)||0)}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${escapeHtml(p.id)}">＋ &nbsp;Add to cart</button></div></article>`).join('');
+ host.innerHTML=filtered.map(p=>{const photoSrc=productPhotoSource(p);return `<article class="product" data-product-card="${escapeHtml(p.id)}"><div class="productpic">${photoSrc?`<img class="product-photo-img" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`:`<span class="sushi">${escapeHtml(p.icon)}</span>`}</div><div class="productbody"><div class="productname" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div><div class="inventory-state"><span>Stok Manual<br><b>${Math.floor(Number(p.stockManual)||0)}</b></span><span>Stok Barcode<br><b>${Math.floor(Number(p.stockBarcode)||0)}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${escapeHtml(p.id)}">＋ &nbsp;Add to cart</button></div></article>`}).join('');
  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();addToCart(b.dataset.add,'manual')});
  document.querySelectorAll('[data-product-card]').forEach(card=>card.addEventListener('click',e=>{
   if(e.target.closest('[data-add]'))return;
@@ -812,10 +885,10 @@ function renderCart(){
  document.getElementById('cart').innerHTML=entries.length?entries.map(([id,qty])=>{
   const p=findProductById(id);if(!p)return '';
   if(compactDrawer){
-   const photo=(p.photo||p.imageUrl||p.image)?`<img src="${p.photo||p.imageUrl||p.image}" alt="${p.name}">`:`<span class="sushi" aria-hidden="true">${p.icon}</span>`;
+   const cartPhoto=productPhotoSource(p)||p.imageUrl||p.image;const photo=cartPhoto?`<img src="${escapeHtml(cartPhoto)}" alt="${escapeHtml(p.name)}">`:`<span class="sushi" aria-hidden="true">${escapeHtml(p.icon)}</span>`;
    return `<div class="cartitem cartitem-compact"><div class="cart-item-photo">${photo}</div><div class="cart-item-info"><div class="cart-item-name" title="${p.name}">${p.name}</div><div class="cart-item-unit">${qty} x ${money(p.price)}</div><div class="cart-item-quantity"><span class="cart-item-quantity-label">Jumlah</span><button type="button" data-minus="${id}" aria-label="Kurangi ${p.name}">−</button><span class="cart-item-qty-num">${qty}</span><button type="button" data-plus="${id}" aria-label="Tambah ${p.name}">+</button></div></div><div class="cart-item-total">${money(p.price*qty)}</div></div>`;
   }
-  return `<div class="cartitem"><div class="carttop"><div class="cartpic">${p.photo?`<img src="${p.photo}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;border-radius:6px">`:p.icon}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`;
+  const cartPhoto=productPhotoSource(p);return `<div class="cartitem"><div class="carttop"><div class="cartpic">${cartPhoto?`<img src="${escapeHtml(cartPhoto)}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;object-fit:contain;border-radius:6px">`:escapeHtml(p.icon)}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`;
  }).join(''):'<div class="empty">Your order is empty.<br>Add sushi to get started.</div>';
  document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.minus,-1));
  document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>changeQty(b.dataset.plus,1));
