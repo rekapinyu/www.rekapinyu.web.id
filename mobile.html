@@ -210,6 +210,38 @@ body { min-height: 100%; }
   }
 }
 
+
+/* Mobile touch scrolling for the sticky sidebar (scrollbar remains hidden) */
+.sidebar {
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.sidebar::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+.sidebar .navspacer { flex: 0 0 12px; min-height: 12px; }
+@media (max-width: 900px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+}
+
 </style>
 </head>
 <body>
