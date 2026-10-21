@@ -260,6 +260,32 @@ body { min-height: 100%; }
  .products{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding-top:60px}
  .productpic{height:110px}
 }
+
+/* Inventory-card styling for the requested compact mobile/tablet product view */
+.inventory-state, .inventory-price { display: none; }
+@media (max-width: 720px) {
+  .products { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; }
+  .product { border-radius: 11px; padding: 6px; }
+  .productpic { height: clamp(70px, 13vw, 100px); border: 0; border-radius: 8px; }
+  .sushi { font-size: clamp(34px, 7vw, 52px); }
+  .productbody { padding: 5px 2px 2px; gap: 5px; }
+  .productname { font-size: 10px; min-height: 14px; white-space: nowrap; }
+  .productmeta, .add { display: none; }
+  .inventory-state { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .inventory-state span, .inventory-price span { display: block; min-width: 0; padding: 5px 4px; border: 1px solid #b9eacb; border-radius: 7px; background: #f0fbf3; color: #7c8b82; font-size: 8px; line-height: 1.35; overflow-wrap: anywhere; }
+  .inventory-state span:first-child { background: #fff8ef; border-color: #ffd6a8; }
+  .inventory-state b, .inventory-price b { display: inline-block; color: #078b6d; font-size: 9px; font-weight: 600; margin-top: 3px; }
+  .inventory-state span:first-child b { color: #e05d13; }
+  .inventory-price { display: block; }
+  .inventory-price span { background: #eff6ff; border-color: #c8ddff; color: #8293a9; }
+  .inventory-price b { color: #1756c7; }
+  .inventory-price.sell span { background: #effbf3; border-color: #bcebc9; }
+  .inventory-price.sell b { color: #07936c; }
+}
+@media (max-width: 420px) {
+  .products { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
 </style>
 </head>
 <body>
@@ -322,12 +348,13 @@ const products=[
 let activeCategory='Nigiri Sushi',cart=new Map(),discount=0;
 const money=n=>'$'+n.toFixed(2);
 function renderCategories(){document.getElementById('categories').innerHTML=categories.map(c=>`<button class="category ${activeCategory===c.name?'active':''}" data-cat="${c.name}"><span class="food">${c.icon}</span><span>${c.name}</span></button>`).join('');document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{activeCategory=b.dataset.cat;renderCategories();renderProducts()})}
-function renderProducts(){let q=document.getElementById('search').value.toLowerCase();let filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));document.getElementById('products').innerHTML=filtered.map(p=>`<article class="product"><div class="productpic"><span class="sushi">${p.icon}</span></div><div class="productbody"><div class="productname" title="${p.name}">${p.name}</div><div class="productmeta"><span>${p.desc}</span><span class="price">${money(p.price)}</span></div><button class="add" data-add="${p.id}">＋ &nbsp;Add to cart</button></div></article>`).join('');document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addToCart(+b.dataset.add))}
+function renderProducts(){let q=(document.getElementById('mobileSearch')?.value||document.getElementById('search').value).toLowerCase();let filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));document.getElementById('products').innerHTML=filtered.map(p=>`<article class="product"><div class="productpic"><span class="sushi">${p.icon}</span></div><div class="productbody"><div class="productname" title="${p.name}">${p.name}</div><div class="inventory-state"><span>Stok Manual<br><b>${p.stockManual??90}</b></span><span>Stok Barcode<br><b>${p.stockBarcode??0}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${p.id}">＋ &nbsp;Add to cart</button></div></article>`).join('');document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addToCart(+b.dataset.add))}
 function addToCart(id){cart.set(id,(cart.get(id)||0)+1);renderCart();toast('Added to cart')}
 function changeQty(id,delta){let n=(cart.get(id)||0)+delta;if(n<=0)cart.delete(id);else cart.set(id,n);renderCart()}
 function renderCart(){let entries=[...cart.entries()];document.getElementById('cart').innerHTML=entries.length?entries.map(([id,qty])=>{let p=products.find(x=>x.id===id);return `<div class="cartitem"><div class="carttop"><div class="cartpic">${p.icon}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`}).join(''):'<div class="empty">Your order is empty.<br>Add sushi to get started.</div>';document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>changeQty(+b.dataset.minus,-1));document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>changeQty(+b.dataset.plus,1));let subtotal=entries.reduce((s,[id,q])=>s+products.find(p=>p.id===id).price*q,0),tax=subtotal*.1,total=Math.max(0,subtotal+tax-discount);document.getElementById('subtotal').textContent=money(subtotal);document.getElementById('tax').textContent=money(tax);document.getElementById('discount').textContent=money(discount);document.getElementById('total').textContent=money(total)}
 function toast(msg){let el=document.getElementById('toast');el.textContent=msg;el.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.style.display='none',2200)}
 document.getElementById('search').addEventListener('input',renderProducts);
+document.getElementById('mobileSearch')?.addEventListener('input',renderProducts);
 document.getElementById('clear').onclick=()=>{cart.clear();discount=0;renderCart();toast('Order cleared')};
 document.getElementById('apply').onclick=()=>{let code=document.getElementById('promo').value.trim().toUpperCase();let subtotal=[...cart.entries()].reduce((s,[id,q])=>s+products.find(p=>p.id===id).price*q,0);if(code==='SUSHI10'&&subtotal>0){discount=subtotal*.1;renderCart();toast('10% discount applied')}else{discount=0;renderCart();toast('Use code SUSHI10 for 10% off')}};
 document.getElementById('filterBtn').onclick=()=>{activeCategory=activeCategory==='All'?'Nigiri Sushi':'All';renderCategories();renderProducts();toast(activeCategory==='All'?'Showing all categories':'Showing Nigiri Sushi')};
