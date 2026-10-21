@@ -487,6 +487,14 @@ body { min-height: 100%; }
   .product-manager-toolbar .pm-folder { flex-grow:1.05; }
 }
 
+/* Explicit Kasir menu view: show cashier search/barcode toolbar, stock cards and floating cart. */
+@media screen and (orientation:landscape) and (max-width:1100px) {
+  body.mobile-cashier-menu .mobile-toolbar { display:flex !important; }
+  body.mobile-cashier-menu .product-manager-toolbar { display:none !important; }
+  body.mobile-cashier-menu .cart-fab { display:grid !important; }
+  body.mobile-cashier-menu .products .product { cursor:pointer !important; }
+}
+
 </style>
 </head>
 <body>
@@ -714,7 +722,7 @@ function cancelCartDrawer(){
  closeCartDrawer();
  toast('Perubahan keranjang dibatalkan');
 }
-// Sidebar menu click state: a single selected tile, with a unique color per menu.
+// Sidebar menu click state: Kasir explicitly opens the cashier page shown in the reference.
 const sidebarMenuButtons = document.querySelectorAll('.mobile-nav button');
 sidebarMenuButtons.forEach((button,index) => {
   button.setAttribute('aria-pressed', 'false');
@@ -724,12 +732,16 @@ sidebarMenuButtons.forEach((button,index) => {
       item.classList.toggle('is-selected', selected);
       item.setAttribute('aria-pressed', String(selected));
     });
-    // Produk Kasir (icon ke-3) opens the inventory-management layout; other icons return to the existing cashier layout.
+    // Produk Kasir (icon ke-3) keeps its product-entry toolbar. Kasir (icon ke-2)
+    // opens the screenshot-matched cashier toolbar, clickable product cards, and floating cart.
     currentMobileMenu = index===2 ? 'produk' : 'kasir';
-    document.body.classList.toggle('mobile-product-menu',currentMobileMenu==='produk');
+    document.body.classList.toggle('mobile-product-menu', currentMobileMenu==='produk');
+    document.body.classList.toggle('mobile-cashier-menu', index===1);
     renderProducts();
   });
 });
+// Open the page on Kasir by default so the reference content belongs to the Kasir menu.
+sidebarMenuButtons[1]?.click();
 document.getElementById('cartFab').addEventListener('click',openCartDrawer);
 document.getElementById('cartSaveBtn').addEventListener('click',saveCartDrawer);
 document.getElementById('cartCancelBtn').addEventListener('click',cancelCartDrawer);
