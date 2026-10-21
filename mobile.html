@@ -423,10 +423,10 @@ body { min-height: 100%; }
     <div class="itemshead"><strong>Items</strong><button class="clear" id="clear">▤ &nbsp;Clear All</button></div>
     <div class="cartitems" id="cart"></div>
     <div class="summary">
-     <div class="sumrow"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
-     <div class="sumrow"><span>Tax (10%)</span><span id="tax">$0.00</span></div>
-     <div class="sumrow"><span>Discount</span><span id="discount">$0.00</span></div>
-     <div class="sumrow total"><span>Total</span><span id="total">$0.00</span></div>
+     <div class="sumrow"><span>Subtotal</span><span id="subtotal">Rp. 0</span></div>
+     <div class="sumrow"><span>Tax (10%)</span><span id="tax">Rp. 0</span></div>
+     <div class="sumrow"><span>Discount</span><span id="discount">Rp. 0</span></div>
+     <div class="sumrow total"><span>Total</span><span id="total">Rp. 0</span></div>
      <div class="promo"><input id="promo" placeholder="Enter promo code..."><button id="apply">Apply</button></div>
      <select class="payment" id="payment"><option value="">Select payment method</option><option>Cash</option><option>Credit / Debit Card</option><option>E-Wallet</option></select>
      <button class="placeorder" id="place">Place Order</button>
@@ -466,7 +466,7 @@ const products=[
  {id:14,name:'Salmon Ikura',category:'Gunkan Maki',desc:'4 pcs/pack',price:12.5,icon:'🍱'}
 ];
 let activeCategory='Nigiri Sushi',cart=new Map(),discount=0;
-const money=n=>'$'+n.toFixed(2);
+const money=n=>'Rp. '+Math.round(Number(n||0)*1000).toLocaleString('id-ID'); // Single Rupiah formatter used across products and all cart totals.
 function renderCategories(){document.getElementById('categories').innerHTML=categories.map(c=>`<button class="category ${activeCategory===c.name?'active':''}" data-cat="${c.name}"><span class="food">${c.icon}</span><span>${c.name}</span></button>`).join('');document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{activeCategory=b.dataset.cat;renderCategories();renderProducts()})}
 function renderProducts(){let q=(document.getElementById('mobileSearch')?.value||document.getElementById('search').value).toLowerCase();let filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));document.getElementById('products').innerHTML=filtered.map(p=>`<article class="product" data-product-card="${p.id}"><div class="productpic"><span class="sushi">${p.icon}</span></div><div class="productbody"><div class="productname" title="${p.name}">${p.name}</div><div class="inventory-state"><span>Stok Manual<br><b>${p.stockManual??90}</b></span><span>Stok Barcode<br><b>${p.stockBarcode??0}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${p.id}">＋ &nbsp;Add to cart</button></div></article>`).join('');document.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();addToCart(+b.dataset.add)});document.querySelectorAll('[data-product-card]').forEach(card=>card.addEventListener('click',e=>{if(e.target.closest('[data-add]'))return;if(window.matchMedia('(orientation: landscape) and (max-width: 1100px)').matches){addToCart(Number(card.dataset.productCard))}}))}
 function addToCart(id){cart.set(id,(cart.get(id)||0)+1);renderCart();toast('Added to cart')}
@@ -474,12 +474,12 @@ function changeQty(id,delta){let n=(cart.get(id)||0)+delta;if(n<=0)cart.delete(i
 function renderCart(){
  const entries=[...cart.entries()];
  const compactDrawer=window.matchMedia('(orientation: landscape) and (max-width: 1100px)').matches;
- const rupiah=n=>'Rp. '+Math.round(n*1000).toLocaleString('id-ID');
+
  document.getElementById('cart').innerHTML=entries.length?entries.map(([id,qty])=>{
   const p=products.find(x=>x.id===id);
   if(compactDrawer){
    const photo=(p.photo||p.imageUrl||p.image)?`<img src="${p.photo||p.imageUrl||p.image}" alt="${p.name}">`:`<span class="sushi" aria-hidden="true">${p.icon}</span>`;
-   return `<div class="cartitem cartitem-compact"><div class="cart-item-photo">${photo}</div><div class="cart-item-info"><div class="cart-item-name" title="${p.name}">${p.name}</div><div class="cart-item-unit">${qty} x ${rupiah(p.price)}</div><div class="cart-item-quantity"><span class="cart-item-quantity-label">Jumlah</span><button type="button" data-minus="${id}" aria-label="Kurangi ${p.name}">−</button><span class="cart-item-qty-num">${qty}</span><button type="button" data-plus="${id}" aria-label="Tambah ${p.name}">+</button></div></div><div class="cart-item-total">${rupiah(p.price*qty)}</div></div>`;
+   return `<div class="cartitem cartitem-compact"><div class="cart-item-photo">${photo}</div><div class="cart-item-info"><div class="cart-item-name" title="${p.name}">${p.name}</div><div class="cart-item-unit">${qty} x ${money(p.price)}</div><div class="cart-item-quantity"><span class="cart-item-quantity-label">Jumlah</span><button type="button" data-minus="${id}" aria-label="Kurangi ${p.name}">−</button><span class="cart-item-qty-num">${qty}</span><button type="button" data-plus="${id}" aria-label="Tambah ${p.name}">+</button></div></div><div class="cart-item-total">${money(p.price*qty)}</div></div>`;
   }
   return `<div class="cartitem"><div class="carttop"><div class="cartpic">${p.icon}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`;
  }).join(''):'<div class="empty">Your order is empty.<br>Add sushi to get started.</div>';
@@ -489,7 +489,7 @@ function renderCart(){
  document.getElementById('subtotal').textContent=money(subtotal);
  document.getElementById('tax').textContent=money(tax);
  document.getElementById('discount').textContent=money(discount);
- document.getElementById('total').textContent=compactDrawer?rupiah(total):money(total);
+ document.getElementById('total').textContent=money(total);
  updateCartFabCount();
 }
 function toast(msg){let el=document.getElementById('toast');el.textContent=msg;el.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.style.display='none',2200)}
