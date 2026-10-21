@@ -257,6 +257,77 @@ body { min-height: 100%; }
   .inventory-state b, .inventory-price b { font-size: 7px !important; }
 }
 
+
+
+/* Mobile landscape cart button and right-side drawer; desktop rules remain untouched. */
+.cart-drawer-backdrop { display:none; }
+.cart-fab { display:none; }
+.cart-drawer-actions { display:none; }
+@media screen and (orientation:landscape) and (max-width:1100px) {
+  .cart-fab {
+    position:fixed; right:max(15px, env(safe-area-inset-right)); bottom:max(15px, env(safe-area-inset-bottom));
+    z-index:1090; display:grid; place-items:center; width:58px; height:58px; padding:0;
+    border:0; border-radius:50%; background:#2563eb; color:#fff;
+    box-shadow:0 7px 20px rgba(37,99,235,.34); cursor:pointer;
+    transition:transform .2s ease, background .2s ease, box-shadow .2s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .cart-fab:active { transform:scale(.94); background:#1d4ed8; }
+  .cart-fab svg { display:block; width:27px; height:27px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .cart-fab-count {
+    position:absolute; top:-3px; right:-3px; min-width:21px; height:21px; padding:0 5px;
+    display:flex; align-items:center; justify-content:center; border:2px solid #fff; border-radius:999px;
+    background:#0f172a; color:#fff; font:700 10px/1 Arial,sans-serif;
+  }
+  .cart-drawer-backdrop {
+    display:block; position:fixed; inset:0; z-index:1100; background:rgba(15,23,42,.34);
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .34s ease, visibility .34s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .cart-drawer-backdrop.is-open { opacity:1; visibility:visible; pointer-events:auto; }
+  .order.cart-drawer-panel {
+    position:fixed !important; top:0 !important; right:0 !important; bottom:0 !important; left:auto !important;
+    display:flex !important; flex-direction:column !important; width:min(390px, calc(100vw - 50px)) !important;
+    height:100dvh !important; max-height:100dvh !important; min-height:0 !important; margin:0 !important;
+    border:0 !important; border-left:1px solid #e4eaf2 !important; border-radius:0 !important;
+    background:#fff !important; overflow:hidden !important; box-shadow:-14px 0 38px rgba(15,23,42,.16) !important;
+    transform:translate3d(105%,0,0); transition:transform .38s cubic-bezier(.22,.75,.2,1);
+    pointer-events:none; z-index:1110 !important; will-change:transform; box-sizing:border-box;
+  }
+  .order.cart-drawer-panel.is-open { transform:translate3d(0,0,0); pointer-events:auto; }
+  .cart-drawer-actions {
+    display:flex !important; flex:0 0 auto; gap:8px; padding:10px 13px;
+    border-bottom:1px solid #edf1f5; background:#fff;
+  }
+  .cart-drawer-actions button {
+    min-height:36px; flex:1 1 0; border:1px solid #2563eb; border-radius:8px;
+    font:600 12px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    cursor:pointer; transition:background .18s ease, transform .18s ease;
+  }
+  .cart-drawer-save { background:#2563eb; color:#fff; }
+  .cart-drawer-save:hover { background:#1d4ed8; }
+  .cart-drawer-cancel { background:#eff6ff; color:#1d4ed8; }
+  .cart-drawer-cancel:hover { background:#dbeafe; }
+  .cart-drawer-actions button:active { transform:scale(.98); }
+  .order.cart-drawer-panel .orderhead { flex:0 0 auto; padding-top:12px; padding-bottom:10px; }
+  .order.cart-drawer-panel .cartitems { flex:1 1 auto; min-height:38px; overscroll-behavior:contain; }
+  .order.cart-drawer-panel .summary { flex:0 0 auto; max-height:48dvh; overflow-y:auto; overscroll-behavior:contain; }
+  body.cart-drawer-body-open { overflow:hidden !important; }
+}
+@media screen and (orientation:landscape) and (max-width:600px) {
+  .cart-fab { width:52px; height:52px; right:max(11px, env(safe-area-inset-right)); bottom:max(11px, env(safe-area-inset-bottom)); }
+  .cart-fab svg { width:24px; height:24px; }
+  .order.cart-drawer-panel { width:min(355px, calc(100vw - 44px)) !important; }
+  .order.cart-drawer-panel .orderhead { padding:9px 10px; }
+  .order.cart-drawer-panel .orderhead h2 { font-size:14px; }
+  .cart-drawer-actions { padding:8px 10px; }
+  .order.cart-drawer-panel .summary { max-height:50dvh; padding-left:10px; padding-right:10px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .cart-fab, .cart-drawer-backdrop, .order.cart-drawer-panel { transition:none !important; }
+}
+
 </style>
 </head>
 <body>
@@ -290,8 +361,12 @@ body { min-height: 100%; }
     <div class="categories" id="categories"></div>
     <div class="products" id="products"></div>
    </main>
-   <aside class="order">
+   <aside class="order cart-drawer-panel" id="cartDrawer">
     <div class="orderhead"><h2>Order Details</h2><button class="more" title="More options">···</button></div>
+    <div class="cart-drawer-actions" aria-label="Aksi keranjang">
+     <button type="button" id="cartCancelBtn" class="cart-drawer-cancel">Batalkan</button>
+     <button type="button" id="cartSaveBtn" class="cart-drawer-save">Simpan</button>
+    </div>
     <div class="orderselectors"><select aria-label="Order type"><option>Dine In</option><option>Take Away</option><option>Delivery</option></select><select aria-label="Table"><option>Table 21</option><option>Table 01</option><option>Table 02</option><option>Table 03</option><option>Table 04</option></select></div>
     <div class="itemshead"><strong>Items</strong><button class="clear" id="clear">▤ &nbsp;Clear All</button></div>
     <div class="cartitems" id="cart"></div>
@@ -308,6 +383,11 @@ body { min-height: 100%; }
   </div>
  </div>
 </div>
+<div id="cartDrawerBackdrop" class="cart-drawer-backdrop" aria-hidden="true"></div>
+<button id="cartFab" class="cart-fab" type="button" aria-label="Buka keranjang" aria-controls="cartDrawer" aria-expanded="false">
+ <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.1 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 1.9-1.4L21 8H6"/><circle cx="10" cy="19.2" r="1.3"/><circle cx="17.2" cy="19.2" r="1.3"/></svg>
+ <span id="cartFabCount" class="cart-fab-count">0</span>
+</button>
 <div class="toast" id="toast"></div>
 <script>
 const categories=[
@@ -335,7 +415,7 @@ function renderCategories(){document.getElementById('categories').innerHTML=cate
 function renderProducts(){let q=(document.getElementById('mobileSearch')?.value||document.getElementById('search').value).toLowerCase();let filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));document.getElementById('products').innerHTML=filtered.map(p=>`<article class="product"><div class="productpic"><span class="sushi">${p.icon}</span></div><div class="productbody"><div class="productname" title="${p.name}">${p.name}</div><div class="inventory-state"><span>Stok Manual<br><b>${p.stockManual??90}</b></span><span>Stok Barcode<br><b>${p.stockBarcode??0}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${p.id}">＋ &nbsp;Add to cart</button></div></article>`).join('');document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addToCart(+b.dataset.add))}
 function addToCart(id){cart.set(id,(cart.get(id)||0)+1);renderCart();toast('Added to cart')}
 function changeQty(id,delta){let n=(cart.get(id)||0)+delta;if(n<=0)cart.delete(id);else cart.set(id,n);renderCart()}
-function renderCart(){let entries=[...cart.entries()];document.getElementById('cart').innerHTML=entries.length?entries.map(([id,qty])=>{let p=products.find(x=>x.id===id);return `<div class="cartitem"><div class="carttop"><div class="cartpic">${p.icon}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`}).join(''):'<div class="empty">Your order is empty.<br>Add sushi to get started.</div>';document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>changeQty(+b.dataset.minus,-1));document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>changeQty(+b.dataset.plus,1));let subtotal=entries.reduce((s,[id,q])=>s+products.find(p=>p.id===id).price*q,0),tax=subtotal*.1,total=Math.max(0,subtotal+tax-discount);document.getElementById('subtotal').textContent=money(subtotal);document.getElementById('tax').textContent=money(tax);document.getElementById('discount').textContent=money(discount);document.getElementById('total').textContent=money(total)}
+function renderCart(){let entries=[...cart.entries()];document.getElementById('cart').innerHTML=entries.length?entries.map(([id,qty])=>{let p=products.find(x=>x.id===id);return `<div class="cartitem"><div class="carttop"><div class="cartpic">${p.icon}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`}).join(''):'<div class="empty">Your order is empty.<br>Add sushi to get started.</div>';document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>changeQty(+b.dataset.minus,-1));document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>changeQty(+b.dataset.plus,1));let subtotal=entries.reduce((s,[id,q])=>s+products.find(p=>p.id===id).price*q,0),tax=subtotal*.1,total=Math.max(0,subtotal+tax-discount);document.getElementById('subtotal').textContent=money(subtotal);document.getElementById('tax').textContent=money(tax);document.getElementById('discount').textContent=money(discount);document.getElementById('total').textContent=money(total);updateCartFabCount()}
 function toast(msg){let el=document.getElementById('toast');el.textContent=msg;el.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.style.display='none',2200)}
 document.getElementById('search').addEventListener('input',renderProducts);
 document.getElementById('mobileSearch')?.addEventListener('input',renderProducts);
@@ -346,6 +426,54 @@ document.getElementById('place').onclick=()=>{if(!cart.size){toast('Please add i
 document.getElementById('mobileSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;renderProducts()});
 document.getElementById('mobileBarcode').addEventListener('keydown',e=>{if(e.key==='Enter'){const p=products.find(x=>String(x.id)===e.target.value.trim());if(p){addToCart(p.id);e.target.value=''}else toast('Barcode tidak ditemukan')}});
 document.getElementById('shiftMobile').onclick=()=>toast('SHIFT');
+
+// Mobile cart drawer: preserve the cart snapshot until the user saves or cancels.
+let cartDrawerSnapshot=null;
+function updateCartFabCount(){
+ const count=[...cart.values()].reduce((sum,qty)=>sum+qty,0);
+ const badge=document.getElementById('cartFabCount');
+ if(badge) badge.textContent=count>99?'99+':String(count);
+}
+function openCartDrawer(){
+ const drawer=document.getElementById('cartDrawer');
+ if(drawer.classList.contains('is-open')) return;
+ cartDrawerSnapshot={cart:new Map(cart),discount,promo:document.getElementById('promo').value,payment:document.getElementById('payment').value};
+ drawer.classList.add('is-open');
+ document.getElementById('cartDrawerBackdrop').classList.add('is-open');
+ document.getElementById('cartDrawerBackdrop').setAttribute('aria-hidden','false');
+ document.getElementById('cartFab').setAttribute('aria-expanded','true');
+ document.body.classList.add('cart-drawer-body-open');
+}
+function closeCartDrawer(){
+ document.getElementById('cartDrawer').classList.remove('is-open');
+ document.getElementById('cartDrawerBackdrop').classList.remove('is-open');
+ document.getElementById('cartDrawerBackdrop').setAttribute('aria-hidden','true');
+ document.getElementById('cartFab').setAttribute('aria-expanded','false');
+ document.body.classList.remove('cart-drawer-body-open');
+}
+function saveCartDrawer(){
+ cartDrawerSnapshot=null;
+ closeCartDrawer();
+ toast('Keranjang disimpan');
+}
+function cancelCartDrawer(){
+ if(cartDrawerSnapshot){
+  cart=new Map(cartDrawerSnapshot.cart);
+  discount=cartDrawerSnapshot.discount;
+  document.getElementById('promo').value=cartDrawerSnapshot.promo;
+  document.getElementById('payment').value=cartDrawerSnapshot.payment;
+  renderCart();
+ }
+ cartDrawerSnapshot=null;
+ closeCartDrawer();
+ toast('Perubahan keranjang dibatalkan');
+}
+document.getElementById('cartFab').addEventListener('click',openCartDrawer);
+document.getElementById('cartSaveBtn').addEventListener('click',saveCartDrawer);
+document.getElementById('cartCancelBtn').addEventListener('click',cancelCartDrawer);
+document.getElementById('cartDrawerBackdrop').addEventListener('click',cancelCartDrawer);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('cartDrawer').classList.contains('is-open'))cancelCartDrawer()});
+
 renderCategories();renderProducts();cart.set(6,1);cart.set(5,1);renderCart();
 </script>
 </body>
