@@ -307,523 +307,83 @@ body { min-height: 100%; }
 }
 
 
-/* Landscape POS layout matching the supplied product-stock reference */
+/* Single consolidated landscape layout rules: header, logo/sidebar divider, and product cards */
 @media screen and (orientation: landscape) and (max-width: 1100px) {
-  .stage { display:block; padding:0; min-height:100dvh; }
+  .stage { display:block; width:100%; min-height:100dvh; height:100dvh; padding:0; }
   .browser { width:100%; height:100dvh; min-height:0; max-height:none; border-radius:0; overflow:hidden; box-shadow:none; }
   .browserbar { display:none !important; }
   .app {
     position:relative;
-    display:grid;
-    grid-template-columns:50px minmax(0,1fr);
-    grid-template-rows:minmax(0,1fr);
-    width:100%;
-    height:100dvh;
-    min-height:0;
-    overflow:hidden;
-  }
-  .sidebar {
-    grid-column:1;
-    grid-row:1;
-    position:relative;
-    top:auto;
-    width:50px;
-    height:calc(100dvh - 52px);
-    max-height:calc(100dvh - 52px);
-    margin-top:52px;
-    overflow-y:auto;
-    padding:8px 0;
-    gap:8px;
-    border-right:1px solid #edf0ef;
-    scrollbar-width:none;
-  }
-  .sidebar::-webkit-scrollbar { display:none !important; }
-  .sidebar .logo { display:none; }
-  .sidebar .navspacer, .sidebar .avatar { display:none; }
-  .sidebar .navbtn { width:38px; height:38px; flex-shrink:0; }
-  .main {
-    grid-column:2;
-    grid-row:1;
-    min-width:0;
-    height:100dvh;
-    overflow-y:auto;
-    padding:62px 8px 8px;
-    display:block;
-  }
-  .mobile-toolbar {
-    display:flex !important;
-    position:fixed;
-    z-index:50;
-    left:0;
-    top:0;
-    width:100%;
-    height:52px;
-    padding:6px 8px;
-    gap:8px;
-    align-items:center;
-    background:#fff;
-    border-bottom:1px solid #edf0ef;
-  }
-  .mobile-toolbar::before {
-    content:"";
-    display:block;
-    flex:0 0 26px;
-    width:26px;
-    height:34px;
-    background:#11b8e8;
-    border-radius:14px 14px 14px 14px;
-    clip-path:polygon(50% 0, 88% 62%, 88% 73%, 81% 88%, 66% 98%, 35% 98%, 19% 88%, 12% 73%, 12% 62%);
-    margin-right:4px;
-  }
-  .mobile-toolbar input, .mobile-toolbar button {
-    min-width:0;
-    height:36px;
-    border:1px solid #e7e9e9;
-    border-radius:8px;
-    background:#fff;
-    color:#222;
-    font-size:12px;
-  }
-  .mobile-bluetooth { flex:0 0 34px; color:#e65a73 !important; }
-  .mobile-shift { flex:0 0 84px; font-weight:600; }
-  #mobileSearch { flex:1 1 0; padding:0 10px; }
-  #mobileBarcode { flex:1 1 0; padding:0 10px; }
-  .mainhead, .categories, .order { display:none !important; }
-  .products {
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:7px;
-    overflow:visible;
-    align-content:start;
-    padding:0 0 8px;
-  }
-  .product {
-    min-width:0;
-    padding:6px;
-    border:1px solid #dfe7f0;
-    border-radius:11px;
-    box-shadow:none;
-    overflow:hidden;
-  }
-  .productpic {
-    height:clamp(64px, 15vh, 100px);
-    border:0;
-    border-radius:8px;
-    background:#f8fafb;
-  }
-  .sushi { font-size:clamp(34px, 7vh, 54px); }
-  .productbody { padding:4px 1px 1px; gap:5px; }
-  .productname {
-    font-size:10px;
-    line-height:1.2;
-    min-height:13px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .productmeta, .add { display:none !important; }
-  .inventory-state { display:grid; grid-template-columns:1fr 1fr; gap:4px; }
-  .inventory-state span, .inventory-price span {
-    min-width:0;
-    padding:4px 3px;
-    border:1px solid #b9eacb;
-    border-radius:7px;
-    background:#f0fbf3;
-    color:#7c8b82;
-    font-size:7px;
-    line-height:1.3;
-    overflow-wrap:anywhere;
-  }
-  .inventory-state span:first-child { background:#fff8ef; border-color:#ffd6a8; }
-  .inventory-state b, .inventory-price b { display:inline-block; margin-top:3px; font-size:8px; font-weight:600; color:#078b6d; }
-  .inventory-state span:first-child b { color:#e05d13; }
-  .inventory-price { display:block; }
-  .inventory-price span { background:#eff6ff; border-color:#c8ddff; color:#8293a9; }
-  .inventory-price b { color:#1756c7; }
-  .inventory-price.sell span { background:#effbf3; border-color:#bcebc9; }
-  .inventory-price.sell b { color:#07936c; }
-}
-@media screen and (orientation: landscape) and (max-width: 600px) {
-  .app { grid-template-columns:44px minmax(0,1fr); }
-  .sidebar { width:44px; }
-  .sidebar .navbtn { width:34px; height:34px; }
-  .main { padding-left:6px; padding-right:6px; }
-  .mobile-toolbar { gap:5px; padding-left:5px; padding-right:5px; }
-  .mobile-toolbar::before { flex-basis:22px; width:22px; }
-  .mobile-shift { flex-basis:62px; }
-  #mobileSearch, #mobileBarcode { font-size:11px; padding-left:6px; padding-right:6px; }
-  .products { gap:5px; }
-  .product { padding:4px; }
-  .inventory-state span, .inventory-price span { font-size:6.5px; }
-}
-
-
-/* Product-cashier CSS refinement: stable card sizing and readable stock/price fields */
-@media screen and (orientation: landscape) and (max-width: 1100px) {
-  .main { box-sizing:border-box; }
-  .products {
-    width:100%;
-    grid-template-columns:repeat(4, minmax(0, 1fr));
-    grid-auto-rows:max-content;
-    align-items:stretch;
-    justify-items:stretch;
-    gap:7px;
-  }
-  .product {
-    display:flex;
-    flex-direction:column;
-    width:100%;
-    min-width:0;
-    height:auto;
-    align-self:stretch;
-    padding:6px;
-    box-sizing:border-box;
-    border:1px solid #dce5ee;
-    border-radius:10px;
-    background:#fff;
-  }
-  .productpic {
-    width:100%;
-    height:clamp(66px, 13vh, 92px);
-    min-height:0;
-    flex:0 0 auto;
-    display:grid;
-    place-items:center;
-    overflow:hidden;
-    background:#f8fafb;
-    border-radius:7px;
-  }
-  .productpic::after { display:none; }
-  .sushi {
-    max-width:100%;
-    font-size:clamp(32px, 6.5vh, 50px);
-    line-height:1;
-    transform:none;
-  }
-  .productbody {
-    width:100%;
-    min-width:0;
-    flex:1 1 auto;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-    padding:4px 1px 1px;
-    box-sizing:border-box;
-  }
-  .productname {
-    display:block;
-    width:100%;
-    min-width:0;
-    min-height:13px;
-    margin:0;
-    font-size:clamp(8px, 1.15vw, 10px);
-    line-height:1.25;
-    font-weight:650;
-    color:#17191b;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .inventory-state {
-    display:grid;
-    width:100%;
-    grid-template-columns:repeat(2, minmax(0,1fr));
-    gap:4px;
-  }
-  .inventory-state span,
-  .inventory-price span {
-    display:block;
-    width:100%;
-    min-width:0;
-    min-height:0;
-    padding:4px 4px;
-    box-sizing:border-box;
-    border:1px solid #b9eacb;
-    border-radius:7px;
-    background:#effbf3;
-    color:#77877e;
-    font-size:clamp(6px, .78vw, 8px);
-    line-height:1.25;
-    overflow-wrap:anywhere;
-  }
-  .inventory-state span:first-child {
-    background:#fff8ef;
-    border-color:#ffd6a8;
-  }
-  .inventory-state b,
-  .inventory-price b {
-    display:block;
-    margin-top:3px;
-    font-size:clamp(7px, .9vw, 9px);
-    line-height:1.15;
-    font-weight:600;
-    color:#078b6d;
-    white-space:normal;
-    overflow-wrap:anywhere;
-  }
-  .inventory-state span:first-child b { color:#e05d13; }
-  .inventory-price { display:block; width:100%; min-width:0; }
-  .inventory-price span {
-    background:#eff6ff;
-    border-color:#c8ddff;
-    color:#8293a9;
-  }
-  .inventory-price b { color:#1756c7; }
-  .inventory-price.sell span {
-    background:#effbf3;
-    border-color:#bcebc9;
-  }
-  .inventory-price.sell b { color:#07936c; }
-}
-@media screen and (orientation: landscape) and (max-width: 600px) {
-  .products { grid-template-columns:repeat(4, minmax(0,1fr)); gap:4px; }
-  .product { padding:4px; border-radius:8px; }
-  .productpic { height:clamp(52px, 12vh, 72px); }
-  .productbody { gap:3px; }
-  .productname { font-size:8px; }
-  .inventory-state { gap:3px; }
-  .inventory-state span, .inventory-price span { padding:3px 2px; font-size:6px; }
-  .inventory-state b, .inventory-price b { font-size:7px; }
-}
-
-
-/* Final reference-match overrides: product cards only */
-@media screen and (orientation: landscape) and (max-width: 1100px) {
-  .main {
-    padding: 62px 8px 8px !important;
-  }
-  .products {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 7px !important;
-    align-items: stretch !important;
-  }
-  .product {
-    padding: 6px !important;
-    border: 1px solid #dce5ee !important;
-    border-radius: 10px !important;
-    background: #fff !important;
-    box-shadow: none !important;
-  }
-  .productpic {
-    height: clamp(70px, 14vh, 96px) !important;
-    background: #fff !important;
-    border: 0 !important;
-    border-radius: 8px !important;
-    overflow: hidden !important;
-  }
-  .productpic::after { display: none !important; }
-  .sushi {
-    font-size: clamp(34px, 6vh, 48px) !important;
-    line-height: 1 !important;
-    transform: none !important;
-  }
-  .productbody {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 4px !important;
-    padding: 4px 1px 1px !important;
-  }
-  .productname {
-    font-size: 9px !important;
-    font-weight: 700 !important;
-    line-height: 1.25 !important;
-    min-height: 13px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-  }
-  .inventory-state {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 4px !important;
-  }
-  .inventory-state span,
-  .inventory-price span {
-    box-sizing: border-box !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    padding: 4px 4px !important;
-    border-radius: 7px !important;
-    font-size: 7px !important;
-    line-height: 1.25 !important;
-    overflow-wrap: anywhere !important;
-  }
-  .inventory-state span:first-child {
-    background: #fff8ef !important;
-    border-color: #ffd6a8 !important;
-  }
-  .inventory-state span:last-child {
-    background: #effbf3 !important;
-    border-color: #b9eacb !important;
-  }
-  .inventory-state b,
-  .inventory-price b {
-    display: block !important;
-    margin-top: 3px !important;
-    font-size: 8px !important;
-    line-height: 1.15 !important;
-    white-space: nowrap !important;
-  }
-  .inventory-state span:first-child b { color: #e05d13 !important; }
-  .inventory-state span:last-child b { color: #078b6d !important; }
-  .inventory-price { display: block !important; width: 100% !important; }
-  .inventory-price span {
-    background: #eff6ff !important;
-    border-color: #c8ddff !important;
-    color: #8293a9 !important;
-  }
-  .inventory-price b { color: #1756c7 !important; }
-  .inventory-price.sell span {
-    background: #effbf3 !important;
-    border-color: #bcebc9 !important;
-  }
-  .inventory-price.sell b { color: #07936c !important; }
-}
-@media screen and (orientation: landscape) and (max-width: 600px) {
-  .products { gap: 5px !important; }
-  .product { padding: 4px !important; }
-  .productpic { height: clamp(56px, 12vh, 76px) !important; }
-  .productbody { gap: 3px !important; }
-  .productname { font-size: 8px !important; }
-  .inventory-state { gap: 3px !important; }
-  .inventory-state span,
-  .inventory-price span { padding: 3px 2px !important; font-size: 6px !important; }
-  .inventory-state b,
-  .inventory-price b { font-size: 7px !important; }
-}
-
-
-/* Sticky landscape header refined to match the supplied reference */
-@media screen and (orientation: landscape) and (max-width: 1100px) {
-  .mobile-toolbar {
-    position: fixed !important;
-    inset: 0 0 auto 0 !important;
-    width: 100% !important;
-    height: 52px !important;
-    min-height: 52px !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    padding: 6px 8px !important;
-    background: rgba(255,255,255,.98) !important;
-    border-bottom: 1px solid #edf0ef !important;
-    box-shadow: 0 1px 2px rgba(20,40,35,.025) !important;
-    z-index: 1000 !important;
-    flex-wrap: nowrap !important;
-  }
-  .mobile-toolbar::before {
-    content: "" !important;
-    display: block !important;
-    flex: 0 0 26px !important;
-    width: 26px !important;
-    height: 34px !important;
-    margin: 0 4px 0 0 !important;
-    background: #11b8e8 !important;
-    border-radius: 14px !important;
-    clip-path: polygon(50% 0,88% 62%,88% 73%,81% 88%,66% 98%,35% 98%,19% 88%,12% 73%,12% 62%) !important;
-  }
-  .mobile-toolbar .mobile-bluetooth {
-    flex: 0 0 34px !important;
-    width: 34px !important;
-    padding: 0 !important;
-    color: #e65a73 !important;
-    background: #fff !important;
-    border: 1px solid #e7e9e9 !important;
-    border-radius: 8px !important;
-  }
-  .mobile-toolbar .mobile-shift {
-    flex: 0 0 84px !important;
-    width: 84px !important;
-    padding: 0 10px !important;
-    font-weight: 600 !important;
-    white-space: nowrap !important;
-  }
-  .mobile-toolbar #mobileSearch,
-  .mobile-toolbar #mobileBarcode {
-    flex: 1 1 0 !important;
-    width: 0 !important;
-    min-width: 0 !important;
-    padding: 0 10px !important;
-    background: #fff !important;
-    border: 1px solid #e7e9e9 !important;
-    border-radius: 8px !important;
-    color: #4e5554 !important;
-    font-size: 12px !important;
-  }
-  .main {
-    padding-top: 62px !important;
-    scroll-padding-top: 62px !important;
-  }
-}
-@media screen and (orientation: landscape) and (max-width: 600px) {
-  .mobile-toolbar {
-    height: 48px !important;
-    min-height: 48px !important;
-    gap: 5px !important;
-    padding: 5px !important;
-  }
-  .mobile-toolbar::before {
-    flex-basis: 22px !important;
-    width: 22px !important;
-    height: 30px !important;
-    margin-right: 2px !important;
-  }
-  .mobile-toolbar .mobile-bluetooth {
-    flex-basis: 30px !important;
-    width: 30px !important;
-  }
-  .mobile-toolbar .mobile-shift {
-    flex-basis: 62px !important;
-    width: 62px !important;
-    padding: 0 5px !important;
-  }
-  .mobile-toolbar #mobileSearch,
-  .mobile-toolbar #mobileBarcode {
-    padding: 0 6px !important;
-    font-size: 11px !important;
-  }
-  .main { padding-top: 56px !important; }
-}
-
-
-/* Final landscape reference layout: header, left rail and inventory product cards */
-@media screen and (orientation: landscape) and (max-width: 1100px) {
-  .app {
+    display:grid !important;
     grid-template-columns:50px minmax(0,1fr) !important;
     grid-template-rows:minmax(0,1fr) !important;
+    width:100%;
+    height:100dvh;
+    min-height:0;
+    overflow:hidden;
   }
+
+  /* Logo occupies the top-left square; sidebar border forms one continuous right divider */
   .sidebar {
     grid-column:1 !important;
     grid-row:1 !important;
-    width:50px !important;
-    height:calc(100dvh - 52px) !important;
-    max-height:calc(100dvh - 52px) !important;
-    margin-top:52px !important;
-    padding:8px 4px !important;
-    gap:8px !important;
-    overflow-y:auto !important;
-    overflow-x:hidden !important;
-    border-right:1px solid #edf0ef !important;
-    background:#fff !important;
-  }
-  .mobile-brand {
-    display:none !important;
-  }
-  .mobile-nav {
+    position:relative !important;
+    top:auto !important;
+    align-self:stretch !important;
     display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    gap:0 !important;
+    width:50px !important;
+    height:100dvh !important;
+    max-height:100dvh !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 0 8px !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    border-right:1px solid #e5e9ec !important;
+    background:#fff !important;
+    box-sizing:border-box !important;
+    scrollbar-width:none !important;
+    -ms-overflow-style:none !important;
+    z-index:1001 !important;
+  }
+  .sidebar::-webkit-scrollbar { display:none !important; width:0 !important; height:0 !important; }
+  .sidebar .mobile-brand {
+    display:grid !important;
+    place-items:center !important;
+    flex:0 0 52px !important;
+    width:100% !important;
+    height:52px !important;
+    min-height:52px !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    border-bottom:1px solid #e9edef !important;
+    border-radius:0 !important;
+    background:#fff !important;
+    box-sizing:border-box !important;
+    font-size:25px !important;
+  }
+  .sidebar .mobile-nav {
+    display:flex !important;
+    flex:0 0 auto !important;
     flex-direction:column !important;
     align-items:center !important;
     gap:8px !important;
     width:100% !important;
-    padding:0 !important;
+    margin:0 !important;
+    padding:8px 0 !important;
+    box-sizing:border-box !important;
   }
-  .mobile-nav button {
+  .sidebar .mobile-nav button {
     display:grid !important;
     place-items:center !important;
     flex:0 0 39px !important;
     width:39px !important;
     height:39px !important;
+    margin:0 !important;
     padding:0 !important;
     border:1px solid #edf0f4 !important;
     border-radius:10px !important;
@@ -832,105 +392,117 @@ body { min-height: 100%; }
     font-size:17px !important;
     box-shadow:0 1px 2px #00000005 !important;
   }
-  .mobile-nav button:first-child { color:#3976f6 !important; }
+  .sidebar > .logo,
+  .sidebar > .navbtn,
+  .sidebar > .navspacer,
+  .sidebar > .avatar { display:none !important; }
+
+  /* Sticky toolbar begins immediately to the right of the logo/sidebar divider */
   .mobile-toolbar {
     position:fixed !important;
     z-index:1000 !important;
     top:0 !important;
-    left:0 !important;
+    left:50px !important;
     right:0 !important;
-    width:100% !important;
+    width:calc(100% - 50px) !important;
     height:52px !important;
     min-height:52px !important;
-    padding:6px 8px !important;
-    gap:8px !important;
     display:flex !important;
     align-items:center !important;
     flex-wrap:nowrap !important;
-    background:#fff !important;
+    gap:8px !important;
+    margin:0 !important;
+    padding:6px 8px !important;
+    border:0 !important;
     border-bottom:1px solid #e9edef !important;
+    border-radius:0 !important;
+    background:#fff !important;
     box-sizing:border-box !important;
   }
-  .mobile-toolbar::before {
-    flex:0 0 26px !important;
-    width:26px !important;
-    height:34px !important;
-    margin:0 4px 0 0 !important;
-    background:#11b8e8 !important;
-    clip-path:polygon(50% 0,88% 62%,88% 73%,81% 88%,66% 98%,35% 98%,19% 88%,12% 73%,12% 62%) !important;
+  .mobile-toolbar::before { display:none !important; content:none !important; }
+  .mobile-toolbar button,
+  .mobile-toolbar input {
+    flex-shrink:1;
+    min-width:0 !important;
+    height:36px !important;
+    margin:0 !important;
+    border:1px solid #e7e9e9 !important;
+    border-radius:8px !important;
+    background:#fff !important;
+    color:#333 !important;
+    box-sizing:border-box !important;
+    font-size:12px !important;
   }
   .mobile-toolbar .mobile-bluetooth {
     flex:0 0 34px !important;
     width:34px !important;
-    height:36px !important;
-    border:1px solid #e7e9e9 !important;
-    border-radius:8px !important;
-    background:#fff !important;
+    padding:0 !important;
     color:#e65a73 !important;
   }
   .mobile-toolbar .mobile-shift {
     flex:0 0 84px !important;
     width:84px !important;
-    height:36px !important;
-    border:1px solid #e7e9e9 !important;
-    border-radius:8px !important;
-    background:#fff !important;
-    color:#202020 !important;
+    padding:0 8px !important;
     font-weight:600 !important;
+    white-space:nowrap !important;
   }
   .mobile-toolbar #mobileSearch,
   .mobile-toolbar #mobileBarcode {
     flex:1 1 0 !important;
     width:0 !important;
-    min-width:0 !important;
-    height:36px !important;
     padding:0 10px !important;
-    border:1px solid #e7e9e9 !important;
-    border-radius:8px !important;
-    background:#fff !important;
-    color:#4e5554 !important;
-    font-size:12px !important;
   }
+
   .main {
     grid-column:2 !important;
     grid-row:1 !important;
-    height:100dvh !important;
+    display:block !important;
+    width:100%;
     min-width:0 !important;
+    height:100dvh !important;
+    margin:0 !important;
     padding:62px 8px 8px !important;
-    overflow-y:auto !important;
     overflow-x:hidden !important;
+    overflow-y:auto !important;
     box-sizing:border-box !important;
   }
-  .mainhead,.categories,.order { display:none !important; }
+  .mainhead, .categories, .order { display:none !important; }
+
+  /* Product inventory cards */
   .products {
-    width:100% !important;
     display:grid !important;
+    width:100% !important;
     grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-    gap:7px !important;
+    grid-auto-rows:max-content !important;
     align-content:start !important;
     align-items:stretch !important;
+    gap:7px !important;
+    margin:0 !important;
     padding:0 0 8px !important;
     overflow:visible !important;
     box-sizing:border-box !important;
   }
   .product {
-    min-width:0 !important;
-    width:100% !important;
     display:flex !important;
     flex-direction:column !important;
+    width:100% !important;
+    min-width:0 !important;
+    height:auto !important;
+    margin:0 !important;
     padding:6px !important;
     border:1px solid #dce5ee !important;
     border-radius:10px !important;
     background:#fff !important;
     box-shadow:none !important;
     box-sizing:border-box !important;
+    overflow:hidden !important;
   }
   .productpic {
-    width:100% !important;
-    height:clamp(70px,14vh,96px) !important;
-    flex:0 0 auto !important;
     display:grid !important;
     place-items:center !important;
+    flex:0 0 auto !important;
+    width:100% !important;
+    height:clamp(70px,14vh,96px) !important;
     border:0 !important;
     border-radius:8px !important;
     background:#fff !important;
@@ -939,18 +511,21 @@ body { min-height: 100%; }
   .productpic::after { display:none !important; }
   .sushi { font-size:clamp(34px,6vh,48px) !important; line-height:1 !important; transform:none !important; }
   .productbody {
+    display:flex !important;
+    flex:1 1 auto !important;
+    flex-direction:column !important;
+    gap:4px !important;
     width:100% !important;
     min-width:0 !important;
     padding:4px 1px 1px !important;
-    display:flex !important;
-    flex-direction:column !important;
-    gap:4px !important;
     box-sizing:border-box !important;
   }
   .productname {
+    display:block !important;
     width:100% !important;
     min-width:0 !important;
     min-height:13px !important;
+    margin:0 !important;
     font-size:9px !important;
     line-height:1.25 !important;
     font-weight:700 !important;
@@ -958,14 +533,14 @@ body { min-height: 100%; }
     overflow:hidden !important;
     text-overflow:ellipsis !important;
   }
-  .productmeta,.add { display:none !important; }
+  .productmeta, .add { display:none !important; }
   .inventory-state {
     display:grid !important;
-    width:100% !important;
     grid-template-columns:repeat(2,minmax(0,1fr)) !important;
     gap:4px !important;
+    width:100% !important;
   }
-  .inventory-state span,.inventory-price span {
+  .inventory-state span, .inventory-price span {
     display:block !important;
     width:100% !important;
     min-width:0 !important;
@@ -979,7 +554,7 @@ body { min-height: 100%; }
   }
   .inventory-state span:first-child { background:#fff8ef !important; border-color:#ffd6a8 !important; }
   .inventory-state span:last-child { background:#effbf3 !important; border-color:#b9eacb !important; }
-  .inventory-state b,.inventory-price b {
+  .inventory-state b, .inventory-price b {
     display:block !important;
     margin-top:3px !important;
     font-size:8px !important;
@@ -994,139 +569,23 @@ body { min-height: 100%; }
   .inventory-price.sell span { background:#effbf3 !important; border-color:#bcebc9 !important; }
   .inventory-price.sell b { color:#07936c !important; }
 }
-@media screen and (orientation: landscape) and (max-width:600px) {
-  .mobile-toolbar { gap:5px !important; padding:5px !important; }
-  .mobile-toolbar::before { flex-basis:22px !important; width:22px !important; height:30px !important; margin-right:2px !important; }
+@media screen and (orientation:landscape) and (max-width:600px) {
+  .app { grid-template-columns:44px minmax(0,1fr) !important; }
+  .sidebar { width:44px !important; }
+  .sidebar .mobile-brand { flex-basis:48px !important; height:48px !important; min-height:48px !important; }
+  .sidebar .mobile-nav button { flex-basis:35px !important; width:35px !important; height:35px !important; }
+  .mobile-toolbar { left:44px !important; width:calc(100% - 44px) !important; height:48px !important; min-height:48px !important; gap:5px !important; padding:5px !important; }
   .mobile-toolbar .mobile-bluetooth { flex-basis:30px !important; width:30px !important; }
   .mobile-toolbar .mobile-shift { flex-basis:62px !important; width:62px !important; }
-  .mobile-toolbar #mobileSearch,.mobile-toolbar #mobileBarcode { padding:0 6px !important; font-size:11px !important; }
-  .sidebar { width:44px !important; padding-left:2px !important; padding-right:2px !important; }
-  .mobile-nav button { width:36px !important; }
-  .app { grid-template-columns:44px minmax(0,1fr) !important; }
-  .main { padding-left:6px !important; padding-right:6px !important; }
+  .mobile-toolbar #mobileSearch, .mobile-toolbar #mobileBarcode { padding:0 6px !important; font-size:11px !important; }
+  .main { padding:56px 6px 8px !important; }
   .products { gap:5px !important; }
   .product { padding:4px !important; }
   .productpic { height:clamp(56px,12vh,76px) !important; }
   .productname { font-size:8px !important; }
   .inventory-state { gap:3px !important; }
-  .inventory-state span,.inventory-price span { padding:3px 2px !important; font-size:6px !important; }
-  .inventory-state b,.inventory-price b { font-size:7px !important; }
-}
-
-
-/* Keep the logo inside the left sidebar, separated from the scrollable menu by a divider */
-@media screen and (orientation: landscape) and (max-width: 1100px) {
-  .sidebar {
-    display: flex !important;
-    flex-direction: column !important;
-    padding-top: 0 !important;
-    margin-top: 52px !important;
-    height: calc(100dvh - 52px) !important;
-    max-height: calc(100dvh - 52px) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    border-right: 1px solid #edf0ef !important;
-  }
-  .sidebar .mobile-brand {
-    display: grid !important;
-    place-items: center !important;
-    width: 100% !important;
-    height: 52px !important;
-    min-height: 52px !important;
-    flex: 0 0 52px !important;
-    margin: 0 0 8px !important;
-    border-bottom: 1px solid #e9edef !important;
-    box-sizing: border-box !important;
-    background: #fff !important;
-    font-size: 25px !important;
-  }
-  .sidebar .mobile-nav {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 8px !important;
-    width: 100% !important;
-    padding: 0 0 8px !important;
-    box-sizing: border-box !important;
-  }
-  .mobile-toolbar::before { display: none !important; }
-}
-@media screen and (orientation: landscape) and (max-width: 600px) {
-  .sidebar .mobile-brand {
-    height: 48px !important;
-    min-height: 48px !important;
-    flex-basis: 48px !important;
-    font-size: 23px !important;
-  }
-}
-
-
-/* Align logo box at the top-left; Bluetooth box starts directly beside it */
-@media screen and (orientation: landscape) and (max-width: 1100px) {
-  .app {
-    grid-template-columns: 50px minmax(0,1fr) !important;
-    grid-template-rows: minmax(0,1fr) !important;
-  }
-  .sidebar {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    align-self: start !important;
-    overflow-y: auto !important;
-    border-right: 1px solid #edf0ef !important;
-  }
-  .sidebar .mobile-brand {
-    height: 52px !important;
-    min-height: 52px !important;
-    flex-basis: 52px !important;
-    margin: 0 0 8px !important;
-    border-bottom: 1px solid #e9edef !important;
-  }
-  .mobile-toolbar {
-    left: 50px !important;
-    right: 0 !important;
-    width: calc(100% - 50px) !important;
-  }
-  .mobile-toolbar::before { display: none !important; }
-  .main {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-    padding-top: 62px !important;
-  }
-}
-@media screen and (orientation: landscape) and (max-width: 600px) {
-  .sidebar .mobile-brand {
-    height: 48px !important;
-    min-height: 48px !important;
-    flex-basis: 48px !important;
-  }
-  .mobile-toolbar {
-    left: 44px !important;
-    width: calc(100% - 44px) !important;
-    height: 48px !important;
-    min-height: 48px !important;
-  }
-  .main { padding-top: 56px !important; }
-}
-
-
-/* Continuous right divider: logo box joins the sidebar's vertical separator */
-@media screen and (orientation: landscape) and (max-width: 1100px) {
-  .sidebar {
-    border-right: 1px solid #edf0ef !important;
-    box-sizing: border-box !important;
-  }
-  .sidebar .mobile-brand {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    border-right: 1px solid #edf0ef !important;
-    border-bottom: 1px solid #e9edef !important;
-    margin-right: 0 !important;
-    border-radius: 0 !important;
-  }
+  .inventory-state span, .inventory-price span { padding:3px 2px !important; font-size:6px !important; }
+  .inventory-state b, .inventory-price b { font-size:7px !important; }
 }
 
 </style>
