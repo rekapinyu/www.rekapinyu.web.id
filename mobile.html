@@ -181,6 +181,37 @@ body { min-height: 100%; }
   .summary { padding-top: 8px; }
 }
 
+
+/* Sidebar: stays in place while its own menu list can scroll */
+.sidebar {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100%;
+  max-height: 100dvh;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #d6dfdc transparent;
+  z-index: 5;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: #d6dfdc; border-radius: 8px; }
+.sidebar > * { flex-shrink: 0; }
+.sidebar .navspacer { flex: 1 0 12px; min-height: 12px; }
+@media (max-width: 900px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    max-height: 100dvh;
+    align-self: start;
+  }
+}
+
 </style>
 </head>
 <body>
