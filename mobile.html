@@ -464,6 +464,7 @@ body { min-height: 100%; }
   .product-manager-toolbar .pm-barcode { flex-grow:1; }
   .product-manager-toolbar .pm-save { flex-grow:.8; padding:0 4px; cursor:pointer; }
   .product-manager-toolbar .pm-folder { flex-grow:1; padding:0 4px; cursor:pointer; }
+  .product-manager-toolbar .pm-folder { text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }
   .product-manager-toolbar input:focus,
   .product-manager-toolbar select:focus { border-color:#9bb9ff; box-shadow:0 0 0 2px #2563eb12; }
   .product-manager-toolbar button:active { background:#edf4ff; border-color:#b8ceff; }
@@ -492,6 +493,7 @@ body { min-height: 100%; }
   .product-manager-toolbar .pm-barcode { flex-grow:1; }
   .product-manager-toolbar .pm-save { flex-grow:.8; }
   .product-manager-toolbar .pm-folder { flex-grow:1.05; }
+  .product-manager-toolbar .pm-folder { text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }
 }
 
 /* Explicit Kasir menu view: show cashier search/barcode toolbar, stock cards and floating cart. */
@@ -674,7 +676,7 @@ const categories=[
 let products=[];
 let activeCategory='Nigiri Sushi',cart=new Map(),cartSources=new Map(),discount=0,currentMobileMenu='kasir';
 const PRODUCT_FOLDER_DB='rekapinyu-product-folder-handles';
-let targetDirectoryHandle=null,productDirectoryHandle=null,productFolderReady=false,lastJsonSignature='',folderReadBusy=false;
+let targetDirectoryHandle=null,productDirectoryHandle=null,reportDirectoryHandle=null,productFolderReady=false,lastJsonSignature='',folderReadBusy=false;
 const money=n=>'Rp. '+Math.round(Number(n||0)*1000).toLocaleString('id-ID'); // UI values are in thousands of rupiah.
 function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function numberValue(value){
@@ -755,8 +757,53 @@ async function directoryPermission(handle,request=false){
 }
 async function ensureProductSubfolder(create=false){
  if(!targetDirectoryHandle)return null;
- try{return await targetDirectoryHandle.getDirectoryHandle('Produk',{create});}catch(_){return null;}
+ try{return await targetDirectoryHandle.getDirectoryHandle('Produk Kasir',{create});}catch(_){return null;}
 }
+async function ensureReportSubfolder(create=false){
+ if(!targetDirectoryHandle)return null;
+ try{return await targetDirectoryHandle.getDirectoryHandle('Laporan Kasir',{create});}catch(_){return null;}
+}
+async function migrateLegacyProductFiles(destination){
+ // Keep older installations working: if Produk Kasir has no canonical product JSON,
+ // copy legacy JSON/photo files from the former Produk folder without deleting originals.
+ if(!targetDirectoryHandle||!destination)return 0;
+ try{
+  let hasCanonicalJson=false;
+  for await(const [name,handle] of destination.entries()){
+   if(handle.kind==='file'&&['produk.json','produkkasir.json','products.json','produk-kasir.json'].includes(name.toLowerCase())){hasCanonicalJson=true;break;}
+  }
+  if(hasCanonicalJson)return 0;
+  const legacy=await targetDirectoryHandle.getDirectoryHandle('Produk',{create:false});
+  const legacyFiles=[];
+  for await(const [name,handle] of legacy.entries()){
+   if(handle.kind==='file'&&(/\.json$/i.test(name)||PRODUCT_IMAGE_EXTENSIONS.test(name)))legacyFiles.push({name,handle});
+  }
+  let copied=0;
+  for(const item of legacyFiles){
+   let existing=null;
+   try{existing=await destination.getFileHandle(item.name,{create:false});}catch(_){}
+   if(existing)continue;
+   try{
+    const sourceFile=await item.handle.getFile();
+    const destHandle=await destination.getFileHandle(item.name,{create:true});
+    const writable=await destHandle.createWritable();
+    try{await writable.write(await sourceFile.arrayBuffer());await writable.close();copied++;}
+    catch(error){try{await writable.abort();}catch(_){}throw error;}
+   }catch(error){/* Leave any source file untouched if migration of that file fails. */}
+  }
+  return copied;
+ }catch(_){return 0;}
+}
+function updateProductFolderButton(handle=targetDirectoryHandle){
+ const button=document.getElementById('createProductFolderBtn');
+ if(!button)return;
+ const name=handle&&handle.name?String(handle.name):'';
+ button.textContent=name||'Buat Folder';
+ button.title=name?`Folder terpilih: ${name}`:'Pilih Folder Target';
+ button.setAttribute('aria-label',name?`Folder target terpilih: ${name}`:'Buat Folder');
+ button.classList.toggle('has-selected-folder',!!name);
+}
+function selectedProductsPath(){return targetDirectoryHandle?`${targetDirectoryHandle.name}/Produk Kasir`:'Folder Target/Produk Kasir';}
 async function getJsonFileHandles(){
  const files=[];
  if(!productDirectoryHandle)return files;
@@ -778,11 +825,11 @@ async function getProductImageFileHandles(){
    }
   }catch(_){/* Folder may be readable only partially; JSON products remain usable. */}
  };
- // Search both the selected target folder and its Produk subfolder.
+ // Search both the selected target folder and its Produk Kasir subfolder.
  await collect(targetDirectoryHandle,'target');
- if(productDirectoryHandle&&productDirectoryHandle!==targetDirectoryHandle)await collect(productDirectoryHandle,'Produk');
- // Prefer an image inside Produk when duplicate filenames exist.
- images.sort((a,b)=>Number(a.path==='Produk')-Number(b.path==='Produk')||a.name.localeCompare(b.name));
+ if(productDirectoryHandle&&productDirectoryHandle!==targetDirectoryHandle)await collect(productDirectoryHandle,'Produk Kasir');
+ // Prefer an image inside Produk Kasir when duplicate filenames exist.
+ images.sort((a,b)=>Number(a.path==='Produk Kasir')-Number(b.path==='Produk Kasir')||a.name.localeCompare(b.name));
  return images;
 }
 function normalizedPhotoKey(value){
@@ -879,7 +926,7 @@ async function refreshProductsFromFolder(force=false,showError=false){
   renderProducts();renderCart();
   return true;
  }catch(error){
-  if(showError)toast('Gagal membaca JSON/foto dari folder Produk');
+  if(showError)toast('Gagal membaca JSON/foto dari subfolder Produk Kasir');
   return false;
  }finally{folderReadBusy=false;}
 }
@@ -889,7 +936,7 @@ function canonicalProductData(p){
  return {id:p.id,name:p.name,namaProduk:p.name,category:p.category,kategori:p.category,desc:p.desc||'1 pcs',price:priceActual,priceInternal:Number(p.price)||0,hargaJual:priceActual,cost:costActual,costInternal:Number(p.cost??p.price*.8),hpp:costActual,barcode:p.barcode||'',stockManual,stokManual:stockManual,stockBarcode,stokBarcode:stockBarcode,photo:p.photo||'',icon:p.icon||'📦'};
 }
 async function writeProductsToJson(){
- if(!productFolderReady||!productDirectoryHandle)throw new Error('Folder Target/Produk belum dipilih');
+ if(!productFolderReady||!productDirectoryHandle)throw new Error('Folder target/Produk Kasir belum dipilih');
  const fileHandle=await productDirectoryHandle.getFileHandle('Produk.json',{create:true});
  const writable=await fileHandle.createWritable();
  try{await writable.write(JSON.stringify({schemaVersion:1,updatedAt:new Date().toISOString(),products:products.map(canonicalProductData)},null,2));await writable.close();}
@@ -898,23 +945,46 @@ async function writeProductsToJson(){
  await refreshProductsFromFolder(true,false);
 }
 async function setupProductFolder(handle,create=true){
+ const previousHandle=targetDirectoryHandle;
+ let sameTarget=false;
+ if(previousHandle&&handle&&typeof handle.isSameEntry==='function'){
+  try{sameTarget=await handle.isSameEntry(previousHandle);}catch(_){sameTarget=false;}
+ }
  targetDirectoryHandle=handle;
+ updateProductFolderButton(handle);
+ productFolderReady=false;productDirectoryHandle=null;reportDirectoryHandle=null;lastJsonSignature='';
+ if(!sameTarget){
+  products=[];cart.clear();cartSources.clear();discount=0;cartDrawerSnapshot=null;
+  const promo=document.getElementById('promo');if(promo)promo.value='';
+ }
  await storeTargetHandle(handle);
- productDirectoryHandle=await ensureProductSubfolder(create);
- if(!productDirectoryHandle)throw new Error('Subfolder Produk tidak ditemukan');
+ // Automatically create both required child folders inside the selected directory.
+ const productSubfolder=await ensureProductSubfolder(true);
+ const reportSubfolder=await ensureReportSubfolder(true);
+ if(!productSubfolder)throw new Error('Subfolder Produk Kasir tidak dapat dibuat');
+ if(!reportSubfolder)throw new Error('Subfolder Laporan Kasir tidak dapat dibuat');
+ productDirectoryHandle=productSubfolder;
+ reportDirectoryHandle=reportSubfolder;
+ await migrateLegacyProductFiles(productDirectoryHandle);
  productFolderReady=true;lastJsonSignature='';
  await refreshProductsFromFolder(true,true);
 }
 async function restoreProductFolderOnStartup(){
- products=[];productFolderReady=false;productDirectoryHandle=null;targetDirectoryHandle=null;
+ products=[];productFolderReady=false;productDirectoryHandle=null;reportDirectoryHandle=null;targetDirectoryHandle=null;
  try{
   const handle=await getStoredTargetHandle();
-  if(!handle){renderProducts();renderCart();return;}
+  if(!handle){updateProductFolderButton(null);renderProducts();renderCart();return;}
   targetDirectoryHandle=handle;
+  updateProductFolderButton(handle);
   if(await directoryPermission(handle,false)!=='granted'){renderProducts();renderCart();return;}
-  const subfolder=await ensureProductSubfolder(false);
-  if(!subfolder){renderProducts();renderCart();return;}
-  productDirectoryHandle=subfolder;productFolderReady=true;
+  // Recreate a required folder if an existing target is missing it and permission remains granted.
+  const productSubfolder=await ensureProductSubfolder(true);
+  const reportSubfolder=await ensureReportSubfolder(true);
+  if(!productSubfolder||!reportSubfolder){productFolderReady=false;renderProducts();renderCart();return;}
+  productDirectoryHandle=productSubfolder;
+  reportDirectoryHandle=reportSubfolder;
+  await migrateLegacyProductFiles(productDirectoryHandle);
+  productFolderReady=true;lastJsonSignature='';
   await refreshProductsFromFolder(true,false);
  }catch(error){products=[];productFolderReady=false;renderProducts();renderCart();}
 }
@@ -923,8 +993,8 @@ function productPhotoSource(p){const saved=String(p.photo||'').trim();if(/^(data
 function renderProducts(){
  const isInventoryMenu=currentMobileMenu==='produk'&&window.matchMedia('(orientation: landscape) and (max-width: 1100px)').matches;
  const host=document.getElementById('products');
- if(!productFolderReady){host.innerHTML='<div class="products-empty">Pilih Folder Target melalui menu Produk → Buat Folder untuk membaca data JSON.</div>';return;}
- if(!products.length){host.innerHTML='<div class="products-empty">Belum ada produk di Folder Target/Produk (JSON).</div>';return;}
+ if(!productFolderReady){host.innerHTML='<div class="products-empty">Pilih folder target melalui menu Produk untuk membuat subfolder Produk Kasir dan membaca data JSON.</div>';return;}
+ if(!products.length){host.innerHTML=`<div class="products-empty">Belum ada produk di ${escapeHtml(selectedProductsPath())} (JSON).</div>`;return;}
  let filtered=[];
  if(isInventoryMenu){
   const preferredOrder=products.map(p=>p.id);
@@ -951,7 +1021,7 @@ function renderProducts(){
 function findProductById(id){return products.find(p=>String(p.id)===String(id));}
 function findCartKey(id){for(const key of cart.keys())if(String(key)===String(id))return key;return id;}
 function addToCart(id,source='manual'){
- const product=findProductById(id);if(!product){toast('Produk tidak tersedia dari JSON folder Produk');return;}
+ const product=findProductById(id);if(!product){toast('Produk tidak tersedia dari JSON subfolder Produk Kasir');return;}
  const key=product.id;cart.set(key,(cart.get(key)||0)+1);
  const split=cartSources.get(key)||{manual:0,barcode:0};split[source==='barcode'?'barcode':'manual']++;cartSources.set(key,split);
  renderCart();toast('Produk ditambahkan ke keranjang');
@@ -1016,7 +1086,7 @@ document.getElementById('newProductPhoto').addEventListener('change', event => {
  reader.readAsDataURL(file);
 });
 async function saveManagedProduct(){
- if(!productFolderReady||!productDirectoryHandle){toast('Pilih Folder Target dahulu melalui Buat Folder');return;}
+ if(!productFolderReady||!productDirectoryHandle){toast('Pilih folder target melalui menu Produk terlebih dahulu');return;}
  const name=document.getElementById('newProductName').value.trim();
  const category=document.getElementById('newProductCategory').value;
  const hppRaw=document.getElementById('newProductHpp').value.trim();
@@ -1033,9 +1103,9 @@ async function saveManagedProduct(){
  const product={id,name,category,desc:'1 pcs',price:price/1000,cost:hpp/1000,barcode,stockManual:0,stockBarcode:0,photo:selectedProductPhoto,icon:'📦'};
  products.push(product);
  try{await writeProductsToJson();}
- catch(error){products=products.filter(p=>String(p.id)!==String(id));renderProducts();toast('Gagal menyimpan Produk.json. Periksa izin folder target.');return;}
+ catch(error){products=products.filter(p=>String(p.id)!==String(id));renderProducts();toast('Gagal menyimpan Produk.json di subfolder Produk Kasir. Periksa izin folder target.');return;}
  document.getElementById('newProductName').value='';document.getElementById('newProductCategory').value='';document.getElementById('newProductHpp').value='';document.getElementById('newProductPrice').value='';document.getElementById('newProductBarcode').value='';document.getElementById('newProductPhoto').value='';selectedProductPhoto='';document.getElementById('newProductPhotoLabel').textContent='Foto';
- toast('Produk disimpan ke Folder Target/Produk/Produk.json');
+ toast(`Produk disimpan ke ${selectedProductsPath()}/Produk.json`);
 }
 document.getElementById('saveProductBtn').addEventListener('click',saveManagedProduct);
 
@@ -1086,7 +1156,7 @@ document.getElementById('editProductPhotoInput').addEventListener('change',event
 document.getElementById('productEditForm').addEventListener('submit',async event=>{
  event.preventDefault();
  if(editingProductId===null)return;
- if(!productFolderReady||!productDirectoryHandle){toast('Folder Target/Produk belum aktif');return;}
+ if(!productFolderReady||!productDirectoryHandle){toast('Subfolder Produk Kasir belum aktif');return;}
  const product=findProductById(editingProductId);if(!product){toast('Produk tidak ditemukan');closeProductEdit();return;}
  const name=document.getElementById('editProductName').value.trim();
  const category=document.getElementById('editProductCategory').value;
@@ -1105,44 +1175,39 @@ document.getElementById('productEditForm').addEventListener('submit',async event
  const before={...product};
  Object.assign(product,{name,category,barcode,cost:hpp/1000,price:price/1000,stockManual,stockBarcode,photo:editedPhotoDataUrl!==null?editedPhotoDataUrl:(product.photo||'')});
  try{await writeProductsToJson();}
- catch(error){Object.assign(product,before);renderProducts();renderCart();toast('Edit gagal disimpan ke Produk.json. Periksa izin folder target.');return;}
- closeProductEdit();renderProducts();renderCart();toast('Perubahan produk berhasil disimpan ke Produk.json');
+ catch(error){Object.assign(product,before);renderProducts();renderCart();toast('Edit gagal disimpan ke Produk Kasir/Produk.json. Periksa izin folder target.');return;}
+ closeProductEdit();renderProducts();renderCart();toast(`Perubahan produk berhasil disimpan ke ${selectedProductsPath()}/Produk.json`);
 });
 async function deleteManagedProduct(id){
  const product=findProductById(id);if(!product){toast('Produk tidak ditemukan');return;}
- if(!productFolderReady||!productDirectoryHandle){toast('Pilih Folder Target dahulu');return;}
- if(!window.confirm(`Hapus produk "${product.name}" dari Folder Target/Produk?`))return;
+ if(!productFolderReady||!productDirectoryHandle){toast('Pilih folder target terlebih dahulu');return;}
+ if(!window.confirm(`Hapus produk "${product.name}" dari ${selectedProductsPath()}?`))return;
  const beforeProducts=products.map(p=>({...p}));
  const beforeCart=new Map(cart),beforeSources=new Map([...cartSources].map(([key,value])=>[key,{...value}]));
  products=products.filter(p=>String(p.id)!==String(id));
  try{await writeProductsToJson();}
- catch(error){products=beforeProducts;cart=beforeCart;cartSources=beforeSources;renderProducts();renderCart();toast('Hapus gagal disimpan ke Produk.json. Periksa izin folder target.');return;}
+ catch(error){products=beforeProducts;cart=beforeCart;cartSources=beforeSources;renderProducts();renderCart();toast('Hapus gagal disimpan ke Produk Kasir/Produk.json. Periksa izin folder target.');return;}
  for(const key of [...cart.keys()])if(String(key)===String(id)){cart.delete(key);cartSources.delete(key);}
- renderProducts();renderCart();toast('Produk berhasil dihapus dari Produk.json');
+ renderProducts();renderCart();toast(`Produk berhasil dihapus dari ${selectedProductsPath()}/Produk.json`);
 }
 window.addEventListener('keydown',event=>{if(event.key==='Escape'&&productEditModal.classList.contains('is-open'))closeProductEdit();});
 
 async function chooseProductTargetFolder(){
  if(typeof window.showDirectoryPicker!=='function'){toast('Browser ini tidak mendukung pemilihan folder. Gunakan Chrome atau Edge terbaru.');return;}
  try{
-  if(targetDirectoryHandle){
-   const permission=await directoryPermission(targetDirectoryHandle,true);
-   if(permission==='granted'){
-    const sub=await ensureProductSubfolder(true);
-    if(sub){productDirectoryHandle=sub;productFolderReady=true;lastJsonSignature='';await refreshProductsFromFolder(true,true);toast(`Folder Target aktif: ${products.length} produk dibaca dari subfolder Produk`);return;}
-   }
-  }
-  const chosen=await window.showDirectoryPicker({mode:'readwrite'});
+  // Always open the picker, so a different target folder can be selected later.
+  const chosen=await window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-folder-target'});
   await setupProductFolder(chosen,true);
-  toast(`Folder Target dipilih. ${products.length} produk dibaca dari subfolder Produk.`);
- }catch(error){if(error?.name!=='AbortError')toast('Folder Target/Produk gagal dibuka. Periksa izin folder.');}
+  updateProductFolderButton(chosen);
+  toast(`Folder ${chosen.name} dipilih. Subfolder Produk Kasir dan Laporan Kasir dibuat otomatis; ${products.length} produk dibaca dari Produk Kasir.`);
+ }catch(error){if(error?.name!=='AbortError'){renderProducts();renderCart();toast('Folder target atau subfolder Produk Kasir/Laporan Kasir gagal disiapkan. Periksa izin folder.');}}
 }
 document.getElementById('createProductFolderBtn').addEventListener('click',chooseProductTargetFolder);
 
 async function completeSale({requirePayment=false,closeDrawer=false}={}){
  if(!cart.size){toast('Keranjang masih kosong');return false;}
  if(requirePayment&&!document.getElementById('payment').value){toast('Pilih metode pembayaran terlebih dahulu');return false;}
- if(!productFolderReady||!productDirectoryHandle){toast('Transaksi tidak disimpan: pilih Folder Target di menu Produk terlebih dahulu');return false;}
+ if(!productFolderReady||!productDirectoryHandle){toast('Transaksi tidak disimpan: pilih folder target di menu Produk terlebih dahulu');return false;}
  const priorProducts=products.map(p=>({...p}));
  for(const [id,qty] of cart.entries()){
   const p=findProductById(id);if(!p)continue;
@@ -1164,7 +1229,7 @@ async function completeSale({requirePayment=false,closeDrawer=false}={}){
  const promo=document.getElementById('promo');if(promo)promo.value='';
  renderProducts();renderCart();
  if(closeDrawer){cartDrawerSnapshot=null;closeCartDrawer();}
- toast('Transaksi berhasil. Stok di Folder Target/Produk telah diperbarui.');
+ toast(`Transaksi berhasil. Stok di ${selectedProductsPath()} telah diperbarui.`);
  return true;
 }
 
