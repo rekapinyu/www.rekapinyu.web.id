@@ -551,7 +551,7 @@ document.getElementById('cartDrawerBackdrop').addEventListener('click',cancelCar
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('cartDrawer').classList.contains('is-open'))cancelCartDrawer()});
 window.addEventListener('resize',()=>{renderCart()});
 
-renderCategories();renderProducts();cart.set(6,1);cart.set(5,1);renderCart();
+renderCategories();renderProducts();renderCart();
 </script>
 </body>
 </html>
