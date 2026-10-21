@@ -396,6 +396,43 @@ body { min-height: 100%; }
   .cart-fab, .cart-drawer-backdrop, .order.cart-drawer-panel { transition:none !important; }
 }
 
+
+/* Mobile sidebar interaction: each menu gets its own inset selection color. */
+@media screen and (orientation: landscape) and (max-width: 1100px) {
+  .sidebar .mobile-nav button {
+    outline: none !important;
+    background: #fff !important;
+    border-color: #edf0f4 !important;
+    color: #64748b !important;
+    box-shadow: inset 0 0 0 0 transparent !important;
+    transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sidebar .mobile-nav button:nth-child(1) { --nav-tint: #eaf2ff; --nav-ink: #2563eb; }
+  .sidebar .mobile-nav button:nth-child(2) { --nav-tint: #e8f8ef; --nav-ink: #14804a; }
+  .sidebar .mobile-nav button:nth-child(3) { --nav-tint: #f1eaff; --nav-ink: #7c3aed; }
+  .sidebar .mobile-nav button:nth-child(4) { --nav-tint: #fff2e2; --nav-ink: #c46a13; }
+  .sidebar .mobile-nav button:nth-child(5) { --nav-tint: #e2f7f7; --nav-ink: #0f766e; }
+  .sidebar .mobile-nav button:hover,
+  .sidebar .mobile-nav button:active,
+  .sidebar .mobile-nav button.is-selected {
+    background: var(--nav-tint) !important;
+    border-color: var(--nav-tint) !important;
+    color: var(--nav-ink) !important;
+    box-shadow: inset 0 0 0 1px var(--nav-tint) !important;
+  }
+  .sidebar .mobile-nav button:focus-visible {
+    box-shadow: inset 0 0 0 1px var(--nav-ink) !important;
+  }
+  .sidebar .mobile-nav button .material-symbols-rounded {
+    color: inherit !important;
+    transition: color .18s ease, transform .18s ease !important;
+  }
+  .sidebar .mobile-nav button.is-selected .material-symbols-rounded {
+    transform: scale(1.06);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -559,6 +596,18 @@ function cancelCartDrawer(){
  closeCartDrawer();
  toast('Perubahan keranjang dibatalkan');
 }
+// Sidebar menu click state: a single selected tile, with a unique color per menu.
+const sidebarMenuButtons = document.querySelectorAll('.mobile-nav button');
+sidebarMenuButtons.forEach(button => {
+  button.setAttribute('aria-pressed', 'false');
+  button.addEventListener('click', () => {
+    sidebarMenuButtons.forEach(item => {
+      const selected = item === button;
+      item.classList.toggle('is-selected', selected);
+      item.setAttribute('aria-pressed', String(selected));
+    });
+  });
+});
 document.getElementById('cartFab').addEventListener('click',openCartDrawer);
 document.getElementById('cartSaveBtn').addEventListener('click',saveCartDrawer);
 document.getElementById('cartCancelBtn').addEventListener('click',cancelCartDrawer);
