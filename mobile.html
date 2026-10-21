@@ -234,6 +234,32 @@ body { min-height: 100%; }
   .sidebar { width: 42px; }
 }
 
+
+/* Compact mobile cashier layout, matching the supplied reference */
+.mobile-brand,.mobile-nav,.mobile-toolbar{display:none}
+@media(max-width:900px){
+ .browserbar{display:none}
+ .app{grid-template-columns:50px minmax(0,1fr)!important;grid-template-rows:auto auto}
+ .sidebar{width:50px!important;border-right:1px solid #eee;padding:0!important;background:#fff;gap:0!important}
+ .sidebar>.logo,.sidebar>.navbtn,.sidebar>.navspacer,.sidebar>.avatar{display:none!important}
+ .mobile-brand{display:grid;place-items:center;height:54px;font-size:27px;width:100%;border-bottom:1px solid #f0f0f0}
+ .mobile-nav{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px;width:100%}
+ .mobile-nav button{height:39px;width:39px;border:1px solid #f0f0f0;border-radius:11px;background:#fff;color:#7199e4;font-size:16px}
+ .main{padding:0 14px 14px!important;min-width:0}
+ .mobile-toolbar{display:grid;grid-template-columns:34px 84px minmax(90px,1.5fr) minmax(80px,1fr);align-items:center;gap:8px;height:54px;margin:0 -14px;padding:0 9px;border-bottom:1px solid #eee;background:#fff}
+ .mobile-toolbar button,.mobile-toolbar input{height:35px;min-width:0;border:1px solid #e9e9e9;border-radius:8px;background:#fff;padding:0 10px;font-size:12px}
+ .mobile-toolbar .mobile-bluetooth{color:#f34a56}.mobile-toolbar .mobile-shift{font-weight:650}
+ .mainhead,.categories{display:none!important}
+ .products{padding-top:110px;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px;overflow:visible}
+ .productpic{height:135px}
+ .order{grid-column:2}
+}
+@media(max-width:520px){
+ .mobile-toolbar{grid-template-columns:30px 53px minmax(70px,1.5fr) minmax(64px,1fr);gap:5px;padding:0 5px}
+ .mobile-toolbar button,.mobile-toolbar input{padding:0 5px;font-size:10px}
+ .products{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding-top:60px}
+ .productpic{height:110px}
+}
 </style>
 </head>
 <body>
@@ -242,11 +268,14 @@ body { min-height: 100%; }
   <div class="browserbar"><i class="dot red"></i><i class="dot yellow"></i><i class="dot green"></i><span class="browsericon">▣</span><span style="margin-left:8px">‹</span><span>›</span><div class="address">♙ https://sushiban/dashboard/order.com</div><span>⟳</span><span>⇧</span><span>＋</span><span>▢</span></div>
   <div class="app">
    <aside class="sidebar">
+    <div class="mobile-brand">💧</div>
+    <div class="mobile-nav"><button title="Kasir">▧</button><button title="Produk">♜</button><button title="Laporan">▣</button><button title="Pengaturan">☷</button></div>
     <div class="logo">🍣</div>
     <button class="navbtn" title="Home">⌂</button><button class="navbtn active" title="Products">▦</button><button class="navbtn" title="Orders">▤</button><button class="navbtn" title="Customers">♧</button><button class="navbtn" title="Inventory">⬡</button><button class="navbtn" title="Reports">▥</button>
     <div class="navspacer"></div><button class="navbtn" title="Notifications">♟</button><button class="navbtn" title="Settings">⚙</button><div class="avatar">👩🏻</div>
    </aside>
    <main class="main">
+    <div class="mobile-toolbar"><button class="mobile-bluetooth" title="Bluetooth">ᛒ</button><button class="mobile-shift" id="shiftMobile">SHIFT</button><input id="mobileSearch" placeholder="cari produk" aria-label="Cari produk"><input id="mobileBarcode" placeholder="barcode" aria-label="Barcode"></div>
     <div class="mainhead"><h1>Time to Sushi!</h1><div class="searchrow"><input class="search" id="search" placeholder="⌕  Search sushi..." aria-label="Search products"><button class="filter" id="filterBtn">▽ &nbsp;Filter</button></div></div>
     <div class="categories" id="categories"></div>
     <div class="products" id="products"></div>
@@ -303,6 +332,9 @@ document.getElementById('clear').onclick=()=>{cart.clear();discount=0;renderCart
 document.getElementById('apply').onclick=()=>{let code=document.getElementById('promo').value.trim().toUpperCase();let subtotal=[...cart.entries()].reduce((s,[id,q])=>s+products.find(p=>p.id===id).price*q,0);if(code==='SUSHI10'&&subtotal>0){discount=subtotal*.1;renderCart();toast('10% discount applied')}else{discount=0;renderCart();toast('Use code SUSHI10 for 10% off')}};
 document.getElementById('filterBtn').onclick=()=>{activeCategory=activeCategory==='All'?'Nigiri Sushi':'All';renderCategories();renderProducts();toast(activeCategory==='All'?'Showing all categories':'Showing Nigiri Sushi')};
 document.getElementById('place').onclick=()=>{if(!cart.size){toast('Please add items to your order');return}if(!document.getElementById('payment').value){toast('Please select a payment method');return}toast('Order placed successfully!');cart.clear();discount=0;document.getElementById('promo').value='';renderCart()};
+document.getElementById('mobileSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;renderProducts()});
+document.getElementById('mobileBarcode').addEventListener('keydown',e=>{if(e.key==='Enter'){const p=products.find(x=>String(x.id)===e.target.value.trim());if(p){addToCart(p.id);e.target.value=''}else toast('Barcode tidak ditemukan')}});
+document.getElementById('shiftMobile').onclick=()=>toast('SHIFT');
 renderCategories();renderProducts();cart.set(6,1);cart.set(5,1);renderCart();
 </script>
 </body>
