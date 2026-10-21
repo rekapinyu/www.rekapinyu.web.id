@@ -786,6 +786,233 @@ body { min-height: 100%; }
   .main { padding-top: 56px !important; }
 }
 
+
+/* Final landscape reference layout: header, left rail and inventory product cards */
+@media screen and (orientation: landscape) and (max-width: 1100px) {
+  .app {
+    grid-template-columns:50px minmax(0,1fr) !important;
+    grid-template-rows:minmax(0,1fr) !important;
+  }
+  .sidebar {
+    grid-column:1 !important;
+    grid-row:1 !important;
+    width:50px !important;
+    height:calc(100dvh - 52px) !important;
+    max-height:calc(100dvh - 52px) !important;
+    margin-top:52px !important;
+    padding:8px 4px !important;
+    gap:8px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    border-right:1px solid #edf0ef !important;
+    background:#fff !important;
+  }
+  .mobile-brand {
+    display:none !important;
+  }
+  .mobile-nav {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    gap:8px !important;
+    width:100% !important;
+    padding:0 !important;
+  }
+  .mobile-nav button {
+    display:grid !important;
+    place-items:center !important;
+    flex:0 0 39px !important;
+    width:39px !important;
+    height:39px !important;
+    padding:0 !important;
+    border:1px solid #edf0f4 !important;
+    border-radius:10px !important;
+    background:#fff !important;
+    color:#5887ed !important;
+    font-size:17px !important;
+    box-shadow:0 1px 2px #00000005 !important;
+  }
+  .mobile-nav button:first-child { color:#3976f6 !important; }
+  .mobile-toolbar {
+    position:fixed !important;
+    z-index:1000 !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    width:100% !important;
+    height:52px !important;
+    min-height:52px !important;
+    padding:6px 8px !important;
+    gap:8px !important;
+    display:flex !important;
+    align-items:center !important;
+    flex-wrap:nowrap !important;
+    background:#fff !important;
+    border-bottom:1px solid #e9edef !important;
+    box-sizing:border-box !important;
+  }
+  .mobile-toolbar::before {
+    flex:0 0 26px !important;
+    width:26px !important;
+    height:34px !important;
+    margin:0 4px 0 0 !important;
+    background:#11b8e8 !important;
+    clip-path:polygon(50% 0,88% 62%,88% 73%,81% 88%,66% 98%,35% 98%,19% 88%,12% 73%,12% 62%) !important;
+  }
+  .mobile-toolbar .mobile-bluetooth {
+    flex:0 0 34px !important;
+    width:34px !important;
+    height:36px !important;
+    border:1px solid #e7e9e9 !important;
+    border-radius:8px !important;
+    background:#fff !important;
+    color:#e65a73 !important;
+  }
+  .mobile-toolbar .mobile-shift {
+    flex:0 0 84px !important;
+    width:84px !important;
+    height:36px !important;
+    border:1px solid #e7e9e9 !important;
+    border-radius:8px !important;
+    background:#fff !important;
+    color:#202020 !important;
+    font-weight:600 !important;
+  }
+  .mobile-toolbar #mobileSearch,
+  .mobile-toolbar #mobileBarcode {
+    flex:1 1 0 !important;
+    width:0 !important;
+    min-width:0 !important;
+    height:36px !important;
+    padding:0 10px !important;
+    border:1px solid #e7e9e9 !important;
+    border-radius:8px !important;
+    background:#fff !important;
+    color:#4e5554 !important;
+    font-size:12px !important;
+  }
+  .main {
+    grid-column:2 !important;
+    grid-row:1 !important;
+    height:100dvh !important;
+    min-width:0 !important;
+    padding:62px 8px 8px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    box-sizing:border-box !important;
+  }
+  .mainhead,.categories,.order { display:none !important; }
+  .products {
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:7px !important;
+    align-content:start !important;
+    align-items:stretch !important;
+    padding:0 0 8px !important;
+    overflow:visible !important;
+    box-sizing:border-box !important;
+  }
+  .product {
+    min-width:0 !important;
+    width:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    padding:6px !important;
+    border:1px solid #dce5ee !important;
+    border-radius:10px !important;
+    background:#fff !important;
+    box-shadow:none !important;
+    box-sizing:border-box !important;
+  }
+  .productpic {
+    width:100% !important;
+    height:clamp(70px,14vh,96px) !important;
+    flex:0 0 auto !important;
+    display:grid !important;
+    place-items:center !important;
+    border:0 !important;
+    border-radius:8px !important;
+    background:#fff !important;
+    overflow:hidden !important;
+  }
+  .productpic::after { display:none !important; }
+  .sushi { font-size:clamp(34px,6vh,48px) !important; line-height:1 !important; transform:none !important; }
+  .productbody {
+    width:100% !important;
+    min-width:0 !important;
+    padding:4px 1px 1px !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:4px !important;
+    box-sizing:border-box !important;
+  }
+  .productname {
+    width:100% !important;
+    min-width:0 !important;
+    min-height:13px !important;
+    font-size:9px !important;
+    line-height:1.25 !important;
+    font-weight:700 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  .productmeta,.add { display:none !important; }
+  .inventory-state {
+    display:grid !important;
+    width:100% !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:4px !important;
+  }
+  .inventory-state span,.inventory-price span {
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    padding:4px !important;
+    border:1px solid #b9eacb !important;
+    border-radius:7px !important;
+    font-size:7px !important;
+    line-height:1.25 !important;
+    box-sizing:border-box !important;
+    overflow-wrap:anywhere !important;
+  }
+  .inventory-state span:first-child { background:#fff8ef !important; border-color:#ffd6a8 !important; }
+  .inventory-state span:last-child { background:#effbf3 !important; border-color:#b9eacb !important; }
+  .inventory-state b,.inventory-price b {
+    display:block !important;
+    margin-top:3px !important;
+    font-size:8px !important;
+    line-height:1.15 !important;
+    font-weight:600 !important;
+  }
+  .inventory-state span:first-child b { color:#e05d13 !important; }
+  .inventory-state span:last-child b { color:#078b6d !important; }
+  .inventory-price { display:block !important; width:100% !important; }
+  .inventory-price span { background:#eff6ff !important; border-color:#c8ddff !important; color:#8293a9 !important; }
+  .inventory-price b { color:#1756c7 !important; }
+  .inventory-price.sell span { background:#effbf3 !important; border-color:#bcebc9 !important; }
+  .inventory-price.sell b { color:#07936c !important; }
+}
+@media screen and (orientation: landscape) and (max-width:600px) {
+  .mobile-toolbar { gap:5px !important; padding:5px !important; }
+  .mobile-toolbar::before { flex-basis:22px !important; width:22px !important; height:30px !important; margin-right:2px !important; }
+  .mobile-toolbar .mobile-bluetooth { flex-basis:30px !important; width:30px !important; }
+  .mobile-toolbar .mobile-shift { flex-basis:62px !important; width:62px !important; }
+  .mobile-toolbar #mobileSearch,.mobile-toolbar #mobileBarcode { padding:0 6px !important; font-size:11px !important; }
+  .sidebar { width:44px !important; padding-left:2px !important; padding-right:2px !important; }
+  .mobile-nav button { width:36px !important; }
+  .app { grid-template-columns:44px minmax(0,1fr) !important; }
+  .main { padding-left:6px !important; padding-right:6px !important; }
+  .products { gap:5px !important; }
+  .product { padding:4px !important; }
+  .productpic { height:clamp(56px,12vh,76px) !important; }
+  .productname { font-size:8px !important; }
+  .inventory-state { gap:3px !important; }
+  .inventory-state span,.inventory-price span { padding:3px 2px !important; font-size:6px !important; }
+  .inventory-state b,.inventory-price b { font-size:7px !important; }
+}
+
 </style>
 </head>
 <body>
