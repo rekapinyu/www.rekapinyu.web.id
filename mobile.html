@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300,0,0">
-<title>Kasir Managemenet - App</title>
+<title>Sushi POS — Cashier</title>
 <style>
 :root{--green:#0aa883;--green-dark:#078b6d;--mint:#e5f5f1;--ink:#17191b;--muted:#858b8a;--line:#eceeed;--bg:#f3f5f4}
 *{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:12px}
@@ -433,6 +433,60 @@ body { min-height: 100%; }
   }
 }
 
+
+/* Mobile landscape: dedicated Produk Kasir screen matching the provided reference. */
+.product-manager-toolbar { display:none; }
+@media screen and (orientation: landscape) and (max-width:1100px) {
+  .product-manager-toolbar {
+    position:fixed !important; top:0 !important; left:50px !important; right:0 !important;
+    z-index:1000 !important; width:calc(100% - 50px) !important; height:52px !important;
+    min-height:52px !important; display:none; align-items:center; flex-wrap:nowrap;
+    gap:5px; margin:0 !important; padding:5px 22px 5px 8px !important;
+    border:0 !important; border-bottom:1px solid #e9edef !important;
+    background:#fff !important; box-sizing:border-box !important;
+  }
+  .product-manager-toolbar input,
+  .product-manager-toolbar select,
+  .product-manager-toolbar button {
+    display:block; flex:1 1 0; width:0; min-width:0; height:36px; margin:0; padding:0 7px;
+    border:1px solid #e1e6ec; border-radius:8px; outline:none; background:#fff;
+    color:#202936; box-sizing:border-box; font:400 10px/1.2 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    text-overflow:clip; white-space:nowrap;
+  }
+  .product-manager-toolbar .pm-name { flex-grow:1.7; }
+  .product-manager-toolbar .pm-category { flex-grow:.85; appearance:auto; }
+  .product-manager-toolbar .pm-hpp { flex-grow:1.05; }
+  .product-manager-toolbar .pm-price { flex-grow:1; }
+  .product-manager-toolbar .pm-barcode { flex-grow:1; }
+  .product-manager-toolbar .pm-save { flex-grow:.8; padding:0 4px; cursor:pointer; }
+  .product-manager-toolbar .pm-folder { flex-grow:1; padding:0 4px; cursor:pointer; }
+  .product-manager-toolbar input:focus,
+  .product-manager-toolbar select:focus { border-color:#9bb9ff; box-shadow:0 0 0 2px #2563eb12; }
+  .product-manager-toolbar button:active { background:#edf4ff; border-color:#b8ceff; }
+  body.mobile-product-menu .mobile-toolbar { display:none !important; }
+  body.mobile-product-menu .product-manager-toolbar { display:flex !important; }
+  body.mobile-product-menu .main { padding-right:22px !important; }
+  body.mobile-product-menu .cart-fab { display:none !important; }
+  body.mobile-product-menu .products .product { cursor:default !important; }
+}
+@media screen and (orientation:landscape) and (max-width:600px) {
+  .product-manager-toolbar {
+    left:44px !important; width:calc(100% - 44px) !important; height:48px !important;
+    min-height:48px !important; gap:2px; padding:4px 4px !important;
+  }
+  body.mobile-product-menu .main { padding-right:6px !important; }
+  .product-manager-toolbar input,
+  .product-manager-toolbar select,
+  .product-manager-toolbar button { height:35px; padding:0 3px; font-size:8px; border-radius:6px; }
+  .product-manager-toolbar .pm-name { flex-grow:1.65; }
+  .product-manager-toolbar .pm-category { flex-grow:.85; }
+  .product-manager-toolbar .pm-hpp { flex-grow:1.05; }
+  .product-manager-toolbar .pm-price { flex-grow:1; }
+  .product-manager-toolbar .pm-barcode { flex-grow:1; }
+  .product-manager-toolbar .pm-save { flex-grow:.8; }
+  .product-manager-toolbar .pm-folder { flex-grow:1.05; }
+}
+
 </style>
 </head>
 <body>
@@ -465,6 +519,18 @@ body { min-height: 100%; }
    </aside>
    <main class="main">
     <div class="mobile-toolbar"><button class="mobile-bluetooth" title="Bluetooth">ᛒ</button><button class="mobile-shift" id="shiftMobile">SHIFT</button><input id="mobileSearch" placeholder="cari produk" aria-label="Cari produk"><input id="mobileBarcode" placeholder="barcode" aria-label="Barcode"></div>
+    <div class="product-manager-toolbar" aria-label="Form Produk Kasir">
+      <input id="newProductName" class="pm-name" type="text" placeholder="Nama Produk" aria-label="Nama Produk" autocomplete="off">
+      <select id="newProductCategory" class="pm-category" aria-label="Kategori">
+        <option value="" selected>Kategori</option>
+        <option>Nigiri Sushi</option><option>Maki Sushi</option><option>Uramaki Sushi</option><option>Gunkan Maki</option><option>Temaki Sushi</option><option>Oshi Sushi</option><option>Chirashi Sushi</option>
+      </select>
+      <input id="newProductHpp" class="pm-hpp" type="number" min="0" step="100" placeholder="Hpp" aria-label="HPP">
+      <input id="newProductPrice" class="pm-price" type="number" min="0" step="100" placeholder="Harga Jual" aria-label="Harga Jual">
+      <input id="newProductBarcode" class="pm-barcode" type="text" placeholder="Barcode" aria-label="Barcode" autocomplete="off">
+      <button id="saveProductBtn" class="pm-save" type="button">Simpan</button>
+      <button id="createProductFolderBtn" class="pm-folder" type="button">Buat Folder</button>
+    </div>
     <div class="mainhead"><h1>Time to Sushi!</h1><div class="searchrow"><input class="search" id="search" placeholder="⌕  Search sushi..." aria-label="Search products"><button class="filter" id="filterBtn">▽ &nbsp;Filter</button></div></div>
     <div class="categories" id="categories"></div>
     <div class="products" id="products"></div>
@@ -517,10 +583,30 @@ const products=[
  {id:13,name:'Chirashi Bowl',category:'Chirashi Sushi',desc:'1 bowl',price:16,icon:'🍚'},
  {id:14,name:'Salmon Ikura',category:'Gunkan Maki',desc:'4 pcs/pack',price:12.5,icon:'🍱'}
 ];
-let activeCategory='Nigiri Sushi',cart=new Map(),discount=0;
+let activeCategory='Nigiri Sushi',cart=new Map(),discount=0,currentMobileMenu='kasir';
 const money=n=>'Rp. '+Math.round(Number(n||0)*1000).toLocaleString('id-ID'); // Single Rupiah formatter used across products and all cart totals.
 function renderCategories(){document.getElementById('categories').innerHTML=categories.map(c=>`<button class="category ${activeCategory===c.name?'active':''}" data-cat="${c.name}"><span class="food">${c.icon}</span><span>${c.name}</span></button>`).join('');document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{activeCategory=b.dataset.cat;renderCategories();renderProducts()})}
-function renderProducts(){let q=(document.getElementById('mobileSearch')?.value||document.getElementById('search').value).toLowerCase();let filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));document.getElementById('products').innerHTML=filtered.map(p=>`<article class="product" data-product-card="${p.id}"><div class="productpic"><span class="sushi">${p.icon}</span></div><div class="productbody"><div class="productname" title="${p.name}">${p.name}</div><div class="inventory-state"><span>Stok Manual<br><b>${p.stockManual??90}</b></span><span>Stok Barcode<br><b>${p.stockBarcode??0}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${p.id}">＋ &nbsp;Add to cart</button></div></article>`).join('');document.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();addToCart(+b.dataset.add)});document.querySelectorAll('[data-product-card]').forEach(card=>card.addEventListener('click',e=>{if(e.target.closest('[data-add]'))return;if(window.matchMedia('(orientation: landscape) and (max-width: 1100px)').matches){addToCart(Number(card.dataset.productCard))}}))}
+function renderProducts(){
+ const isInventoryMenu=currentMobileMenu==='produk'&&window.matchMedia('(orientation: landscape) and (max-width: 1100px)').matches;
+ let filtered=[];
+ if(isInventoryMenu){
+  // Put the four reference products first in the mobile product-management grid.
+  const preferredOrder=[1,3,4,5,6,7,8,9,10,11,12,13,14,2];
+  const byId=new Map(products.map(p=>[p.id,p]));
+  filtered=preferredOrder.map(id=>byId.get(id)).filter(Boolean);
+  filtered=filtered.concat(products.filter(p=>!preferredOrder.includes(p.id)));
+ }else{
+  const q=(document.getElementById('mobileSearch')?.value||document.getElementById('search').value).toLowerCase();
+  filtered=products.filter(p=>(activeCategory==='All'||p.category===activeCategory)&&p.name.toLowerCase().includes(q));
+  if(!filtered.length)filtered=products.filter(p=>p.name.toLowerCase().includes(q));
+ }
+ document.getElementById('products').innerHTML=filtered.map(p=>`<article class="product" data-product-card="${p.id}"><div class="productpic"><span class="sushi">${p.icon}</span></div><div class="productbody"><div class="productname" title="${p.name}">${p.name}</div><div class="inventory-state"><span>Stok Manual<br><b>${p.stockManual??90}</b></span><span>Stok Barcode<br><b>${p.stockBarcode??0}</b></span></div><div class="inventory-price"><span>Harga Beli<br><b>${money(p.cost??p.price*.8)}</b></span></div><div class="inventory-price sell"><span>Harga Jual<br><b>${money(p.price)}</b></span></div><button class="add" data-add="${p.id}">＋ &nbsp;Add to cart</button></div></article>`).join('');
+ document.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();addToCart(+b.dataset.add)});
+ document.querySelectorAll('[data-product-card]').forEach(card=>card.addEventListener('click',e=>{
+  if(e.target.closest('[data-add]'))return;
+  if(!isInventoryMenu&&window.matchMedia('(orientation: landscape) and (max-width: 1100px)').matches){addToCart(Number(card.dataset.productCard))}
+ }));
+}
 function addToCart(id){cart.set(id,(cart.get(id)||0)+1);renderCart();toast('Added to cart')}
 function changeQty(id,delta){let n=(cart.get(id)||0)+delta;if(n<=0)cart.delete(id);else cart.set(id,n);renderCart()}
 function renderCart(){
@@ -554,6 +640,38 @@ document.getElementById('place').onclick=()=>{if(!cart.size){toast('Please add i
 document.getElementById('mobileSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;renderProducts()});
 document.getElementById('mobileBarcode').addEventListener('keydown',e=>{if(e.key==='Enter'){const p=products.find(x=>String(x.id)===e.target.value.trim());if(p){addToCart(p.id);e.target.value=''}else toast('Barcode tidak ditemukan')}});
 document.getElementById('shiftMobile').onclick=()=>toast('SHIFT');
+
+// Produk Kasir: product creation inputs only affect the product-management view.
+function saveManagedProduct(){
+ const name=document.getElementById('newProductName').value.trim();
+ const category=document.getElementById('newProductCategory').value;
+ const hppRaw=document.getElementById('newProductHpp').value.trim();
+ const priceRaw=document.getElementById('newProductPrice').value.trim();
+ const barcode=document.getElementById('newProductBarcode').value.trim();
+ const hpp=Number(hppRaw.replace(/[^0-9]/g,''));
+ const price=Number(priceRaw.replace(/[^0-9]/g,''));
+ if(!name){toast('Masukkan nama produk');document.getElementById('newProductName').focus();return}
+ if(!category){toast('Pilih kategori produk');document.getElementById('newProductCategory').focus();return}
+ if(!hppRaw||!Number.isFinite(hpp)||hpp<0){toast('Masukkan HPP yang valid');document.getElementById('newProductHpp').focus();return}
+ if(!priceRaw||!Number.isFinite(price)||price<=0){toast('Masukkan harga jual yang valid');document.getElementById('newProductPrice').focus();return}
+ const id=products.reduce((max,p)=>Math.max(max,Number(p.id)||0),0)+1;
+ products.push({id,name,category,desc:'1 pcs',cost:hpp/1000,price:price/1000,barcode,stockManual:0,stockBarcode:0,icon:'📦'});
+ document.getElementById('newProductName').value='';
+ document.getElementById('newProductCategory').value='';
+ document.getElementById('newProductHpp').value='';
+ document.getElementById('newProductPrice').value='';
+ document.getElementById('newProductBarcode').value='';
+ renderProducts();toast('Produk berhasil ditambahkan');
+}
+document.getElementById('saveProductBtn').addEventListener('click',saveManagedProduct);
+document.getElementById('createProductFolderBtn').addEventListener('click',async()=>{
+ if(typeof window.showDirectoryPicker!=='function'){toast('Pembuatan folder tidak didukung browser ini');return}
+ try{
+  const root=await window.showDirectoryPicker({mode:'readwrite'});
+  await root.getDirectoryHandle('ProdukKasir',{create:true});
+  toast('Folder ProdukKasir berhasil dibuat');
+ }catch(error){if(error?.name!=='AbortError')toast('Folder tidak berhasil dibuat')}
+});
 
 // Mobile cart drawer: preserve the cart snapshot until the user saves or cancels.
 let cartDrawerSnapshot=null;
@@ -598,7 +716,7 @@ function cancelCartDrawer(){
 }
 // Sidebar menu click state: a single selected tile, with a unique color per menu.
 const sidebarMenuButtons = document.querySelectorAll('.mobile-nav button');
-sidebarMenuButtons.forEach(button => {
+sidebarMenuButtons.forEach((button,index) => {
   button.setAttribute('aria-pressed', 'false');
   button.addEventListener('click', () => {
     sidebarMenuButtons.forEach(item => {
@@ -606,6 +724,10 @@ sidebarMenuButtons.forEach(button => {
       item.classList.toggle('is-selected', selected);
       item.setAttribute('aria-pressed', String(selected));
     });
+    // Produk Kasir (icon ke-3) opens the inventory-management layout; other icons return to the existing cashier layout.
+    currentMobileMenu = index===2 ? 'produk' : 'kasir';
+    document.body.classList.toggle('mobile-product-menu',currentMobileMenu==='produk');
+    renderProducts();
   });
 });
 document.getElementById('cartFab').addEventListener('click',openCartDrawer);
