@@ -1112,6 +1112,23 @@ body { min-height: 100%; }
   .main { padding-top: 56px !important; }
 }
 
+
+/* Continuous right divider: logo box joins the sidebar's vertical separator */
+@media screen and (orientation: landscape) and (max-width: 1100px) {
+  .sidebar {
+    border-right: 1px solid #edf0ef !important;
+    box-sizing: border-box !important;
+  }
+  .sidebar .mobile-brand {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-right: 1px solid #edf0ef !important;
+    border-bottom: 1px solid #e9edef !important;
+    margin-right: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
 </style>
 </head>
 <body>
