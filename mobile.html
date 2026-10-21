@@ -313,12 +313,18 @@ body { min-height: 100%; }
     margin:0; padding:5px 0; border:0; border-bottom:1px solid #f0f2f4; border-radius:0;
     background:#fff; box-shadow:none;
   }
+  /* Cart product thumbnail: the light, rounded box from the reference image. */
   .cart-item-photo {
-    display:grid; place-items:center; flex:0 0 39px; width:39px; height:39px; overflow:hidden;
-    border:1px solid #edf0f4; border-radius:10px; background:#fff; box-sizing:border-box;
+    display:grid; place-items:center; flex:0 0 38px; width:38px; height:38px; min-width:38px;
+    overflow:hidden; padding:0; border:1px solid #e8edf3; border-radius:10px;
+    background:#fff; box-shadow:0 1px 2px rgba(15,23,42,.06); box-sizing:border-box;
   }
-  .cart-item-photo .sushi { display:block; font-size:21px; line-height:1; transform:none; filter:none; }
-  .cart-item-photo img { display:block; width:100%; height:100%; object-fit:contain; }
+  /* Keep the cart thumbnail's icon small; the main product icon has a larger landscape rule. */
+  .cart-item-photo .sushi {
+    display:block; width:auto; height:auto; font-size:9px !important; line-height:1 !important;
+    transform:none !important; filter:none !important; margin:0; padding:0;
+  }
+  .cart-item-photo img { display:block; width:100%; height:100%; padding:4px; object-fit:contain; }
   .cart-item-info { display:flex; flex:1 1 auto; flex-direction:column; justify-content:center; gap:2px; min-width:0; }
   .cart-item-name { color:#101214; font-size:10px; line-height:1.25; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .cart-item-unit { color:#222; font-size:8px; line-height:1.25; white-space:nowrap; }
@@ -362,7 +368,6 @@ body { min-height: 100%; }
   .order.cart-drawer-panel .orderhead h2::after { font-size:12px; }
   .order.cart-drawer-panel .cartitems { padding-left:10px; padding-right:10px; }
   .order.cart-drawer-panel .cartitem.cartitem-compact { min-height:46px; }
-  .cart-item-photo { flex-basis:39px; width:39px; height:39px; border-width:1px; border-color:#edf0f4; border-radius:10px; }
   .order.cart-drawer-panel .summary { padding:6px 10px 5px; }
   .cart-drawer-actions { padding:7px 10px calc(7px + env(safe-area-inset-bottom)); }
 }
