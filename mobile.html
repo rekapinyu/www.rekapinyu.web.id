@@ -147,6 +147,40 @@ button,input,select{font:inherit}button{cursor:pointer}
   .order { max-height: none; }
 }
 
+
+/* Viewport-fit fix: preserve the current design, avoid hiding content below the screen */
+html { min-height: 100%; scroll-behavior: smooth; }
+body { min-height: 100%; }
+@media (max-width: 900px) {
+  .stage { min-height: 100dvh; height: auto; }
+  .browser { min-height: 100dvh; height: auto; max-height: none; overflow: visible; }
+  .app { min-height: 100dvh; height: auto; align-items: start; }
+  .main { min-height: 0; height: auto; overflow: visible; }
+  .products { min-height: 0; max-height: none; overflow: visible; }
+  .order { min-height: 0; height: auto; max-height: none; overflow: visible; }
+  .summary { flex-shrink: 0; }
+  .cartitems { min-height: 0; }
+}
+@media (max-width: 720px) {
+  .stage, .browser { width: 100%; }
+  .app { grid-template-rows: auto auto; }
+  .main { padding-bottom: 16px; }
+  .order { align-self: start; }
+  .cartitems { max-height: min(38dvh, 300px); overflow-y: auto; overscroll-behavior: contain; }
+  .summary { padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+}
+@media (min-width: 721px) and (max-width: 900px) {
+  .main { padding-bottom: 22px; }
+  .order { padding-bottom: env(safe-area-inset-bottom); }
+}
+@media (max-height: 700px) and (max-width: 900px) {
+  .cartitems { max-height: 30dvh; }
+  .orderhead { padding-top: 8px; padding-bottom: 8px; }
+  .orderselectors { padding-top: 6px; padding-bottom: 6px; }
+  .itemshead { padding-top: 7px; padding-bottom: 5px; }
+  .summary { padding-top: 8px; }
+}
+
 </style>
 </head>
 <body>
