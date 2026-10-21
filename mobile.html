@@ -319,16 +319,21 @@ body { min-height: 100%; }
     overflow:hidden; padding:0; border:1px solid #e8edf3; border-radius:10px;
     background:#fff; box-shadow:0 1px 2px rgba(15,23,42,.06); box-sizing:border-box;
   }
-  /* Keep the cart thumbnail's icon small; the main product icon has a larger landscape rule. */
+  /* Product thumbnail: enlarge the product icon inside the same light rounded box. */
   .cart-item-photo .sushi {
-    display:block; width:auto; height:auto; font-size:9px !important; line-height:1 !important;
+    display:block; width:auto; height:auto; font-size:18px !important; line-height:1 !important;
     transform:none !important; filter:none !important; margin:0; padding:0;
   }
-  .cart-item-photo img { display:block; width:100%; height:100%; padding:4px; object-fit:contain; }
-  .cart-item-info { display:flex; flex:1 1 auto; flex-direction:column; justify-content:center; gap:2px; min-width:0; }
+  .cart-item-photo img { display:block; width:100%; height:100%; padding:2px; object-fit:contain; }
+  .cart-item-info { display:flex; flex:1 1 auto; flex-direction:column; justify-content:center; gap:3px; min-width:0; }
   .cart-item-name { color:#101214; font-size:10px; line-height:1.25; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .cart-item-unit { color:#222; font-size:8px; line-height:1.25; white-space:nowrap; }
-  .cart-item-total { flex:0 0 auto; max-width:34%; padding-left:3px; color:#111; font-size:8px; line-height:1.25; text-align:right; white-space:nowrap; }
+  .cart-item-unit { color:#222; font-size:9px; line-height:1.25; white-space:nowrap; }
+  .cart-item-quantity { display:flex; align-items:center; justify-content:flex-start; gap:4px; min-width:0; color:#343b46; font-size:9px; line-height:1; white-space:nowrap; }
+  .cart-item-quantity-label { flex:0 0 auto; margin-right:1px; font-size:9.5px; font-weight:600; }
+  .cart-item-quantity button { display:grid; place-items:center; flex:0 0 21px; width:21px; height:21px; padding:0; border:1px solid #d6e2f4; border-radius:5px; background:#f8fbff; color:#2563eb; font:600 14px/1 Arial,sans-serif; cursor:pointer; }
+  .cart-item-quantity button:active { background:#dbeafe; }
+  .cart-item-qty-num { display:inline-flex; align-items:center; justify-content:center; min-width:14px; font-size:10px; font-weight:700; color:#17191b; }
+  .cart-item-total { flex:0 0 auto; max-width:31%; padding-left:3px; color:#111; font-size:9px; line-height:1.25; text-align:right; white-space:nowrap; }
   .order.cart-drawer-panel .cartitems .empty { padding:26px 8px; font-size:11px; }
   .order.cart-drawer-panel .summary {
     flex:0 0 auto; max-height:none; overflow:visible; margin:0; padding:6px 13px 5px;
@@ -367,7 +372,11 @@ body { min-height: 100%; }
   .order.cart-drawer-panel .orderhead { min-height:35px; padding:7px 10px 6px; }
   .order.cart-drawer-panel .orderhead h2::after { font-size:12px; }
   .order.cart-drawer-panel .cartitems { padding-left:10px; padding-right:10px; }
-  .order.cart-drawer-panel .cartitem.cartitem-compact { min-height:46px; }
+  .order.cart-drawer-panel .cartitem.cartitem-compact { min-height:65px; gap:6px; }
+  .cart-item-quantity { gap:3px; }
+  .cart-item-quantity-label { font-size:9px; }
+  .cart-item-quantity button { flex-basis:19px; width:19px; height:20px; }
+  .cart-item-total { max-width:29%; font-size:8.5px; }
   .order.cart-drawer-panel .summary { padding:6px 10px 5px; }
   .cart-drawer-actions { padding:7px 10px calc(7px + env(safe-area-inset-bottom)); }
 }
@@ -470,7 +479,7 @@ function renderCart(){
   const p=products.find(x=>x.id===id);
   if(compactDrawer){
    const photo=(p.photo||p.imageUrl||p.image)?`<img src="${p.photo||p.imageUrl||p.image}" alt="${p.name}">`:`<span class="sushi" aria-hidden="true">${p.icon}</span>`;
-   return `<div class="cartitem cartitem-compact"><div class="cart-item-photo">${photo}</div><div class="cart-item-info"><div class="cart-item-name" title="${p.name}">${p.name}</div><div class="cart-item-unit">${qty} x ${rupiah(p.price)}</div></div><div class="cart-item-total">${rupiah(p.price*qty)}</div></div>`;
+   return `<div class="cartitem cartitem-compact"><div class="cart-item-photo">${photo}</div><div class="cart-item-info"><div class="cart-item-name" title="${p.name}">${p.name}</div><div class="cart-item-unit">${qty} x ${rupiah(p.price)}</div><div class="cart-item-quantity"><span class="cart-item-quantity-label">Jumlah</span><button type="button" data-minus="${id}" aria-label="Kurangi ${p.name}">−</button><span class="cart-item-qty-num">${qty}</span><button type="button" data-plus="${id}" aria-label="Tambah ${p.name}">+</button></div></div><div class="cart-item-total">${rupiah(p.price*qty)}</div></div>`;
   }
   return `<div class="cartitem"><div class="carttop"><div class="cartpic">${p.icon}</div><div><div class="cartname">${p.name}</div><div class="cartdesc">${p.category}<br>${p.desc}</div></div></div><div class="cartbottom"><span class="cartprice">${money(p.price*qty)}</span><div class="qty"><button data-minus="${id}">−</button><span class="qtynum">${qty}</span><button class="plus" data-plus="${id}">＋</button></div></div></div>`;
  }).join(''):'<div class="empty">Your order is empty.<br>Add sushi to get started.</div>';
