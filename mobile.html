@@ -44,6 +44,109 @@ button,input,select{font:inherit}button{cursor:pointer}
 @media(max-width:1000px){.stage{padding:0}.browser{height:100vh;min-height:620px}.app{grid-template-columns:55px minmax(0,1fr) 270px}.main{padding:14px 12px}.categories{gap:6px;grid-template-columns:repeat(7,minmax(57px,1fr))}.category{min-height:80px}.category span:last-child{font-size:9px}.productpic{height:105px}.sushi{font-size:55px}.products{gap:8px}.orderhead{padding:14px 12px}.cartitems{padding:0 8px}}
 @media(max-width:720px){body{background:#f5f7f6}.stage{padding:0;display:block}.browser{width:100%;height:100dvh;min-height:0;border-radius:0;box-shadow:none}.browserbar{display:none;height:0}.app{grid-template-columns:48px minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}.sidebar{grid-row:1 / 3;padding:9px 0;gap:9px}.logo,.navbtn,.avatar{width:34px;height:34px}.logo{font-size:19px;margin-bottom:7px}.navbtn{font-size:17px}.main{padding:13px 10px;overflow:hidden}.mainhead{align-items:flex-start;flex-direction:column;gap:10px;margin-bottom:12px}.mainhead h1{font-size:16px}.searchrow{width:100%}.search{width:auto;max-width:none;flex:1}.categories{display:flex;overflow-x:auto;padding-bottom:3px;margin-right:-10px;scrollbar-width:none}.categories::-webkit-scrollbar{display:none}.category{min-width:78px;min-height:78px}.category .food{font-size:25px;line-height:29px}.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.productpic{height:105px}.sushi{font-size:55px}.productbody{padding:8px}.productname{font-size:11px}.order{grid-column:2;max-height:47vh;border-left:0;border-top:1px solid #e9ecea;overflow:hidden}.orderhead{padding:10px 12px}.orderhead h2{font-size:14px}.orderselectors{padding:7px 10px}.itemshead{padding:9px 11px 6px}.cartitems{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 8px;overflow:auto}.cartitem{margin:0;padding:7px}.cartpic{width:31px;height:31px;font-size:20px}.cartname{font-size:9px}.cartdesc{font-size:8px}.cartbottom{margin-top:6px}.qty{gap:4px}.qty button{width:20px;height:20px}.summary{padding:8px 10px}.sumrow{margin-bottom:5px}.sumrow.total{margin-top:7px}.promo{margin-top:8px}.promo input,.promo button,.payment{padding:7px}.placeorder{padding:8px;margin-top:7px}}
 @media(max-width:390px){.app{grid-template-columns:43px minmax(0,1fr)}.logo,.navbtn,.avatar{width:31px;height:31px}.main{padding:11px 7px}.category{min-width:72px}.productpic{height:88px}.sushi{font-size:47px}.productmeta{font-size:9px}.add{font-size:10px}.order{max-height:49vh}.cartitems{grid-template-columns:1fr}.cartitem{padding:6px}.carttop{gap:6px}.cartpic{width:28px;height:28px}.cartdesc{display:none}.cartbottom{margin-top:4px}}
+
+/* Responsive refinement: phones, tablets and iPad sizes */
+@media (min-width: 1101px) {
+  .browser { width: min(1400px, 100%); height: min(880px, calc(100vh - 64px)); }
+  .app { grid-template-columns: 66px minmax(0,1fr) 310px; }
+  .products { grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+@media (min-width: 901px) and (max-width: 1100px) {
+  .stage { padding: 12px; }
+  .browser { width: 100%; height: calc(100vh - 24px); min-height: 600px; }
+  .app { grid-template-columns: 52px minmax(0,1fr) 265px; }
+  .main { padding: 14px 11px; }
+  .mainhead { align-items: flex-start; flex-direction: column; gap: 9px; }
+  .searchrow { width: 100%; }
+  .search { flex: 1; width: auto; max-width: none; }
+  .categories { display: flex; overflow-x: auto; scrollbar-width: none; padding-bottom: 3px; }
+  .categories::-webkit-scrollbar { display: none; }
+  .category { min-width: 76px; }
+  .products { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .productpic { height: 105px; }
+}
+@media (min-width: 721px) and (max-width: 900px) {
+  body { background: #f5f7f6; }
+  .stage { display: block; padding: 0; }
+  .browser { width: 100%; height: auto; min-height: 100dvh; border-radius: 0; box-shadow: none; overflow: visible; }
+  .app { grid-template-columns: 52px minmax(0,1fr); grid-template-rows: auto auto; min-height: 100dvh; }
+  .sidebar { grid-row: 1 / 3; position: sticky; top: 0; height: 100dvh; }
+  .main { padding: 18px 14px; overflow: visible; }
+  .mainhead { align-items: center; flex-direction: row; flex-wrap: wrap; }
+  .searchrow { width: min(100%, 360px); }
+  .search { width: auto; max-width: none; flex: 1; }
+  .categories { display: flex; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  .categories::-webkit-scrollbar { display: none; }
+  .category { min-width: 86px; }
+  .products { grid-template-columns: repeat(3, minmax(0,1fr)); overflow: visible; }
+  .productpic { height: clamp(100px, 17vw, 150px); }
+  .order { grid-column: 2; max-height: none; overflow: visible; border-left: 0; border-top: 1px solid #e9ecea; }
+  .cartitems { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; overflow: visible; }
+  .cartitem { margin: 0; }
+  .summary { padding: 14px; }
+}
+@media (max-width: 720px) {
+  .browser { overflow: visible; height: auto; min-height: 100dvh; }
+  .app { min-height: 100dvh; height: auto; grid-template-rows: auto auto; }
+  .sidebar { position: sticky; top: 0; height: 100dvh; align-self: start; }
+  .main { overflow: visible; min-width: 0; }
+  .mainhead { width: 100%; }
+  .categories { min-width: 0; }
+  .products { overflow: visible; }
+  .order { max-height: none; overflow: visible; min-width: 0; }
+  .cartitems { max-height: 34vh; }
+  .summary { background: #fff; }
+  .placeorder { min-height: 40px; }
+}
+@media (max-width: 480px) {
+  .app { grid-template-columns: 42px minmax(0,1fr); }
+  .sidebar { padding-left: 0; padding-right: 0; gap: 8px; }
+  .logo, .navbtn, .avatar { width: 30px; height: 30px; border-radius: 9px; }
+  .logo { margin-bottom: 5px; }
+  .main { padding: 12px 8px; }
+  .mainhead { gap: 9px; }
+  .searchrow { gap: 6px; }
+  .search { min-width: 0; padding: 8px; }
+  .filter { padding: 8px; white-space: nowrap; }
+  .category { min-width: 72px; min-height: 73px; }
+  .category .food { font-size: 24px; }
+  .category span:last-child { font-size: 9px; }
+  .products { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }
+  .productpic { height: clamp(76px, 24vw, 105px); }
+  .sushi { font-size: clamp(40px, 13vw, 54px); }
+  .productbody { padding: 7px; gap: 6px; }
+  .productname { white-space: normal; min-height: 28px; }
+  .productmeta { align-items: flex-start; flex-wrap: wrap; }
+  .add { min-height: 34px; }
+  .orderhead h2 { font-size: 15px; }
+  .orderselectors { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .cartitems { grid-template-columns: 1fr; max-height: 38vh; }
+  .cartitem { padding: 8px; }
+  .cartpic { width: 34px; height: 34px; font-size: 21px; }
+  .cartname { font-size: 10px; }
+  .cartdesc { display: block; font-size: 9px; }
+  .summary { padding: 10px 9px calc(12px + env(safe-area-inset-bottom)); }
+  .promo input { min-width: 0; }
+}
+@media (max-width: 350px) {
+  .app { grid-template-columns: 38px minmax(0,1fr); }
+  .logo, .navbtn, .avatar { width: 28px; height: 28px; }
+  .products { grid-template-columns: minmax(0,1fr); }
+  .productpic { height: 110px; }
+  .productname { min-height: 0; }
+  .orderselectors { gap: 5px; padding-left: 7px; padding-right: 7px; }
+  .orderselectors select { font-size: 10px; padding: 7px 4px; }
+  .promo { gap: 5px; }
+  .promo button { padding: 0 8px; }
+}
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 900px) {
+  .app { grid-template-rows: auto auto; }
+  .sidebar { height: auto; min-height: 100dvh; }
+  .mainhead { flex-direction: row; align-items: center; }
+  .products { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .order { max-height: none; }
+}
+
 </style>
 </head>
 <body>
