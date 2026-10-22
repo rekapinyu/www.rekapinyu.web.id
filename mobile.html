@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300,0,0">
-<title>Kasir Management - Apps</title>
+<title>Sushi POS — Cashier</title>
 <style>
 :root{--green:#0aa883;--green-dark:#078b6d;--mint:#e5f5f1;--ink:#17191b;--muted:#858b8a;--line:#eceeed;--bg:#f3f5f4}
 *{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:12px}
@@ -1366,8 +1366,86 @@ document.getElementById('cartDrawerBackdrop').addEventListener('click',cancelCar
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('cartDrawer').classList.contains('is-open'))cancelCartDrawer()});
 window.addEventListener('resize',()=>{renderCart()});
 
+// Firebase logout: sign out from Firebase first, then clear compatible app auth markers.
+async function logoutAndRedirectToLogin(){
+  const button = document.querySelector('.mobile-logout');
+  if (button) { button.disabled = true; button.setAttribute('aria-busy', 'true'); }
+  try {
+    // Wait for Firebase modular SDK initialization (defined in the module script below).
+    if (window.rekapinyuFirebaseReady) await window.rekapinyuFirebaseReady;
+    if (typeof window.rekapinyuFirebaseSignOut !== 'function') {
+      throw new Error('Firebase Authentication belum berhasil diinisialisasi. Periksa koneksi internet dan domain Firebase.');
+    }
+    await window.rekapinyuFirebaseSignOut();
+
+    const authKeyPattern = /(^|[._:-])(auth|authtoken|token|session|login|loggedin|logged_in|currentuser|current_user|userdata|user_data|userid|user_id|access_token|refreshtoken|refresh_token|id_token|idtoken)([._:-]|$)/i;
+    const commonAuthKeys = new Set([
+      'auth','authtoken','accessToken','access_token','refreshToken','refresh_token','idToken','id_token',
+      'token','session','user','userData','user_data','currentUser','current_user','userId','user_id',
+      'isLoggedIn','loggedIn','rekapinyuUser','rekapinyu_user','rekapinyuToken','rekapinyu_token',
+      'rekapinyuAuth','rekapinyu_auth','authUser','auth_user','supabase.auth.token'
+    ]);
+    for (const storage of [window.localStorage, window.sessionStorage]) {
+      const removeKeys = [];
+      for (let i = 0; i < storage.length; i++) {
+        const key = storage.key(i);
+        if (!key) continue;
+        const normalized = key.toLowerCase();
+        if (commonAuthKeys.has(key) || commonAuthKeys.has(normalized) || authKeyPattern.test(key) || /^(firebase:authuser:|sb-.+-auth-token$)/i.test(key)) {
+          // Preserve product-folder handles and business data.
+          if (!/(product.?folder|folder.?handle|cart|product.?data|produk.?kasir)/i.test(key)) removeKeys.push(key);
+        }
+      }
+      removeKeys.forEach(key => storage.removeItem(key));
+    }
+  } catch (error) {
+    console.error('Logout Firebase gagal:', error);
+    if (button) { button.disabled = false; button.removeAttribute('aria-busy'); }
+    if (typeof toast === 'function') toast('Logout Firebase gagal. Periksa koneksi lalu coba lagi.');
+    return; // Do not pretend Firebase logout succeeded or redirect while the account may remain signed in.
+  }
+  window.location.replace('https://rekapinyu.web.id/login');
+}
+const mobileLogoutButton = document.querySelector('.mobile-logout');
+if (mobileLogoutButton) {
+  mobileLogoutButton.addEventListener('click', logoutAndRedirectToLogin);
+}
+
 renderCategories();renderProducts();renderCart();
 restoreProductFolderOnStartup();
+</script>
+<script type="module">
+  import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
+  import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
+  import { getAnalytics, isSupported as analyticsIsSupported } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAyzAV68m4BRtwmn0iu2vDplZaJ9r_uQVk",
+    authDomain: "rekapinyu.firebaseapp.com",
+    databaseURL: "https://rekapinyu-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "rekapinyu",
+    storageBucket: "rekapinyu.firebasestorage.app",
+    messagingSenderId: "835450919713",
+    appId: "1:835450919713:web:818f9f48c5b05330d67c60",
+    measurementId: "G-4KSJC9ENH8"
+  };
+
+  window.rekapinyuFirebaseReady = (async () => {
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    // Analytics is optional and must not prevent Authentication from initializing.
+    try {
+      if (await analyticsIsSupported()) getAnalytics(app);
+    } catch (analyticsError) {
+      console.warn('Firebase Analytics tidak tersedia pada lingkungan ini:', analyticsError);
+    }
+    window.rekapinyuFirebaseSignOut = () => signOut(auth);
+    window.rekapinyuFirebaseAuth = auth;
+    return true;
+  })().catch(error => {
+    console.error('Inisialisasi Firebase gagal:', error);
+    return false;
+  });
 </script>
 </body>
 </html>
