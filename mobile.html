@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300,0,0">
-<title>Sushi POS — Cashier</title>
+<title>Kasir Management - Apps</title>
 <style>
 :root{--green:#0aa883;--green-dark:#078b6d;--mint:#e5f5f1;--ink:#17191b;--muted:#858b8a;--line:#eceeed;--bg:#f3f5f4}
 *{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:12px}
@@ -65,7 +65,7 @@ body { min-height: 100%; }
 .inventory-state, .inventory-price { display: none; }
 
 /* Default: mobile-only controls are not shown on desktop. */
-.mobile-brand, .mobile-nav, .mobile-toolbar { display: none; }
+.mobile-brand, .mobile-nav, .mobile-toolbar, .mobile-logout { display: none; }
 
 /* Portrait lock for phone/tablet widths. */
 @media screen and (orientation: portrait) and (max-width: 1100px) {
@@ -157,6 +157,27 @@ body { min-height: 100%; }
     -webkit-font-feature-settings: "liga" !important;
     -webkit-font-smoothing: antialiased !important;
     pointer-events: none !important;
+  }
+  /* Separate logout control stays at the bottom of the mobile sidebar. */
+  .sidebar .mobile-logout {
+    display: grid !important; place-items: center !important;
+    flex: 0 0 39px !important; width: 39px !important; height: 39px !important;
+    margin: auto 0 0 !important; padding: 0 !important;
+    border: 1px solid #fee2e2 !important; border-radius: 10px !important;
+    background: #fff !important; color: #dc2626 !important;
+    box-shadow: 0 1px 2px #00000005 !important;
+    cursor: pointer !important; -webkit-tap-highlight-color: transparent;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease !important;
+  }
+  .sidebar .mobile-logout:hover,
+  .sidebar .mobile-logout:active {
+    background: #fee2e2 !important; border-color: #fecaca !important; color: #b91c1c !important;
+  }
+  .sidebar .mobile-logout .material-symbols-rounded {
+    display: block !important; font-family: "Material Symbols Rounded" !important;
+    font-size: 21px !important; font-weight: 300 !important; line-height: 1 !important;
+    font-feature-settings: "liga" !important; -webkit-font-feature-settings: "liga" !important;
+    -webkit-font-smoothing: antialiased !important; pointer-events: none !important;
   }
   .sidebar > .logo, .sidebar > .navbtn, .sidebar > .navspacer, .sidebar > .avatar { display: none !important; }
 
@@ -255,6 +276,8 @@ body { min-height: 100%; }
   .sidebar .mobile-brand { flex-basis: 48px !important; height: 48px !important; min-height: 48px !important; }
   .sidebar .mobile-brand img { width: 34px !important; height: 34px !important; max-height: 34px !important; }
   .sidebar .mobile-nav button { flex-basis: 35px !important; width: 35px !important; height: 35px !important; }
+  .sidebar .mobile-logout { flex-basis: 35px !important; width: 35px !important; height: 35px !important; border-radius: 9px !important; }
+  .sidebar .mobile-logout .material-symbols-rounded { font-size: 19px !important; }
   .mobile-toolbar { left: 44px !important; width: calc(100% - 44px) !important; height: 48px !important; min-height: 48px !important; gap: 5px !important; padding: 5px !important; }
   .mobile-toolbar .mobile-bluetooth { flex-basis: 30px !important; width: 30px !important; }
   .mobile-toolbar .mobile-shift { flex-basis: 62px !important; width: 62px !important; }
@@ -616,6 +639,9 @@ body { min-height: 100%; }
         <span class="material-symbols-rounded" aria-hidden="true">settings</span>
       </button>
     </div>
+    <button class="mobile-logout" type="button" title="Logout" aria-label="Logout">
+      <span class="material-symbols-rounded" aria-hidden="true">logout</span>
+    </button>
     <div class="logo">🍣</div>
     <button class="navbtn" title="Home">⌂</button><button class="navbtn active" title="Products">▦</button><button class="navbtn" title="Orders">▤</button><button class="navbtn" title="Customers">♧</button><button class="navbtn" title="Inventory">⬡</button><button class="navbtn" title="Reports">▥</button>
     <div class="navspacer"></div><button class="navbtn" title="Notifications">♟</button><button class="navbtn" title="Settings">⚙</button><div class="avatar">👩🏻</div>
