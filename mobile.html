@@ -1133,12 +1133,17 @@ document.getElementById('mobileSearch').addEventListener('input',e=>{document.ge
 document.getElementById('mobileBarcode').addEventListener('keydown',e=>{if(e.key==='Enter'){const code=e.target.value.trim();const p=products.find(x=>String(x.barcode||'').trim()===code);if(p){addToCart(p.id,'barcode');e.target.value=''}else toast('Barcode tidak ditemukan')}});
 document.getElementById('shiftMobile').onclick=()=>toast('SHIFT');
 
-// Printer Bluetooth pairing: use Web Bluetooth for BLE-capable printers in supported secure browsers.
-// Classic Bluetooth SPP printers are not accessible through the Web Bluetooth GATT API.
+// Printer Bluetooth pairing and best-effort reconnect for previously permitted BLE printers.
+// Web Bluetooth requires HTTPS and does not support every classic Bluetooth/SPP printer.
 const mobileBluetoothButton = document.getElementById('mobileBluetooth');
 const bluetoothStatusIcon = document.getElementById('bluetoothStatusIcon');
+const BLUETOOTH_PRINTER_STORAGE_KEY = 'rekapinyu.bluetoothPrinter.v1';
 let selectedBluetoothPrinter = null;
 let bluetoothDisconnectHandler = null;
+let bluetoothReconnectTimer = null;
+let bluetoothReconnectAttempts = 0;
+let bluetoothReconnectInProgress = false;
+const BLUETOOTH_RECONNECT_DELAYS = [1500, 2500, 4000, 7000, 12000, 20000, 30000];
 function setBluetoothButtonState(state, title, iconName) {
   if (!mobileBluetoothButton) return;
   mobileBluetoothButton.classList.remove('is-scanning','is-connected','is-error');
@@ -1147,12 +1152,90 @@ function setBluetoothButtonState(state, title, iconName) {
   mobileBluetoothButton.setAttribute('aria-label', title);
   if (bluetoothStatusIcon && iconName) bluetoothStatusIcon.textContent = iconName;
 }
+function getSavedBluetoothPrinter() {
+  try {
+    const raw = localStorage.getItem(BLUETOOTH_PRINTER_STORAGE_KEY);
+    if (!raw) return null;
+    const saved = JSON.parse(raw);
+    return saved && typeof saved.id === 'string' && saved.id ? saved : null;
+  } catch (_) { return null; }
+}
+function saveBluetoothPrinterPreference(device) {
+  if (!device || !device.id) return;
+  try {
+    localStorage.setItem(BLUETOOTH_PRINTER_STORAGE_KEY, JSON.stringify({ id:device.id, name:device.name || '', savedAt:Date.now() }));
+  } catch (error) { console.warn('Preferensi printer Bluetooth tidak dapat disimpan:', error); }
+}
+function clearBluetoothReconnectTimer() {
+  if (bluetoothReconnectTimer !== null) clearTimeout(bluetoothReconnectTimer);
+  bluetoothReconnectTimer = null;
+}
+function bindBluetoothPrinterDisconnect(device) {
+  if (bluetoothDisconnectHandler && selectedBluetoothPrinter) {
+    selectedBluetoothPrinter.removeEventListener('gattserverdisconnected', bluetoothDisconnectHandler);
+  }
+  selectedBluetoothPrinter = device;
+  bluetoothDisconnectHandler = () => {
+    if (selectedBluetoothPrinter !== device) return;
+    setBluetoothButtonState('', 'Printer terputus — mencoba menyambungkan kembali…','bluetooth_disabled');
+    scheduleBluetoothAutoReconnect();
+  };
+  device.addEventListener('gattserverdisconnected', bluetoothDisconnectHandler);
+}
+function scheduleBluetoothAutoReconnect(delay) {
+  if (bluetoothReconnectTimer !== null) return;
+  if (bluetoothReconnectAttempts >= BLUETOOTH_RECONNECT_DELAYS.length) {
+    setBluetoothButtonState('error', 'Printer belum tersambung — klik Bluetooth untuk mencoba lagi', 'bluetooth_disabled');
+    return;
+  }
+  const wait = Number.isFinite(delay) ? delay : BLUETOOTH_RECONNECT_DELAYS[bluetoothReconnectAttempts];
+  bluetoothReconnectAttempts++;
+  bluetoothReconnectTimer = setTimeout(() => {
+    bluetoothReconnectTimer = null;
+    reconnectSavedBluetoothPrinter({ silent:true });
+  }, wait);
+}
 function bluetoothErrorMessage(error) {
   if (!error) return 'Koneksi Bluetooth gagal.';
   if (error.name === 'NotFoundError' || error.name === 'AbortError' || error.name === 'NotAllowedError') return 'Pemilihan printer dibatalkan.';
   if (error.name === 'SecurityError') return 'Akses Bluetooth diblokir. Buka aplikasi melalui HTTPS dan izinkan Bluetooth.';
   if (error.name === 'NetworkError') return 'Printer tidak dapat dihubungkan. Pastikan printer menyala dan belum terhubung ke perangkat lain.';
   return 'Gagal menghubungkan printer Bluetooth: ' + (error.message || error.name || 'kesalahan tidak diketahui');
+}
+async function reconnectSavedBluetoothPrinter(options = {}) {
+  const silent = options.silent !== false;
+  if (bluetoothReconnectInProgress || !navigator.bluetooth || !window.isSecureContext) return false;
+  if (selectedBluetoothPrinter && selectedBluetoothPrinter.gatt && selectedBluetoothPrinter.gatt.connected) {
+    setBluetoothButtonState('connected', 'Terhubung: ' + (selectedBluetoothPrinter.name || 'Printer Bluetooth') + ' — klik untuk memilih perangkat lain', 'bluetooth_connected');
+    return true;
+  }
+  const saved = getSavedBluetoothPrinter();
+  if (!saved || typeof navigator.bluetooth.getDevices !== 'function') return false;
+  bluetoothReconnectInProgress = true;
+  try {
+    const permittedDevices = await navigator.bluetooth.getDevices();
+    const device = permittedDevices.find(item => item && item.id === saved.id);
+    if (!device) {
+      setBluetoothButtonState('', 'Printer tersimpan belum tersedia bagi situs ini — klik untuk pairing ulang', 'bluetooth_searching');
+      return false;
+    }
+    setBluetoothButtonState('scanning', 'Menyambungkan ulang ' + (device.name || saved.name || 'printer Bluetooth') + '…', 'bluetooth_searching');
+    if (!device.gatt) throw new Error('Perangkat tidak menyediakan koneksi BLE GATT. Printer Bluetooth klasik mungkin memerlukan aplikasi Android atau penghubung native.');
+    if (selectedBluetoothPrinter !== device || !bluetoothDisconnectHandler) bindBluetoothPrinterDisconnect(device);
+    if (!device.gatt.connected) await device.gatt.connect();
+    clearBluetoothReconnectTimer();
+    bluetoothReconnectAttempts = 0;
+    setBluetoothButtonState('connected', 'Terhubung: ' + (device.name || saved.name || 'Printer Bluetooth') + ' — klik untuk memilih perangkat lain', 'bluetooth_connected');
+    if (!silent) toast('Printer Bluetooth tersambung kembali: ' + (device.name || saved.name || 'Printer'));
+    return true;
+  } catch (error) {
+    console.warn('Penyambungan ulang printer Bluetooth belum berhasil:', error);
+    setBluetoothButtonState('error', 'Belum tersambung — mencoba ulang otomatis atau klik untuk pairing', 'bluetooth_disabled');
+    scheduleBluetoothAutoReconnect();
+    return false;
+  } finally {
+    bluetoothReconnectInProgress = false;
+  }
 }
 async function scanAndPairBluetoothPrinter() {
   if (!mobileBluetoothButton || mobileBluetoothButton.disabled) return;
@@ -1162,6 +1245,7 @@ async function scanAndPairBluetoothPrinter() {
     return;
   }
   const previousPrinter = selectedBluetoothPrinter;
+  clearBluetoothReconnectTimer();
   mobileBluetoothButton.disabled = true;
   setBluetoothButtonState('scanning','Mencari printer Bluetooth…','bluetooth_searching');
   toast('Pilih printer Bluetooth dari daftar perangkat.');
@@ -1176,37 +1260,44 @@ async function scanAndPairBluetoothPrinter() {
         '0000ff00-0000-1000-8000-00805f9b34fb'
       ]
     });
-    if (bluetoothDisconnectHandler && selectedBluetoothPrinter) {
-      selectedBluetoothPrinter.removeEventListener('gattserverdisconnected', bluetoothDisconnectHandler);
-    }
-    selectedBluetoothPrinter = device;
-    bluetoothDisconnectHandler = () => {
-      if (selectedBluetoothPrinter !== device) return;
-      setBluetoothButtonState('', 'Printer terputus — klik untuk mencari ulang','bluetooth_disabled');
-      toast('Printer Bluetooth terputus.');
-    };
-    device.addEventListener('gattserverdisconnected', bluetoothDisconnectHandler);
-
+    bindBluetoothPrinterDisconnect(device);
+    saveBluetoothPrinterPreference(device);
     if (!device.gatt) throw new Error('Perangkat tidak menyediakan koneksi BLE GATT. Printer Bluetooth klasik mungkin memerlukan aplikasi Android atau penghubung native.');
     if (!device.gatt.connected) await device.gatt.connect();
+    clearBluetoothReconnectTimer();
+    bluetoothReconnectAttempts = 0;
     setBluetoothButtonState('connected', 'Terhubung: ' + (device.name || 'Printer Bluetooth') + ' — klik untuk memilih perangkat lain','bluetooth_connected');
     toast('Printer Bluetooth terhubung: ' + (device.name || 'Printer'));
   } catch (error) {
     console.warn('Pairing printer Bluetooth gagal/dibatalkan:', error);
     if (previousPrinter && previousPrinter.gatt && previousPrinter.gatt.connected) {
-      selectedBluetoothPrinter = previousPrinter;
+      bindBluetoothPrinterDisconnect(previousPrinter);
       setBluetoothButtonState('connected','Terhubung: ' + (previousPrinter.name || 'Printer Bluetooth'),'bluetooth_connected');
     } else {
       selectedBluetoothPrinter = null;
       const cancelled = error && ['NotFoundError','AbortError','NotAllowedError'].includes(error.name);
-      setBluetoothButtonState(cancelled ? '' : 'error', cancelled ? 'Cari printer Bluetooth' : 'Koneksi Bluetooth gagal — klik untuk mencoba lagi', cancelled ? 'bluetooth_searching' : 'bluetooth_disabled');
+      setBluetoothButtonState(cancelled ? '' : 'error', cancelled ? 'Cari printer Bluetooth' : 'Koneksi Bluetooth gagal — mencoba ulang otomatis atau klik untuk pairing', cancelled ? 'bluetooth_searching' : 'bluetooth_disabled');
       if (!cancelled) toast(bluetoothErrorMessage(error));
+      if (!cancelled && getSavedBluetoothPrinter()) scheduleBluetoothAutoReconnect(1800);
     }
   } finally {
     mobileBluetoothButton.disabled = false;
   }
 }
 if (mobileBluetoothButton) mobileBluetoothButton.addEventListener('click', scanAndPairBluetoothPrinter);
+
+// On reload/reopen and when the page returns to the foreground, reconnect to the last printer
+// that this site was already permitted to access. No new permission dialog is shown automatically.
+setTimeout(() => reconnectSavedBluetoothPrinter({ silent:true }), 650);
+window.addEventListener('pageshow', () => {
+  if (document.visibilityState === 'visible') setTimeout(() => reconnectSavedBluetoothPrinter({ silent:true }), 250);
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') setTimeout(() => reconnectSavedBluetoothPrinter({ silent:true }), 250);
+});
+window.addEventListener('online', () => reconnectSavedBluetoothPrinter({ silent:true }));
+window.rekapinyuBluetoothReconnect = () => reconnectSavedBluetoothPrinter({ silent:true });
+
 
 // Produk Kasir: product creation inputs only affect the product-management view.
 let selectedProductPhoto = '';
@@ -1496,7 +1587,7 @@ restoreProductFolderOnStartup();
 </script>
 <script type="module">
   import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
-  import { getAuth, signOut } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
+  import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js';
   import { getAnalytics, isSupported as analyticsIsSupported } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js';
 
   const firebaseConfig = {
@@ -1521,6 +1612,13 @@ restoreProductFolderOnStartup();
     }
     window.rekapinyuFirebaseSignOut = () => signOut(auth);
     window.rekapinyuFirebaseAuth = auth;
+    // If Firebase restores an existing signed-in session or a user signs in again on this page,
+    // try reconnecting to the already-authorized printer without prompting for a new device.
+    onAuthStateChanged(auth, user => {
+      if (user && typeof window.rekapinyuBluetoothReconnect === 'function') {
+        setTimeout(() => window.rekapinyuBluetoothReconnect(), 350);
+      }
+    });
     return true;
   })().catch(error => {
     console.error('Inisialisasi Firebase gagal:', error);
