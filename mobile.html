@@ -198,7 +198,12 @@ body { min-height: 100%; }
     background: #fff !important; color: #333 !important; box-sizing: border-box !important;
     font-size: 12px !important;
   }
-  .mobile-toolbar .mobile-bluetooth { flex: 0 0 34px !important; width: 34px !important; padding: 0 !important; color: #e65a73 !important; }
+  .mobile-toolbar .mobile-bluetooth { flex: 0 0 34px !important; width: 34px !important; padding: 0 !important; color: #e65a73 !important; display:grid !important; place-items:center !important; cursor:pointer !important; transition:background .18s ease,border-color .18s ease,color .18s ease,opacity .18s ease !important; }
+  .mobile-toolbar .mobile-bluetooth .material-symbols-rounded { font-family:"Material Symbols Rounded" !important; font-size:19px !important; line-height:1 !important; font-weight:400 !important; font-feature-settings:"liga" !important; pointer-events:none !important; }
+  .mobile-toolbar .mobile-bluetooth.is-scanning { background:#fef3c7 !important; border-color:#f59e0b !important; color:#92400e !important; }
+  .mobile-toolbar .mobile-bluetooth.is-connected { background:#dcfce7 !important; border-color:#86efac !important; color:#15803d !important; }
+  .mobile-toolbar .mobile-bluetooth.is-error { background:#fff1f2 !important; border-color:#fda4af !important; color:#be123c !important; }
+  .mobile-toolbar .mobile-bluetooth:disabled { opacity:.72 !important; cursor:progress !important; }
   .mobile-toolbar .mobile-shift { flex: 0 0 84px !important; width: 84px !important; padding: 0 8px !important; font-weight: 600 !important; white-space: nowrap !important; }
   .mobile-toolbar #mobileSearch, .mobile-toolbar #mobileBarcode { flex: 1 1 0 !important; width: 0 !important; padding: 0 10px !important; }
 
@@ -647,7 +652,7 @@ body { min-height: 100%; }
     <div class="navspacer"></div><button class="navbtn" title="Notifications">♟</button><button class="navbtn" title="Settings">⚙</button><div class="avatar">👩🏻</div>
    </aside>
    <main class="main">
-    <div class="mobile-toolbar"><button class="mobile-bluetooth" title="Bluetooth">ᛒ</button><button class="mobile-shift" id="shiftMobile">SHIFT</button><input id="mobileSearch" placeholder="cari produk" aria-label="Cari produk"><input id="mobileBarcode" placeholder="barcode" aria-label="Barcode"></div>
+    <div class="mobile-toolbar"><button class="mobile-bluetooth" id="mobileBluetooth" type="button" title="Cari dan hubungkan printer Bluetooth" aria-label="Cari dan hubungkan printer Bluetooth"><span class="material-symbols-rounded" id="bluetoothStatusIcon" aria-hidden="true">bluetooth_searching</span></button><button class="mobile-shift" id="shiftMobile">SHIFT</button><input id="mobileSearch" placeholder="cari produk" aria-label="Cari produk"><input id="mobileBarcode" placeholder="barcode" aria-label="Barcode"></div>
     <div class="product-manager-toolbar" aria-label="Form Produk Kasir">
       <input id="newProductName" class="pm-name" type="text" placeholder="Nama Produk" aria-label="Nama Produk" autocomplete="off">
       <label class="pm-photo" for="newProductPhoto" aria-label="Foto produk">
@@ -1127,6 +1132,81 @@ document.getElementById('place').onclick=()=>completeSale({requirePayment:true,c
 document.getElementById('mobileSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;renderProducts()});
 document.getElementById('mobileBarcode').addEventListener('keydown',e=>{if(e.key==='Enter'){const code=e.target.value.trim();const p=products.find(x=>String(x.barcode||'').trim()===code);if(p){addToCart(p.id,'barcode');e.target.value=''}else toast('Barcode tidak ditemukan')}});
 document.getElementById('shiftMobile').onclick=()=>toast('SHIFT');
+
+// Printer Bluetooth pairing: use Web Bluetooth for BLE-capable printers in supported secure browsers.
+// Classic Bluetooth SPP printers are not accessible through the Web Bluetooth GATT API.
+const mobileBluetoothButton = document.getElementById('mobileBluetooth');
+const bluetoothStatusIcon = document.getElementById('bluetoothStatusIcon');
+let selectedBluetoothPrinter = null;
+let bluetoothDisconnectHandler = null;
+function setBluetoothButtonState(state, title, iconName) {
+  if (!mobileBluetoothButton) return;
+  mobileBluetoothButton.classList.remove('is-scanning','is-connected','is-error');
+  if (state) mobileBluetoothButton.classList.add('is-' + state);
+  mobileBluetoothButton.title = title;
+  mobileBluetoothButton.setAttribute('aria-label', title);
+  if (bluetoothStatusIcon && iconName) bluetoothStatusIcon.textContent = iconName;
+}
+function bluetoothErrorMessage(error) {
+  if (!error) return 'Koneksi Bluetooth gagal.';
+  if (error.name === 'NotFoundError' || error.name === 'AbortError' || error.name === 'NotAllowedError') return 'Pemilihan printer dibatalkan.';
+  if (error.name === 'SecurityError') return 'Akses Bluetooth diblokir. Buka aplikasi melalui HTTPS dan izinkan Bluetooth.';
+  if (error.name === 'NetworkError') return 'Printer tidak dapat dihubungkan. Pastikan printer menyala dan belum terhubung ke perangkat lain.';
+  return 'Gagal menghubungkan printer Bluetooth: ' + (error.message || error.name || 'kesalahan tidak diketahui');
+}
+async function scanAndPairBluetoothPrinter() {
+  if (!mobileBluetoothButton || mobileBluetoothButton.disabled) return;
+  if (!window.isSecureContext || !navigator.bluetooth || typeof navigator.bluetooth.requestDevice !== 'function') {
+    setBluetoothButtonState('error','Bluetooth tidak didukung di browser ini','bluetooth_disabled');
+    toast('Bluetooth Web memerlukan HTTPS dan browser yang mendukung Web Bluetooth (misalnya Chrome/Edge).');
+    return;
+  }
+  const previousPrinter = selectedBluetoothPrinter;
+  mobileBluetoothButton.disabled = true;
+  setBluetoothButtonState('scanning','Mencari printer Bluetooth…','bluetooth_searching');
+  toast('Pilih printer Bluetooth dari daftar perangkat.');
+  try {
+    const device = await navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: [
+        'battery_service',
+        'device_information',
+        '000018f0-0000-1000-8000-00805f9b34fb',
+        '0000ffe0-0000-1000-8000-00805f9b34fb',
+        '0000ff00-0000-1000-8000-00805f9b34fb'
+      ]
+    });
+    if (bluetoothDisconnectHandler && selectedBluetoothPrinter) {
+      selectedBluetoothPrinter.removeEventListener('gattserverdisconnected', bluetoothDisconnectHandler);
+    }
+    selectedBluetoothPrinter = device;
+    bluetoothDisconnectHandler = () => {
+      if (selectedBluetoothPrinter !== device) return;
+      setBluetoothButtonState('', 'Printer terputus — klik untuk mencari ulang','bluetooth_disabled');
+      toast('Printer Bluetooth terputus.');
+    };
+    device.addEventListener('gattserverdisconnected', bluetoothDisconnectHandler);
+
+    if (!device.gatt) throw new Error('Perangkat tidak menyediakan koneksi BLE GATT. Printer Bluetooth klasik mungkin memerlukan aplikasi Android atau penghubung native.');
+    if (!device.gatt.connected) await device.gatt.connect();
+    setBluetoothButtonState('connected', 'Terhubung: ' + (device.name || 'Printer Bluetooth') + ' — klik untuk memilih perangkat lain','bluetooth_connected');
+    toast('Printer Bluetooth terhubung: ' + (device.name || 'Printer'));
+  } catch (error) {
+    console.warn('Pairing printer Bluetooth gagal/dibatalkan:', error);
+    if (previousPrinter && previousPrinter.gatt && previousPrinter.gatt.connected) {
+      selectedBluetoothPrinter = previousPrinter;
+      setBluetoothButtonState('connected','Terhubung: ' + (previousPrinter.name || 'Printer Bluetooth'),'bluetooth_connected');
+    } else {
+      selectedBluetoothPrinter = null;
+      const cancelled = error && ['NotFoundError','AbortError','NotAllowedError'].includes(error.name);
+      setBluetoothButtonState(cancelled ? '' : 'error', cancelled ? 'Cari printer Bluetooth' : 'Koneksi Bluetooth gagal — klik untuk mencoba lagi', cancelled ? 'bluetooth_searching' : 'bluetooth_disabled');
+      if (!cancelled) toast(bluetoothErrorMessage(error));
+    }
+  } finally {
+    mobileBluetoothButton.disabled = false;
+  }
+}
+if (mobileBluetoothButton) mobileBluetoothButton.addEventListener('click', scanAndPairBluetoothPrinter);
 
 // Produk Kasir: product creation inputs only affect the product-management view.
 let selectedProductPhoto = '';
