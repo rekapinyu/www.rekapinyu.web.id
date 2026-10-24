@@ -5855,9 +5855,12 @@ function updateUserAvatarUI() {
             const container = document.getElementById('kasbon-grid');
             if (!container) return;
 
+            /* KASBON FILTER — state tunggal. File ini tidak memiliki select
+               #filter-kasbon-status, sehingga membaca select lama membuat pilihan
+               Lunas/Belum Lunas/Semua tidak pernah diterapkan. */
             const fStatusEl = document.getElementById('filter-kasbon-status');
             const fNamaEl = document.getElementById('filter-kasbon-nama');
-            const fStatus = fStatusEl ? fStatusEl.value : "";
+            const fStatus = fStatusEl ? fStatusEl.value : (window.__rekapinyuKasbonStatusFilter || "");
             const fNama = fNamaEl ? fNamaEl.value.trim().toLowerCase() : "";
 
             let filtered = kasbonData.filter(item => {
@@ -8692,6 +8695,11 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         #rekapinyu-kasbon-filter-wrap { right: 14px; bottom: 76px; }
         #rekapinyu-kasbon-filter-button { width: 50px; height: 50px; }
     }
+    @media (min-width: 768px) {
+        #rekapinyu-kasbon-filter-wrap { z-index: 9999 !important; }
+        #rekapinyu-kasbon-filter-button { position: relative; z-index: 10000; pointer-events: auto; }
+        #rekapinyu-kasbon-filter-menu { position: relative; z-index: 10001; pointer-events: auto; }
+    }
 </style>
 <div id="rekapinyu-kasbon-filter-wrap">
 <div class="hidden" id="rekapinyu-kasbon-filter-menu">
@@ -9008,18 +9016,59 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     function bindKasbonFilter() {
         const button = document.getElementById('rekapinyu-kasbon-filter-button');
         const menu = document.getElementById('rekapinyu-kasbon-filter-menu');
-        if (!button || !menu || button.dataset.bound) return;
-        button.dataset.bound = '1';
-        button.addEventListener('click', event => { event.stopPropagation(); menu.classList.toggle('hidden'); });
+        if (!button || !menu || button.dataset.kasbonFilterBound === 'v2') return;
+        button.dataset.kasbonFilterBound = 'v2';
+        if (typeof window.__rekapinyuKasbonStatusFilter !== 'string') {
+            window.__rekapinyuKasbonStatusFilter = '';
+        }
+
+        button.setAttribute('aria-haspopup', 'true');
+        button.setAttribute('aria-expanded', 'false');
+        button.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            const open = menu.classList.contains('hidden');
+            menu.classList.toggle('hidden', !open);
+            button.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+
         menu.addEventListener('click', event => {
             const option = event.target.closest('[data-kasbon-filter]');
             if (!option) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const status = option.dataset.kasbonFilter || '';
+            window.__rekapinyuKasbonStatusFilter = status;
+
+            /* Sinkronkan select jika suatu versi halaman memang memilikinya,
+               tetapi jangan bergantung pada elemen yang tidak ada di file ini. */
             const select = document.getElementById('filter-kasbon-status');
-            if (select) { select.value = option.dataset.kasbonFilter; renderKasbonGrid(); }
+            if (select) select.value = status;
+
+            menu.querySelectorAll('[data-kasbon-filter]').forEach(item => {
+                item.setAttribute('aria-pressed', item === option ? 'true' : 'false');
+                item.classList.toggle('bg-blue-50', item === option);
+                item.classList.toggle('text-blue-700', item === option);
+            });
+            const label = status === 'lunas' ? 'Lunas' : status === 'belum_lunas' ? 'Belum Lunas' : 'Semua Status';
+            button.setAttribute('aria-label', 'Filter Kasbon: ' + label);
+            button.setAttribute('title', 'Filter Kasbon: ' + label);
+            if (typeof renderKasbonGrid === 'function') renderKasbonGrid();
             menu.classList.add('hidden');
+            button.setAttribute('aria-expanded', 'false');
         });
+
         document.addEventListener('click', event => {
-            if (!event.target.closest('#rekapinyu-kasbon-filter-wrap')) menu.classList.add('hidden');
+            if (!event.target.closest('#rekapinyu-kasbon-filter-wrap')) {
+                menu.classList.add('hidden');
+                button.setAttribute('aria-expanded', 'false');
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                menu.classList.add('hidden');
+                button.setAttribute('aria-expanded', 'false');
+            }
         });
     }
 
