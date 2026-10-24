@@ -1446,6 +1446,27 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 
 
 
+
+<style id="kasbon-desktop-sticky-filter-fix">
+/* Kasbon desktop: pertahankan panel input menempel di bagian atas area scroll MAIN. */
+@media (min-width: 768px) {
+  main #kasbon-sticky-container {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    align-self: stretch !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 0 !important;
+  }
+  main:has(#view-kasbon:not(.hidden)) #kasbon-sticky-container:not(.hidden) {
+    display: block !important;
+  }
+}
+</style>
+
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
