@@ -91,7 +91,7 @@
 
 
 
-/* Desktop reference layout update: presentation-only; JS and audio logic stay unchanged. */
+/* Desktop reference layout: stable two-column layout, visual-only. */
 .desktop-nav{display:none}
 @media (min-width:761px){
   .top{justify-content:space-between}
@@ -102,23 +102,48 @@
   .social-icon.whatsapp{border:2px solid #20b968;color:#20b968;border-radius:50%;font-size:14px}
   .social-icon.tiktok{color:#111827;font-size:21px;text-shadow:-1px 0 #25f4ee,1px 0 #fe2c55}
   .social-icon.facebook{background:#1877f2;color:#fff;border-radius:50%;font-family:Arial,sans-serif;font-size:16px;align-items:end}
-
-  /* Flatten only the left wrapper at desktop widths so existing controls can sit
-     in the right visual column without changing their event handlers or DOM IDs. */
-  .grid{grid-template-columns:minmax(0,1.73fr) minmax(0,1fr);grid-template-rows:auto auto;column-gap:28px;row-gap:0;align-items:start}
-  #importSection{display:contents}
-  #videoStage{grid-column:1;grid-row:1;margin-left:9px;min-width:0}
-  #importSection .filemeta{grid-column:1;grid-row:2;align-self:start;margin:12px 0 0 9px!important;width:min(525px,calc(100% - 9px));}
-  #transposeSection{grid-column:2;grid-row:1;align-self:stretch;z-index:1;min-width:0}
-  #importSection .row{grid-column:2;grid-row:1;align-self:end;z-index:2;max-width:none;width:100%;margin:0 0 68px!important;padding:0}
-  #importSection .row .btn{width:100%;min-width:0;flex:1}
-  #importSection .alert{grid-column:2;grid-row:1;align-self:end;z-index:2;max-width:none;width:100%;margin:0 0 4px!important;min-height:57px;}
-  #importSection .alert:not(.show){visibility:hidden;display:block;opacity:0;pointer-events:none}
-  #importSection .alert.show{display:block;opacity:1;visibility:visible}
+  .wrap{width:100%;max-width:none;padding:0 30px 30px}
+  .top{height:62px;margin:0 -30px 24px;padding:10px 27px;justify-content:space-between;border-bottom:1px solid #d4dce8;gap:0}
+  .brand{gap:0}
+  .brand .logo,.brand p,.top .pill{display:none}
+  .brand h1{font-size:29px;font-weight:400;letter-spacing:-1.2px;line-height:1.3}
+  .brand-mic{color:#ff343b}
+  .brand-on{color:#00a5ec}
+  .hero,.foot{display:none}
+  .grid{display:grid;grid-template-columns:minmax(0,1.73fr) minmax(0,1fr);gap:28px;align-items:start;margin-top:0}
+  #importSection,#transposeSection{display:block;border:0;border-radius:0;background:transparent;box-shadow:none;padding:0;min-width:0}
+  #importSection>h3,#importSection>.sub,#transposeSection>h3,#transposeSection>.sub{display:none}
+  #importSection{padding:0 9px}
+  #videoStage{width:100%;min-width:0}
+  #videoStage:empty{aspect-ratio:16/9;display:grid;place-items:center;border:1px dashed #dbe3ef;border-radius:20px;background:#f8fafc}
+  #videoStage:empty::before{content:'Video MP4 akan tampil di sini';color:#94a3b8;font-size:14px}
+  #karaokeVideo{display:block!important;width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:16/9;object-fit:cover!important;background:#000;border-radius:20px!important;margin:0!important}
+  #dropZone{min-height:40px;height:40px;margin:2px 0 14px;padding:4px 8px;border:1px dashed #8798b7;border-radius:14px;background:#f8fafc;color:#1e293b}
+  #dropZone .uploadIcon{display:none}
+  #dropZone strong{font-size:10px;line-height:1.25;font-weight:700}
+  #dropZone small{font-size:9px;line-height:1.2;margin-top:2px;color:#64748b}
+  #dropZone:hover,#dropZone.drag{border-color:#0f9f91;background:#f1fafa}
+  #importSection .filemeta{width:min(525px,100%);margin:12px 0 0;padding:10px 8px;border-radius:0;background:#f8fafc;border:0;border-right:1px solid #dbe3ef;min-height:68px;align-items:center}
+  .fileIcon{width:42px;height:42px;background:#eaf0ff;color:#112b50;border-radius:12px}
+  .filetext b{font-size:13px;line-height:1.3;color:#0f172a}
+  .filetext small{font-size:12px;color:#64748b}
+  .status{font-size:12px;color:#0f9f91}
+  #transposeSection .noteBox{height:138px;margin:0 0 22px;padding:18px 10px;background:#f8fafc;border:1px solid #d8e2f0;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  #transposeSection .noteBox small{font-size:14px;color:#7b8798}
+  #transposeSection .note{font-size:42px;line-height:1.25;color:#0b1c36;letter-spacing:-1px}
+  #transposeSection #noteDesc{font-size:12px;color:#64748b}
+  #transposeSection .stepper{grid-template-columns:68px minmax(0,1fr) 68px;gap:14px}
+  #transposeSection .step{height:64px;border-radius:17px;background:#1c2f4f;color:#fff;border:1px solid #1c2f4f;font-size:29px}
+  #transposeSection .range{accent-color:#0f9f91;height:10px}
+  #transposeSection .rangeLabels{margin-top:8px;color:#64748b;font-size:12px}
+  #transposeSection .semitone{display:none}
+  #transposeSection .playrow,#transposeSection .hint{display:none}
+  #transposeSection .row{display:flex;width:100%;max-width:none;margin:38px 0 0!important;gap:10px}
+  #transposeSection .row .btn{width:100%;min-width:0;flex:1;background:#1c2f4f;color:#fff;border:1px solid #1c2f4f;border-radius:10px}
+  #transposeSection .alert{width:100%;max-width:none;margin:10px 0 0!important;min-height:57px;background:#fff1f2;color:#be123c;border-color:#fecdd3}
+  #transposeSection .alert:not(.show){display:none}
 }
-@media(max-width:760px){
-  .desktop-nav{display:none!important}
-}
+@media(max-width:760px){.desktop-nav{display:none!important}}
 
 </style></head>
 <body><main class="wrap">
@@ -128,14 +153,14 @@
 <section class="card" id="importSection"><h3>01 · Import musik</h3><p class="sub">Pilih video MP4 dari perangkat kamu.</p>
 <div id="videoStage" class="videoStage"></div>
 <div class="filemeta"><div class="fileIcon">♫</div><div class="filetext"><b id="fileName">Belum ada lagu dipilih</b><small id="fileSize">File audio akan tampil di sini</small><div class="status" id="fileStatus">Menunggu file</div></div></div>
-<div class="row" style="margin-top:14px"><button class="btn secondary" id="clearBtn" disabled>Hapus video</button></div>
-<div id="alert" class="alert"></div>
-
 </section>
 <section class="card transposeCard" id="transposeSection"><label class="drop" id="dropZone" for="videoFile"><div><div class="uploadIcon">⬆</div><strong>Tekan untuk pilih video MP4</strong><small>MP4 · pilih video baru untuk mengganti video</small></div></label><input id="videoFile" type="file" accept="video/mp4,video/*,.mp4" hidden><h3>02 · Transpose nada video</h3><p class="sub">Ubah nada audio video saat diputar.</p>
 <div class="noteBox"><small>Nada relatif</small><div class="note" id="noteName">Original</div><div class="mini" id="noteDesc">0 semitone · nada asli</div></div>
 <div class="stepper"><button class="step" id="downBtn" aria-label="Turunkan nada" disabled>−</button><input class="range" id="pitchRange" type="range" min="-24" max="24" step="1" value="0" disabled><button class="step" id="upBtn" aria-label="Naikkan nada" disabled>+</button></div>
-<div class="rangeLabels"><span>−24 semitone</span><span>0</span><span>+24 semitone</span></div><div class="semitone"><span id="pitchValue">0</span><small>semitone</small></div>
+<div class="rangeLabels"><span>−24 semitone</span><span>0</span><span>+24 semitone</span></div>
+<div class="row" style="margin-top:14px"><button class="btn secondary" id="clearBtn" disabled>Hapus video</button></div>
+<div id="alert" class="alert"></div>
+<div class="semitone"><span id="pitchValue">0</span><small>semitone</small></div>
 <div class="playrow"><button class="btn playbtn" id="playBtn" disabled>▶ &nbsp; Putar video</button><div class="progress"><div id="progressBar"></div></div><div class="row" style="justify-content:space-between;margin-top:8px"><span class="mini" id="currentTime">00:00</span><span class="mini" id="duration">00:00</span></div></div>
 <p class="hint" style="margin:16px 0 0">Catatan: transpose mengubah pitch audio tanpa mengubah kecepatan video. Playback rate dipertahankan pada 1×; file asli tidak diubah.</p>
 </section></div><div class="foot">Transpose Karaoke MP4 V6 · Pemrosesan audio lokal dengan koreksi formant untuk kualitas nada lebih alami.</div>
