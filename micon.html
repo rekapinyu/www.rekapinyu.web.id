@@ -65,8 +65,8 @@
   #karaokeVideo{display:block!important;width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:16/9;object-fit:cover!important;background:#000;border-radius:20px!important;margin:0!important}
   #dropZone{min-height:40px;height:40px;margin:2px 0 14px;padding:4px 8px;border:1px dashed #8798b7;border-radius:14px;background:#f8fafc;color:#1e293b}
   #dropZone .uploadIcon{display:none}
-  #dropZone strong{font-size:8px;line-height:1.25;font-weight:700}
-  #dropZone small{font-size:7px;line-height:1.2;margin-top:2px;color:#64748b}
+  #dropZone strong{font-size:10px;line-height:1.25;font-weight:700}
+  #dropZone small{font-size:9px;line-height:1.2;margin-top:2px;color:#64748b}
   #dropZone:hover,#dropZone.drag{border-color:#0f9f91;background:#f1fafa}
   #importSection .filemeta{width:min(525px,calc(100% + 14px));margin:12px 0 0 -7px;padding:10px 8px;border-radius:0 0 0 0;background:#f8fafc;border:0;border-right:1px solid #dbe3ef;min-height:68px;align-items:center}
   .fileIcon{width:42px;height:42px;background:#eaf0ff;color:#112b50;border-radius:12px}
@@ -89,9 +89,40 @@
   #transposeSection .playrow,#transposeSection .hint{display:none}
 }
 
+
+
+/* Desktop reference layout update: presentation-only; JS and audio logic stay unchanged. */
+.desktop-nav{display:none}
+@media (min-width:761px){
+  .top{justify-content:space-between}
+  .desktop-nav{display:flex;align-items:center;gap:24px;margin-left:auto;font-size:15px;line-height:1;color:#111827;white-space:nowrap}
+  .nav-link{display:inline-flex;align-items:center;cursor:default}
+  .social-icons{display:flex;align-items:center;gap:12px;margin-left:0}
+  .social-icon{display:inline-grid;place-items:center;width:21px;height:21px;font-weight:800;line-height:1;font-size:17px}
+  .social-icon.whatsapp{border:2px solid #20b968;color:#20b968;border-radius:50%;font-size:14px}
+  .social-icon.tiktok{color:#111827;font-size:21px;text-shadow:-1px 0 #25f4ee,1px 0 #fe2c55}
+  .social-icon.facebook{background:#1877f2;color:#fff;border-radius:50%;font-family:Arial,sans-serif;font-size:16px;align-items:end}
+
+  /* Flatten only the left wrapper at desktop widths so existing controls can sit
+     in the right visual column without changing their event handlers or DOM IDs. */
+  .grid{grid-template-columns:minmax(0,1.73fr) minmax(0,1fr);grid-template-rows:auto auto;column-gap:28px;row-gap:0;align-items:start}
+  #importSection{display:contents}
+  #videoStage{grid-column:1;grid-row:1;margin-left:9px;min-width:0}
+  #importSection .filemeta{grid-column:1;grid-row:2;align-self:start;margin:12px 0 0 9px!important;width:min(525px,calc(100% - 9px));}
+  #transposeSection{grid-column:2;grid-row:1;align-self:stretch;z-index:1;min-width:0}
+  #importSection .row{grid-column:2;grid-row:1;align-self:end;z-index:2;max-width:none;width:100%;margin:0 0 68px!important;padding:0}
+  #importSection .row .btn{width:100%;min-width:0;flex:1}
+  #importSection .alert{grid-column:2;grid-row:1;align-self:end;z-index:2;max-width:none;width:100%;margin:0 0 4px!important;min-height:57px;}
+  #importSection .alert:not(.show){visibility:hidden;display:block;opacity:0;pointer-events:none}
+  #importSection .alert.show{display:block;opacity:1;visibility:visible}
+}
+@media(max-width:760px){
+  .desktop-nav{display:none!important}
+}
+
 </style></head>
 <body><main class="wrap">
-<header class="top"><div class="brand"><div class="logo">♫</div><div><h1><span class="brand-mic">Mic</span> <span class="brand-on">On</span></h1><p>Atur nada lagu sesuai suara kamu</p></div></div><div class="pill">IMPORT VIDEO · LOKAL</div></header>
+<header class="top"><div class="brand"><div class="logo">♫</div><div><h1><span class="brand-mic">Mic</span> <span class="brand-on">On</span></h1><p>Atur nada lagu sesuai suara kamu</p></div></div><nav class="desktop-nav" aria-label="Navigasi utama"><span class="nav-link">Home</span><span class="nav-link">Panduan</span><span class="nav-link">Perpanjang Paket</span><span class="social-icons" aria-label="Media sosial"><span class="social-icon whatsapp" title="WhatsApp">◔</span><span class="social-icon tiktok" title="TikTok">♪</span><span class="social-icon facebook" title="Facebook">f</span></span></nav><div class="pill">IMPORT VIDEO · LOKAL</div></header>
 <section class="hero" id="homeSection"><h2>Nyanyi di nada<br><span>yang paling nyaman.</span></h2><p>Import musik, naikkan atau turunkan nada hingga 24 semitone, lalu putar untuk latihan karaoke.</p></section>
 <div class="grid">
 <section class="card" id="importSection"><h3>01 · Import musik</h3><p class="sub">Pilih video MP4 dari perangkat kamu.</p>
