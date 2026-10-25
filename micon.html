@@ -44,19 +44,64 @@
   .sheet-note{color:#334155;font-weight:700;padding:8px 2px}.sheet-note small{font-weight:400;color:#64748b}
 }
 
+
+/* Reference design: Mic On header, large video left and compact pitch controls right.
+   These are presentation-only overrides; playback/transpose behavior remains intact. */
+@media (min-width:761px){
+  body{background:#fff;color:#172033}
+  .wrap{width:100%;max-width:none;padding:0 30px 30px}
+  .top{height:62px;margin:0 -30px 24px;padding:10px 27px;justify-content:flex-start;border-bottom:1px solid #d4dce8;gap:0}
+  .brand{gap:0}
+  .brand .logo,.brand p,.top .pill{display:none}
+  .brand h1{font-size:29px;font-weight:400;letter-spacing:-1.2px;line-height:1.3}
+  .brand-mic{color:#ff343b}
+  .brand-on{color:#00a5ec}
+  .hero,.foot{display:none}
+  .grid{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:0}
+  #importSection,#transposeSection{border:0;border-radius:0;background:transparent;box-shadow:none;padding:0;min-width:0}
+  #importSection>h3,#importSection>.sub,#transposeSection>h3,#transposeSection>.sub{display:none}
+  #importSection{padding:0 9px}
+  .videoStage{width:100%;min-width:0}
+  #karaokeVideo{display:block!important;width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:16/9;object-fit:cover!important;background:#000;border-radius:20px!important;margin:0!important}
+  #dropZone{min-height:40px;height:40px;margin:2px 0 14px;padding:4px 8px;border:1px dashed #8798b7;border-radius:14px;background:#f8fafc;color:#1e293b}
+  #dropZone .uploadIcon{display:none}
+  #dropZone strong{font-size:8px;line-height:1.25;font-weight:700}
+  #dropZone small{font-size:7px;line-height:1.2;margin-top:2px;color:#64748b}
+  #dropZone:hover,#dropZone.drag{border-color:#0f9f91;background:#f1fafa}
+  #importSection .filemeta{width:min(525px,calc(100% + 14px));margin:12px 0 0 -7px;padding:10px 8px;border-radius:0 0 0 0;background:#f8fafc;border:0;border-right:1px solid #dbe3ef;min-height:68px;align-items:center}
+  .fileIcon{width:42px;height:42px;background:#eaf0ff;color:#112b50;border-radius:12px}
+  .filetext b{font-size:13px;line-height:1.3;color:#0f172a}
+  .filetext small{font-size:12px;color:#64748b}
+  .status{font-size:12px;color:#0f9f91}
+  #importSection .row{max-width:525px;margin:12px 0 0!important}
+  #importSection .btn.secondary{background:#1c2f4f;color:#fff;border:1px solid #1c2f4f;border-radius:10px}
+  #importSection .alert{max-width:525px;margin-top:10px;background:#fff1f2;color:#be123c;border-color:#fecdd3}
+  #transposeSection{padding:0}
+  #transposeSection .noteBox{height:138px;margin:0 0 22px;padding:18px 10px;background:#f8fafc;border:1px solid #d8e2f0;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  #transposeSection .noteBox small{font-size:14px;color:#7b8798}
+  #transposeSection .note{font-size:42px;line-height:1.25;color:#0b1c36;letter-spacing:-1px}
+  #transposeSection #noteDesc{font-size:12px;color:#64748b}
+  #transposeSection .stepper{grid-template-columns:68px minmax(0,1fr) 68px;gap:14px}
+  #transposeSection .step{height:64px;border-radius:17px;background:#1c2f4f;color:#fff;border:1px solid #1c2f4f;font-size:29px}
+  #transposeSection .range{accent-color:#0f9f91;height:10px}
+  #transposeSection .rangeLabels{margin-top:8px;color:#64748b;font-size:12px}
+  #transposeSection .semitone{display:none}
+  #transposeSection .playrow,#transposeSection .hint{display:none}
+}
+
 </style></head>
 <body><main class="wrap">
-<header class="top"><div class="brand"><div class="logo">♫</div><div><h1>Transpose Karaoke</h1><p>Atur nada lagu sesuai suara kamu</p></div></div><div class="pill">IMPORT VIDEO · LOKAL</div></header>
+<header class="top"><div class="brand"><div class="logo">♫</div><div><h1><span class="brand-mic">Mic</span> <span class="brand-on">On</span></h1><p>Atur nada lagu sesuai suara kamu</p></div></div><div class="pill">IMPORT VIDEO · LOKAL</div></header>
 <section class="hero" id="homeSection"><h2>Nyanyi di nada<br><span>yang paling nyaman.</span></h2><p>Import musik, naikkan atau turunkan nada hingga 24 semitone, lalu putar untuk latihan karaoke.</p></section>
 <div class="grid">
 <section class="card" id="importSection"><h3>01 · Import musik</h3><p class="sub">Pilih video MP4 dari perangkat kamu.</p>
-<label class="drop" id="dropZone" for="videoFile"><div><div class="uploadIcon">⬆</div><strong>Tekan untuk pilih video MP4</strong><small>MP4 · pilih video baru untuk mengganti video</small></div></label><input id="videoFile" type="file" accept="video/mp4,video/*,.mp4" hidden>
+<div id="videoStage" class="videoStage"></div>
 <div class="filemeta"><div class="fileIcon">♫</div><div class="filetext"><b id="fileName">Belum ada lagu dipilih</b><small id="fileSize">File audio akan tampil di sini</small><div class="status" id="fileStatus">Menunggu file</div></div></div>
 <div class="row" style="margin-top:14px"><button class="btn secondary" id="clearBtn" disabled>Hapus video</button></div>
 <div id="alert" class="alert"></div>
 
 </section>
-<section class="card transposeCard" id="transposeSection"><h3>02 · Transpose nada video</h3><p class="sub">Ubah nada audio video saat diputar.</p>
+<section class="card transposeCard" id="transposeSection"><label class="drop" id="dropZone" for="videoFile"><div><div class="uploadIcon">⬆</div><strong>Tekan untuk pilih video MP4</strong><small>MP4 · pilih video baru untuk mengganti video</small></div></label><input id="videoFile" type="file" accept="video/mp4,video/*,.mp4" hidden><h3>02 · Transpose nada video</h3><p class="sub">Ubah nada audio video saat diputar.</p>
 <div class="noteBox"><small>Nada relatif</small><div class="note" id="noteName">Original</div><div class="mini" id="noteDesc">0 semitone · nada asli</div></div>
 <div class="stepper"><button class="step" id="downBtn" aria-label="Turunkan nada" disabled>−</button><input class="range" id="pitchRange" type="range" min="-24" max="24" step="1" value="0" disabled><button class="step" id="upBtn" aria-label="Naikkan nada" disabled>+</button></div>
 <div class="rangeLabels"><span>−24 semitone</span><span>0</span><span>+24 semitone</span></div><div class="semitone"><span id="pitchValue">0</span><small>semitone</small></div>
@@ -83,7 +128,7 @@ const fmt=t=>{t=Number.isFinite(t)&&t>0?t:0;return String(Math.floor(t/60)).padS
 function msg(t,err=false){const a=$('alert');if(a){a.textContent=t;a.className='alert show '+(err?'err':'ok')}}
 function noteValue(n){return n>0?'+'+n:String(n)}
 function showTime(){if(!video)return;$('currentTime').textContent=fmt(video.currentTime);$('progressBar').style.width=(video.duration?video.currentTime/video.duration*100:0)+'%';}
-function setupVideo(){if(video)video.remove();video=document.createElement('video');video.id='karaokeVideo';video.controls=true;video.playsInline=true;video.preload='metadata';video.defaultPlaybackRate=1;video.playbackRate=1;video.style.cssText='display:block;width:100%;max-height:52vh;object-fit:contain;background:#000;border-radius:16px;margin:12px 0';$('dropZone').after(video);video.src=url;video.addEventListener('loadedmetadata',()=>{$('duration').textContent=fmt(video.duration);$('fileStatus').textContent='Video siap diputar';$('playBtn').disabled=false;$('pitchRange').disabled=false;$('downBtn').disabled=false;$('upBtn').disabled=false;});video.addEventListener('ratechange',()=>{if(video&&video.playbackRate!==1)video.playbackRate=1;});video.addEventListener('timeupdate',showTime);video.addEventListener('play',()=>{playing=true;$('playBtn').textContent='Ⅱ Jeda video'});video.addEventListener('pause',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('ended',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('error',()=>msg('Browser tidak dapat membaca video ini. Coba MP4 H.264 dengan audio AAC.',true));}
+function setupVideo(){if(video)video.remove();video=document.createElement('video');video.id='karaokeVideo';video.controls=true;video.playsInline=true;video.preload='metadata';video.defaultPlaybackRate=1;video.playbackRate=1;video.style.cssText='display:block;width:100%;max-height:52vh;object-fit:contain;background:#000;border-radius:16px;margin:12px 0';$('videoStage').appendChild(video);video.src=url;video.addEventListener('loadedmetadata',()=>{$('duration').textContent=fmt(video.duration);$('fileStatus').textContent='Video siap diputar';$('playBtn').disabled=false;$('pitchRange').disabled=false;$('downBtn').disabled=false;$('upBtn').disabled=false;});video.addEventListener('ratechange',()=>{if(video&&video.playbackRate!==1)video.playbackRate=1;});video.addEventListener('timeupdate',showTime);video.addEventListener('play',()=>{playing=true;$('playBtn').textContent='Ⅱ Jeda video'});video.addEventListener('pause',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('ended',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('error',()=>msg('Browser tidak dapat membaca video ini. Coba MP4 H.264 dengan audio AAC.',true));}
 async function getFormantNodeClass(){if(!hqConstructorPromise){hqConstructorPromise=import(HQ_MODULE).then(mod=>{if(!mod.FormantCorrectionNode)throw new Error('Modul koreksi formant tidak ditemukan.');return mod.FormantCorrectionNode;});}return hqConstructorPromise;}
 function setFormantForPitch(n){if(!effect||engine!=='hq'||!effect.formantStrength)return;/* Koreksi timbre lebih kuat saat pitch diturunkan; campuran bertahap membantu mempertahankan warna instrumen. */const strength=n<0?Math.min(0.92,0.56+(Math.abs(n)/24)*0.36):(n>0?Math.min(0.72,0.48+(n/24)*0.24):0);effect.formantStrength.value=strength;}
 function updatePitch(){const n=Number($('pitchRange').value);$('pitchValue').textContent=noteValue(n);$('noteName').textContent=n===0?'Original':noteValue(n);$('noteDesc').textContent=n===0?'0 semitone · nada asli':Math.abs(n)+' semitone '+(n>0?'lebih tinggi':'lebih rendah');const engineReady=!!effect&&(engine==='hq'||engine==='tone');$('pitchRange').disabled=!file||!engineReady;$('downBtn').disabled=!file||!engineReady||n<=-24;$('upBtn').disabled=!file||!engineReady||n>=24;if(effect){try{if(engine==='hq'){effect.pitch.value=1;effect.pitchSemitones.value=n;effect.playbackRate.value=1;setFormantForPitch(n);}else if(engine==='tone'){effect.pitch=n;effect.wet.value=(n===0?0:1);}}catch(e){msg('Efek transpose gagal diperbarui: '+(e.message||e),true);}}if(video){video.defaultPlaybackRate=1;if(video.playbackRate!==1)video.playbackRate=1;}}
