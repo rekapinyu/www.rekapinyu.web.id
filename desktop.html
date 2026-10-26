@@ -9569,18 +9569,18 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         try{await idbSet(null)}catch(_){ }
         try{await idbSetFolderName('')}catch(_){ }
         try{await idbSetParentRoot(null)}catch(_){ }
+        /* Jangan biarkan label lama membuat tombol tetap aktif ketika folder
+           fisik sudah hilang, berganti nama, atau subfolder wajib tidak lengkap. */
+        try{localStorage.removeItem(LABEL_KEY)}catch(_){ }
       }else{
         photoDirectoryHandle=root;
         photoDirectoryOwnerKey=owner;
         try{localStorage.setItem(LABEL_KEY,selectedFolderName)}catch(_){ }
       }
     }
-    /* Nama pilihan tetap terlihat lintas reload/logout/login. Handle akses tetap
-       mengikuti izin browser dan akun aktif; label saja tidak memberi akses folder. */
-    if(!selectedFolderName){
-      try{selectedFolderName=String(localStorage.getItem(LABEL_KEY)||'').trim()}catch(_){ }
-    }
-    const active=!!selectedFolderName;
+    /* Label hanya ditampilkan bila handle folder masih tervalidasi. Label cache
+       tidak boleh mengunci tombol setelah folder terhapus atau berganti nama. */
+    const active=!!selectedFolderName&&!!valid;
     btn.classList.toggle('is-active',active);
     btn.setAttribute('aria-pressed',active?'true':'false');
     btn.disabled=active;
