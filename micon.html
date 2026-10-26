@@ -167,6 +167,42 @@
   @media(max-width:760px){.foot{grid-template-columns:1fr;gap:18px;margin-top:24px;padding:20px 2px 8px}.social-icons{gap:8px}.social-icon{width:34px;height:34px;flex-basis:34px}}
 }
 @media(max-width:760px){.top{position:sticky;top:0;z-index:1200;background:rgba(255,255,255,.97);box-shadow:0 1px 0 rgba(148,163,184,.22)}}
+
+/* Layout refinement based on the supplied reference image; visual-only desktop overrides. */
+@media (min-width:761px){
+  .wrap{padding:0 30px 16px}
+  .grid{display:grid;grid-template-columns:minmax(0,1.73fr) minmax(0,1fr);gap:36px;align-items:start;margin-top:0}
+  #importSection,#transposeSection{display:contents}
+  #videoStage{grid-column:1;grid-row:1 / span 6;align-self:start;width:100%;min-width:0}
+  #videoStage:empty{aspect-ratio:16/9;display:grid;place-items:center;border:1px dashed #dbe3ef;border-radius:20px;background:#f8fafc}
+  #videoStage:empty::before{content:'Video MP4 akan tampil di sini';color:#94a3b8;font-size:14px}
+  #karaokeVideo{display:block!important;width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:16/9;object-fit:cover!important;background:#000;border-radius:20px!important;margin:0!important}
+  #dropZone{grid-column:2;grid-row:1;min-height:40px;height:40px;margin:6px 0 0;padding:4px 8px;border:1px dashed #9aabc6;border-radius:14px;background:#f8fafc;color:#1e293b}
+  #dropZone .uploadIcon{display:none}
+  #dropZone strong{font-size:10px;line-height:1.25;font-weight:700}
+  #dropZone small{font-size:9px;line-height:1.2;margin-top:2px;color:#64748b}
+  #importSection .filemeta{grid-column:2;grid-row:2;width:100%;margin:8px 0 0;padding:6px 10px;border:1px dashed #9aabc6;border-radius:14px;background:#f8fafc;min-height:40px;align-items:center}
+  .fileIcon{width:28px;height:28px;border-radius:8px;font-size:15px}
+  .filetext b{font-size:11px;line-height:1.25;color:#0f172a}
+  .filetext small{font-size:8px;color:#64748b}
+  .status{display:inline;font-size:9px;margin-left:8px;color:#0f9f91}
+  #transposeSection .noteBox{grid-column:2;grid-row:3;height:138px;margin:10px 0 0;padding:18px 10px;background:#f8fafc;border:1px solid #d8e2f0;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  #transposeSection .noteBox small{font-size:14px;color:#7b8798}
+  #transposeSection .note{font-size:42px;line-height:1.25;color:#0b1c36;letter-spacing:-1px}
+  #transposeSection #noteDesc{font-size:12px;color:#64748b}
+  #transposeSection .stepper{grid-column:2;grid-row:4;grid-template-columns:68px minmax(0,1fr) 68px;gap:14px;margin-top:22px}
+  #transposeSection .step{height:64px;border-radius:17px;background:#1c2f4f;color:#fff;border:1px solid #1c2f4f;font-size:29px}
+  #transposeSection .range{accent-color:#0f9f91;height:10px}
+  #transposeSection .rangeLabels{grid-column:2;grid-row:5;margin-top:8px;color:#64748b;font-size:12px}
+  #transposeSection .semitone{display:none}
+  #transposeSection .playrow,#transposeSection .hint{display:none}
+  #transposeSection .row{grid-column:2;grid-row:6;display:flex;width:100%;max-width:none;margin:36px 0 0!important;gap:10px}
+  #transposeSection .row .btn{width:100%;min-width:0;flex:1;background:#1c2f4f;color:#fff;border:1px solid #1c2f4f;border-radius:10px}
+  #transposeSection .alert{grid-column:2;grid-row:7;width:100%;max-width:none;margin:10px 0 0!important;min-height:57px;background:#fff1f2;color:#be123c;border-color:#fecdd3}
+  #transposeSection .alert:not(.show){display:none}
+  .foot{display:grid;grid-template-columns:1fr 1fr;gap:28px;text-align:left;margin:28px 0 0;padding:22px 0 6px;border-top:1px solid #e2e8f0;color:#64748b;font-size:13px}
+}
+
 </style></head>
 <body><main class="wrap">
 <header class="top"><div class="brand"><div class="logo">♫</div><div><h1><span class="brand-mic">Mic</span> <span class="brand-on">On</span></h1><p>Atur nada lagu sesuai suara kamu</p></div></div><nav class="desktop-nav" aria-label="Navigasi utama"><span class="nav-link">Home</span><span class="nav-link">Panduan</span><span class="nav-link">Perpanjang Paket</span><span class="social-icons" aria-label="Media sosial"><span class="social-icon whatsapp" title="WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.2A12.7 12.7 0 0 0 5.1 22.4L3.4 28.6l6.4-1.7A12.7 12.7 0 1 0 16 3.2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11.4 9.8c-.4-.8-.8-.8-1.2-.8h-1c-.4 0-.9.2-1.4.7s-1.8 1.8-1.8 4.3 1.9 5 2.2 5.4c.3.3 3.7 5.9 9.1 7.4 4.5 1.3 5.4 1 6.4.9 1-.1 3.2-1.3 3.7-2.6.5-1.3.5-2.4.3-2.6-.2-.2-.5-.3-1.1-.6s-3.2-1.6-3.7-1.8c-.5-.2-.9-.3-1.2.3-.4.5-1.4 1.8-1.7 2.2-.3.4-.6.4-1.1.1-.5-.3-2.3-.9-4.3-2.7-1.6-1.4-2.7-3.1-3-3.6-.3-.5 0-.8.2-1.1.2-.2.5-.6.8-.9.3-.3.4-.5.5-.8.2-.3.1-.6 0-.9-.1-.3-1.1-2.8-1.5-3.8Z" fill="currentColor" transform="translate(1 0) scale(.82)"/></svg></span><span class="social-icon tiktok" title="TikTok" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 6.7a5.1 5.1 0 0 1-3.9-4.6V1.5h-3.8v13.2a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V8.1a7 7 0 1 0 5.8 6.9V8.4a8.7 8.7 0 0 0 4.9 1.5V6.8c-.3 0-.7 0-1-.1Z" fill="currentColor"/></svg></span><span class="social-icon facebook" title="Facebook" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.02 4.39 11.01 10.13 11.85v-8.38H7.08v-3.47h3.05V9.43c0-3.03 1.79-4.7 4.53-4.7 1.31 0 2.69.24 2.69.24v2.95h-1.51c-1.49 0-1.96.93-1.96 1.89v2.27h3.33l-.53 3.47h-2.8v8.38C19.61 23.08 24 18.09 24 12.07Z" fill="currentColor"/></svg></span></span></nav><div class="pill">IMPORT VIDEO · LOKAL</div></header>
