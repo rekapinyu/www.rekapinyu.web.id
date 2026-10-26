@@ -5618,7 +5618,7 @@ function updateUserAvatarUI() {
             showModal("Berhasil", "Data History berhasil dihapus.");
         }
 
-        document.getElementById('pengeluaran-form').addEventListener('submit', (e) => {
+        document.getElementById('pengeluaran-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nama = document.getElementById('pengeluaran-nama').value.trim();
             const nominal = parseNum(document.getElementById('pengeluaran-nominal').value);
@@ -5641,7 +5641,8 @@ function updateUserAvatarUI() {
 
             pengeluaranData.unshift(newItem);
             if (currentSessionUser && currentSessionUser.phone) {
-                window.__rekapinyuSaveLocalRekap?.();
+                const saved = await window.__rekapinyuSaveLocalRekap?.();
+                if(saved!==true){ pengeluaranData=pengeluaranData.filter(x=>x.id!==newItem.id); showModal('Gagal Disimpan','Data Pengeluaran tidak berhasil ditulis ke subfolder Pengeluaran. Periksa folder pilihan dan izin akses.','fa-solid fa-circle-xmark text-rose-600'); return; }
             }
 
             document.getElementById('pengeluaran-form').reset();
@@ -5652,7 +5653,7 @@ function updateUserAvatarUI() {
             setTimeout(() => { try { closeModal(); } catch (err) {} }, 1600);
         });
 
-        document.getElementById('kasbon-form').addEventListener('submit', (e) => {
+        document.getElementById('kasbon-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nama = document.getElementById('kasbon-nama').value.trim();
             const produk = document.getElementById('kasbon-produk').value.trim();
@@ -5694,7 +5695,8 @@ function updateUserAvatarUI() {
             }
 
             if (currentSessionUser && currentSessionUser.phone) {
-                window.__rekapinyuSaveLocalRekap?.();
+                const saved = await window.__rekapinyuSaveLocalRekap?.();
+                if(saved!==true){ showModal('Gagal Disimpan','Data Kasbon tidak berhasil ditulis ke subfolder Kasbon. Periksa folder pilihan dan izin akses.','fa-solid fa-circle-xmark text-rose-600'); return; }
             }
 
             document.getElementById('kasbon-form').reset();
@@ -5704,12 +5706,13 @@ function updateUserAvatarUI() {
             setTimeout(() => { try { closeModal(); } catch (err) {} }, 1600);
         });
 
-        function toggleLunasKasbon(id) {
+        async function toggleLunasKasbon(id) {
             const item = kasbonData.find(d => d.id === id);
             if(item) {
                 item.isLunas = !item.isLunas;
                 if (currentSessionUser && currentSessionUser.phone) {
-                    window.__rekapinyuSaveLocalRekap?.();
+                    const saved = await window.__rekapinyuSaveLocalRekap?.();
+                    if(saved!==true){ item.isLunas=!item.isLunas; showModal('Gagal Disimpan','Perubahan Kasbon gagal disimpan ke subfolder Kasbon.','fa-solid fa-circle-xmark text-rose-600'); return; }
                 }
                 renderKasbonGrid();
             }
@@ -5732,13 +5735,15 @@ function updateUserAvatarUI() {
                 </div>
             `;
 
-            saveBtn.onclick = function() {
+            saveBtn.onclick = async function() {
                 const newName = document.getElementById('edit-val-nama-pelanggan').value.trim();
                 if (!newName) return;
 
+                const oldName=item.namaPelanggan;
                 item.namaPelanggan = newName;
                 if (currentSessionUser && currentSessionUser.phone) {
-                    window.__rekapinyuSaveLocalRekap?.();
+                    const saved = await window.__rekapinyuSaveLocalRekap?.();
+                    if(saved!==true){ item.namaPelanggan=oldName; showModal('Gagal Disimpan','Perubahan nama Kasbon gagal disimpan ke subfolder Kasbon.','fa-solid fa-circle-xmark text-rose-600'); return; }
                 }
                 closeEditModal();
                 renderKasbonGrid();
