@@ -7398,12 +7398,11 @@ function updateUserAvatarUI() {
   }
 
   async function save(){
-    /* KASBON / PENGELUARAN — SATU IMPLEMENTASI FINAL.
-       Data selalu bersumber dari Data/Rekap yang SUDAH ADA.
-       Tidak pernah membuat folder baru.
-       Tidak pernah membuat file JSON baru.
-       Jika file harian belum ada, data hanya dibaca/ditampilkan dan tidak dibuatkan file baru.
-       File yang SUDAH ADA boleh diperbarui melalui handle yang sudah ditemukan. */
+    /* SIMPAN OTOMATIS DATA SIDEBAR KE SUBFOLDER MASING-MASING.
+       Folder harus sudah dibuat saat pemilihan folder toko; file JSON harian
+       dibuat atau diperbarui otomatis ketika data menu berubah. */
+    const pengeluaranDir=await window.__rekapinyuGetDataSubdirectory?.('Pengeluaran');
+    const kasbonDir=await window.__rekapinyuGetDataSubdirectory?.('Kasbon');
     const rekapCloudPayload={
       NamaToko:String(currentSessionUser?.shopName||""),
       NomorHp:String(currentSessionUser?.phone||""),
@@ -9564,18 +9563,43 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
 
     const owner=photoOwnerKey();
     let selectedFolderName='';
+    let root=null;
     if(owner){
       try{selectedFolderName=String(await idbGetFolderName()||'').trim()}catch(_){ }
-      if(!selectedFolderName && photoDirectoryOwnerKey===owner){
-        try{selectedFolderName=String(photoDirectoryHandle?.name||'').trim()}catch(_){ }
+      try{root=photoDirectoryOwnerKey===owner?photoDirectoryHandle:null}catch(_){ }
+      if(!root){try{root=await idbGet()}catch(_){root=null}}
+
+      /* Validasi: folder target atau salah satu subfolder wajib hilang/berubah,
+         status pilihan dibersihkan agar tombol kembali menjadi Buat Folder. */
+      let valid=!!root && !!selectedFolderName;
+      if(valid){
+        try{
+          if(String(root.name||'').trim()!==selectedFolderName)valid=false;
+          if((await root.queryPermission({mode:'readwrite'}))!=='granted')valid=false;
+          if(valid){
+            for(const name of ['Produk Kasir','Input Data','Kasbon','Pengeluaran']){
+              await root.getDirectoryHandle(name,{create:false});
+            }
+          }
+        }catch(_){valid=false}
+      }
+      if(!valid){
+        selectedFolderName='';
+        photoDirectoryHandle=null;
+        photoDirectoryOwnerKey=owner;
+        try{await idbSet(null)}catch(_){ }
+        try{await idbSetFolderName('')}catch(_){ }
+      }else{
+        photoDirectoryHandle=root;
+        photoDirectoryOwnerKey=owner;
       }
     }
 
     const active=!!selectedFolderName;
     btn.classList.toggle('is-active',active);
     btn.setAttribute('aria-pressed',active?'true':'false');
-    btn.disabled=active;
-    btn.style.cursor=active?'default':'pointer';
+    btn.disabled=false;
+    btn.style.cursor='pointer';
     btn.title=active?`Folder penyimpanan: ${selectedFolderName}`:'Buat Folder';
     btn.innerHTML=active
       ? `<i class="fa-solid fa-folder-open" aria-hidden="true"></i><span>${escapeHtml(selectedFolderName)}</span>`
@@ -9893,7 +9917,8 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     normalizeAll();
     window.__rekapinyuProdukKasirData=products;
     window.__rekapinyuProdukKasirLoaded=true;
-    try{await syncProdukKasirJson(products)}catch(e){console.warn('Rekapinyu: ProdukKasir JSON gagal diperbarui.',e)}
+    const folderSaved=await syncProdukKasirJson(products);
+    if(folderSaved!==true)throw new Error('Subfolder Produk Kasir belum tersedia atau belum diberi izin akses.');
     render();
     try{window.__initKasirViews?.()}catch(_){}
     return products;
@@ -10357,6 +10382,13 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     $('pk3-import-file')?.addEventListener('change',e=>importProducts(e.target.files?.[0]));
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('pk3-edit-modal')?.hidden)closeEdit()});
     updateFolderStatus();
+    /* Pantau status folder agar tombol kembali ke Buat Folder jika target
+       dihapus/diganti nama atau subfolder wajib tidak lagi tersedia. */
+    if(!window.__rekapinyuPk3FolderStatusTimer){
+      window.__rekapinyuPk3FolderStatusTimer=setInterval(()=>{
+        if(document.getElementById('view-produk-kasir'))updateFolderStatus();
+      },2000);
+    }
     scanTargetFolderPhotos().then(()=>refreshRenderedPhotos()).catch(()=>{});
     startPhotoWatch();
   }
@@ -12496,7 +12528,7 @@ async function initKasirViews(){
     const rows=[];
     for await(const [name,entry] of dir.entries()){
       if(depth===1){
-        if(entry?.kind==='directory' && ['Rekap','Produk Kasir','Kasir'].includes(name)) rows.push({name,kind:'directory',entry});
+        if(entry?.kind==='directory' && ['Produk Kasir','Input Data','Kasbon','Pengeluaran'].includes(name)) rows.push({name,kind:'directory',entry});
       }else if(entry?.kind==='directory'){
         rows.push({name,kind:'directory',entry});
       }else if(entry?.kind==='file'){
