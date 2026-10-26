@@ -203,9 +203,35 @@
   .foot{display:grid;grid-template-columns:1fr 1fr;gap:28px;text-align:left;margin:28px 0 0;padding:22px 0 6px;border-top:1px solid #e2e8f0;color:#64748b;font-size:13px}
 }
 
-</style></head>
+</style>
+<style>
+/* Ikon navigasi dan halaman tautan YouTube; tambahan UI tanpa mengubah mesin audio. */
+.desktop-nav .nav-link{gap:7px;align-items:center;cursor:pointer;padding:8px 2px;border-radius:9px}
+.nav-link .nav-ico{width:17px;height:17px;display:inline-grid;place-items:center;flex:none;color:#2563eb}
+.nav-link .nav-ico svg{width:17px;height:17px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav-link:hover{color:#2563eb}
+#youtubeSection{display:none;max-width:900px;margin:8px auto 0}
+#youtubeSection.active{display:block}
+#mainContent.hidden{display:none}
+.yt-card{border:1px solid #dbe3ef;border-radius:22px;background:#fff;padding:24px;box-shadow:0 8px 28px rgba(15,23,42,.06)}
+.yt-card h2{font-size:clamp(23px,3vw,32px);margin:0 0 8px;color:#172033}
+.yt-card p{color:#64748b;margin:0 0 18px}
+.yt-form{display:flex;gap:10px;align-items:stretch}
+.yt-form input{flex:1;min-width:0;border:1px solid #cbd5e1;border-radius:12px;padding:14px 15px;font:inherit;outline:none}
+.yt-form input:focus{border-color:#2563eb;box-shadow:0 0 0 3px #2563eb18}
+.yt-btn{border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:700;padding:13px 18px;cursor:pointer}
+.yt-preview{display:none;margin-top:18px;aspect-ratio:16/9;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden}
+.yt-preview.show{display:block}.yt-preview iframe{width:100%;height:100%;border:0}
+.yt-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.yt-actions a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:11px;padding:11px 15px;background:#172033;color:#fff;font-weight:700;font-size:14px}
+.yt-note{font-size:13px!important;line-height:1.6;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;margin-top:16px!important}
+@media(max-width:760px){.desktop-nav{display:none!important}#youtubeSection{margin-top:8px}.yt-card{padding:17px;border-radius:18px}.yt-form{flex-direction:column}.yt-btn{width:100%}}
+</style>
+
+</head>
 <body><main class="wrap">
-<header class="top"><div class="brand"><div class="logo">♫</div><div><h1><span class="brand-mic">Mic</span> <span class="brand-on">On</span></h1><p>Atur nada lagu sesuai suara kamu</p></div></div><nav class="desktop-nav" aria-label="Navigasi utama"><span class="nav-link">Home</span><span class="nav-link">Karaoke</span><span class="nav-link">Download Video Youtube</span><span class="nav-link">Perpanjang Paket</span><span class="social-icons" aria-label="Media sosial"><span class="social-icon whatsapp" title="WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.2A12.7 12.7 0 0 0 5.1 22.4L3.4 28.6l6.4-1.7A12.7 12.7 0 1 0 16 3.2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11.4 9.8c-.4-.8-.8-.8-1.2-.8h-1c-.4 0-.9.2-1.4.7s-1.8 1.8-1.8 4.3 1.9 5 2.2 5.4c.3.3 3.7 5.9 9.1 7.4 4.5 1.3 5.4 1 6.4.9 1-.1 3.2-1.3 3.7-2.6.5-1.3.5-2.4.3-2.6-.2-.2-.5-.3-1.1-.6s-3.2-1.6-3.7-1.8c-.5-.2-.9-.3-1.2.3-.4.5-1.4 1.8-1.7 2.2-.3.4-.6.4-1.1.1-.5-.3-2.3-.9-4.3-2.7-1.6-1.4-2.7-3.1-3-3.6-.3-.5 0-.8.2-1.1.2-.2.5-.6.8-.9.3-.3.4-.5.5-.8.2-.3.1-.6 0-.9-.1-.3-1.1-2.8-1.5-3.8Z" fill="currentColor" transform="translate(1 0) scale(.82)"/></svg></span><span class="social-icon tiktok" title="TikTok" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 6.7a5.1 5.1 0 0 1-3.9-4.6V1.5h-3.8v13.2a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V8.1a7 7 0 1 0 5.8 6.9V8.4a8.7 8.7 0 0 0 4.9 1.5V6.8c-.3 0-.7 0-1-.1Z" fill="currentColor"/></svg></span><span class="social-icon facebook" title="Facebook" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.02 4.39 11.01 10.13 11.85v-8.38H7.08v-3.47h3.05V9.43c0-3.03 1.79-4.7 4.53-4.7 1.31 0 2.69.24 2.69.24v2.95h-1.51c-1.49 0-1.96.93-1.96 1.89v2.27h3.33l-.53 3.47h-2.8v8.38C19.61 23.08 24 18.09 24 12.07Z" fill="currentColor"/></svg></span></span></nav><div class="pill">IMPORT VIDEO · LOKAL</div></header>
+<header class="top"><div class="brand"><div class="logo">♫</div><div><h1><span class="brand-mic">Mic</span> <span class="brand-on">On</span></h1><p>Atur nada lagu sesuai suara kamu</p></div></div><nav class="desktop-nav" aria-label="Navigasi utama"><span class="nav-link" data-page="homePage"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></svg></span>Home</span><span class="nav-link" data-page="karaokePage"><span class="nav-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span>Karaoke</span><span class="nav-link" data-page="youtubePage"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></span>Download Video YouTube</span><span class="nav-link" data-page="packagePage"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4.5 7.8 7.5 4.4 7.5-4.4M12 12.2V21"/></svg></span>Perpanjang Paket</span><span class="social-icons" aria-label="Media sosial"><span class="social-icon whatsapp" title="WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.2A12.7 12.7 0 0 0 5.1 22.4L3.4 28.6l6.4-1.7A12.7 12.7 0 1 0 16 3.2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11.4 9.8c-.4-.8-.8-.8-1.2-.8h-1c-.4 0-.9.2-1.4.7s-1.8 1.8-1.8 4.3 1.9 5 2.2 5.4c.3.3 3.7 5.9 9.1 7.4 4.5 1.3 5.4 1 6.4.9 1-.1 3.2-1.3 3.7-2.6.5-1.3.5-2.4.3-2.6-.2-.2-.5-.3-1.1-.6s-3.2-1.6-3.7-1.8c-.5-.2-.9-.3-1.2.3-.4.5-1.4 1.8-1.7 2.2-.3.4-.6.4-1.1.1-.5-.3-2.3-.9-4.3-2.7-1.6-1.4-2.7-3.1-3-3.6-.3-.5 0-.8.2-1.1.2-.2.5-.6.8-.9.3-.3.4-.5.5-.8.2-.3.1-.6 0-.9-.1-.3-1.1-2.8-1.5-3.8Z" fill="currentColor" transform="translate(1 0) scale(.82)"/></svg></span><span class="social-icon tiktok" title="TikTok" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 6.7a5.1 5.1 0 0 1-3.9-4.6V1.5h-3.8v13.2a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V8.1a7 7 0 1 0 5.8 6.9V8.4a8.7 8.7 0 0 0 4.9 1.5V6.8c-.3 0-.7 0-1-.1Z" fill="currentColor"/></svg></span><span class="social-icon facebook" title="Facebook" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.02 4.39 11.01 10.13 11.85v-8.38H7.08v-3.47h3.05V9.43c0-3.03 1.79-4.7 4.53-4.7 1.31 0 2.69.24 2.69.24v2.95h-1.51c-1.49 0-1.96.93-1.96 1.89v2.27h3.33l-.53 3.47h-2.8v8.38C19.61 23.08 24 18.09 24 12.07Z" fill="currentColor"/></svg></span></span></nav><div class="pill">IMPORT VIDEO · LOKAL</div></header>
+ <div id="mainContent">
 <section class="hero" id="homeSection"><h2>Nyanyi di nada<br><span>yang paling nyaman.</span></h2><p>Import musik, naikkan atau turunkan nada hingga 24 semitone, lalu putar untuk latihan karaoke.</p></section>
 <div class="grid">
 <section class="card" id="importSection"><h3>01 · Import musik</h3><p class="sub">Pilih video MP4 dari perangkat kamu.</p>
@@ -235,6 +261,8 @@
     </ul>
   </section>
 </footer>
+ </div>
+ <section id="youtubeSection" aria-label="Download Video YouTube"><div class="yt-card"><h2>Download Video YouTube</h2><p>Tempel tautan video YouTube untuk melihat pratinjau dan membuka video sumber.</p><form class="yt-form" id="youtubeForm"><input id="youtubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=..." aria-label="Tautan video YouTube" required><button class="yt-btn" type="submit">Tampilkan Video</button></form><div id="youtubePreview" class="yt-preview"></div><div class="yt-actions" id="youtubeActions" style="display:none"><a id="youtubeOpen" href="#" target="_blank" rel="noopener noreferrer">Buka di YouTube ↗</a></div><p class="yt-note">Catatan: halaman ini dapat menampilkan pratinjau dari tautan YouTube, tetapi tidak mengunduh atau mengekstrak file video langsung dari YouTube. Untuk menyimpan video, gunakan fitur unduhan resmi yang tersedia dari YouTube atau unduh video milik Anda melalui YouTube Studio.</p></div></section>
 </main>
 <nav class="mobile-dock" id="mobileDock" aria-label="Menu utama mobile">
   <button class="dock-item active" type="button" data-target="homeSection"><span class="dock-icon">⌂</span><span>Beranda</span></button>
@@ -319,7 +347,22 @@ $('videoFile').addEventListener('change',async e=>{const f=e.target.files?.[0];i
 $('playBtn').addEventListener('click',async()=>{if(!video)return;try{await setupAudio();if(video.paused){video.defaultPlaybackRate=1;video.playbackRate=1;await video.play();}else video.pause();}catch(e){msg('Gagal memutar video/audio: '+(e.message||e),true);}});
 $('pitchRange').addEventListener('input',updatePitch);$('downBtn').addEventListener('click',()=>{$('pitchRange').value=Math.max(-24,+$('pitchRange').value-1);updatePitch()});$('upBtn').addEventListener('click',()=>{$('pitchRange').value=Math.min(24,+$('pitchRange').value+1);updatePitch()});$('clearBtn').addEventListener('click',()=>{clearVideo()});
 const dock=document.getElementById('mobileDock'),moreSheet=document.getElementById('moreSheet');if(dock){dock.querySelectorAll('[data-target]').forEach(btn=>btn.addEventListener('click',()=>{dock.querySelectorAll('.dock-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');moreSheet?.classList.remove('open');moreSheet?.setAttribute('aria-hidden','true');document.getElementById(btn.dataset.target)?.scrollIntoView({behavior:'smooth',block:'start'});}));}if($('moreMenuBtn'))$('moreMenuBtn').addEventListener('click',()=>{moreSheet?.classList.toggle('open');moreSheet?.setAttribute('aria-hidden',String(!moreSheet.classList.contains('open')))});if($('closeMore'))$('closeMore').addEventListener('click',()=>{moreSheet.classList.remove('open');moreSheet.setAttribute('aria-hidden','true')});if($('settingsShortcut'))$('settingsShortcut').addEventListener('click',()=>msg('Pengaturan Supabase tidak diperlukan: video diproses langsung di perangkat.'));
-updatePitch();
+  // Navigasi header dan pratinjau tautan YouTube; mesin transpose tetap tidak disentuh.
+  const mainContent=document.getElementById('mainContent'),youtubeSection=document.getElementById('youtubeSection');
+  document.querySelectorAll('.desktop-nav .nav-link[data-page]').forEach(link=>link.addEventListener('click',()=>{
+    const page=link.dataset.page;
+    if(page==='youtubePage'){mainContent.classList.add('hidden');youtubeSection.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+    else {youtubeSection.classList.remove('active');mainContent.classList.remove('hidden');if(page==='karaokePage')document.getElementById('importSection')?.scrollIntoView({behavior:'smooth',block:'start'});else if(page==='packagePage'){msg('Informasi paket belum tersedia pada file ini.');}else window.scrollTo({top:0,behavior:'smooth'});}
+  }));
+  const ytForm=document.getElementById('youtubeForm');
+  if(ytForm)ytForm.addEventListener('submit',e=>{
+    e.preventDefault();const raw=document.getElementById('youtubeUrl').value.trim();let id='';
+    try{const u=new URL(raw);if(u.hostname==='youtu.be'||u.hostname.endsWith('.youtu.be'))id=u.pathname.split('/').filter(Boolean)[0]||'';else if(u.hostname.includes('youtube.com')){id=u.searchParams.get('v')||'';if(!id){const parts=u.pathname.split('/').filter(Boolean);if(['embed','shorts','live'].includes(parts[0]))id=parts[1]||'';}}}catch(_){}
+    if(!/^[A-Za-z0-9_-]{11}$/.test(id)){alert('Tautan YouTube tidak valid. Tempel tautan video YouTube yang benar.');return;}
+    const preview=document.getElementById('youtubePreview');preview.innerHTML='<iframe title="Pratinjau video YouTube" src="https://www.youtube-nocookie.com/embed/'+id+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>';preview.classList.add('show');
+    const actions=document.getElementById('youtubeActions');actions.style.display='flex';document.getElementById('youtubeOpen').href='https://www.youtube.com/watch?v='+id;
+  });
+  updatePitch();
 })();
 </script></body></html>
 <style>
