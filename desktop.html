@@ -2373,9 +2373,9 @@ bind();
 <!-- PATCH: FILE MANAGER FOLDER TARGET, hanya area Atur Folder -->
 <div id="rk-folder-manager" class="rk-folder-manager" hidden>
   <div class="rk-folder-dialog">
-    <div class="rk-folder-head"><div><strong>Atur Folder</strong><span>Folder toko → Produk Kasir / Input Data / Kasbon / Pengeluaran</span></div><button type="button" id="rk-folder-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="rk-folder-head"><div><strong>Atur Folder</strong><span>Folder toko → Produk Kasir / Transaksi Kasir / Input Data / Kasbon / Pengeluaran</span></div><button type="button" id="rk-folder-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="rk-folder-toolbar"><button type="button" id="rk-folder-open-doc"><i class="fa-solid fa-folder-open"></i> Buka Dokumen</button><span id="rk-folder-current">Belum ada folder Dokumen yang dibuka</span></div>
-    <div id="rk-folder-tree" class="rk-folder-tree"><div class="rk-folder-empty"><i class="fa-solid fa-folder-tree"></i><span>Pilih folder toko. Aplikasi menggunakan subfolder Produk Kasir, Input Data, Kasbon, dan Pengeluaran; transaksi Kasir tetap disimpan ke Firestore.</span></div></div>
+    <div id="rk-folder-tree" class="rk-folder-tree"><div class="rk-folder-empty"><i class="fa-solid fa-folder-tree"></i><span>Pilih folder toko. Aplikasi membuat subfolder Produk Kasir, Transaksi Kasir, Input Data, Kasbon, dan Pengeluaran. Transaksi Kasir tetap disimpan ke Firestore.</span></div></div>
   </div>
 </div>
 <!-- VIEW PRODUK KASIR -->
@@ -9454,7 +9454,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     if(!shopFolder)throw new Error('Folder toko belum tersedia. Buat folder toko di dalam Dokumen lalu pilih folder tersebut.');
 
     /* Subfolder standar SELALU dibuat otomatis di dalam folder target toko. */
-    const required=['Produk Kasir','Input Data','Kasbon','Pengeluaran'];
+    const required=['Produk Kasir','Transaksi Kasir','Input Data','Kasbon','Pengeluaran'];
     try{
       window.__rekapinyuAllowFolderCreate=true;
       for(const name of required){
@@ -9595,7 +9595,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
             if(valid && typeof current.isSameEntry==='function' && !(await current.isSameEntry(root)))valid=false;
           }
           if(valid){
-            for(const name of ['Produk Kasir','Input Data','Kasbon','Pengeluaran']){
+            for(const name of ['Produk Kasir','Transaksi Kasir','Input Data','Kasbon','Pengeluaran']){
               await root.getDirectoryHandle(name,{create:false});
             }
           }
@@ -10951,7 +10951,8 @@ async function initKasirViews(){
       profit:kasirCart.reduce((sum,x)=>sum+((Number(x.price)||0)-(Number(x.cost??x.grosir)||0))*(Number(x.qty)||0),0)
     };
 
-    /* Simpan transaksi hanya ke satu JSON harian TransaksiKasir + LaporanKasir di folder target. */
+    /* Simpan transaksi ke JSON harian pada subfolder Transaksi Kasir,
+       sambil mempertahankan sinkronisasi transaksi ke Firestore. */
     kasirTransactions.push(transaction);
     window.__rekapinyuKasirTransactionsRealtime=kasirTransactions;
     try{
@@ -10959,8 +10960,26 @@ async function initKasirViews(){
          dihapus dari daftar, stok barcode + manual menjadi stok nyata. */
       const produkSaved=await window.__rekapinyuSyncProdukKasirJson?.(kasirProducts);
       if(produkSaved!==true)throw new Error('Folder target belum dipilih atau file JSON Produk Kasir tidak dapat diperbarui.');
-      /* Transaksi Kasir tidak lagi bergantung pada subfolder JSON Kasir.
-         Data transaksi tetap diteruskan melalui jalur sinkronisasi Firestore yang tersedia. */
+      /* Simpan seluruh transaksi untuk tanggal ini ke subfolder Transaksi Kasir. */
+      const transaksiDir=await window.__rekapinyuGetDataSubdirectory?.('Transaksi Kasir');
+      if(!transaksiDir)throw new Error('Subfolder Transaksi Kasir tidak tersedia atau belum diberi izin akses.');
+      const now=new Date();
+      const days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+      const months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+      const transactionFileName=`TransaksiKasir_${days[now.getDay()]}_${now.getDate()}_${months[now.getMonth()]}_${now.getFullYear()}.json`;
+      const transactionFile=await transaksiDir.getFileHandle(transactionFileName,{create:true});
+      let dailyTransactions=[];
+      try{
+        const previous=JSON.parse(await (await transactionFile.getFile()).text());
+        if(Array.isArray(previous?.TransaksiKasir))dailyTransactions=previous.TransaksiKasir;
+        else if(Array.isArray(previous))dailyTransactions=previous;
+      }catch(_){dailyTransactions=[];}
+      const transactionMap=new Map(dailyTransactions.map(item=>[String(item?.id??''),item]));
+      transactionMap.set(String(transaction.id),transaction);
+      const transactionPayload={Rekap_hari:days[now.getDay()],Tanggal:now.getDate(),Bulan:months[now.getMonth()],Tahun:now.getFullYear(),TransaksiKasir:[...transactionMap.values()]};
+      const transactionWriter=await transactionFile.createWritable();
+      try{await transactionWriter.write(JSON.stringify(transactionPayload,null,2));}finally{await transactionWriter.close();}
+      /* Pertahankan sinkronisasi Firestore yang sudah ada. */
       try{await window.__rekapinyuSaveKasirTransactionsCloud?.(kasirTransactions)}catch(e){console.warn('Rekapinyu: TransaksiKasir gagal disimpan ke Firestore.',e)}
       await window.__rekapinyuSaveKasirTotalsCloud?.();
       try{document.dispatchEvent(new CustomEvent('rekapinyu-kasir-transaction-saved',{detail:{transaction}}))}catch(_){}
@@ -12472,8 +12491,8 @@ async function initKasirViews(){
 <li>➤ Masuk Ke Menu Produk Kasir dan Buat Folder Di Pojok Kanan Atas</li>
 <li>➤ Klik Buat Folder, dan akan diarahkan ke Browser Penyimpanan Komputer</li>
 <li>➤ Buat Nama Folder Sesuai Nama Toko Anda, Contoh Nama Folder TOKO INOYA</li>
-<li>➤ Akan Otomatis Membuat sub Folder di Folder yg Anda Buat Tadi, Sub Folder: Rekap, Produk, Kasir</li>
-<li>➤ Semua Data Transaksi Kasir, Rekap, Backup Manual akan Masuk ke dalam Folder yang sudah di buat oleh Anda</li>
+<li>➤ Akan otomatis membuat 5 subfolder: Produk Kasir, Transaksi Kasir, Input Data, Kasbon, dan Pengeluaran</li>
+<li>➤ Data Produk Kasir, Transaksi Kasir, Input Data, Kasbon, dan Pengeluaran disimpan ke subfolder masing-masing. Transaksi Kasir juga tetap disinkronkan ke Firestore.</li>
 <li>➤ Jika Data Produk Tehapus Di folder Yg Anda Buat, Maka secara Otomatis Menampilkan Data dari Database Online yg tersimpan, & Lakukan Backup Manual Kembali, di file yang terhapus</li>
 <li>➤ Disaranakan Membuat Folder di Data : D komputer & Di Data: C komputer (tidak Disarankan)</li>
 </ol></section>
@@ -12547,7 +12566,7 @@ async function initKasirViews(){
     const rows=[];
     for await(const [name,entry] of dir.entries()){
       if(depth===1){
-        if(entry?.kind==='directory' && ['Produk Kasir','Input Data','Kasbon','Pengeluaran'].includes(name)) rows.push({name,kind:'directory',entry});
+        if(entry?.kind==='directory' && ['Produk Kasir','Transaksi Kasir','Input Data','Kasbon','Pengeluaran'].includes(name)) rows.push({name,kind:'directory',entry});
       }else if(entry?.kind==='directory'){
         rows.push({name,kind:'directory',entry});
       }else if(entry?.kind==='file'){
