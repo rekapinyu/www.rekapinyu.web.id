@@ -198,7 +198,7 @@
   #transposeSection .playrow,#transposeSection .hint{display:none}
   #transposeSection .row{grid-column:2;grid-row:6;display:flex;width:100%;max-width:none;margin:36px 0 0!important;gap:10px}
   #transposeSection .row .btn{width:100%;min-width:0;flex:1;background:#1c2f4f;color:#fff;border:1px solid #1c2f4f;border-radius:10px}
-  #transposeSection .alert{grid-column:2;grid-row:7;width:100%;max-width:none;margin:10px 0 0!important;min-height:57px;background:#fff1f2;color:#be123c;border-color:#fecdd3}
+  #transposeSection .alert{grid-column:2;grid-row:7;width:100%;max-width:none;margin:10px 0 0!important;min-height:0;background:#fff1f2;color:#be123c;border-color:#fecdd3}
   #transposeSection .alert:not(.show){display:none}
   .foot{display:grid;grid-template-columns:1fr 1fr;gap:28px;text-align:left;margin:28px 0 0;padding:22px 0 6px;border-top:1px solid #e2e8f0;color:#64748b;font-size:13px}
 }
@@ -300,7 +300,7 @@ async function setupAudio(){
   if(source&&effect&&engine==='tone'){await Tone.start();updatePitch();return;}
   try{
     await setupHighQualityAudio();
-    if(engine==='hq'){updatePitch();msg('Pemrosesan audio kualitas tinggi aktif. Koreksi timbre membantu suara tetap lebih alami saat nada diturunkan; kecepatan video tetap 1×.');}
+    if(engine==='hq'){updatePitch();}
     return;
   }catch(highQualityError){
     /* Fall back only if the high-quality engine failed before creating a MediaElementSourceNode. */
