@@ -210,22 +210,13 @@
 .nav-link .nav-ico{width:17px;height:17px;display:inline-grid;place-items:center;flex:none;color:#2563eb}
 .nav-link .nav-ico svg{width:17px;height:17px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav-link:hover{color:#2563eb}
-#youtubeSection{display:none;max-width:900px;margin:8px auto 0}
+#youtubeSection{display:none;width:100vw;max-width:none;margin:0 0 0 calc(50% - 50vw);padding:0;min-height:calc(100vh - 92px);background:#fff}
 #youtubeSection.active{display:block}
 #mainContent.hidden{display:none}
-.yt-card{border:1px solid #dbe3ef;border-radius:22px;background:#fff;padding:24px;box-shadow:0 8px 28px rgba(15,23,42,.06)}
-.yt-card h2{font-size:clamp(23px,3vw,32px);margin:0 0 8px;color:#172033}
-.yt-card p{color:#64748b;margin:0 0 18px}
-.yt-form{display:flex;gap:10px;align-items:stretch}
-.yt-form input{flex:1;min-width:0;border:1px solid #cbd5e1;border-radius:12px;padding:14px 15px;font:inherit;outline:none}
-.yt-form input:focus{border-color:#2563eb;box-shadow:0 0 0 3px #2563eb18}
-.yt-btn{border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:700;padding:13px 18px;cursor:pointer}
-.yt-preview{display:none;margin-top:18px;aspect-ratio:16/9;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden}
-.yt-preview.show{display:block}.yt-preview iframe{width:100%;height:100%;border:0}
-.yt-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.yt-actions a,.yt-actions button{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;border-radius:11px;padding:11px 15px;background:#172033;color:#fff;font-weight:700;font-size:14px;cursor:pointer}.yt-actions .yt-download{background:#2563eb}.yt-download-help{display:none;margin-top:12px;padding:12px 14px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;font-size:13px;line-height:1.55}.yt-download-help.show{display:block}
-.yt-note{font-size:13px!important;line-height:1.6;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;margin-top:16px!important}
-@media(max-width:760px){.desktop-nav{display:none!important}#youtubeSection{margin-top:8px}.yt-card{padding:17px;border-radius:18px}.yt-form{flex-direction:column}.yt-btn{width:100%}}
+#youtubeSection .yt-frame{display:block;width:100%;height:calc(100vh - 92px);min-height:520px;border:0;margin:0;padding:0;background:#fff}
+#youtubeSection .yt-fallback{margin:0;padding:12px 16px;text-align:center;background:#f8fafc;color:#475569;font-size:13px;line-height:1.5}
+#youtubeSection .yt-fallback a{display:inline-flex;margin-left:8px;padding:8px 12px;border-radius:9px;background:#2563eb;color:#fff;text-decoration:none;font-weight:700}
+@media(max-width:760px){.desktop-nav{display:none!important}#youtubeSection{margin:0 0 0 calc(50% - 50vw);min-height:calc(100dvh - 70px)}#youtubeSection .yt-frame{height:calc(100dvh - 70px);min-height:480px}#youtubeSection .yt-fallback{padding:10px 12px}}
 </style>
 
 </head>
@@ -262,7 +253,7 @@
   </section>
 </footer>
  </div>
- <section id="youtubeSection" aria-label="Download Video YouTube"><div class="yt-card"><h2>Download Video YouTube</h2><p>Tempel tautan video YouTube untuk melihat pratinjau dan membuka video sumber.</p><form class="yt-form" id="youtubeForm"><input id="youtubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=..." aria-label="Tautan video YouTube" required><button class="yt-btn" type="submit">Tampilkan Video</button></form><div id="youtubePreview" class="yt-preview"></div><div class="yt-actions" id="youtubeActions" style="display:none"><a id="youtubeOpen" href="#" target="_blank" rel="noopener noreferrer">Buka di YouTube ↗</a><button type="button" class="yt-download" id="youtubeDownloadBtn">⬇ Download Video</button></div><div class="yt-download-help" id="youtubeDownloadHelp" role="status">Untuk mengunduh, buka video di YouTube. Jika tersedia, tekan tombol <b>Download</b> di aplikasi YouTube (fitur ini dapat memerlukan YouTube Premium dan ketersediaannya bergantung wilayah/video). Untuk video milik sendiri, gunakan YouTube Studio. Halaman ini tidak mengambil atau membuat file unduhan langsung dari tautan YouTube.</div><p class="yt-note">Tempel tautan, tekan Tampilkan Video, lalu gunakan tombol Download Video untuk membuka opsi unduhan resmi. Video tidak diunduh langsung oleh halaman ini.</p></div></section>
+ <section id="youtubeSection" aria-label="Download Video YouTube"><iframe class="yt-frame" src="https://yt-mp4.net/" title="Downloader video YouTube" loading="eager" referrerpolicy="strict-origin-when-cross-origin" allow="clipboard-read; clipboard-write" ></iframe><p class="yt-fallback">Jika situs tidak tampil di dalam MicOn, kemungkinan situs membatasi tampilan iframe. <a href="https://yt-mp4.net/" target="_blank" rel="noopener noreferrer">Buka yt-mp4.net</a></p></section>
 </main>
 <nav class="mobile-dock" id="mobileDock" aria-label="Menu utama mobile">
   <button class="dock-item active" type="button" data-target="homeSection"><span class="dock-icon">⌂</span><span>Beranda</span></button>
@@ -347,21 +338,13 @@ $('videoFile').addEventListener('change',async e=>{const f=e.target.files?.[0];i
 $('playBtn').addEventListener('click',async()=>{if(!video)return;try{await setupAudio();if(video.paused){video.defaultPlaybackRate=1;video.playbackRate=1;await video.play();}else video.pause();}catch(e){msg('Gagal memutar video/audio: '+(e.message||e),true);}});
 $('pitchRange').addEventListener('input',updatePitch);$('downBtn').addEventListener('click',()=>{$('pitchRange').value=Math.max(-24,+$('pitchRange').value-1);updatePitch()});$('upBtn').addEventListener('click',()=>{$('pitchRange').value=Math.min(24,+$('pitchRange').value+1);updatePitch()});$('clearBtn').addEventListener('click',()=>{clearVideo()});
 const dock=document.getElementById('mobileDock'),moreSheet=document.getElementById('moreSheet');if(dock){dock.querySelectorAll('[data-target]').forEach(btn=>btn.addEventListener('click',()=>{dock.querySelectorAll('.dock-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');moreSheet?.classList.remove('open');moreSheet?.setAttribute('aria-hidden','true');document.getElementById(btn.dataset.target)?.scrollIntoView({behavior:'smooth',block:'start'});}));}if($('moreMenuBtn'))$('moreMenuBtn').addEventListener('click',()=>{moreSheet?.classList.toggle('open');moreSheet?.setAttribute('aria-hidden',String(!moreSheet.classList.contains('open')))});if($('closeMore'))$('closeMore').addEventListener('click',()=>{moreSheet.classList.remove('open');moreSheet.setAttribute('aria-hidden','true')});if($('settingsShortcut'))$('settingsShortcut').addEventListener('click',()=>msg('Pengaturan Supabase tidak diperlukan: video diproses langsung di perangkat.'));
-  // Navigasi header dan pratinjau tautan YouTube; mesin transpose tetap tidak disentuh.
+  // Navigasi header; menu downloader menggunakan situs eksternal tanpa mengubah mesin audio.
   const mainContent=document.getElementById('mainContent'),youtubeSection=document.getElementById('youtubeSection');
   document.querySelectorAll('.desktop-nav .nav-link[data-page]').forEach(link=>link.addEventListener('click',()=>{
     const page=link.dataset.page;
     if(page==='youtubePage'){mainContent.classList.add('hidden');youtubeSection.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
     else {youtubeSection.classList.remove('active');mainContent.classList.remove('hidden');if(page==='karaokePage')document.getElementById('importSection')?.scrollIntoView({behavior:'smooth',block:'start'});else if(page==='packagePage'){msg('Informasi paket belum tersedia pada file ini.');}else window.scrollTo({top:0,behavior:'smooth'});}
   }));
-  const ytForm=document.getElementById('youtubeForm');
-  if(ytForm)ytForm.addEventListener('submit',e=>{
-    e.preventDefault();const raw=document.getElementById('youtubeUrl').value.trim();let id='';
-    try{const u=new URL(raw);if(u.hostname==='youtu.be'||u.hostname.endsWith('.youtu.be'))id=u.pathname.split('/').filter(Boolean)[0]||'';else if(u.hostname.includes('youtube.com')){id=u.searchParams.get('v')||'';if(!id){const parts=u.pathname.split('/').filter(Boolean);if(['embed','shorts','live'].includes(parts[0]))id=parts[1]||'';}}}catch(_){}
-    if(!/^[A-Za-z0-9_-]{11}$/.test(id)){alert('Tautan YouTube tidak valid. Tempel tautan video YouTube yang benar.');return;}
-    const preview=document.getElementById('youtubePreview');preview.innerHTML='<iframe title="Pratinjau video YouTube" src="https://www.youtube-nocookie.com/embed/'+id+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>';preview.classList.add('show');
-    const actions=document.getElementById('youtubeActions');actions.style.display='flex';document.getElementById('youtubeOpen').href='https://www.youtube.com/watch?v='+id;const dl=document.getElementById('youtubeDownloadBtn');if(dl)dl.onclick=()=>{document.getElementById('youtubeDownloadHelp')?.classList.add('show');window.open('https://www.youtube.com/watch?v='+id,'_blank','noopener,noreferrer');};
-  });
   updatePitch();
 })();
 </script></body></html>
