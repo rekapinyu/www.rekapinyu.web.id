@@ -1628,7 +1628,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 <section class="hidden" id="view-activity"></section>
 <div aria-label="Area Aktifitas" class="hidden" id="activity-main-container">
 <style id="rekapinyu-activity-24h-css">
-#activity-main-container{width:100%;max-width:900px;margin:10px auto 0;box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:14px}
+#activity-main-container{width:100%;max-width:900px;margin:6px auto 0;padding:0;box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:14px}
 #activity-main-container.hidden{display:none!important}
 #activity-main-container .rk-activity-final-filter{width:100%;box-sizing:border-box;position:sticky;top:10px;z-index:40}
 #activity-main-container .rk-activity-final-filter-box{width:100%;box-sizing:border-box;padding:10px;background:rgba(255,255,255,.98);border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,.07)}
@@ -1663,7 +1663,7 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   #activity-main-container{
     width:100%!important;
     max-width:900px!important;
-    margin:32px auto 0!important;
+    margin:6px auto 0!important;
     gap:16px!important;
   }
   #activity-main-container .rk-activity-final-filter{
@@ -12402,8 +12402,8 @@ async function initKasirViews(){
 
 
 <style id="laporan-kasir-baru-v16-css">
-#view-laporan-kasir{width:100%;min-height:100%;padding:18px 14px;box-sizing:border-box;overflow:auto;background:#f1f4f8}
-#view-laporan-kasir .lk16-report-wrap{width:100%;max-width:900px;margin:0 auto}
+#view-laporan-kasir{width:100%!important;max-width:100%!important;flex:1 1 auto!important;min-height:0!important;margin:6px 0 0!important;padding:0!important;box-sizing:border-box!important;overflow:visible!important;background:#f1f4f8}
+#view-laporan-kasir .lk16-report-wrap{width:100%;max-width:900px;margin:0 auto;box-sizing:border-box}
 #view-laporan-kasir .lk16-report-list{display:grid;grid-template-columns:1fr;gap:16px;width:100%}
 #view-laporan-kasir .lk16-card{width:100%;box-sizing:border-box;padding:20px 22px 22px;border:1px solid #e2e8f0;border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.055);transition:.15s}
 #view-laporan-kasir .lk16-card:hover{box-shadow:0 12px 30px rgba(15,23,42,.08);transform:translateY(-1px)}
