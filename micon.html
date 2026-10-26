@@ -322,3 +322,18 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
 updatePitch();
 })();
 </script></body></html>
+<style>
+/* Final spacing match to the supplied desktop reference; design-only adjustments. */
+@media (min-width:761px){
+ .wrap{padding-left:39px!important;padding-right:30px!important;padding-bottom:14px!important}
+ .top{margin-left:-39px!important;margin-right:-30px!important;padding-left:28px!important;padding-right:75px!important;height:59px!important;margin-bottom:27px!important}
+ .grid{grid-template-columns:minmax(0,1.62fr) minmax(0,.98fr)!important;gap:37px!important}
+ #dropZone{margin-top:6px!important;height:40px!important;min-height:40px!important}
+ #importSection .filemeta{margin-top:9px!important;min-height:40px!important;padding:6px 10px!important}
+ #transposeSection .noteBox{margin-top:10px!important;height:138px!important}
+ #transposeSection .stepper{margin-top:22px!important}
+ #transposeSection .row{margin-top:36px!important}
+ .foot{margin-top:28px!important;padding-top:22px!important;gap:28px!important;line-height:1.7!important}
+ .foot-title{margin-bottom:7px!important}
+}
+</style>
