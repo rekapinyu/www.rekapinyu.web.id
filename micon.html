@@ -221,7 +221,25 @@
 @media(max-width:760px){.desktop-nav{display:none!important}#youtubeSection{margin:0 0 0 calc(50% - 50vw);min-height:calc(100dvh - 62px)}#youtubeSection .yt-frame{height:calc(100dvh + 118px);min-height:598px;margin-top:-118px}#youtubeSection .yt-fallback{padding:10px 12px}}
 </style>
 
-</head>
+<style>\n
+/* Pilihan tangga nada: kotak ringkas sesuai gambar referensi. */
+.keySelectWrap{display:block;width:100%;min-width:0}
+.keySelect{display:block;width:100%;height:40px;padding:0 12px;border:1px dashed #9aabc6;border-radius:14px;background:#f8fafc;color:#111827;text-align:center;text-align-last:center;font:12px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;outline:none;cursor:pointer}
+.keySelect:focus{border-color:#0f9f91;box-shadow:0 0 0 2px rgba(15,159,145,.10)}
+@media(min-width:761px){
+  .grid{grid-template-columns:minmax(0,1.62fr) minmax(0,.98fr)!important;column-gap:37px!important}
+  #transposeSection .keySelectWrap{grid-column:2;grid-row:3;margin-top:8px}
+  #transposeSection .noteBox{grid-column:2;grid-row:4;margin-top:12px!important;height:138px!important}
+  #transposeSection .stepper{grid-column:2;grid-row:5;margin-top:18px!important}
+  #transposeSection .rangeLabels{grid-column:2;grid-row:6;margin-top:8px!important}
+  #transposeSection .row{grid-column:2;grid-row:7;margin-top:18px!important}
+  #transposeSection .alert{grid-column:2;grid-row:8}
+}
+@media(max-width:760px){
+  .keySelect{height:44px;border-color:#cbd5e1;background:#f8fafc;font-size:14px}
+  #transposeSection .keySelectWrap{margin:12px 0}
+}
+\n</style>\n</head>
 <body><main class="wrap">
 <header class="top"><div class="brand"><div class="logo">♫</div><div><h1><span class="brand-mic">Mic</span> <span class="brand-on">On</span></h1><p>Atur nada lagu sesuai suara kamu</p></div></div><nav class="desktop-nav" aria-label="Navigasi utama"><span class="nav-link" data-page="homePage"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9M9 20v-7h6v7"/></svg></span>Home</span><span class="nav-link" data-page="karaokePage"><span class="nav-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span>Karaoke</span><span class="nav-link" data-page="youtubePage"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></span>Download Video YouTube</span><span class="nav-link" data-page="packagePage"><span class="nav-ico"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4.5 7.8 7.5 4.4 7.5-4.4M12 12.2V21"/></svg></span>Perpanjang Paket</span><span class="social-icons" aria-label="Media sosial"><span class="social-icon whatsapp" title="WhatsApp" aria-label="WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3.2A12.7 12.7 0 0 0 5.1 22.4L3.4 28.6l6.4-1.7A12.7 12.7 0 1 0 16 3.2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11.4 9.8c-.4-.8-.8-.8-1.2-.8h-1c-.4 0-.9.2-1.4.7s-1.8 1.8-1.8 4.3 1.9 5 2.2 5.4c.3.3 3.7 5.9 9.1 7.4 4.5 1.3 5.4 1 6.4.9 1-.1 3.2-1.3 3.7-2.6.5-1.3.5-2.4.3-2.6-.2-.2-.5-.3-1.1-.6s-3.2-1.6-3.7-1.8c-.5-.2-.9-.3-1.2.3-.4.5-1.4 1.8-1.7 2.2-.3.4-.6.4-1.1.1-.5-.3-2.3-.9-4.3-2.7-1.6-1.4-2.7-3.1-3-3.6-.3-.5 0-.8.2-1.1.2-.2.5-.6.8-.9.3-.3.4-.5.5-.8.2-.3.1-.6 0-.9-.1-.3-1.1-2.8-1.5-3.8Z" fill="currentColor" transform="translate(1 0) scale(.82)"/></svg></span><span class="social-icon tiktok" title="TikTok" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 6.7a5.1 5.1 0 0 1-3.9-4.6V1.5h-3.8v13.2a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V8.1a7 7 0 1 0 5.8 6.9V8.4a8.7 8.7 0 0 0 4.9 1.5V6.8c-.3 0-.7 0-1-.1Z" fill="currentColor"/></svg></span><span class="social-icon facebook" title="Facebook" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.02 4.39 11.01 10.13 11.85v-8.38H7.08v-3.47h3.05V9.43c0-3.03 1.79-4.7 4.53-4.7 1.31 0 2.69.24 2.69.24v2.95h-1.51c-1.49 0-1.96.93-1.96 1.89v2.27h3.33l-.53 3.47h-2.8v8.38C19.61 23.08 24 18.09 24 12.07Z" fill="currentColor"/></svg></span></span></nav><div class="pill">IMPORT VIDEO · LOKAL</div></header>
  <div id="mainContent">
@@ -232,6 +250,23 @@
 <div class="filemeta"><div class="fileIcon">♫</div><div class="filetext"><b id="fileName">Belum ada lagu dipilih</b><small id="fileSize">File audio akan tampil di sini</small><div class="status" id="fileStatus">Menunggu file</div></div></div>
 </section>
 <section class="card transposeCard" id="transposeSection"><label class="drop" id="dropZone" for="videoFile"><div><div class="uploadIcon">⬆</div><strong>Tekan untuk pilih video MP4</strong><small>MP4 · pilih video baru untuk mengganti video</small></div></label><input id="videoFile" type="file" accept="video/mp4,video/*,.mp4" hidden><h3>02 · Transpose nada video</h3><p class="sub">Ubah nada audio video saat diputar.</p>
+<label class="keySelectWrap" aria-label="Pilih Tangga Nada">
+  <select id="keySelect" class="keySelect">
+    <option value="">Pilih Tangga Nada</option>
+    <option value="0">C / Do</option>
+    <option value="1">C♯ / D♭</option>
+    <option value="2">D / Re</option>
+    <option value="3">D♯ / E♭</option>
+    <option value="4">E / Mi</option>
+    <option value="5">F / Fa</option>
+    <option value="6">F♯ / G♭</option>
+    <option value="7">G / Sol</option>
+    <option value="8">G♯ / A♭</option>
+    <option value="9">A / La</option>
+    <option value="10">A♯ / B♭</option>
+    <option value="11">B / Si</option>
+  </select>
+</label>
 <div class="noteBox"><small>Nada relatif</small><div class="note" id="noteName">Original</div><div class="mini" id="noteDesc">0 semitone · nada asli</div></div>
 <div class="stepper"><button class="step" id="downBtn" aria-label="Turunkan nada" disabled>−</button><input class="range" id="pitchRange" type="range" min="-24" max="24" step="1" value="0" disabled><button class="step" id="upBtn" aria-label="Naikkan nada" disabled>+</button></div>
 <div class="rangeLabels"><span>−24 semitone</span><span>0</span><span>+24 semitone</span></div>
@@ -355,10 +390,20 @@ async function setupAudio(){
   }
 }
 async function clearAudioGraph(){if(video){try{video.pause()}catch(_){}}if(source){try{source.disconnect()}catch(_){}source=null;}if(effect){try{effect.disconnect()}catch(_){}try{effect.dispose?.()}catch(_){}effect=null;}const oldCtx=ctx;ctx=null;if(ownsContext&&oldCtx&&oldCtx.state!=='closed'){try{await oldCtx.close()}catch(_){}}ownsContext=false;engine='none';}
-async function clearVideo(){await clearAudioGraph();if(video){video.removeAttribute('src');video.load();video.remove();video=null;}if(url){URL.revokeObjectURL(url);url=null;}file=null;playing=false;$('videoFile').value='';$('fileName').textContent='Belum ada video dipilih';$('fileSize').textContent='Pilih file MP4 dari perangkat';$('fileStatus').textContent='Menunggu video';$('clearBtn').disabled=true;$('playBtn').disabled=true;$('playBtn').textContent='▶ Putar video';$('pitchRange').disabled=true;$('downBtn').disabled=true;$('upBtn').disabled=true;$('pitchRange').value=0;$('duration').textContent='00:00';$('currentTime').textContent='00:00';$('progressBar').style.width='0%';$('alert').className='alert';updatePitch();}
+async function clearVideo(){await clearAudioGraph();if(video){video.removeAttribute('src');video.load();video.remove();video=null;}if(url){URL.revokeObjectURL(url);url=null;}file=null;playing=false;$('videoFile').value='';$('fileName').textContent='Belum ada video dipilih';$('fileSize').textContent='Pilih file MP4 dari perangkat';$('fileStatus').textContent='Menunggu video';$('clearBtn').disabled=true;$('playBtn').disabled=true;$('playBtn').textContent='▶ Putar video';$('pitchRange').disabled=true;$('downBtn').disabled=true;$('upBtn').disabled=true;$('pitchRange').value=0;if($('keySelect'))$('keySelect').value='';$('duration').textContent='00:00';$('currentTime').textContent='00:00';$('progressBar').style.width='0%';$('alert').className='alert';updatePitch();}
 $('videoFile').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;if(!(/\.mp4$/i.test(f.name)||f.type==='video/mp4')){msg('Pilih file video MP4.',true);return;}await clearVideo();file=f;url=URL.createObjectURL(file);$('fileName').textContent=file.name;$('fileSize').textContent=(file.size/1048576).toFixed(2)+' MB · video/mp4';$('fileStatus').textContent='Memuat video…';$('clearBtn').disabled=false;$('pitchRange').value=0;setupVideo();updatePitch();video.addEventListener('loadedmetadata',()=>{setupAudio().catch(e=>msg('Video siap, tetapi transpose belum aktif: '+(e.message||e),true));},{once:true});});
 $('playBtn').addEventListener('click',async()=>{if(!video)return;try{await setupAudio();if(video.paused){video.defaultPlaybackRate=1;video.playbackRate=1;await video.play();}else video.pause();}catch(e){msg('Gagal memutar video/audio: '+(e.message||e),true);}});
-$('pitchRange').addEventListener('input',updatePitch);$('downBtn').addEventListener('click',()=>{$('pitchRange').value=Math.max(-24,+$('pitchRange').value-1);updatePitch()});$('upBtn').addEventListener('click',()=>{$('pitchRange').value=Math.min(24,+$('pitchRange').value+1);updatePitch()});$('clearBtn').addEventListener('click',()=>{clearVideo()});
+const keySelect=$('keySelect');
+  if(keySelect)keySelect.addEventListener('change',()=>{
+    if(!keySelect.value)return;
+    const selected=Number(keySelect.value);
+    const current=Number($('pitchRange').value);
+    // The chosen key is interpreted as a semitone target relative to C (0).
+    // Keep the existing transpose engine as the only audio-processing path.
+    $('pitchRange').value=Math.max(-24,Math.min(24,selected));
+    updatePitch();
+  });
+  $('pitchRange').addEventListener('input',updatePitch);$('downBtn').addEventListener('click',()=>{$('pitchRange').value=Math.max(-24,+$('pitchRange').value-1);updatePitch()});$('upBtn').addEventListener('click',()=>{$('pitchRange').value=Math.min(24,+$('pitchRange').value+1);updatePitch()});$('clearBtn').addEventListener('click',()=>{clearVideo()});
 const dock=document.getElementById('mobileDock'),moreSheet=document.getElementById('moreSheet');if(dock){dock.querySelectorAll('[data-target]').forEach(btn=>btn.addEventListener('click',()=>{dock.querySelectorAll('.dock-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');moreSheet?.classList.remove('open');moreSheet?.setAttribute('aria-hidden','true');document.getElementById(btn.dataset.target)?.scrollIntoView({behavior:'smooth',block:'start'});}));}if($('moreMenuBtn'))$('moreMenuBtn').addEventListener('click',()=>{moreSheet?.classList.toggle('open');moreSheet?.setAttribute('aria-hidden',String(!moreSheet.classList.contains('open')))});if($('closeMore'))$('closeMore').addEventListener('click',()=>{moreSheet.classList.remove('open');moreSheet.setAttribute('aria-hidden','true')});if($('settingsShortcut'))$('settingsShortcut').addEventListener('click',()=>msg('Pengaturan Supabase tidak diperlukan: video diproses langsung di perangkat.'));
   // Navigasi header; menu downloader menggunakan situs eksternal tanpa mengubah mesin audio.
   const mainContent=document.getElementById('mainContent'),youtubeSection=document.getElementById('youtubeSection');
