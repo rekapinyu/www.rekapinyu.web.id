@@ -9349,6 +9349,13 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
   async function idbSetDocumentsRoot(value){
     return await idbSetByKey(PHOTO_DOCUMENTS_KEY,value);
   }
+  const PHOTO_PARENT_KEY='rekapinyu_produk_kasir_parent_directory';
+  async function idbGetParentRoot(){
+    return await idbGetByKey(photoUserKey(PHOTO_PARENT_KEY));
+  }
+  async function idbSetParentRoot(value){
+    return await idbSetByKey(photoUserKey(PHOTO_PARENT_KEY),value);
+  }
 
   async function requestDirectoryPermission(handle,mode='readwrite'){
     try{
@@ -9388,9 +9395,8 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       if(isDocumentsDirectoryName(picked.name)){
         try{window.__rekapinyuFolderManagerDocuments=picked}catch(_){ }
         try{await idbSetDocumentsRoot(picked)}catch(_){ }
-        return {root:picked,shopFolder:null};
       }
-      return {root:null,shopFolder:picked};
+      return {root:picked,shopFolder:null};
     }
     let docs=null;
     try{docs=window.__rekapinyuFolderManagerDocuments||null}catch(_){ }
@@ -9418,9 +9424,10 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     if(isDocumentsDirectoryName(picked.name)){
       try{window.__rekapinyuFolderManagerDocuments=picked}catch(_){ }
       try{await idbSetDocumentsRoot(picked)}catch(_){ }
-      return {root:picked,shopFolder:null};
     }
-    return {root:null,shopFolder:picked};
+    /* Simpan folder yang dipilih sebagai induk agar aplikasi bisa memastikan
+       folder toko masih benar-benar ada, bukan hanya memakai handle lama. */
+    return {root:picked,shopFolder:null};
   }
 
   async function selectPhotoDirectory(preselectedDirectory){
@@ -9434,7 +9441,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     let shopFolder=target?.shopFolder||null;
 
     if(docs){
-      if(!(await requestDirectoryPermission(docs)))throw new Error('Izin akses folder Dokumen ditolak.');
+      if(!(await requestDirectoryPermission(docs)))throw new Error('Izin akses folder induk ditolak.');
       try{shopFolder=await docs.getDirectoryHandle(shopName,{create:false});}
       catch(_){
         try{
@@ -9442,6 +9449,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
           shopFolder=await docs.getDirectoryHandle(shopName,{create:true});
         }finally{window.__rekapinyuAllowFolderCreate=false;}
       }
+      try{await idbSetParentRoot(docs)}catch(_){ }
     }
     if(!shopFolder)throw new Error('Folder toko belum tersedia. Buat folder toko di dalam Dokumen lalu pilih folder tersebut.');
 
@@ -9576,6 +9584,16 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         try{
           if(String(root.name||'').trim()!==selectedFolderName)valid=false;
           if((await root.queryPermission({mode:'readwrite'}))!=='granted')valid=false;
+          /* Jangan hanya percaya handle tersimpan: pastikan folder toko masih ada
+             pada folder induk dan masih menunjuk ke entri direktori yang sama. */
+          let parent=null;
+          try{parent=await idbGetParentRoot()}catch(_){parent=null}
+          if(!parent)valid=false;
+          if(valid){
+            if((await parent.queryPermission({mode:'readwrite'}))!=='granted')valid=false;
+            const current=await parent.getDirectoryHandle(selectedFolderName,{create:false});
+            if(valid && typeof current.isSameEntry==='function' && !(await current.isSameEntry(root)))valid=false;
+          }
           if(valid){
             for(const name of ['Produk Kasir','Input Data','Kasbon','Pengeluaran']){
               await root.getDirectoryHandle(name,{create:false});
@@ -9589,6 +9607,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         photoDirectoryOwnerKey=owner;
         try{await idbSet(null)}catch(_){ }
         try{await idbSetFolderName('')}catch(_){ }
+        try{await idbSetParentRoot(null)}catch(_){ }
       }else{
         photoDirectoryHandle=root;
         photoDirectoryOwnerKey=owner;
