@@ -9460,8 +9460,20 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       for(const name of required){
         let sub=null;
         try{sub=await shopFolder.getDirectoryHandle(name,{create:false});}
-        catch(_){sub=await shopFolder.getDirectoryHandle(name,{create:true});}
-        if(!(await requestDirectoryPermission(sub)))throw new Error(`Izin akses folder ${name} ditolak.`);
+        catch(_){
+          /* Buat subfolder wajib secara eksplisit. Gunakan implementasi asli
+             bila pengaman direktori menolak opsi create dari wrapper lama. */
+          try{sub=await shopFolder.getDirectoryHandle(name,{create:true});}
+          catch(createError){
+            const originalGet=window.__rekapinyuOriginalGetDirectoryHandle;
+            if(typeof originalGet==='function') sub=await originalGet.call(shopFolder,name,{create:true});
+            else throw createError;
+          }
+        }
+        if(!sub)throw new Error(`Subfolder ${name} gagal dibuat.`);
+        /* Verifikasi folder benar-benar ada sebelum melanjutkan. */
+        const verified=await shopFolder.getDirectoryHandle(name,{create:false});
+        if(!(await requestDirectoryPermission(verified)))throw new Error(`Izin akses folder ${name} ditolak.`);
       }
     }finally{window.__rekapinyuAllowFolderCreate=false;}
 
@@ -9469,6 +9481,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     photoDirectoryHandle=shopFolder;
     try{await idbSet(shopFolder)}catch(_){ }
     try{await idbSetFolderName(shopFolder.name)}catch(_){ }
+    try{localStorage.setItem('rekapinyu_produk_kasir_folder_label_v1',shopFolder.name)}catch(_){ }
     await updateFolderStatus();
     try{await scanTargetFolderPhotos();await refreshRenderedPhotos()}catch(_){ }
     try{await window.__rekapinyuLoadLocalRekap?.()}catch(_){ }
@@ -9568,36 +9581,30 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
   async function updateFolderStatus(){
     const btn=$('pk3-folder-pick');
     if(!btn)return;
-
+    const LABEL_KEY='rekapinyu_produk_kasir_folder_label_v1';
     const owner=photoOwnerKey();
     let selectedFolderName='';
     let root=null;
+    let valid=false;
     if(owner){
       try{selectedFolderName=String(await idbGetFolderName()||'').trim()}catch(_){ }
       try{root=photoDirectoryOwnerKey===owner?photoDirectoryHandle:null}catch(_){ }
       if(!root){try{root=await idbGet()}catch(_){root=null}}
-
-      /* Validasi: folder target atau salah satu subfolder wajib hilang/berubah,
-         status pilihan dibersihkan agar tombol kembali menjadi Buat Folder. */
-      let valid=!!root && !!selectedFolderName;
+      valid=!!root&&!!selectedFolderName;
       if(valid){
         try{
           if(String(root.name||'').trim()!==selectedFolderName)valid=false;
           if((await root.queryPermission({mode:'readwrite'}))!=='granted')valid=false;
-          /* Jangan hanya percaya handle tersimpan: pastikan folder toko masih ada
-             pada folder induk dan masih menunjuk ke entri direktori yang sama. */
           let parent=null;
           try{parent=await idbGetParentRoot()}catch(_){parent=null}
           if(!parent)valid=false;
           if(valid){
             if((await parent.queryPermission({mode:'readwrite'}))!=='granted')valid=false;
             const current=await parent.getDirectoryHandle(selectedFolderName,{create:false});
-            if(valid && typeof current.isSameEntry==='function' && !(await current.isSameEntry(root)))valid=false;
+            if(typeof current.isSameEntry==='function'&&!(await current.isSameEntry(root)))valid=false;
           }
           if(valid){
-            for(const name of ['Produk Kasir','Transaksi Kasir','Input Data','Kasbon','Pengeluaran']){
-              await root.getDirectoryHandle(name,{create:false});
-            }
+            for(const name of ['Produk Kasir','Transaksi Kasir','Input Data','Kasbon','Pengeluaran'])await root.getDirectoryHandle(name,{create:false});
           }
         }catch(_){valid=false}
       }
@@ -9611,15 +9618,20 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       }else{
         photoDirectoryHandle=root;
         photoDirectoryOwnerKey=owner;
+        try{localStorage.setItem(LABEL_KEY,selectedFolderName)}catch(_){ }
       }
     }
-
+    /* Nama pilihan tetap terlihat lintas reload/logout/login. Handle akses tetap
+       mengikuti izin browser dan akun aktif; label saja tidak memberi akses folder. */
+    if(!selectedFolderName){
+      try{selectedFolderName=String(localStorage.getItem(LABEL_KEY)||'').trim()}catch(_){ }
+    }
     const active=!!selectedFolderName;
     btn.classList.toggle('is-active',active);
     btn.setAttribute('aria-pressed',active?'true':'false');
-    btn.disabled=false;
-    btn.style.cursor='pointer';
-    btn.title=active?`Folder penyimpanan: ${selectedFolderName}`:'Buat Folder';
+    btn.disabled=active;
+    btn.style.cursor=active?'default':'pointer';
+    btn.title=active?`Folder penyimpanan dipilih: ${selectedFolderName}`:'Buat Folder';
     btn.innerHTML=active
       ? `<i class="fa-solid fa-folder-open" aria-hidden="true"></i><span>${escapeHtml(selectedFolderName)}</span>`
       : `<i class="fa-solid fa-folder-plus" aria-hidden="true"></i><span>Buat Folder</span>`;
@@ -10374,7 +10386,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
          selectPhotoDirectory tanpa membuka dialog picker kedua atau jalur khusus mobile. */
       e?.preventDefault?.();
       e?.stopPropagation?.();
-      if(btn?.disabled)return;
+      if(btn?.disabled || btn?.classList.contains('is-active'))return;
       try{
         if(btn)btn.disabled=true;
         await selectPhotoDirectory();
