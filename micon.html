@@ -276,10 +276,28 @@ const fmt=t=>{t=Number.isFinite(t)&&t>0?t:0;return String(Math.floor(t/60)).padS
 function msg(t,err=false){const a=$('alert');if(a){a.textContent=t;a.className='alert show '+(err?'err':'ok')}}
 function noteValue(n){return n>0?'+'+n:String(n)}
 function showTime(){if(!video)return;$('currentTime').textContent=fmt(video.currentTime);$('progressBar').style.width=(video.duration?video.currentTime/video.duration*100:0)+'%';}
-function setupVideo(){if(video)video.remove();video=document.createElement('video');video.id='karaokeVideo';video.controls=true;video.playsInline=true;video.preload='metadata';video.defaultPlaybackRate=1;video.playbackRate=1;video.style.cssText='display:block;width:100%;max-height:52vh;object-fit:contain;background:#000;border-radius:16px;margin:12px 0';$('videoStage').appendChild(video);video.src=url;video.addEventListener('loadedmetadata',()=>{$('duration').textContent=fmt(video.duration);$('fileStatus').textContent='Video siap diputar';$('playBtn').disabled=false;$('pitchRange').disabled=false;$('downBtn').disabled=false;$('upBtn').disabled=false;});video.addEventListener('ratechange',()=>{if(video&&video.playbackRate!==1)video.playbackRate=1;});video.addEventListener('timeupdate',showTime);video.addEventListener('play',()=>{playing=true;$('playBtn').textContent='Ⅱ Jeda video'});video.addEventListener('pause',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('ended',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('error',()=>msg('Browser tidak dapat membaca video ini. Coba MP4 H.264 dengan audio AAC.',true));}
+function setupVideo(){if(video)video.remove();video=document.createElement('video');video.id='karaokeVideo';video.controls=true;video.playsInline=true;video.preload='metadata';video.defaultPlaybackRate=1;video.playbackRate=1;video.style.cssText='display:block;width:100%;max-height:52vh;object-fit:contain;background:#000;border-radius:16px;margin:12px 0';$('videoStage').appendChild(video);video.src=url;video.addEventListener('loadedmetadata',()=>{$('duration').textContent=fmt(video.duration);$('fileStatus').textContent='Video siap diputar';$('playBtn').disabled=false;$('pitchRange').disabled=true;$('downBtn').disabled=true;$('upBtn').disabled=true;});video.addEventListener('ratechange',()=>{if(video&&video.playbackRate!==1)video.playbackRate=1;});video.addEventListener('timeupdate',showTime);video.addEventListener('play',()=>{playing=true;$('playBtn').textContent='Ⅱ Jeda video'});video.addEventListener('pause',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('ended',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('error',()=>msg('Browser tidak dapat membaca video ini. Coba MP4 H.264 dengan audio AAC.',true));}
 async function getFormantNodeClass(){if(!hqConstructorPromise){hqConstructorPromise=import(HQ_MODULE).then(mod=>{if(!mod.FormantCorrectionNode)throw new Error('Modul koreksi formant tidak ditemukan.');return mod.FormantCorrectionNode;});}return hqConstructorPromise;}
 function setFormantForPitch(n){if(!effect||engine!=='hq'||!effect.formantStrength)return;/* Koreksi timbre lebih kuat saat pitch diturunkan; campuran bertahap membantu mempertahankan warna instrumen. */const strength=n<0?Math.min(0.92,0.56+(Math.abs(n)/24)*0.36):(n>0?Math.min(0.72,0.48+(n/24)*0.24):0);effect.formantStrength.value=strength;}
-function updatePitch(){const n=Number($('pitchRange').value);$('pitchValue').textContent=noteValue(n);$('noteName').textContent=n===0?'Original':noteValue(n);$('noteDesc').textContent=n===0?'0 semitone · nada asli':Math.abs(n)+' semitone '+(n>0?'lebih tinggi':'lebih rendah');const engineReady=!!effect&&(engine==='hq'||engine==='tone');$('pitchRange').disabled=!file||!engineReady;$('downBtn').disabled=!file||!engineReady||n<=-24;$('upBtn').disabled=!file||!engineReady||n>=24;if(effect){try{if(engine==='hq'){effect.pitch.value=1;effect.pitchSemitones.value=n;effect.playbackRate.value=1;setFormantForPitch(n);}else if(engine==='tone'){effect.pitch=n;effect.wet.value=(n===0?0:1);}}catch(e){msg('Efek transpose gagal diperbarui: '+(e.message||e),true);}}if(video){video.defaultPlaybackRate=1;if(video.playbackRate!==1)video.playbackRate=1;}}
+function updatePitch(){
+  const n=Number($('pitchRange').value);
+  $('pitchValue').textContent=noteValue(n);
+  $('noteName').textContent=n===0?'Original':noteValue(n);
+  $('noteDesc').textContent=n===0?'0 semitone · nada asli':Math.abs(n)+' semitone '+(n>0?'lebih tinggi':'lebih rendah');
+  const engineReady=!!effect&&engine==='hq';
+  $('pitchRange').disabled=!file||(!engineReady&&!video?.paused);
+  $('downBtn').disabled=!file||!engineReady||n<=-24;
+  $('upBtn').disabled=!file||!engineReady||n>=24;
+  if(effect&&engine==='hq'){
+    try{
+      effect.pitch.value=1;
+      effect.pitchSemitones.value=n;
+      effect.playbackRate.value=1;
+      setFormantForPitch(n);
+    }catch(e){msg('Efek transpose gagal diperbarui: '+(e.message||e),true);}
+  }
+  if(video){video.defaultPlaybackRate=1;if(video.playbackRate!==1)video.playbackRate=1;}
+}
 async function setupHighQualityAudio(){
   const AudioCtx=window.AudioContext||window.webkitAudioContext;
   if(!AudioCtx)throw new Error('Browser tidak mendukung Web Audio API.');
@@ -316,22 +334,24 @@ async function setupHighQualityAudio(){
 async function setupToneFallback(){if(!window.Tone)throw new Error('Mesin audio berkualitas tinggi tidak termuat, dan mode cadangan tidak tersedia. Periksa koneksi internet lalu muat ulang.');await Tone.start();const toneCtx=Tone.getContext();ctx=toneCtx.rawContext;effect=new Tone.PitchShift({pitch:Number($('pitchRange').value),windowSize:0.1,feedback:0,wet:Number($('pitchRange').value)===0?0:1});try{source=toneCtx.createMediaElementSource(video);source.connect(effect.input.input);effect.toDestination();engine='tone';ownsContext=false;video.defaultPlaybackRate=1;video.playbackRate=1;msg('Mesin koreksi kualitas tinggi tidak dapat dimuat; memakai mode audio standar. Untuk suara lebih jernih, pastikan internet mengizinkan akses ke CDN.',true);}catch(e){try{effect.dispose()}catch(_){}effect=null;engine='none';throw e;}}
 async function setupAudio(){
   if(!video)throw new Error('Pilih video terlebih dahulu.');
-  if(source&&engine==='bypass'){if(ctx&&ctx.state==='suspended')await ctx.resume();return;}
-  if(source&&effect&&engine==='hq'){if(ctx&&ctx.state==='suspended')await ctx.resume();updatePitch();return;}
-  if(source&&effect&&engine==='tone'){await Tone.start();updatePitch();return;}
+  if(source&&effect&&engine==='hq'){
+    if(ctx&&ctx.state==='suspended')await ctx.resume();
+    updatePitch();
+    return;
+  }
+  if(source&&engine==='bypass')throw new Error('Mesin transpose belum tersambung. Pilih ulang video lalu coba lagi.');
   try{
     await setupHighQualityAudio();
-    if(engine==='hq'){updatePitch();}
-    return;
+    if(engine==='hq'){updatePitch();return;}
+    throw new Error('Mesin transpose tidak aktif.');
   }catch(highQualityError){
-    /* Fall back only if the high-quality engine failed before creating a MediaElementSourceNode. */
-    if(source&&engine==='bypass')return;
+    /* Jangan mengklaim transpose aktif bila mesin pitch-shift gagal. */
+    if(source&&engine==='bypass')throw highQualityError;
     if(source){try{source.disconnect()}catch(_){}source=null;}
     if(effect){try{effect.disconnect()}catch(_){}try{effect.dispose?.()}catch(_){}effect=null;}
     if(ctx&&ownsContext&&ctx.state!=='closed'){try{await ctx.close()}catch(_){}}
     ctx=null;ownsContext=false;engine='none';
-    try{await setupToneFallback();updatePitch();}
-    catch(fallbackError){throw new Error('Mesin audio berkualitas tinggi gagal dimuat ('+(highQualityError.message||highQualityError)+'). Mode cadangan juga gagal: '+(fallbackError.message||fallbackError));}
+    throw new Error('Efek perubahan nada tidak berhasil dimuat. Pastikan internet aktif dan browser mendukung AudioWorklet, lalu pilih ulang video. Detail: '+(highQualityError.message||highQualityError));
   }
 }
 async function clearAudioGraph(){if(video){try{video.pause()}catch(_){}}if(source){try{source.disconnect()}catch(_){}source=null;}if(effect){try{effect.disconnect()}catch(_){}try{effect.dispose?.()}catch(_){}effect=null;}const oldCtx=ctx;ctx=null;if(ownsContext&&oldCtx&&oldCtx.state!=='closed'){try{await oldCtx.close()}catch(_){}}ownsContext=false;engine='none';}
