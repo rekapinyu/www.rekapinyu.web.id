@@ -10811,7 +10811,7 @@ async function initKasirViews(){
     renderKasirTransactionTabs(); renderKasirProducts(); renderCart(); renderTransactions();
   }
 
-  /* JSON HARIAN KASIR + LAPORAN KASIR — satu file per tanggal, dibuat ulang/di-update otomatis setelah transaksi berhasil. */
+  /* JSON HARIAN TRANSAKSI KASIR + LAPORAN KASIR — satu file per tanggal di subfolder Transaksi Kasir, diperbarui otomatis setelah transaksi berhasil. */
   function kasirJsonDateInfo(timestamp){
     const d=new Date(Number(timestamp)||Date.now()),dd=String(d.getDate()).padStart(2,'0'),mm=String(d.getMonth()+1).padStart(2,'0'),yyyy=d.getFullYear();
     const days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -10819,14 +10819,14 @@ async function initKasirViews(){
   }
   function kasirTransactionTimestamp(tx){const id=Number(tx?.id);if(Number.isFinite(id)&&id>0)return id;const parsed=Date.parse(String(tx?.date||''));return Number.isFinite(parsed)?parsed:Date.now();}
   async function loadKasirTransactionsFromFolder(){
-    const dir=await window.__rekapinyuGetDataSubdirectory?.('Kasir'); if(!dir)return [];
+    const dir=await window.__rekapinyuGetDataSubdirectory?.('Transaksi Kasir'); if(!dir)return [];
     const all=[]; async function walk(cur){for await(const [name,entry] of cur.entries()){if(entry?.kind==='directory'){await walk(entry);continue;}if(entry?.kind!=='file'||!/^Kasir_.*\.json$/i.test(String(name)))continue;try{const raw=JSON.parse(await (await entry.getFile()).text());if(Array.isArray(raw?.TransaksiKasir))all.push(...raw.TransaksiKasir);}catch(_){}}}
     await walk(dir); const seen=new Set(); return all.filter(t=>{const k=String(t?.id||'')||JSON.stringify(t);if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>Number(b?.id||0)-Number(a?.id||0));
   }
   async function loadKasirFolderData(){const tx=await loadKasirTransactionsFromFolder();kasirTransactions=tx;window.__rekapinyuKasirTransactionsRealtime=kasirTransactions;try{renderTransactions()}catch(_){ }return tx;}
   window.__rekapinyuLoadKasirFolder=loadKasirFolderData;
   async function saveKasirHarianJson(transactionToGuarantee=null){
-    const dir=await window.__rekapinyuGetDataSubdirectory?.('Kasir'); if(!dir)return false;
+    const dir=await window.__rekapinyuGetDataSubdirectory?.('Transaksi Kasir'); if(!dir)return false;
     const now=Date.now(),info=kasirJsonDateInfo(now);
     const memoryTx=Array.isArray(kasirTransactions)?kasirTransactions:[];
     let fileTx=[];
