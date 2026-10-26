@@ -8833,8 +8833,8 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
 
     async function importHistoryBackupFromJson() {
         try {
-            const dir = await window.__rekapinyuGetDataSubdirectory?.('Rekap');
-            if (!dir) throw new Error('Folder Data/Rekap tidak ditemukan. Pastikan folder Data/Rekap sudah tersedia.');
+            const dir = await window.__rekapinyuGetDataSubdirectory?.('Input Data');
+            if (!dir) throw new Error('Subfolder Input Data tidak ditemukan. Pilih folder toko di Menu Produk Kasir terlebih dahulu.');
             if (!('showOpenFilePicker' in window)) throw new Error('Browser ini belum mendukung pemilihan file langsung dari folder Data/Rekap. Gunakan Chrome/Edge terbaru.');
             const picked = await window.showOpenFilePicker({multiple:false,startIn:dir,types:[{description:'Rekapinyu History JSON (BackupHistory / InputData)',accept:{'application/json':['.json']}}]});
             const handle = picked?.[0];
@@ -8931,7 +8931,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
             });
         }
 
-        /* Input file lama tidak dipakai lagi. Import memakai folder Data/Rekap langsung. */
+        /* Import History memilih file JSON langsung dari subfolder Input Data. */
         const importFile = document.getElementById('history-io-import-file');
         if (importFile) {
             importFile.value = '';
@@ -10272,7 +10272,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         return;
       }
       if(!/^BackupProduk_.*\.json$/i.test(String(file.name||'')))
-        throw new Error('Pilih file backup Produk Kasir dengan nama BackupProduk_*.json dari folder Data/Produk.');
+        throw new Error('Pilih file backup Produk Kasir bernama BackupProduk_*.json dari subfolder Produk Kasir.');
       const raw=String(await file.text()).trim();
       if(!raw)throw new Error('File backup kosong.');
       const parsed=JSON.parse(raw);
@@ -10288,7 +10288,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       await write();
       render();
       try{window.__initKasirViews?.()}catch(_){}
-      if(typeof showModal==='function')showModal('Import Berhasil',`${imported.length} produk berhasil diimport dari BackupProduk di Data/Produk.`);
+      if(typeof showModal==='function')showModal('Import Berhasil',`${imported.length} produk berhasil diimport dari file backup subfolder Produk Kasir.`);
     }catch(err){
       if(err?.name!=='AbortError'&&typeof showModal==='function')
         showModal('Import Gagal',err?.message||'File backup produk tidak dapat dibaca.');
