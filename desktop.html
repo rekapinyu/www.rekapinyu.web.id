@@ -9388,46 +9388,16 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     return /^(documents|dokumen)(?:\s+\d+)?$/i.test(name);
   }
   async function getDocumentsRootForAutoCreate(preselectedDirectory){
-    /* Folder yang sudah dipilih langsung dari klik mobile dipakai tanpa membuka picker kedua kali. */
+    /* Pilih folder target yang SUDAH ADA. Tidak membuat folder induk toko. */
     if(preselectedDirectory){
-      const picked=preselectedDirectory;
-      if(!(await requestDirectoryPermission(picked)))throw new Error('Izin akses folder ditolak.');
-      if(isDocumentsDirectoryName(picked.name)){
-        try{window.__rekapinyuFolderManagerDocuments=picked}catch(_){ }
-        try{await idbSetDocumentsRoot(picked)}catch(_){ }
-      }
-      return {root:picked,shopFolder:null};
-    }
-    let docs=null;
-    try{docs=window.__rekapinyuFolderManagerDocuments||null}catch(_){ }
-    if(!docs){
-      try{docs=await idbGetDocumentsRoot()}catch(_){ }
-    }
-    if(docs){
-      try{
-        if(isDocumentsDirectoryName(docs.name)){
-          if((await docs.queryPermission({mode:'readwrite'}))==='granted')return {root:docs,shopFolder:null};
-          if(docs.requestPermission&&(await docs.requestPermission({mode:'readwrite'}))==='granted')return {root:docs,shopFolder:null};
-        }
-      }catch(_){docs=null}
+      if(!(await requestDirectoryPermission(preselectedDirectory)))throw new Error('Izin akses folder ditolak.');
+      return {root:preselectedDirectory,shopFolder:preselectedDirectory};
     }
     if(!('showDirectoryPicker' in window))throw new Error('Browser ini belum mendukung akses folder perangkat. Gunakan Chrome/Edge terbaru di desktop/tablet.');
-    /*
-       Pengguna boleh membuat folder toko sendiri dari dialog browser, lalu memilih
-       folder tersebut. Folder yang dipilih dipakai LANGSUNG sebagai target Produk Kasir.
-       Bila yang dipilih adalah Documents/Dokumen, aplikasi tetap membuat folder toko
-       berdasarkan Nama Toko secara otomatis di dalamnya.
-    */
     const picked=await window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-documents-manager',startIn:'documents'});
     if(!picked)throw new Error('Akses folder dibatalkan.');
     if(!(await requestDirectoryPermission(picked)))throw new Error('Izin akses folder ditolak.');
-    if(isDocumentsDirectoryName(picked.name)){
-      try{window.__rekapinyuFolderManagerDocuments=picked}catch(_){ }
-      try{await idbSetDocumentsRoot(picked)}catch(_){ }
-    }
-    /* Simpan folder yang dipilih sebagai induk agar aplikasi bisa memastikan
-       folder toko masih benar-benar ada, bukan hanya memakai handle lama. */
-    return {root:picked,shopFolder:null};
+    return {root:picked,shopFolder:picked};
   }
 
   async function selectPhotoDirectory(preselectedDirectory){
@@ -9437,21 +9407,12 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     if(!shopName)throw new Error('Nama Toko belum tersedia. Folder belum dapat dibuat.');
 
     const target=await getDocumentsRootForAutoCreate(preselectedDirectory);
-    let docs=target?.root||null;
-    let shopFolder=target?.shopFolder||null;
-
-    if(docs){
-      if(!(await requestDirectoryPermission(docs)))throw new Error('Izin akses folder induk ditolak.');
-      try{shopFolder=await docs.getDirectoryHandle(shopName,{create:false});}
-      catch(_){
-        try{
-          window.__rekapinyuAllowFolderCreate=true;
-          shopFolder=await docs.getDirectoryHandle(shopName,{create:true});
-        }finally{window.__rekapinyuAllowFolderCreate=false;}
-      }
-      try{await idbSetParentRoot(docs)}catch(_){ }
-    }
-    if(!shopFolder)throw new Error('Folder toko belum tersedia. Buat folder toko di dalam Dokumen lalu pilih folder tersebut.');
+    /* Folder yang dipilih pengguna adalah folder toko/target langsung.
+       Jangan membuat folder induk baru berdasarkan nama toko. */
+    const shopFolder=target?.shopFolder||target?.root||null;
+    if(!shopFolder)throw new Error('Pilih folder yang sudah ada untuk menyimpan data.');
+    if(!(await requestDirectoryPermission(shopFolder)))throw new Error('Izin akses folder yang dipilih ditolak.');
+    try{await idbSetParentRoot(null)}catch(_){ }
 
     /* Subfolder standar SELALU dibuat otomatis di dalam folder target toko. */
     const required=['Produk Kasir','Transaksi Kasir','Input Data','Kasbon','Pengeluaran'];
@@ -9595,14 +9556,6 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         try{
           if(String(root.name||'').trim()!==selectedFolderName)valid=false;
           if((await root.queryPermission({mode:'readwrite'}))!=='granted')valid=false;
-          let parent=null;
-          try{parent=await idbGetParentRoot()}catch(_){parent=null}
-          if(!parent)valid=false;
-          if(valid){
-            if((await parent.queryPermission({mode:'readwrite'}))!=='granted')valid=false;
-            const current=await parent.getDirectoryHandle(selectedFolderName,{create:false});
-            if(typeof current.isSameEntry==='function'&&!(await current.isSameEntry(root)))valid=false;
-          }
           if(valid){
             for(const name of ['Produk Kasir','Transaksi Kasir','Input Data','Kasbon','Pengeluaran'])await root.getDirectoryHandle(name,{create:false});
           }
