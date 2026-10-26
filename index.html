@@ -1,45 +1,31 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Mengarahkan Rekapinyu sesuai perangkat</title>
-  <script>
-    (function () {
-      // Smartphone dan tablet/iPad diarahkan ke versi mobile.
-      // Perangkat desktop/laptop diarahkan ke versi desktop.
-      var ua = navigator.userAgent || "";
-      var platform = navigator.platform || "";
-      var isIPadOS = platform === "MacIntel" && navigator.maxTouchPoints > 1;
-      var isTablet = /iPad|Tablet|PlayBook|Silk/i.test(ua) || isIPadOS;
-      var isPhone = /Android.*Mobile|iPhone|iPod|Windows Phone|IEMobile|Opera Mini/i.test(ua);
-      var isMobileDevice = isPhone || isTablet;
-
-      var target = isMobileDevice ? "/mobile" : "/desktop";
-      var fallbackText = isMobileDevice
-        ? "Buka Rekapinyu versi mobile"
-        : "Buka Rekapinyu versi desktop";
-
-      window.location.replace(target);
-
-      document.addEventListener("DOMContentLoaded", function () {
-        var link = document.getElementById("redirect-fallback");
-        var message = document.getElementById("redirect-message");
-        if (link) {
-          link.href = target;
-          link.textContent = fallbackText;
-        }
-        if (message) message.textContent = "Mengarahkan Anda ke Rekapinyu...";
-      });
-    })();
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Rekapinyu</title>
+<style>
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#fff}
+#appFrame{display:block;width:100%;height:100%;height:100dvh;border:0;margin:0;padding:0;background:#fff}
+</style>
+<script>
+(function(){
+  var mq=window.matchMedia('(max-width: 760px)');
+  function target(){return mq.matches?'mobile.html':'dekstop.html'}
+  window.addEventListener('DOMContentLoaded',function(){
+    var f=document.getElementById('appFrame');
+    if(f){f.src=target();f.dataset.currentTarget=target()}
+  });
+  function change(){
+    var f=document.getElementById('appFrame'), t=target();
+    if(f&&f.dataset.currentTarget!==t){f.dataset.currentTarget=t;f.src=t}
+  }
+  if(mq.addEventListener)mq.addEventListener('change',change);else if(mq.addListener)mq.addListener(change);
+})();
+</script>
 </head>
 <body>
-  <main>
-    <h1>Rekapinyu</h1>
-    <p id="redirect-message">Mengarahkan Anda ke Rekapinyu...</p>
-    <p>Jika halaman tidak berpindah otomatis, <a id="redirect-fallback" href="https://www.rekapinyu.web.id">klik di sini untuk membuka Rekapinyu</a>.</p>
-  </main>
+<iframe id="appFrame" title="Rekapinyu" allow="camera; microphone; geolocation; clipboard-read; clipboard-write" allowfullscreen></iframe>
 </body>
 </html>
