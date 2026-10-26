@@ -9394,7 +9394,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
       return {root:preselectedDirectory,shopFolder:preselectedDirectory};
     }
     if(!('showDirectoryPicker' in window))throw new Error('Browser ini belum mendukung akses folder perangkat. Gunakan Chrome/Edge terbaru di desktop/tablet.');
-    const picked=await window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-documents-manager',startIn:'documents'});
+    const picked=await window.showDirectoryPicker({mode:'readwrite',id:'rekapinyu-shop-root-picker',startIn:'documents'});
     if(!picked)throw new Error('Akses folder dibatalkan.');
     if(!(await requestDirectoryPermission(picked)))throw new Error('Izin akses folder ditolak.');
     return {root:picked,shopFolder:picked};
@@ -9407,9 +9407,10 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     if(!shopName)throw new Error('Nama Toko belum tersedia. Folder belum dapat dibuat.');
 
     const target=await getDocumentsRootForAutoCreate(preselectedDirectory);
-    /* Folder yang dipilih pengguna adalah folder toko/target langsung.
-       Jangan membuat folder induk baru berdasarkan nama toko. */
-    const shopFolder=target?.shopFolder||target?.root||null;
+    /* Folder yang dipilih pengguna dipakai langsung sebagai root.
+       Jangan membuat folder induk baru, jangan membuat folder bernama toko,
+       dan jangan membuat subfolder bernama sama dengan nama toko. */
+    const shopFolder=target?.root||target?.shopFolder||null;
     if(!shopFolder)throw new Error('Pilih folder yang sudah ada untuk menyimpan data.');
     if(!(await requestDirectoryPermission(shopFolder)))throw new Error('Izin akses folder yang dipilih ditolak.');
     try{await idbSetParentRoot(null)}catch(_){ }
