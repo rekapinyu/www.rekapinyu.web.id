@@ -9469,7 +9469,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     if(!shopFolder)throw new Error('Folder toko belum tersedia. Buat folder toko di dalam Dokumen lalu pilih folder tersebut.');
 
     /* Subfolder standar SELALU dibuat otomatis di dalam folder target toko. */
-    const required=['Rekap','Produk','Kasir'];
+    const required=['Rekap','Produk Kasir','Kasir'];
     try{
       window.__rekapinyuAllowFolderCreate=true;
       for(const name of required){
@@ -9515,7 +9515,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     if(!root)return null;
     photoDirectoryHandle=root;
     photoDirectoryOwnerKey=owner;
-    try{return await root.getDirectoryHandle('Produk',{create:false});}
+    try{return await root.getDirectoryHandle('Produk Kasir',{create:false});}
     catch(_){return null;}
   }
 
@@ -10213,8 +10213,8 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
    */
   async function backupProducts(){
     try{
-      const dir=await window.__rekapinyuGetDataSubdirectory?.('Produk');
-      if(!dir)throw new Error('Folder Data/Produk tidak ditemukan. Pilih folder Data terlebih dahulu dan pastikan subfolder Produk sudah ada.');
+      const dir=await window.__rekapinyuGetDataSubdirectory?.('Produk Kasir');
+      if(!dir)throw new Error('Folder Data/Produk Kasir tidak ditemukan. Pastikan subfolder Produk Kasir sudah tersedia di dalam folder Data.');
       const latest=read();
       products=latest.map(normalizeProduct);
       if(!products.length){
@@ -12517,7 +12517,7 @@ async function initKasirViews(){
     const rows=[];
     for await(const [name,entry] of dir.entries()){
       if(depth===1){
-        if(entry?.kind==='directory' && ['Rekap','Produk','Kasir'].includes(name)) rows.push({name,kind:'directory',entry});
+        if(entry?.kind==='directory' && ['Rekap','Produk Kasir','Kasir'].includes(name)) rows.push({name,kind:'directory',entry});
       }else if(entry?.kind==='directory'){
         rows.push({name,kind:'directory',entry});
       }else if(entry?.kind==='file'){
