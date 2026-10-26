@@ -2373,9 +2373,9 @@ bind();
 <!-- PATCH: FILE MANAGER FOLDER TARGET, hanya area Atur Folder -->
 <div id="rk-folder-manager" class="rk-folder-manager" hidden>
   <div class="rk-folder-dialog">
-    <div class="rk-folder-head"><div><strong>Atur Folder</strong><span>Dokumen → Data → Rekap / Produk / Kasir (beserta seluruh file di dalamnya)</span></div><button type="button" id="rk-folder-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="rk-folder-head"><div><strong>Atur Folder</strong><span>Folder toko → Produk Kasir / Input Data / Kasbon / Pengeluaran</span></div><button type="button" id="rk-folder-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="rk-folder-toolbar"><button type="button" id="rk-folder-open-doc"><i class="fa-solid fa-folder-open"></i> Buka Dokumen</button><span id="rk-folder-current">Belum ada folder Dokumen yang dibuka</span></div>
-    <div id="rk-folder-tree" class="rk-folder-tree"><div class="rk-folder-empty"><i class="fa-solid fa-folder-tree"></i><span>Pilih folder Dokumen. Aplikasi hanya membaca Data/Rekap, Data/Produk, dan Data/Kasir beserta file di dalamnya; tidak mengubah folder lain.</span></div></div>
+    <div id="rk-folder-tree" class="rk-folder-tree"><div class="rk-folder-empty"><i class="fa-solid fa-folder-tree"></i><span>Pilih folder toko. Aplikasi menggunakan subfolder Produk Kasir, Input Data, Kasbon, dan Pengeluaran; transaksi Kasir tetap disimpan ke Firestore.</span></div></div>
   </div>
 </div>
 <!-- VIEW PRODUK KASIR -->
@@ -5408,11 +5408,11 @@ function updateUserAvatarUI() {
              */
             const getRekapDir = async () => {
                 if (typeof window.__rekapinyuGetDataSubdirectory !== 'function') {
-                    throw new Error('Folder Rekap belum terhubung. Gunakan folder yang sudah ditentukan di Menu Produk Kasir.');
+                    throw new Error('Folder Input Data belum terhubung. Gunakan folder yang sudah ditentukan di Menu Produk Kasir.');
                 }
-                const dir = await window.__rekapinyuGetDataSubdirectory('Rekap');
+                const dir = await window.__rekapinyuGetDataSubdirectory('Input Data');
                 if (!dir) {
-                    throw new Error('Folder Rekap belum dipilih/tersedia. Tentukan folder Data/Rekap di Menu Produk Kasir terlebih dahulu.');
+                    throw new Error('Subfolder Input Data belum tersedia. Pilih folder toko di Menu Produk Kasir terlebih dahulu.');
                 }
                 return dir;
             };
@@ -7158,7 +7158,7 @@ function updateUserAvatarUI() {
   }
 
   async function getDir(){
-    if(typeof window.__rekapinyuGetDataSubdirectory==='function')return await window.__rekapinyuGetDataSubdirectory('Rekap');
+    if(typeof window.__rekapinyuGetDataSubdirectory==='function')return await window.__rekapinyuGetDataSubdirectory('Pengeluaran');
     return null;
   }
 
@@ -7172,8 +7172,8 @@ function updateUserAvatarUI() {
       if(typeof window.__rekapinyuGetProdukKasirSelectedFolder!=='function')return null;
       const selectedRoot=await window.__rekapinyuGetProdukKasirSelectedFolder();
       if(!selectedRoot)return null;
-      try{return await selectedRoot.getDirectoryHandle('Rekap',{create:false});}
-      catch(_){return selectedRoot;}
+      try{return await selectedRoot.getDirectoryHandle('Input Data',{create:false});}
+      catch(_){return null;}
     }catch(_){
       return null;
     }
@@ -7235,11 +7235,12 @@ function updateUserAvatarUI() {
   async function load(){
     /* =========================================================
      * HISTORY + DATA OPERASIONAL
-     * History membaca folder pilihan Produk Kasir -> Rekap.
-     * Kasbon/Pengeluaran tetap memakai getDir() lama agar menu lain tidak berubah.
+     * Input Data membaca subfolder Input Data.
+     * Kasbon dan Pengeluaran masing-masing membaca subfoldernya sendiri.
      * ========================================================= */
     const historyDir=await getHistoryTargetDir();
-    const operationalDir=await getDir();
+    const pengeluaranDir=await window.__rekapinyuGetDataSubdirectory?.('Pengeluaran');
+    const kasbonDir=await window.__rekapinyuGetDataSubdirectory?.('Kasbon');
 
     /* ---------------------------------------------------------
      * HISTORY: SATU BLOK PEMBACAAN LOKAL
@@ -7320,21 +7321,6 @@ function updateUserAvatarUI() {
     /* ---------------------------------------------------------
      * DATA OPERASIONAL LAIN — LOGIKA LAMA DIPERTAHANKAN
      * --------------------------------------------------------- */
-    if(!operationalDir){
-      loaded=false;
-      pengeluaranData=[];
-      kasbonData=[];
-      syncBackupFromHistory();
-      try{
-        populateHistoryFilters?.();
-        renderHistory?.();
-        renderPengeluaranGrid?.();
-        renderKasbonGrid?.();
-      }catch(_){}
-      return false;
-    }
-
-    const files=await listRekapFiles(operationalDir);
     const pengeluaranMap=new Map();
     const kasbonMap=new Map();
 
@@ -7345,14 +7331,19 @@ function updateUserAvatarUI() {
       if(!map.has(key))map.set(key,item);
     };
 
-    for(const entry of files){
+    for(const [dir,field,map] of [[pengeluaranDir,'Pengeluaran',pengeluaranMap],[kasbonDir,'Kasbon',kasbonMap]]){
+      if(!dir)continue;
       try{
-        const data=await readJsonHandle(entry.handle);
-        normalizeLoadedArray(data.Pengeluaran).forEach(item=>addUnique(pengeluaranMap,item));
-        normalizeLoadedArray(data.Kasbon).forEach(item=>addUnique(kasbonMap,item));
-      }catch(err){
-        console.warn('Rekapinyu: file JSON Rekap dilewati karena JSON tidak valid.',entry.name,err);
-      }
+        const files=await listRekapFiles(dir);
+        for(const entry of files){
+          try{
+            const data=await readJsonHandle(entry.handle);
+            normalizeLoadedArray(data[field]).forEach(item=>addUnique(map,item));
+          }catch(err){
+            console.warn(`Rekapinyu: file JSON ${field} dilewati karena JSON tidak valid.`,entry.name,err);
+          }
+        }
+      }catch(err){console.warn(`Rekapinyu: subfolder ${field} tidak dapat dibaca.`,err);}
     }
 
     pengeluaranData=Array.from(pengeluaranMap.values()).sort(sortNewest);
@@ -7427,7 +7418,7 @@ function updateUserAvatarUI() {
          Jangan menganggap berhasil jika folder target tidak tersedia, karena
          itu membuat formulir tampak tersimpan padahal file JSON tidak ditulis. */
       const dir=await getHistoryTargetDir();
-      if(!dir)throw new Error('Folder pilihan Produk Kasir tidak tersedia atau belum diberi izin akses.');
+      if(!dir)throw new Error('Subfolder Input Data tidak tersedia atau belum diberi izin akses.');
 
       const existing=await listRekapFiles(dir);
       const existingByKey=new Map();
@@ -7446,9 +7437,9 @@ function updateUserAvatarUI() {
       const expenseGroups=groupByDate(pengeluaranData);
       const kasbonGroups=groupByDate(kasbonData);
 
-      /* INPUT DATA: gunakan/BUAT file harian di folder Data/Rekap yang SUDAH ADA.
-         Folder tidak pernah dibuat otomatis. Hanya file JSON harian yang dibuat
-         ketika ada input baru dan folder Data/Rekap memang sudah tersedia. */
+      /* INPUT DATA: gunakan/BUAT file harian di subfolder Input Data yang SUDAH ADA.
+         Folder dibuat otomatis saat pemilihan folder toko. File JSON harian dibuat
+         di subfolder Input Data ketika ada input baru. */
       const historyDates=[...historyGroups.keys()];
       for(const key of historyDates){
         const info=historyGroups.get(key)?.info;
@@ -7458,8 +7449,8 @@ function updateUserAvatarUI() {
         const payload=makePayload(
           info,
           historyGroups.get(key)?.items||[],
-          expenseGroups.get(key)?.items||[],
-          kasbonGroups.get(key)?.items||[]
+          [],
+          []
         );
         if(existingInputEntry){
           await writeJson(existingInputEntry.handle,payload);
@@ -7469,23 +7460,10 @@ function updateUserAvatarUI() {
         }
       }
 
-      /* Data Pengeluaran/Kasbon yang tanggalnya belum mempunyai History
-         tetap hanya memperbarui file Rekap yang memang sudah ada. */
-      for(const [key,entry] of existingByKey){
-        if(historyGroups.has(key))continue;
-        const info=entry.info;
-        const payload=makePayload(
-          info,
-          historyGroups.get(key)?.items||[],
-          expenseGroups.get(key)?.items||[],
-          kasbonGroups.get(key)?.items||[]
-        );
-        await writeJson(entry.handle,payload);
-      }
-
-
-      /* KASBON / PENGELUARAN: satu file JSON harian masing-masing di Data/Rekap. */
-      const writeSeparateDailyFiles = async (groups, prefix, field) => {
+      /* KASBON / PENGELUARAN: masing-masing ditulis ke subfolder tersendiri. */
+      const writeSeparateDailyFiles = async (targetDir, groups, prefix, field) => {
+        if(!targetDir)throw new Error(`Subfolder ${field} belum tersedia atau belum diberi izin akses.`);
+        const targetEntries=await listRekapFiles(targetDir);
         for (const {info, items} of groups.values()) {
           const targetName = `${prefix}_${info.day}_${info.date}_${info.month}_${info.year}.json`;
           const payload = {
@@ -7496,19 +7474,19 @@ function updateUserAvatarUI() {
             [field]: items
           };
           let handle = null;
-          for (const entry of existing) {
+          for (const entry of targetEntries) {
             if (String(entry.name).toLowerCase() === targetName.toLowerCase()) {
               handle = entry.handle;
               break;
             }
           }
-          if (!handle) handle = await dir.getFileHandle(targetName, {create:true});
+          if (!handle) handle = await targetDir.getFileHandle(targetName, {create:true});
           await writeJson(handle, payload);
         }
       };
 
-      await writeSeparateDailyFiles(expenseGroups, 'Pengeluaran', 'Pengeluaran');
-      await writeSeparateDailyFiles(kasbonGroups, 'Kasbon', 'Kasbon');
+      await writeSeparateDailyFiles(pengeluaranDir, expenseGroups, 'Pengeluaran', 'Pengeluaran');
+      await writeSeparateDailyFiles(kasbonDir, kasbonGroups, 'Kasbon', 'Kasbon');
 
       window.__rekapinyuDataLaporanBulanan=
         typeof window.__rekapinyuBuildLaporanBulanan==='function'
@@ -9469,7 +9447,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     if(!shopFolder)throw new Error('Folder toko belum tersedia. Buat folder toko di dalam Dokumen lalu pilih folder tersebut.');
 
     /* Subfolder standar SELALU dibuat otomatis di dalam folder target toko. */
-    const required=['Rekap','Produk Kasir','Kasir'];
+    const required=['Produk Kasir','Input Data','Kasbon','Pengeluaran'];
     try{
       window.__rekapinyuAllowFolderCreate=true;
       for(const name of required){
@@ -9833,7 +9811,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     };
   }
   async function writeProdukKasirJson(product){
-    const dir=await getPhotoDirectoryQuiet();
+    const dir=await window.__rekapinyuGetDataSubdirectory?.('Produk Kasir');
     if(!dir||!product?.name)return false;
     const fileName=produkKasirJsonFileName(product.name);
     const handle=await dir.getFileHandle(fileName,{create:true});
@@ -9842,12 +9820,12 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
     return true;
   }
   async function deleteProdukKasirJson(productName){
-    const dir=await getPhotoDirectoryQuiet();
+    const dir=await window.__rekapinyuGetDataSubdirectory?.('Produk Kasir');
     if(!dir||!productName)return;
     try{const fh=await dir.getFileHandle(produkKasirJsonFileName(productName),{create:false});await fh.remove()}catch(_){}
   }
   async function syncProdukKasirJson(productsList){
-    const dir=await getPhotoDirectoryQuiet();
+    const dir=await window.__rekapinyuGetDataSubdirectory?.('Produk Kasir');
     if(!dir)return false;
     const list=Array.isArray(productsList)?productsList:[];
     for(const product of list){if(product?.name)await writeProdukKasirJson(product)}
@@ -9869,7 +9847,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
   }
 
   async function loadProdukKasirJsonFromFolder(){
-    const dir=await getPhotoDirectoryQuiet();
+    const dir=await window.__rekapinyuGetDataSubdirectory?.('Produk Kasir');
     if(!dir)return [];
     const loaded=[];
     async function walk(currentDir){
@@ -10214,7 +10192,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
   async function backupProducts(){
     try{
       const dir=await window.__rekapinyuGetDataSubdirectory?.('Produk Kasir');
-      if(!dir)throw new Error('Folder Data/Produk Kasir tidak ditemukan. Pastikan subfolder Produk Kasir sudah tersedia di dalam folder Data.');
+      if(!dir)throw new Error('Subfolder Produk Kasir tidak ditemukan di dalam folder toko yang dipilih.');
       const latest=read();
       products=latest.map(normalizeProduct);
       if(!products.length){
@@ -10246,7 +10224,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         await writable.close();
       }
 
-      if(typeof showModal==='function')showModal('Backup Berhasil',`${products.length} produk berhasil dibackup ke folder Data/Produk.`);
+      if(typeof showModal==='function')showModal('Backup Berhasil',`${products.length} produk berhasil dibackup ke subfolder Produk Kasir.`);
     }catch(err){
       if(typeof showModal==='function')showModal('Backup Gagal',err?.message||'Gagal membuat file backup di folder Produk Kasir.');
     }
@@ -10930,8 +10908,9 @@ async function initKasirViews(){
          dihapus dari daftar, stok barcode + manual menjadi stok nyata. */
       const produkSaved=await window.__rekapinyuSyncProdukKasirJson?.(kasirProducts);
       if(produkSaved!==true)throw new Error('Folder target belum dipilih atau file JSON Produk Kasir tidak dapat diperbarui.');
-      const jsonSaved=await window.__rekapinyuSaveKasirHarianJson?.(transaction);
-      if(jsonSaved!==true)throw new Error('File JSON Transaksi Kasir dan Laporan Kasir tidak dapat diperbarui.');
+      /* Transaksi Kasir tidak lagi bergantung pada subfolder JSON Kasir.
+         Data transaksi tetap diteruskan melalui jalur sinkronisasi Firestore yang tersedia. */
+      try{await window.__rekapinyuSaveKasirTransactionsCloud?.(kasirTransactions)}catch(e){console.warn('Rekapinyu: TransaksiKasir gagal disimpan ke Firestore.',e)}
       await window.__rekapinyuSaveKasirTotalsCloud?.();
       try{document.dispatchEvent(new CustomEvent('rekapinyu-kasir-transaction-saved',{detail:{transaction}}))}catch(_){}
       /* JSON Produk Kasir sudah menjadi sumber stok. Beritahu kedua tampilan
@@ -10944,7 +10923,7 @@ async function initKasirViews(){
       window.__rekapinyuProdukKasirData=kasirProducts;
       try{await window.__rekapinyuSyncProdukKasirJson?.(kasirProducts)}catch(_){}
       renderKasirProducts();
-      showModal('Gagal','Transaksi belum disimpan karena stok Produk Kasir atau file JSON Transaksi Kasir/Laporan Kasir gagal diperbarui. Pastikan folder target sudah dipilih.','fa-solid fa-folder-open text-rose-600');
+      showModal('Gagal','Transaksi belum dapat diselesaikan karena data Produk Kasir gagal diperbarui. Pastikan subfolder Produk Kasir tersedia.','fa-solid fa-folder-open text-rose-600');
       return false;
     }
     renderKasirProducts();
