@@ -6,22 +6,31 @@
 <meta name="theme-color" content="#ffffff">
 <title>Rekapinyu</title>
 <style>
-*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#fff}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#fff}
 #appFrame{display:block;width:100%;height:100%;height:100dvh;border:0;margin:0;padding:0;background:#fff}
 </style>
 <script>
 (function(){
-  var mq=window.matchMedia('(max-width: 760px)');
-  function target(){return mq.matches?'mobile.html':'dekstop.html'}
-  window.addEventListener('DOMContentLoaded',function(){
-    var f=document.getElementById('appFrame');
-    if(f){f.src=target();f.dataset.currentTarget=target()}
-  });
-  function change(){
-    var f=document.getElementById('appFrame'), t=target();
-    if(f&&f.dataset.currentTarget!==t){f.dataset.currentTarget=t;f.src=t}
+  function getTarget(){
+    return window.matchMedia('(max-width: 760px)').matches ? 'mobile.html' : 'desktop.html';
   }
-  if(mq.addEventListener)mq.addEventListener('change',change);else if(mq.addListener)mq.addListener(change);
+  function loadApp(){
+    var frame=document.getElementById('appFrame');
+    if(!frame)return;
+    var target=getTarget();
+    frame.dataset.currentTarget=target;
+    frame.src=target;
+  }
+  window.addEventListener('DOMContentLoaded',function(){
+    loadApp();
+    var mq=window.matchMedia('(max-width: 760px)');
+    if(mq.addEventListener){
+      mq.addEventListener('change',loadApp);
+    }else if(mq.addListener){
+      mq.addListener(loadApp);
+    }
+  });
 })();
 </script>
 </head>
