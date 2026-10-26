@@ -12065,7 +12065,7 @@ async function initKasirViews(){
   'use strict';
   /*
      LAPORAN KASIR V16
-     SUMBER TRANSAKSI = FILE JSON DI FOLDER DATA/KASIR.
+     SUMBER TRANSAKSI = FILE JSON DI SUBFOLDER TRANSAKSI KASIR.
      SUMBER OMSET/PROFIT = FIELD FIRESTORE TotalOmsetKasir/TotalProfitKasir.
      - File JSON hanya dipakai untuk daftar transaksi, tanggal, jumlah transaksi, dan barang terjual.
      - Omset Kasir dan Profit/Keuntungan tidak dihitung dari file JSON.
@@ -12187,8 +12187,8 @@ async function initKasirViews(){
     }catch(error){
       if(String(error?.message||'').includes('Izin baca'))throw error;
     }
-    try{return await root.getDirectoryHandle('Kasir',{create:false});}
-    catch(_){throw new Error('Subfolder Kasir tidak ditemukan di dalam folder yang dipilih di Menu Produk Kasir.');}
+    try{return await root.getDirectoryHandle('Transaksi Kasir',{create:false});}
+    catch(_){throw new Error('Subfolder Transaksi Kasir tidak ditemukan di dalam folder yang dipilih di Menu Produk Kasir.');}
   }
 
   async function scanKasirJson(){
@@ -12223,7 +12223,7 @@ async function initKasirViews(){
           }
         }
       }catch(error){
-        console.warn('Rekapinyu: file JSON Kasir dilewati karena tidak valid.',entry.path,error);
+        console.warn('Rekapinyu: file JSON Transaksi Kasir dilewati karena tidak valid.',entry.path,error);
       }
     }
 
@@ -12303,7 +12303,7 @@ async function initKasirViews(){
     Promise.resolve(window.__rekapinyuSaveKasirTotalsCloud?.(totalOmzet,totalProfit))
       .catch(error=>console.warn('Rekapinyu: hasil Menu Laporan Kasir gagal disimpan ke Firestore.',error));
     if(!reports.length){
-      list.innerHTML='<div class="lk16-empty"><i class="fa-solid fa-folder-open"></i><strong>Belum ada transaksi pada file JSON Kasir.</strong><span>Laporan menghitung Omset Kasir dan Profit/Keuntungan dari file JSON Kasir, lalu hasilnya disimpan ke Firestore.</span></div>';
+      list.innerHTML='<div class="lk16-empty"><i class="fa-solid fa-folder-open"></i><strong>Belum ada transaksi pada file JSON Transaksi Kasir.</strong><span>Laporan membaca daftar transaksi dari file JSON subfolder Transaksi Kasir; hasil Omset Kasir dan Profit/Keuntungan tetap disimpan ke Firestore.</span></div>';
       return;
     }
     const shiftDefaults={shift1:{employee:'',start:'06:00',end:'14:00'},shift2:{employee:'',start:'14:00',end:'22:00'}};
@@ -12352,12 +12352,12 @@ async function initKasirViews(){
       const expectedFolderState=
         message.includes('Folder target Produk Kasir belum tersedia.') ||
         message.includes('Folder target belum dipilih atau izinnya belum aktif.') ||
-        message.includes('Subfolder Kasir tidak ditemukan di dalam folder yang dipilih di Menu Produk Kasir.') ||
+        message.includes('Subfolder Transaksi Kasir tidak ditemukan di dalam folder yang dipilih di Menu Produk Kasir.') ||
         message.includes('Izin baca folder target belum diberikan.');
       /* Kondisi folder belum dipilih/siap bukan error aplikasi. Jangan memenuhi Console
          dengan warning berulang; pesan tetap ditampilkan di area Laporan Kasir. */
       if(!expectedFolderState)console.warn('Rekapinyu: Laporan Kasir gagal membaca JSON folder.',error);
-      list.innerHTML=`<div class="lk16-empty"><i class="fa-solid fa-folder-open"></i><strong>${esc(error?.message||'Folder Kasir belum dapat dibaca.')}</strong><span>Pilih kembali folder target di Menu Produk Kasir agar Laporan Kasir dapat membaca file JSON.</span></div>`;
+      list.innerHTML=`<div class="lk16-empty"><i class="fa-solid fa-folder-open"></i><strong>${esc(error?.message||'Folder Transaksi Kasir belum dapat dibaca.')}</strong><span>Pilih kembali folder target di Menu Produk Kasir agar Laporan Kasir dapat membaca file JSON.</span></div>`;
       lastFolderSignature='';
     }finally{
       renderBusy=false;
