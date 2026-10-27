@@ -318,6 +318,29 @@
 <div class="more-sheet" id="moreSheet" aria-hidden="true"><button type="button" class="sheet-close" id="closeMore">Tutup ✕</button><button type="button" class="sheet-link" id="settingsShortcut">⚙️ Pengaturan Supabase</button><div class="sheet-note">Transpose Karaoke<br><small>Import musik · Atur nada · Putar karaoke</small></div></div>
 
 <script>
+/* Struktur tunggal Beranda mobile: preview kiri terpisah dari scroll kanan. */
+(function(){
+  if(!window.matchMedia('(max-width:760px)').matches) return;
+  const main=document.getElementById('mainContent');
+  const grid=main&&main.querySelector('.grid');
+  const importSection=document.getElementById('importSection');
+  const transpose=document.getElementById('transposeSection');
+  const videoStage=document.getElementById('videoStage');
+  const mobileFill=importSection&&importSection.querySelector('.mobile-fill');
+  const footer=main&&main.querySelector('.foot');
+  if(!main||!grid||!importSection||!transpose||!videoStage||!footer) return;
+  const layout=document.createElement('div'); layout.className='home-layout';
+  const preview=document.createElement('section'); preview.className='home-preview-column'; preview.setAttribute('aria-label','Preview video');
+  const scroll=document.createElement('section'); scroll.className='home-scroll-column'; scroll.setAttribute('aria-label','Kontrol nada dan informasi');
+  main.insertBefore(layout,grid);
+  layout.append(preview,scroll);
+  preview.appendChild(videoStage);
+  scroll.appendChild(grid);
+  if(mobileFill) scroll.appendChild(mobileFill);
+  scroll.appendChild(footer);
+})();
+</script>
+<script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
 let file=null,url=null,video=null,ctx=null,source=null,effect=null,playing=false,ownsContext=false,engine='none';
@@ -600,32 +623,47 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
 @media(min-width:761px){.mobile-bottom-nav{display:none!important}}
 </style>
 
-
 <style>
-/* Perbaikan khusus halaman Beranda mobile: preview sticky kiri, konten+footer scroll di kanan. */
+/* Beranda mobile — satu aturan final; desktop tetap memakai layout asli. */
 @media(max-width:760px){
-  #mainContent{height:calc(100dvh - 78px - env(safe-area-inset-bottom))!important;min-height:0!important;overflow:hidden!important}
-  .home-layout{display:grid!important;grid-template-columns:minmax(0,42%) minmax(0,58%)!important;width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important;align-items:stretch!important}
-  .home-preview-column{position:relative!important;min-width:0!important;height:100%!important;overflow:hidden!important;background:#000!important;border-right:1px solid #383838!important}
-  .home-preview-column #videoStage{position:sticky!important;top:0!important;width:100%!important;max-height:none!important;aspect-ratio:9/16!important;min-height:0!important;display:grid!important;align-content:start!important;overflow:hidden!important}
-  .home-preview-column #videoStage:empty{aspect-ratio:9/16!important;max-height:none!important}
-  .home-preview-column #karaokeVideo{width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:9/16!important;object-fit:contain!important;margin:0!important}
-  .home-scroll-column{min-width:0!important;height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:contain!important;scrollbar-width:thin!important;-webkit-overflow-scrolling:touch!important;padding-bottom:10px!important}
-  .home-scroll-column .grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-auto-rows:auto!important;align-content:start!important;min-height:0!important;width:100%!important;gap:0!important}
-  .home-scroll-column #dropZone{grid-column:1!important;grid-row:1!important;width:calc(100% - 12px)!important;margin:6px!important;height:auto!important;min-height:34px!important}
+  html,body{height:100%;min-height:100%;overflow:hidden!important}
+  body{overscroll-behavior:none}
+  .wrap{height:100dvh!important;min-height:0!important;max-height:100dvh!important;overflow:hidden!important;padding:0 0 calc(78px + env(safe-area-inset-bottom))!important}
+  #mainContent{height:calc(100dvh - 78px - env(safe-area-inset-bottom))!important;min-height:0!important;max-height:calc(100dvh - 78px - env(safe-area-inset-bottom))!important;overflow:hidden!important;margin:0!important;padding:0!important}
+  .home-layout{display:grid!important;grid-template-columns:minmax(0,42%) minmax(0,58%)!important;gap:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;align-items:stretch!important}
+  .home-preview-column{display:block!important;position:relative!important;min-width:0!important;width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important;background:#080808!important;border-right:1px solid #383838!important}
+  .home-preview-column #videoStage{position:absolute!important;inset:0 auto auto 0!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:9/16!important;display:grid!important;place-items:center!important;overflow:hidden!important;margin:0!important;padding:0!important;background:#080808!important}
+  .home-preview-column #videoStage:empty{height:auto!important;aspect-ratio:9/16!important;border:0!important}
+  .home-preview-column #videoStage:empty::before{content:'Preview video'!important;color:#a3a3a3!important;font-size:12px!important;text-align:center!important;padding:8px!important}
+  .home-preview-column #karaokeVideo{display:block!important;width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:9/16!important;object-fit:contain!important;margin:0!important;border-radius:0!important;background:#000!important}
+  .home-scroll-column{display:block!important;min-width:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:thin!important;padding:0 0 8px!important;background:#171717!important}
+  .home-scroll-column>.grid{display:block!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;margin:0!important;padding:0!important}
+  .home-scroll-column #importSection,.home-scroll-column #transposeSection{display:block!important;width:100%!important;min-width:0!important;height:auto!important;overflow:visible!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+  .home-scroll-column #importSection{display:contents!important}
+  .home-scroll-column #transposeSection{display:contents!important}
+  .home-scroll-column #dropZone{display:flex!important;width:calc(100% - 12px)!important;min-height:34px!important;height:auto!important;margin:6px!important;padding:6px!important;grid-column:auto!important;grid-row:auto!important;justify-content:center!important;border:1px solid #383838!important;border-radius:10px!important;background:#242424!important;color:#f5f5f5!important;text-align:center!important}
+  .home-scroll-column #dropZone .uploadIcon,.home-scroll-column #dropZone small{display:none!important}
+  .home-scroll-column #dropZone strong{font-size:10px!important;line-height:1.3!important;color:#f5f5f5!important}
   .home-scroll-column #transposeSection .keySelectWrap{display:none!important}
-  .home-scroll-column #transposeSection .noteBox{grid-column:1!important;grid-row:2!important;margin:0 6px 8px!important;height:89px!important;min-height:89px!important}
-  .home-scroll-column #transposeSection .stepper{grid-column:1!important;grid-row:3!important;margin:0 6px!important;grid-template-columns:32px minmax(0,1fr) 32px!important;gap:5px!important}
-  .home-scroll-column #transposeSection .step{width:32px!important;min-width:32px!important;height:34px!important}
-  .home-scroll-column #transposeSection .rangeLabels{grid-column:1!important;grid-row:4!important;margin:3px 10px 8px!important}
-  .home-scroll-column .mobile-fill{grid-column:1!important;grid-row:5!important;padding:8px 6px!important;min-height:0!important}
-  .home-scroll-column .mobile-tip{min-height:0!important;padding:10px!important}
-  .home-scroll-column #transposeSection .row{grid-column:1!important;grid-row:6!important;flex-wrap:wrap!important;margin:0 6px 8px!important}
-  .home-scroll-column #transposeSection .alert{grid-column:1!important;grid-row:7!important;margin:5px 6px!important}
-  .home-scroll-column .foot{display:block!important;grid-column:1!important;margin:8px 6px 0!important;padding:12px 0 8px!important;border-top:1px solid #383838!important;text-align:left!important;color:#bdbdbd!important;font-size:10px!important;line-height:1.5!important}
-  .home-scroll-column .foot-section{margin-bottom:12px!important}
-  .home-scroll-column .foot-title{font-size:11px!important;color:#f5f5f5!important;margin-bottom:4px!important}
-  .home-scroll-column .foot p,.home-scroll-column .foot ul{font-size:10px!important;line-height:1.5!important}
-  .home-scroll-column .foot ul{padding-left:15px!important}
+  .home-scroll-column #transposeSection .noteBox{display:flex!important;grid-column:auto!important;grid-row:auto!important;width:calc(100% - 12px)!important;height:89px!important;min-height:89px!important;margin:0 6px 8px!important;padding:8px!important;overflow:hidden!important;border:1px solid #393939!important;border-radius:12px!important;background:#242424!important}
+  .home-scroll-column #transposeSection .note{font-size:clamp(17px,5vw,25px)!important;white-space:nowrap!important}
+  .home-scroll-column #transposeSection .stepper{display:grid!important;grid-column:auto!important;grid-row:auto!important;grid-template-columns:30px minmax(0,1fr) 30px!important;gap:4px!important;margin:0 6px!important}
+  .home-scroll-column #transposeSection .step{width:30px!important;min-width:30px!important;height:34px!important;padding:0!important}
+  .home-scroll-column #transposeSection .range{display:block!important;width:100%!important;min-width:0!important}
+  .home-scroll-column #transposeSection .rangeLabels{display:flex!important;grid-column:auto!important;grid-row:auto!important;justify-content:space-between!important;margin:4px 8px 10px!important;font-size:8px!important}
+  .home-scroll-column .mobile-fill{display:block!important;width:100%!important;min-height:0!important;margin:0!important;padding:8px 6px!important;background:#171717!important}
+  .home-scroll-column .mobile-tip{display:flex!important;min-height:0!important;padding:9px!important}
+  .home-scroll-column .mobile-tip p{overflow-wrap:anywhere!important}
+  .home-scroll-column #transposeSection .row{display:flex!important;grid-column:auto!important;grid-row:auto!important;flex-wrap:wrap!important;margin:4px 6px 8px!important;gap:6px!important}
+  .home-scroll-column #transposeSection .row:has(#clearBtn:disabled){display:none!important}
+  .home-scroll-column #transposeSection .row .btn{min-width:0!important;padding:6px 8px!important;font-size:10px!important}
+  .home-scroll-column #transposeSection .alert{grid-column:auto!important;grid-row:auto!important;margin:5px 6px!important;overflow-wrap:anywhere!important}
+  .home-scroll-column #transposeSection .semitone,.home-scroll-column #transposeSection .playrow,.home-scroll-column #transposeSection .hint{display:none!important}
+  .home-scroll-column .foot{display:block!important;width:calc(100% - 12px)!important;margin:10px 6px 0!important;padding:12px 0 10px!important;border-top:1px solid #383838!important;text-align:left!important;color:#bdbdbd!important;font-size:10px!important;line-height:1.5!important}
+  .home-scroll-column .foot-section{margin:0 0 12px!important;min-width:0!important}
+  .home-scroll-column .foot-title{font-size:11px!important;color:#f5f5f5!important;margin:0 0 4px!important}
+  .home-scroll-column .foot p,.home-scroll-column .foot ul{font-size:10px!important;line-height:1.5!important;overflow-wrap:anywhere!important}
+  .mobile-bottom-nav{z-index:2000!important}
 }
+@media(min-width:761px){.home-layout{display:contents!important}}
 </style>
