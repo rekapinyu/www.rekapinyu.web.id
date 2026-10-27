@@ -321,31 +321,34 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
 let file=null,url=null,video=null,ctx=null,source=null,effect=null,playing=false,ownsContext=false,engine='none';
-let hqConstructorPromise=null;
+let hqConstructorPromise=null,mobileConstructorPromise=null;
 const HQ_MODULE='https://esm.sh/@soundtouchjs/formant-correction-worklet@2.1.1?bundle';
 const HQ_PROCESSOR='https://cdn.jsdelivr.net/npm/@soundtouchjs/formant-correction-worklet@2.1.1/.dist/formant-correction-processor.js';
+const MOBILE_MODULE='https://esm.sh/@soundtouchjs/audio-worklet@2.1.1?bundle';
+const MOBILE_PROCESSOR='https://cdn.jsdelivr.net/npm/@soundtouchjs/audio-worklet@2.1.1/.dist/soundtouch-processor.js';
 const fmt=t=>{t=Number.isFinite(t)&&t>0?t:0;return String(Math.floor(t/60)).padStart(2,'0')+':'+String(Math.floor(t%60)).padStart(2,'0')};
 function msg(t,err=false){const a=$('alert');if(a){a.textContent=t;a.className='alert show '+(err?'err':'ok')}}
 function noteValue(n){return n>0?'+'+n:String(n)}
 function showTime(){if(!video)return;$('currentTime').textContent=fmt(video.currentTime);$('progressBar').style.width=(video.duration?video.currentTime/video.duration*100:0)+'%';}
 function setupVideo(){if(video)video.remove();video=document.createElement('video');video.id='karaokeVideo';video.controls=true;video.playsInline=true;video.preload='metadata';video.defaultPlaybackRate=1;video.playbackRate=1;video.style.cssText='display:block;width:100%;max-height:52vh;object-fit:contain;background:#000;border-radius:16px;margin:12px 0';$('videoStage').appendChild(video);video.src=url;video.addEventListener('loadedmetadata',()=>{$('duration').textContent=fmt(video.duration);$('fileStatus').textContent='Video siap diputar';$('playBtn').disabled=false;$('pitchRange').disabled=true;$('downBtn').disabled=true;$('upBtn').disabled=true;});video.addEventListener('ratechange',()=>{if(video&&video.playbackRate!==1)video.playbackRate=1;});video.addEventListener('timeupdate',showTime);video.addEventListener('play',()=>{playing=true;$('playBtn').textContent='Ⅱ Jeda video'});video.addEventListener('pause',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('ended',()=>{playing=false;$('playBtn').textContent='▶ Putar video'});video.addEventListener('error',()=>msg('Browser tidak dapat membaca video ini. Coba MP4 H.264 dengan audio AAC.',true));}
 async function getFormantNodeClass(){if(!hqConstructorPromise){hqConstructorPromise=import(HQ_MODULE).then(mod=>{if(!mod.FormantCorrectionNode)throw new Error('Modul koreksi formant tidak ditemukan.');return mod.FormantCorrectionNode;});}return hqConstructorPromise;}
-function setFormantForPitch(n){if(!effect||engine!=='hq'||!effect.formantStrength)return;/* Gunakan koreksi formant penuh pada semua arah transpose agar suara tidak bercampur dengan sinyal pitch-shift mentah yang dapat terdengar keruh. */effect.formantStrength.value=1;}
+async function getMobileSoundTouchNodeClass(){if(!mobileConstructorPromise){mobileConstructorPromise=import(MOBILE_MODULE).then(mod=>{if(!mod.SoundTouchNode)throw new Error('Modul audio mobile tidak ditemukan.');return mod.SoundTouchNode;});}return mobileConstructorPromise;}
+function setFormantForPitch(n){if(!effect||engine!=='hq'||!effect.formantStrength)return;/* Koreksi formant hanya untuk jalur desktop; pada HP digunakan jalur SoundTouch yang lebih ringan. */effect.formantStrength.value=1;}
 function updatePitch(){
   const n=Number($('pitchRange').value);
   $('pitchValue').textContent=noteValue(n);
   $('noteName').textContent=n===0?'Original':noteValue(n);
   $('noteDesc').textContent=n===0?'0 semitone · nada asli':Math.abs(n)+' semitone '+(n>0?'lebih tinggi':'lebih rendah');
-  const engineReady=!!effect&&engine==='hq';
+  const engineReady=!!effect&&(engine==='hq'||engine==='mobile');
   $('pitchRange').disabled=!file||(!engineReady&&!video?.paused);
   $('downBtn').disabled=!file||!engineReady||n<=-24;
   $('upBtn').disabled=!file||!engineReady||n>=24;
-  if(effect&&engine==='hq'){
+  if(effect&&(engine==='hq'||engine==='mobile')){
     try{
       effect.pitch.value=1;
       effect.pitchSemitones.value=n;
       effect.playbackRate.value=1;
-      setFormantForPitch(n);
+      if(engine==='hq')setFormantForPitch(n);
     }catch(e){msg('Efek transpose gagal diperbarui: '+(e.message||e),true);}
   }
   if(video){video.defaultPlaybackRate=1;if(video.playbackRate!==1)video.playbackRate=1;}
@@ -353,18 +356,24 @@ function updatePitch(){
 async function setupHighQualityAudio(){
   const AudioCtx=window.AudioContext||window.webkitAudioContext;
   if(!AudioCtx)throw new Error('Browser tidak mendukung Web Audio API.');
-  const FormantCorrectionNode=await getFormantNodeClass();
+  const mobilePlayback=window.matchMedia('(max-width:760px)').matches;
+  const AudioPitchNode=mobilePlayback?await getMobileSoundTouchNodeClass():await getFormantNodeClass();
+  const processorUrl=mobilePlayback?MOBILE_PROCESSOR:HQ_PROCESSOR;
   const newCtx=new AudioCtx({latencyHint:'playback'});
   let mediaSource=null,node=null;
   try{
     await newCtx.resume();
-    await FormantCorrectionNode.register(newCtx,HQ_PROCESSOR);
-    node=new FormantCorrectionNode({context:newCtx,interpolationStrategy:'lanczos',sampleBufferType:'circular'});
-    if(typeof node.setStretchParameters==='function'){const mobilePlayback=window.matchMedia('(max-width:760px)').matches;node.setStretchParameters(mobilePlayback?{overlapMs:8,quickSeek:true}:{overlapMs:12,quickSeek:false});}
-    node.pitch.value=1;node.pitchSemitones.value=Number($('pitchRange').value);node.playbackRate.value=1;node.formantStrength.value=0;
+    await AudioPitchNode.register(newCtx,processorUrl);
+    node=new AudioPitchNode({context:newCtx,interpolationStrategy:'lanczos',sampleBufferType:'circular'});
+    if(typeof node.setStretchParameters==='function'){
+      /* Jendela yang lebih stabil untuk audio mobile; pencarian tetap cepat agar beban CPU rendah. */
+      node.setStretchParameters(mobilePlayback?{sequenceMs:100,seekWindowMs:20,overlapMs:12,quickSeek:true}:{overlapMs:12,quickSeek:false});
+    }
+    node.pitch.value=1;node.pitchSemitones.value=Number($('pitchRange').value);node.playbackRate.value=1;
+    if(node.formantStrength)node.formantStrength.value=0;
     mediaSource=newCtx.createMediaElementSource(video);
     /* Assign immediately after creation: a video element must not be given a second MediaElementSourceNode. */
-    ctx=newCtx;source=mediaSource;effect=node;ownsContext=true;engine='hq';
+    ctx=newCtx;source=mediaSource;effect=node;ownsContext=true;engine=mobilePlayback?'mobile':'hq';
     try{mediaSource.connect(node);node.connect(newCtx.destination);}
     catch(connectError){
       try{mediaSource.disconnect()}catch(_){}
@@ -377,16 +386,16 @@ async function setupHighQualityAudio(){
       return;
     }
     video.preservesPitch=false;video.defaultPlaybackRate=1;video.playbackRate=1;
-    setFormantForPitch(Number($('pitchRange').value));
+    if(!mobilePlayback)setFormantForPitch(Number($('pitchRange').value));
   }catch(e){
-    if(!mediaSource){try{node?.disconnect()}catch(_){};try{if(newCtx.state!=='closed')await newCtx.close()}catch(_){}}
+    if(!mediaSource){try{node?.disconnect()}catch(_){};try{if(newCtx.state!=='closed')await newCtx.close()}catch(_){} }
     throw e;
   }
 }
 async function setupToneFallback(){if(!window.Tone)throw new Error('Mesin audio berkualitas tinggi tidak termuat, dan mode cadangan tidak tersedia. Periksa koneksi internet lalu muat ulang.');await Tone.start();const toneCtx=Tone.getContext();ctx=toneCtx.rawContext;effect=new Tone.PitchShift({pitch:Number($('pitchRange').value),windowSize:0.1,feedback:0,wet:Number($('pitchRange').value)===0?0:1});try{source=toneCtx.createMediaElementSource(video);source.connect(effect.input.input);effect.toDestination();engine='tone';ownsContext=false;video.defaultPlaybackRate=1;video.playbackRate=1;msg('Mesin koreksi kualitas tinggi tidak dapat dimuat; memakai mode audio standar. Untuk suara lebih jernih, pastikan internet mengizinkan akses ke CDN.',true);}catch(e){try{effect.dispose()}catch(_){}effect=null;engine='none';throw e;}}
 async function setupAudio(){
   if(!video)throw new Error('Pilih video terlebih dahulu.');
-  if(source&&effect&&engine==='hq'){
+  if(source&&effect&&(engine==='hq'||engine==='mobile')){
     if(ctx&&ctx.state==='suspended')await ctx.resume();
     updatePitch();
     return;
@@ -394,7 +403,7 @@ async function setupAudio(){
   if(source&&engine==='bypass')throw new Error('Mesin transpose belum tersambung. Pilih ulang video lalu coba lagi.');
   try{
     await setupHighQualityAudio();
-    if(engine==='hq'){updatePitch();return;}
+    if(engine==='hq'||engine==='mobile'){updatePitch();return;}
     throw new Error('Mesin transpose tidak aktif.');
   }catch(highQualityError){
     /* Jangan mengklaim transpose aktif bila mesin pitch-shift gagal. */
