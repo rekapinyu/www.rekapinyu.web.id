@@ -667,3 +667,32 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
 }
 @media(min-width:761px){.home-layout{display:contents!important}}
 </style>
+
+<style>
+/* Beranda desktop — aturan final tunggal untuk susunan dua kolom dan footer di bawahnya. */
+@media (min-width:761px){
+  #mainContent{display:block!important;width:100%!important;min-width:0!important;overflow:visible!important}
+  #mainContent>.grid{display:grid!important;grid-template-columns:minmax(0,1.62fr) minmax(0,.98fr)!important;column-gap:37px!important;row-gap:0!important;align-items:start!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;margin:0!important;padding:0!important}
+  #mainContent>.grid>#importSection,
+  #mainContent>.grid>#transposeSection{display:contents!important}
+  #mainContent #videoStage{grid-column:1!important;grid-row:1 / span 8!important;align-self:start!important;width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:16/9!important;overflow:hidden!important;margin:0!important;padding:0!important;background:#f8fafc!important;border:1px dashed #dbe3ef!important;border-radius:20px!important}
+  #mainContent #videoStage:empty{display:grid!important;place-items:center!important}
+  #mainContent #videoStage:empty::before{content:'Video MP4 akan tampil di sini'!important;color:#94a3b8!important;font-size:14px!important}
+  #mainContent #karaokeVideo{display:block!important;width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:16/9!important;object-fit:contain!important;background:#000!important;border-radius:20px!important;margin:0!important}
+  #mainContent #dropZone{grid-column:2!important;grid-row:1!important;width:100%!important;height:40px!important;min-height:40px!important;margin:0!important;padding:4px 8px!important;border:1px dashed #9aabc6!important;border-radius:14px!important;background:#f8fafc!important;color:#1e293b!important}
+  #mainContent #dropZone .uploadIcon{display:none!important}
+  #mainContent #dropZone strong{font-size:10px!important;line-height:1.25!important}
+  #mainContent #dropZone small{display:block!important;font-size:9px!important;line-height:1.2!important;margin-top:2px!important;color:#64748b!important}
+  #mainContent #importSection .filemeta{grid-column:2!important;grid-row:2!important;width:100%!important;min-height:40px!important;margin:8px 0 0!important;padding:6px 10px!important;border:1px dashed #9aabc6!important;border-radius:14px!important;background:#f8fafc!important}
+  #mainContent #transposeSection .keySelectWrap{grid-column:2!important;grid-row:3!important;margin:8px 0 0!important}
+  #mainContent #transposeSection .keySelect{width:100%!important;height:40px!important}
+  #mainContent #transposeSection .noteBox{grid-column:2!important;grid-row:4!important;width:100%!important;height:138px!important;margin:12px 0 0!important;padding:18px 10px!important;border:1px solid #d8e2f0!important;border-radius:22px!important;background:#f8fafc!important}
+  #mainContent #transposeSection .stepper{grid-column:2!important;grid-row:5!important;margin:22px 0 0!important;grid-template-columns:68px minmax(0,1fr) 68px!important;gap:14px!important}
+  #mainContent #transposeSection .rangeLabels{grid-column:2!important;grid-row:6!important;margin:8px 0 0!important}
+  #mainContent #transposeSection .row{grid-column:2!important;grid-row:7!important;display:flex!important;width:100%!important;margin:36px 0 0!important;gap:10px!important}
+  #mainContent #transposeSection .alert{grid-column:2!important;grid-row:8!important;width:100%!important;margin:10px 0 0!important}
+  #mainContent>.foot{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:28px!important;width:100%!important;margin:28px 0 0!important;padding:22px 0 6px!important;border-top:1px solid #e2e8f0!important;text-align:left!important;background:transparent!important;color:#64748b!important;font-size:13px!important;line-height:1.7!important}
+  #mainContent>.foot .foot-section{min-width:0!important}
+  #mainContent>.foot .foot-title{margin:0 0 7px!important;color:#172033!important;font-size:14px!important}
+}
+</style>
