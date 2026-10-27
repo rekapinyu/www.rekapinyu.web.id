@@ -743,3 +743,11 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   scroll.append(grid,footer);
 })();
 </script>
+
+<style>
+/* Hilangkan tampilan batang scrollbar saja; area kanan tetap dapat digulir. */
+@media (min-width:761px){
+  #mainContent>.home-layout>.home-scroll-column{scrollbar-width:none!important;-ms-overflow-style:none!important}
+  #mainContent>.home-layout>.home-scroll-column::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+}
+</style>
