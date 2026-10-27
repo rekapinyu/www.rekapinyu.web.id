@@ -752,71 +752,30 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
 }
 </style>
 
-<style>
-/* Perbaikan khusus navigasi Download Video YouTube: pulihkan area halaman saat downloader dibuka. */
-@media (min-width:761px){
-  html:has(#youtubeSection.active),body:has(#youtubeSection.active){height:auto!important;min-height:100%!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important}
-  body:has(#youtubeSection.active) .wrap{height:auto!important;min-height:100vh!important;max-height:none!important;overflow:visible!important;padding-bottom:0!important}
-  body:has(#youtubeSection.active) #youtubeSection{display:block!important;position:relative!important;width:100vw!important;min-height:calc(100vh - 59px)!important;overflow:visible!important}
-  body:has(#youtubeSection.active) #youtubeSection .yt-frame{height:calc(100vh + 118px)!important;min-height:638px!important}
-}
-#youtubeSection.active{display:block!important}
-#youtubeSection.active .yt-frame{pointer-events:auto!important}
-</style>
-<script>
-/* Pastikan navigasi downloader bisa dibuka dan kembali ke Beranda tanpa mengubah mesin audio. */
-(function(){
-  const main=document.getElementById('mainContent');
-  const youtube=document.getElementById('youtubeSection');
-  if(!main||!youtube)return;
-  document.querySelectorAll('.desktop-nav .nav-link[data-page]').forEach(link=>{
-    link.addEventListener('click',()=>{
-      if(link.dataset.page==='youtubePage'){
-        main.classList.add('hidden');youtube.classList.add('active');
-        window.scrollTo({top:0,behavior:'auto'});
-      }else{
-        youtube.classList.remove('active');main.classList.remove('hidden');
-        window.scrollTo({top:0,behavior:'auto'});
-      }
-    });
-  });
-})();
-</script>
-
-<style>
-/* Koreksi tampilan downloader: sembunyikan hanya header internal yang bertumpuk dengan header MicOn, bukan 118px konten. */
-#youtubeSection.active{width:100vw!important;min-height:calc(100vh - 59px)!important;overflow:hidden!important;margin-top:0!important}
-#youtubeSection.active .yt-frame{display:block!important;width:100%!important;height:calc(100vh + 59px)!important;min-height:0!important;margin:-59px 0 0!important;border:0!important}
-@media(max-width:760px){
-  #youtubeSection.active{min-height:calc(100dvh - 62px)!important}
-  #youtubeSection.active .yt-frame{height:calc(100dvh + 62px)!important;margin-top:-62px!important}
-}
-</style>
-
-<style>
-/* Downloader menjadi isi menu tersendiri di bawah header MicOn; tidak menggeser konten situs ke belakang header atau keluar dari area menu. */
-#youtubeSection.active{display:block!important;position:relative!important;width:100vw!important;max-width:none!important;height:calc(100vh - 62px)!important;min-height:0!important;max-height:calc(100vh - 62px)!important;overflow:hidden!important;margin:0 0 0 calc(50% - 50vw)!important;padding:0!important;background:#fff!important}
-#youtubeSection.active .yt-frame{display:block!important;position:relative!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;background:#fff!important}
-#youtubeSection.active .yt-fallback{display:none!important}
-@media(max-width:760px){
- #youtubeSection.active{height:calc(100dvh - 62px)!important;min-height:0!important;max-height:calc(100dvh - 62px)!important}
- #youtubeSection.active .yt-frame{height:100%!important;min-height:0!important;margin:0!important}
-}
-</style>
-
-
-<style id="mic-on-menu-isolation-fix">
-/* Satu aturan final: setiap menu memakai area sendiri, tanpa konten Beranda tembus di belakang downloader. */
+<!-- SINGLE CLEAN YOUTUBE MENU RULES: replaces stacked/contradictory patches. -->
+<style id="youtube-menu-single-fix">
+/* Downloader is a separate full-viewport menu below the fixed MicOn header. */
 #mainContent.hidden{display:none!important}
 #youtubeSection{display:none!important}
-#youtubeSection.active{display:block!important;position:relative!important;float:none!important;clear:both!important;width:100vw!important;max-width:none!important;height:calc(100vh - 62px)!important;min-height:0!important;max-height:calc(100vh - 62px)!important;overflow:hidden!important;margin:0 0 0 calc(50% - 50vw)!important;padding:0!important;background:#fff!important;z-index:1!important}
-#youtubeSection.active .yt-frame{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;background:#fff!important}
+#youtubeSection.active{
+  display:block!important;position:fixed!important;top:59px!important;left:0!important;right:0!important;bottom:0!important;
+  width:100vw!important;max-width:none!important;height:calc(100vh - 59px)!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;background:#fff!important;z-index:1100!important
+}
+#youtubeSection.active .yt-frame{
+  display:block!important;position:absolute!important;top:-160px!important;left:0!important;right:auto!important;bottom:auto!important;
+  width:calc(100% + 24px)!important;height:calc(100% + 160px)!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;background:#fff!important
+}
 #youtubeSection.active .yt-fallback{display:none!important}
+html:has(#youtubeSection.active),body:has(#youtubeSection.active){width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important}
+html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.active)::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 @media(max-width:760px){
-  #youtubeSection.active{height:calc(100dvh - 62px)!important;max-height:calc(100dvh - 62px)!important}
+  #youtubeSection.active{top:62px!important;height:calc(100dvh - 62px)!important}
+  #youtubeSection.active .yt-frame{top:-160px!important;width:calc(100% + 24px)!important;height:calc(100% + 160px)!important}
 }
 </style>
-<script id="mic-on-menu-isolation-fix-js">
+<script id="youtube-menu-single-fix-js">
 (function(){
   const main=document.getElementById('mainContent');
   const youtube=document.getElementById('youtubeSection');
@@ -838,49 +797,19 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   }
   document.querySelectorAll('.desktop-nav .nav-link[data-page]').forEach(link=>{
     link.addEventListener('click',function(e){
-      e.preventDefault();
-      e.stopImmediatePropagation();
+      e.preventDefault();e.stopImmediatePropagation();
       const page=link.dataset.page;
-      if(page==='youtubePage'){
-        showYoutube();
-      }else{
+      if(page==='youtubePage')showYoutube();
+      else{
         showHome();
-        if(page==='karaokePage'){
-          requestAnimationFrame(()=>document.getElementById('importSection')?.scrollIntoView({behavior:'smooth',block:'start'}));
-        }else if(page==='packagePage'){
-          const a=document.getElementById('alert');
-          if(a){a.textContent='Informasi paket belum tersedia pada file ini.';a.className='alert show ok';}
-        }else{
-          window.scrollTo({top:0,left:0,behavior:'auto'});
-        }
+        if(page==='karaokePage')requestAnimationFrame(()=>document.getElementById('importSection')?.scrollIntoView({behavior:'smooth',block:'start'}));
+        else if(page==='packagePage'){
+          const alert=document.getElementById('alert');
+          if(alert){alert.textContent='Informasi paket belum tersedia pada file ini.';alert.className='alert show ok';}
+        }else window.scrollTo({top:0,left:0,behavior:'auto'});
       }
     },true);
   });
-  // Pastikan saat halaman dimuat, hanya Beranda yang aktif.
   showHome();
 })();
 </script>
-
-<style id="youtube-embed-header-crop-final">
-/* Sembunyikan header YTMP4 di dalam iframe: kontennya naik di balik header MicOn, sementara area menu tetap terklip. */
-html:has(#youtubeSection.active),
-body:has(#youtubeSection.active){height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important}
-html:has(#youtubeSection.active)::-webkit-scrollbar,
-body:has(#youtubeSection.active)::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
-#youtubeSection.active{position:relative!important;height:calc(100vh - 62px)!important;min-height:0!important;max-height:calc(100vh - 62px)!important;overflow:hidden!important}
-#youtubeSection.active .yt-frame{position:absolute!important;top:-64px!important;left:0!important;right:auto!important;bottom:auto!important;width:calc(100% + 18px)!important;height:calc(100% + 64px)!important;min-height:0!important;max-height:none!important;margin:0!important;border:0!important;overflow:hidden!important}
-@media(max-width:760px){
- #youtubeSection.active{height:calc(100dvh - 62px)!important;max-height:calc(100dvh - 62px)!important}
- #youtubeSection.active .yt-frame{top:-64px!important;height:calc(100% + 64px)!important;width:calc(100% + 18px)!important}
-}
-</style>
-
-<style id="youtube-header-hide-fullwidth-fix">
-/* Downloader memenuhi lebar viewport; sembunyikan seluruh header internal YTMP4 di balik header MicOn. */
-#youtubeSection.active{position:fixed!important;top:62px!important;left:0!important;right:0!important;width:100vw!important;max-width:none!important;height:calc(100vh - 62px)!important;min-height:0!important;max-height:calc(100vh - 62px)!important;margin:0!important;padding:0!important;overflow:hidden!important;z-index:1100!important}
-#youtubeSection.active .yt-frame{position:absolute!important;top:-96px!important;left:0!important;width:calc(100% + 20px)!important;height:calc(100% + 96px)!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
-#youtubeSection.active .yt-fallback{display:none!important}
-html:has(#youtubeSection.active),body:has(#youtubeSection.active){width:100%!important;overflow:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important}
-html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.active)::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
-@media(max-width:760px){#youtubeSection.active{top:62px!important;height:calc(100dvh - 62px)!important;max-height:calc(100dvh - 62px)!important}#youtubeSection.active .yt-frame{top:-96px!important;height:calc(100% + 96px)!important;width:calc(100% + 20px)!important}}
-</style>
