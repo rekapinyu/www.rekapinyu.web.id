@@ -860,3 +860,17 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   showHome();
 })();
 </script>
+
+<style id="youtube-embed-header-crop-final">
+/* Sembunyikan header YTMP4 di dalam iframe: kontennya naik di balik header MicOn, sementara area menu tetap terklip. */
+html:has(#youtubeSection.active),
+body:has(#youtubeSection.active){height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important}
+html:has(#youtubeSection.active)::-webkit-scrollbar,
+body:has(#youtubeSection.active)::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+#youtubeSection.active{position:relative!important;height:calc(100vh - 62px)!important;min-height:0!important;max-height:calc(100vh - 62px)!important;overflow:hidden!important}
+#youtubeSection.active .yt-frame{position:absolute!important;top:-64px!important;left:0!important;right:auto!important;bottom:auto!important;width:calc(100% + 18px)!important;height:calc(100% + 64px)!important;min-height:0!important;max-height:none!important;margin:0!important;border:0!important;overflow:hidden!important}
+@media(max-width:760px){
+ #youtubeSection.active{height:calc(100dvh - 62px)!important;max-height:calc(100dvh - 62px)!important}
+ #youtubeSection.active .yt-frame{top:-64px!important;height:calc(100% + 64px)!important;width:calc(100% + 18px)!important}
+}
+</style>
