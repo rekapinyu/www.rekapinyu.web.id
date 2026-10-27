@@ -698,15 +698,48 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
 </style>
 
 <style>
-/* Garis pemisah vertikal Beranda desktop, sesuai referensi. */
+/* Desktop Beranda: preview tetap, kolom kontrol + footer menjadi satu-satunya area scroll. */
 @media (min-width:761px){
-  #mainContent>.grid{
-    background-image:linear-gradient(to right,
-      transparent calc(62.3% - .5px),
-      #dbe3ef calc(62.3% - .5px),
-      #dbe3ef calc(62.3% + .5px),
-      transparent calc(62.3% + .5px))!important;
-    background-repeat:no-repeat!important;
-  }
+  html,body{height:100%;min-height:100%;overflow:hidden!important}
+  body{overscroll-behavior:none}
+  .wrap{height:100vh!important;min-height:0!important;max-height:100vh!important;overflow:hidden!important;padding-bottom:0!important}
+  #mainContent{height:calc(100vh - 86px)!important;min-height:0!important;max-height:calc(100vh - 86px)!important;overflow:hidden!important}
+  #mainContent>.home-layout{display:grid!important;grid-template-columns:minmax(0,1.62fr) minmax(0,.98fr)!important;column-gap:0!important;row-gap:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important;align-items:stretch!important}
+  #mainContent>.home-layout>.home-preview-column{grid-column:1!important;grid-row:1!important;position:sticky!important;top:0!important;align-self:start!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;overflow:hidden!important;padding-right:21px!important;border-right:1px solid #dbe3ef!important;background:transparent!important}
+  #mainContent>.home-layout>.home-preview-column #videoStage{width:100%!important;height:auto!important;aspect-ratio:16/9!important;min-height:0!important;max-height:none!important;margin:0!important;border:1px dashed #dbe3ef!important;border-radius:20px!important;overflow:hidden!important;background:#f8fafc!important}
+  #mainContent>.home-layout>.home-preview-column #videoStage:empty{display:grid!important;place-items:center!important}
+  #mainContent>.home-layout>.home-preview-column #videoStage:empty:before{content:'Video MP4 akan tampil di sini'!important;color:#94a3b8!important;font-size:14px!important}
+  #mainContent>.home-layout>.home-preview-column #karaokeVideo{display:block!important;width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:16/9!important;object-fit:contain!important;background:#000!important;border-radius:20px!important;margin:0!important}
+  #mainContent>.home-layout>.home-scroll-column{grid-column:2!important;grid-row:1!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:thin!important;padding:0 0 18px 15px!important;background:transparent!important}
+  #mainContent>.home-layout>.home-scroll-column>.grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:0!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;margin:0!important;padding:0!important}
+  #mainContent>.home-layout>.home-scroll-column #importSection,
+  #mainContent>.home-layout>.home-scroll-column #transposeSection{display:contents!important}
+  #mainContent>.home-layout>.home-scroll-column #dropZone{grid-column:1!important;grid-row:1!important;margin:0!important}
+  #mainContent>.home-layout>.home-scroll-column #importSection .filemeta{grid-column:1!important;grid-row:2!important;margin:8px 0 0!important}
+  #mainContent>.home-layout>.home-scroll-column #transposeSection .keySelectWrap{grid-column:1!important;grid-row:3!important;margin:8px 0 0!important}
+  #mainContent>.home-layout>.home-scroll-column #transposeSection .noteBox{grid-column:1!important;grid-row:4!important;margin:12px 0 0!important}
+  #mainContent>.home-layout>.home-scroll-column #transposeSection .stepper{grid-column:1!important;grid-row:5!important;margin:22px 0 0!important}
+  #mainContent>.home-layout>.home-scroll-column #transposeSection .rangeLabels{grid-column:1!important;grid-row:6!important;margin:8px 0 0!important}
+  #mainContent>.home-layout>.home-scroll-column #transposeSection .row{grid-column:1!important;grid-row:7!important;margin:36px 0 0!important}
+  #mainContent>.home-layout>.home-scroll-column #transposeSection .alert{grid-column:1!important;grid-row:8!important;margin:10px 0 0!important}
+  #mainContent>.home-layout>.home-scroll-column>.foot{display:grid!important;grid-column:1!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:22px!important;width:100%!important;margin:28px 0 0!important;padding:22px 0 6px!important;border-top:1px solid #e2e8f0!important;text-align:left!important;background:transparent!important;color:#64748b!important;font-size:13px!important;line-height:1.7!important}
 }
 </style>
+<script>
+/* Susun struktur desktop satu kali: preview kiri terpisah dari panel kanan yang scroll bersama footer. */
+(function(){
+  if(!window.matchMedia('(min-width:761px)').matches) return;
+  const main=document.getElementById('mainContent');
+  const grid=main&&main.querySelector(':scope > .grid');
+  const videoStage=document.getElementById('videoStage');
+  const footer=main&&main.querySelector(':scope > .foot');
+  if(!main||!grid||!videoStage||!footer||main.querySelector(':scope > .home-layout')) return;
+  const layout=document.createElement('div'); layout.className='home-layout';
+  const preview=document.createElement('section'); preview.className='home-preview-column'; preview.setAttribute('aria-label','Preview video');
+  const scroll=document.createElement('section'); scroll.className='home-scroll-column'; scroll.setAttribute('aria-label','Kontrol nada dan informasi');
+  main.insertBefore(layout,grid);
+  layout.append(preview,scroll);
+  preview.appendChild(videoStage);
+  scroll.append(grid,footer);
+})();
+</script>
