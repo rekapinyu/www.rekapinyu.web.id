@@ -442,7 +442,30 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   if(mobilePageNav){mobilePageNav.querySelectorAll('[data-mobile-page]').forEach(button=>button.addEventListener('click',()=>{const target=document.querySelector('.desktop-nav .nav-link[data-page="'+button.dataset.mobilePage+'"]');if(target)target.click();}));}
   updatePitch();
 })();
-</script></body></html>
+</script>
+<script>
+/* Beranda mobile: preview kiri tetap, panel kanan termasuk footer memiliki scroll mandiri. */
+(function(){
+  const applyHomeColumns=()=>{
+    if(!matchMedia('(max-width:760px)').matches || document.querySelector('.home-layout')) return;
+    const main=document.getElementById('mainContent'), grid=main&&main.querySelector('.grid'),
+          videoStage=document.getElementById('videoStage'), foot=main&&main.querySelector('.foot');
+    if(!main||!grid||!videoStage||!foot) return;
+    const layout=document.createElement('div'); layout.className='home-layout';
+    const left=document.createElement('div'); left.className='home-preview-column';
+    const right=document.createElement('div'); right.className='home-scroll-column';
+    main.insertBefore(layout, main.firstChild);
+    layout.append(left,right);
+    left.appendChild(videoStage);
+    right.appendChild(grid);
+    right.appendChild(foot);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',applyHomeColumns,{once:true});
+  else applyHomeColumns();
+  window.addEventListener('resize',()=>{if(!matchMedia('(max-width:760px)').matches){const layout=document.querySelector('.home-layout');if(layout)location.reload();}});
+})();
+</script>
+</body></html>
 <style>
 /* Final spacing match to the supplied desktop reference; design-only adjustments. */
 @media (min-width:761px){
@@ -575,4 +598,34 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   .mobile-bottom-nav button:active{background:#353535!important;color:#fff!important}
 }
 @media(min-width:761px){.mobile-bottom-nav{display:none!important}}
+</style>
+
+
+<style>
+/* Perbaikan khusus halaman Beranda mobile: preview sticky kiri, konten+footer scroll di kanan. */
+@media(max-width:760px){
+  #mainContent{height:calc(100dvh - 78px - env(safe-area-inset-bottom))!important;min-height:0!important;overflow:hidden!important}
+  .home-layout{display:grid!important;grid-template-columns:minmax(0,42%) minmax(0,58%)!important;width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important;align-items:stretch!important}
+  .home-preview-column{position:relative!important;min-width:0!important;height:100%!important;overflow:hidden!important;background:#000!important;border-right:1px solid #383838!important}
+  .home-preview-column #videoStage{position:sticky!important;top:0!important;width:100%!important;max-height:none!important;aspect-ratio:9/16!important;min-height:0!important;display:grid!important;align-content:start!important;overflow:hidden!important}
+  .home-preview-column #videoStage:empty{aspect-ratio:9/16!important;max-height:none!important}
+  .home-preview-column #karaokeVideo{width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:9/16!important;object-fit:contain!important;margin:0!important}
+  .home-scroll-column{min-width:0!important;height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior-y:contain!important;scrollbar-width:thin!important;-webkit-overflow-scrolling:touch!important;padding-bottom:10px!important}
+  .home-scroll-column .grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-auto-rows:auto!important;align-content:start!important;min-height:0!important;width:100%!important;gap:0!important}
+  .home-scroll-column #dropZone{grid-column:1!important;grid-row:1!important;width:calc(100% - 12px)!important;margin:6px!important;height:auto!important;min-height:34px!important}
+  .home-scroll-column #transposeSection .keySelectWrap{display:none!important}
+  .home-scroll-column #transposeSection .noteBox{grid-column:1!important;grid-row:2!important;margin:0 6px 8px!important;height:89px!important;min-height:89px!important}
+  .home-scroll-column #transposeSection .stepper{grid-column:1!important;grid-row:3!important;margin:0 6px!important;grid-template-columns:32px minmax(0,1fr) 32px!important;gap:5px!important}
+  .home-scroll-column #transposeSection .step{width:32px!important;min-width:32px!important;height:34px!important}
+  .home-scroll-column #transposeSection .rangeLabels{grid-column:1!important;grid-row:4!important;margin:3px 10px 8px!important}
+  .home-scroll-column .mobile-fill{grid-column:1!important;grid-row:5!important;padding:8px 6px!important;min-height:0!important}
+  .home-scroll-column .mobile-tip{min-height:0!important;padding:10px!important}
+  .home-scroll-column #transposeSection .row{grid-column:1!important;grid-row:6!important;flex-wrap:wrap!important;margin:0 6px 8px!important}
+  .home-scroll-column #transposeSection .alert{grid-column:1!important;grid-row:7!important;margin:5px 6px!important}
+  .home-scroll-column .foot{display:block!important;grid-column:1!important;margin:8px 6px 0!important;padding:12px 0 8px!important;border-top:1px solid #383838!important;text-align:left!important;color:#bdbdbd!important;font-size:10px!important;line-height:1.5!important}
+  .home-scroll-column .foot-section{margin-bottom:12px!important}
+  .home-scroll-column .foot-title{font-size:11px!important;color:#f5f5f5!important;margin-bottom:4px!important}
+  .home-scroll-column .foot p,.home-scroll-column .foot ul{font-size:10px!important;line-height:1.5!important}
+  .home-scroll-column .foot ul{padding-left:15px!important}
+}
 </style>
