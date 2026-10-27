@@ -782,3 +782,13 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   });
 })();
 </script>
+
+<style>
+/* Koreksi tampilan downloader: sembunyikan hanya header internal yang bertumpuk dengan header MicOn, bukan 118px konten. */
+#youtubeSection.active{width:100vw!important;min-height:calc(100vh - 59px)!important;overflow:hidden!important;margin-top:0!important}
+#youtubeSection.active .yt-frame{display:block!important;width:100%!important;height:calc(100vh + 59px)!important;min-height:0!important;margin:-59px 0 0!important;border:0!important}
+@media(max-width:760px){
+  #youtubeSection.active{min-height:calc(100dvh - 62px)!important}
+  #youtubeSection.active .yt-frame{height:calc(100dvh + 62px)!important;margin-top:-62px!important}
+}
+</style>
