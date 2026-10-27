@@ -249,7 +249,7 @@
 <section class="hero" id="homeSection"><h2>Nyanyi di nada<br><span>yang paling nyaman.</span></h2><p>Import musik, naikkan atau turunkan nada hingga 24 semitone, lalu putar untuk latihan karaoke.</p></section>
 <div class="grid">
 <section class="card" id="importSection"><h3>01 · Import musik</h3><p class="sub">Pilih video MP4 dari perangkat kamu.</p>
-<div id="videoStage" class="videoStage"></div>
+<div id="videoStage" class="videoStage"></div><section class="mobile-fill" aria-label="Informasi karaoke"><div class="mobile-fill-top"><span class="mobile-eq">♫</span><div><strong>Ruang Karaoke</strong><small>Sesuaikan nada, nyanyikan dengan nyaman</small></div></div><div class="mobile-tip"><span>✦</span><div><b>Tips vokal</b><p>Atur nada sedikit demi sedikit sampai lagu terasa pas dengan jangkauan suaramu.</p></div></div></section>
 <div class="filemeta"><div class="fileIcon">♫</div><div class="filetext"><b id="fileName">Belum ada lagu dipilih</b><small id="fileSize">File audio akan tampil di sini</small><div class="status" id="fileStatus">Menunggu file</div></div></div>
 </section>
 <section class="card transposeCard" id="transposeSection"><label class="drop" id="dropZone" for="videoFile"><div><div class="uploadIcon">⬆</div><strong>Tekan untuk pilih video MP4</strong><small>MP4 · pilih video baru untuk mengganti video</small></div></label><input id="videoFile" type="file" accept="video/mp4,video/*,.mp4" hidden><h3>02 · Transpose nada video</h3><p class="sub">Ubah nada audio video saat diputar.</p>
@@ -444,4 +444,53 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   #transposeSection .rangeLabels{margin-top:4px!important}
   #transposeSection .row{margin-top:18px!important}
 }
+</style>
+
+<style>
+/* Desain pemutar mobile mengikuti referensi: tema gelap, video di atas, ruang karaoke di tengah, kontrol nada di bawah. Desktop tidak disentuh. */
+@media(max-width:760px){
+  :root{color-scheme:dark;--bg:#171717;--panel:#202020;--panel2:#262626;--line:#353535;--muted:#a3a3a3;--text:#f5f5f5}
+  html,body{background:#171717!important;color:#f5f5f5!important}
+  .wrap{width:100%;padding:0 0 calc(18px + env(safe-area-inset-bottom))!important;min-height:100dvh}
+  .top{display:none!important}
+  #mainContent{min-height:100dvh}
+  .hero{display:none!important}
+  .grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:0!important;min-height:100dvh}
+  #importSection,#transposeSection{display:contents!important}
+  #videoStage{grid-column:1;grid-row:1;width:100%;margin:0;padding:0;background:#000;min-height:0}
+  #videoStage:empty{aspect-ratio:9/16;max-height:62dvh;display:grid;place-items:center;background:#101010;border:0}
+  #videoStage:empty::before{content:'Pilih video untuk mulai karaoke';color:#a3a3a3;font-size:13px}
+  #karaokeVideo{display:block!important;width:100%!important;height:auto!important;max-height:62dvh!important;aspect-ratio:auto!important;object-fit:contain!important;background:#000!important;border-radius:0!important;margin:0!important}
+  .mobile-fill{grid-column:1;grid-row:3;display:flex;flex-direction:column;gap:22px;padding:22px 18px 110px;min-height:220px;background:#202020;color:#f5f5f5}
+  .mobile-fill-top{display:flex;align-items:center;gap:12px}
+  .mobile-eq{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#303030;color:#f5f5f5;font-size:22px}
+  .mobile-fill-top strong,.mobile-fill-top small{display:block}
+  .mobile-fill-top strong{font-size:14px}
+  .mobile-fill-top small{font-size:11px;color:#a3a3a3;margin-top:3px}
+  .mobile-tip{display:flex;gap:10px;padding:14px;border:1px solid #383838;border-radius:14px;background:#252525}
+  .mobile-tip>span{color:#facc15;font-size:18px}
+  .mobile-tip b{font-size:12px}
+  .mobile-tip p{margin:4px 0 0;font-size:11px;line-height:1.5;color:#a3a3a3}
+  .filemeta{display:none!important}
+  #dropZone{grid-column:1;grid-row:2;order:0;display:flex!important;min-height:34px!important;height:34px!important;margin:0!important;padding:5px 12px!important;border:0!important;border-radius:0!important;background:#202020!important;color:#f5f5f5!important;text-align:left!important;justify-content:flex-start!important}
+  #dropZone .uploadIcon,#dropZone small{display:none!important}
+  #dropZone strong{font-size:11px!important;font-weight:600!important;color:#d4d4d4}
+  #transposeSection .keySelectWrap{grid-column:1;grid-row:4;margin:0 16px 10px!important}
+  .keySelect{height:38px!important;border:1px solid #414141!important;border-radius:10px!important;background:#292929!important;color:#f5f5f5!important;font-size:12px!important}
+  #transposeSection .noteBox{grid-column:1;grid-row:5;height:auto!important;margin:0 16px 10px!important;padding:10px!important;background:#242424!important;border:1px solid #383838!important;border-radius:12px!important}
+  #transposeSection .noteBox small{font-size:11px!important;color:#a3a3a3!important}
+  #transposeSection .note{font-size:25px!important;color:#fff!important}
+  #transposeSection #noteDesc{font-size:10px!important;color:#a3a3a3!important}
+  #transposeSection .stepper{grid-column:1;grid-row:6;grid-template-columns:38px minmax(0,1fr) 38px!important;gap:8px!important;margin:0 16px!important;align-self:end}
+  #transposeSection .step{height:36px!important;border-radius:9px!important;background:#303030!important;border:1px solid #454545!important;color:#f5f5f5!important;font-size:20px!important}
+  #transposeSection .range{accent-color:#f5f5f5!important;height:5px}
+  #transposeSection .rangeLabels{grid-column:1;grid-row:7;margin:4px 18px 0!important;font-size:9px!important;color:#a3a3a3!important}
+  #transposeSection .row{grid-column:1;grid-row:8;margin:8px 10px 0!important;gap:8px!important}
+  #transposeSection .row .btn{flex:0 0 auto!important;min-width:0!important;padding:7px 11px!important;border-radius:9px!important;background:#303030!important;color:#e5e5e5!important;border:1px solid #454545!important;font-size:11px!important}
+  #transposeSection .alert{grid-column:1;grid-row:9;margin:8px 12px!important;min-height:0!important}
+  #transposeSection .semitone,#transposeSection .playrow{display:none!important}
+  .mobile-dock{display:none!important}
+  .foot{display:none!important}
+}
+@media(min-width:761px){.mobile-fill{display:none}}
 </style>
