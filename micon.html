@@ -792,3 +792,14 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   #youtubeSection.active .yt-frame{height:calc(100dvh + 62px)!important;margin-top:-62px!important}
 }
 </style>
+
+<style>
+/* Downloader menjadi isi menu tersendiri di bawah header MicOn; tidak menggeser konten situs ke belakang header atau keluar dari area menu. */
+#youtubeSection.active{display:block!important;position:relative!important;width:100vw!important;max-width:none!important;height:calc(100vh - 62px)!important;min-height:0!important;max-height:calc(100vh - 62px)!important;overflow:hidden!important;margin:0 0 0 calc(50% - 50vw)!important;padding:0!important;background:#fff!important}
+#youtubeSection.active .yt-frame{display:block!important;position:relative!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;background:#fff!important}
+#youtubeSection.active .yt-fallback{display:none!important}
+@media(max-width:760px){
+ #youtubeSection.active{height:calc(100dvh - 62px)!important;min-height:0!important;max-height:calc(100dvh - 62px)!important}
+ #youtubeSection.active .yt-frame{height:100%!important;min-height:0!important;margin:0!important}
+}
+</style>
