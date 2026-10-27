@@ -751,3 +751,34 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
   #mainContent>.home-layout>.home-scroll-column::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 }
 </style>
+
+<style>
+/* Perbaikan khusus navigasi Download Video YouTube: pulihkan area halaman saat downloader dibuka. */
+@media (min-width:761px){
+  html:has(#youtubeSection.active),body:has(#youtubeSection.active){height:auto!important;min-height:100%!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important}
+  body:has(#youtubeSection.active) .wrap{height:auto!important;min-height:100vh!important;max-height:none!important;overflow:visible!important;padding-bottom:0!important}
+  body:has(#youtubeSection.active) #youtubeSection{display:block!important;position:relative!important;width:100vw!important;min-height:calc(100vh - 59px)!important;overflow:visible!important}
+  body:has(#youtubeSection.active) #youtubeSection .yt-frame{height:calc(100vh + 118px)!important;min-height:638px!important}
+}
+#youtubeSection.active{display:block!important}
+#youtubeSection.active .yt-frame{pointer-events:auto!important}
+</style>
+<script>
+/* Pastikan navigasi downloader bisa dibuka dan kembali ke Beranda tanpa mengubah mesin audio. */
+(function(){
+  const main=document.getElementById('mainContent');
+  const youtube=document.getElementById('youtubeSection');
+  if(!main||!youtube)return;
+  document.querySelectorAll('.desktop-nav .nav-link[data-page]').forEach(link=>{
+    link.addEventListener('click',()=>{
+      if(link.dataset.page==='youtubePage'){
+        main.classList.add('hidden');youtube.classList.add('active');
+        window.scrollTo({top:0,behavior:'auto'});
+      }else{
+        youtube.classList.remove('active');main.classList.remove('hidden');
+        window.scrollTo({top:0,behavior:'auto'});
+      }
+    });
+  });
+})();
+</script>
