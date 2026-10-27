@@ -803,3 +803,60 @@ const dock=document.getElementById('mobileDock'),moreSheet=document.getElementBy
  #youtubeSection.active .yt-frame{height:100%!important;min-height:0!important;margin:0!important}
 }
 </style>
+
+
+<style id="mic-on-menu-isolation-fix">
+/* Satu aturan final: setiap menu memakai area sendiri, tanpa konten Beranda tembus di belakang downloader. */
+#mainContent.hidden{display:none!important}
+#youtubeSection{display:none!important}
+#youtubeSection.active{display:block!important;position:relative!important;float:none!important;clear:both!important;width:100vw!important;max-width:none!important;height:calc(100vh - 62px)!important;min-height:0!important;max-height:calc(100vh - 62px)!important;overflow:hidden!important;margin:0 0 0 calc(50% - 50vw)!important;padding:0!important;background:#fff!important;z-index:1!important}
+#youtubeSection.active .yt-frame{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;background:#fff!important}
+#youtubeSection.active .yt-fallback{display:none!important}
+@media(max-width:760px){
+  #youtubeSection.active{height:calc(100dvh - 62px)!important;max-height:calc(100dvh - 62px)!important}
+}
+</style>
+<script id="mic-on-menu-isolation-fix-js">
+(function(){
+  const main=document.getElementById('mainContent');
+  const youtube=document.getElementById('youtubeSection');
+  if(!main||!youtube)return;
+  function showHome(){
+    youtube.classList.remove('active');
+    youtube.style.setProperty('display','none','important');
+    main.classList.remove('hidden');
+    main.style.removeProperty('display');
+    document.documentElement.style.removeProperty('overflow');
+    document.body.style.removeProperty('overflow');
+  }
+  function showYoutube(){
+    main.classList.add('hidden');
+    main.style.setProperty('display','none','important');
+    youtube.classList.add('active');
+    youtube.style.setProperty('display','block','important');
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+  }
+  document.querySelectorAll('.desktop-nav .nav-link[data-page]').forEach(link=>{
+    link.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const page=link.dataset.page;
+      if(page==='youtubePage'){
+        showYoutube();
+      }else{
+        showHome();
+        if(page==='karaokePage'){
+          requestAnimationFrame(()=>document.getElementById('importSection')?.scrollIntoView({behavior:'smooth',block:'start'}));
+        }else if(page==='packagePage'){
+          const a=document.getElementById('alert');
+          if(a){a.textContent='Informasi paket belum tersedia pada file ini.';a.className='alert show ok';}
+        }else{
+          window.scrollTo({top:0,left:0,behavior:'auto'});
+        }
+      }
+    },true);
+  });
+  // Pastikan saat halaman dimuat, hanya Beranda yang aktif.
+  showHome();
+})();
+</script>
