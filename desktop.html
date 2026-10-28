@@ -1468,104 +1468,63 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
   }
 }
 </style>
-
-
-
 <style id="cek-paket-single-layout">
-/* CEK PAKET — implementasi tunggal. CSS hanya untuk #view-cek-paket. */
-#view-cek-paket{width:100%;max-width:none;box-sizing:border-box;color:#172033}
-#view-cek-paket>.overflow-hidden{
-  width:100%;max-width:none;margin:0;overflow:hidden;
-  border:1px solid #e5eaf0;border-radius:16px;background:#fff;box-shadow:none
-}
-#view-cek-paket>.overflow-hidden>div:first-child{
-  padding:28px 30px;color:#fff;
-  background:linear-gradient(112deg,#079b70 0%,#10b5a8 100%)
-}
-#view-cek-paket>.overflow-hidden>div:first-child>.flex:first-child{
-  display:flex;align-items:center;gap:14px
-}
-#view-cek-paket>.overflow-hidden>div:first-child>.flex:first-child>div:first-child{
-  width:52px;height:52px;flex:0 0 52px;display:flex;align-items:center;justify-content:center;
-  border-radius:13px;background:rgba(255,255,255,.2)
-}
-#view-cek-paket>.overflow-hidden>div:first-child h2{
-  margin:0;font-size:21px;line-height:1.35;font-weight:800;color:#fff
-}
-#view-cek-paket>.overflow-hidden>div:first-child p{
-  margin-top:5px;font-size:14px;line-height:1.5;color:rgba(255,255,255,.92)
-}
-#view-cek-paket>.overflow-hidden>div:first-child>.grid{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:26px
-}
-#view-cek-paket>.overflow-hidden>div:first-child>.grid>div{
-  min-width:0;padding:17px 18px;border-radius:13px;background:rgba(255,255,255,.17)
-}
-#view-cek-paket>.overflow-hidden>div:first-child>.grid>div>div:first-child{
-  color:rgba(255,255,255,.88);font-size:12px;font-weight:700;letter-spacing:.025em
-}
-#view-cek-paket #cek-paket-nama,#view-cek-paket #cek-paket-status{
-  margin-top:5px;font-size:22px;line-height:1.35;font-weight:850;color:#fff;overflow-wrap:anywhere
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2){
-  display:flex;flex-direction:column;gap:22px;padding:30px;background:#fff
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div{
-  min-width:0;padding:17px 18px;border:1px solid #dce5ef;border-radius:13px;background:#fff
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div:first-child{background:#f8fafc}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div>div:first-child{
-  color:#7b8798;font-size:14px
-}
-#view-cek-paket #cek-paket-sisa{color:#172033;font-size:32px;line-height:1.2;font-weight:850}
-#view-cek-paket #cek-paket-berakhir,#view-cek-paket #cek-paket-toko{
-  margin-top:10px;color:#172033;font-size:16px;line-height:1.4;font-weight:800;overflow-wrap:anywhere
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div>p{
-  margin-top:6px;color:#718096;font-size:12px;line-height:1.5
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>div:nth-child(2)>.flex{
-  margin-bottom:9px
-}
-#view-cek-paket #cek-paket-progress{
-  background:#10b981;border-radius:999px;transition:width .5s ease
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>div:nth-child(3){
-  display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:20px;
-  padding:18px;border:1px solid #bbf7d0;border-radius:13px;background:#ecfdf5
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>div:nth-child(3)>div:first-child{min-width:0}
-#view-cek-paket #cek-paket-wa{
-  flex:0 0 auto;min-height:54px;padding:13px 18px;border-radius:10px;
-  background:#12a34a;color:#fff;text-decoration:none
-}
-#view-cek-paket>.overflow-hidden>div:nth-child(2)>p:last-child{
-  margin:0;color:#94a3b8;font-size:12px;line-height:1.5
-}
+/* CEK PAKET: satu implementasi struktural, menggunakan class cp-* khusus agar tidak berbenturan dengan Tailwind. */
+#view-cek-paket{display:block;width:100%;max-width:none;box-sizing:border-box;color:#172033;font-family:inherit}
+#view-cek-paket.hidden{display:none!important}
+#view-cek-paket *{box-sizing:border-box}
+#view-cek-paket .cp-page{width:100%;overflow:hidden;border:1px solid #e5eaf0;border-radius:16px;background:#fff;box-shadow:none}
+#view-cek-paket .cp-hero{padding:28px 30px;color:#fff;background:linear-gradient(112deg,#079b70 0%,#10b5a8 100%)}
+#view-cek-paket .cp-heading{display:flex;align-items:center;gap:14px}
+#view-cek-paket .cp-heading-icon{width:52px;height:52px;flex:0 0 52px;display:flex;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,255,255,.2);font-size:24px;color:#fff}
+#view-cek-paket .cp-heading-copy{min-width:0}
+#view-cek-paket .cp-heading h2{margin:0;color:#fff;font-size:21px;font-weight:800;line-height:1.35}
+#view-cek-paket .cp-heading p{margin:5px 0 0;color:rgba(255,255,255,.94);font-size:14px;line-height:1.5}
+#view-cek-paket .cp-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:26px}
+#view-cek-paket .cp-summary-card{min-width:0;padding:17px 18px;border-radius:13px;background:rgba(255,255,255,.17)}
+#view-cek-paket .cp-eyebrow{color:rgba(255,255,255,.9);font-size:12px;font-weight:700;letter-spacing:.025em;text-transform:uppercase}
+#view-cek-paket #cek-paket-nama,#view-cek-paket #cek-paket-status{margin-top:5px;color:#fff;font-size:22px;font-weight:850;line-height:1.35;overflow-wrap:anywhere}
+#view-cek-paket .cp-content{display:flex;flex-direction:column;gap:22px;padding:30px;background:#fff}
+#view-cek-paket .cp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+#view-cek-paket .cp-stat{min-width:0;padding:17px 18px;border:1px solid #dce5ef;border-radius:13px;background:#fff}
+#view-cek-paket .cp-stat-muted{background:#f8fafc}
+#view-cek-paket .cp-stat-label{color:#7b8798;font-size:14px;line-height:1.4}
+#view-cek-paket .cp-days{display:flex;align-items:baseline;gap:9px;margin-top:7px}
+#view-cek-paket #cek-paket-sisa{color:#172033;font-size:32px;font-weight:850;line-height:1.15}
+#view-cek-paket #cek-paket-satuan{color:#475569;font-size:14px;font-weight:700}
+#view-cek-paket #cek-paket-berakhir,#view-cek-paket #cek-paket-toko{margin-top:10px;color:#172033;font-size:16px;font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+#view-cek-paket .cp-stat p{margin:6px 0 0;color:#718096;font-size:12px;line-height:1.5}
+#view-cek-paket .cp-progress-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;color:#334155;font-size:14px;font-weight:750}
+#view-cek-paket #cek-paket-progress-label{color:#64748b;font-size:12px;font-weight:650}
+#view-cek-paket .cp-progress-track{height:13px;overflow:hidden;border-radius:999px;background:#f1f5f9}
+#view-cek-paket #cek-paket-progress{height:100%;border-radius:999px;background:#10b981;transition:width .5s ease}
+#view-cek-paket #cek-paket-info{margin:13px 0 0;color:#64748b;font-size:14px;line-height:1.5}
+#view-cek-paket .cp-renewal{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:20px;padding:18px;border:1px solid #bbf7d0;border-radius:13px;background:#ecfdf5}
+#view-cek-paket .cp-renewal-copy{min-width:0}
+#view-cek-paket .cp-renewal-copy>div{color:#172033;font-size:16px;font-weight:800;line-height:1.4}
+#view-cek-paket .cp-renewal-copy p{margin:6px 0 0;color:#64748b;font-size:14px;line-height:1.5}
+#view-cek-paket #cek-paket-wa{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:9px;min-height:54px;padding:13px 18px;border:0;border-radius:10px;background:#12a34a;color:#fff;text-decoration:none;font-size:14px;font-weight:800;white-space:nowrap;box-shadow:none}
+#view-cek-paket #cek-paket-wa:hover{background:#0e9140}
+#view-cek-paket #cek-paket-wa i{font-size:19px}
+#view-cek-paket .cp-footnote{margin:0;color:#94a3b8;font-size:12px;line-height:1.5}
+#view-cek-paket .cp-footnote i{margin-right:4px}
 @media(max-width:767px){
-  #view-cek-paket>.overflow-hidden{border-radius:14px}
-  #view-cek-paket>.overflow-hidden>div:first-child{padding:19px 16px}
-  #view-cek-paket>.overflow-hidden>div:first-child h2{font-size:19px}
-  #view-cek-paket>.overflow-hidden>div:first-child>.grid{
-    grid-template-columns:minmax(0,1fr);gap:9px;margin-top:19px
-  }
-  #view-cek-paket>.overflow-hidden>div:first-child>.grid>div{padding:13px 14px}
-  #view-cek-paket #cek-paket-nama,#view-cek-paket #cek-paket-status{font-size:19px}
-  #view-cek-paket>.overflow-hidden>div:nth-child(2){gap:18px;padding:16px}
-  #view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid{
-    grid-template-columns:minmax(0,1fr);gap:9px
-  }
-  #view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div{padding:14px}
-  #view-cek-paket>.overflow-hidden>div:nth-child(2)>div:nth-child(3){
-    flex-direction:column;align-items:stretch;gap:13px;padding:14px
-  }
-  #view-cek-paket #cek-paket-wa{width:100%;box-sizing:border-box}
+ #view-cek-paket .cp-page{border-radius:14px}
+ #view-cek-paket .cp-hero{padding:19px 16px}
+ #view-cek-paket .cp-heading{gap:11px}
+ #view-cek-paket .cp-heading-icon{width:46px;height:46px;flex-basis:46px;font-size:21px}
+ #view-cek-paket .cp-heading h2{font-size:19px}
+ #view-cek-paket .cp-heading p{font-size:12px}
+ #view-cek-paket .cp-summary{grid-template-columns:minmax(0,1fr);gap:9px;margin-top:19px}
+ #view-cek-paket .cp-summary-card{padding:13px 14px}
+ #view-cek-paket #cek-paket-nama,#view-cek-paket #cek-paket-status{font-size:19px}
+ #view-cek-paket .cp-content{gap:18px;padding:16px}
+ #view-cek-paket .cp-stats{grid-template-columns:minmax(0,1fr);gap:9px}
+ #view-cek-paket .cp-stat{padding:14px}
+ #view-cek-paket .cp-renewal{flex-direction:column;align-items:stretch;gap:13px;padding:14px}
+ #view-cek-paket #cek-paket-wa{width:100%;min-height:48px;white-space:normal}
 }
 </style>
-
 </head>
 <body class="bg-slate-100 text-slate-800 flex h-screen overflow-hidden">
 <div aria-hidden="true" id="kasir-payment-popup">
@@ -3239,17 +3198,34 @@ main > .max-w-4xl:has(#view-komunitas:not(.hidden)){
 #view-komunitas .komunitas-search-wrap{display:none!important}
 #view-komunitas .komunitas-feed-heading{display:block!important}
 </style>
-<section class="hidden space-y-4" id="view-cek-paket">
-  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <div class="bg-gradient-to-r from-emerald-600 to-teal-500 p-5 text-white sm:p-7">
-      <div class="flex items-center gap-3"><div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20"><i class="fa-solid fa-route text-2xl"></i></div><div><h2 class="text-xl font-extrabold">Cek Paket</h2><p class="mt-1 text-sm text-white/90">Status dan masa aktif paket Rekapinyu Anda</p></div></div>
-      <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"><div class="rounded-xl bg-white/15 p-4"><div class="text-xs font-semibold uppercase tracking-wide text-white/80">Paket Anda</div><div id="cek-paket-nama" class="mt-1 text-xl font-extrabold">Memuat data paket…</div></div><div class="rounded-xl bg-white/15 p-4"><div class="text-xs font-semibold uppercase tracking-wide text-white/80">Status Paket</div><div id="cek-paket-status" class="mt-1 text-xl font-extrabold">Memeriksa…</div></div></div>
+<section class="hidden" id="view-cek-paket">
+  <div class="cp-page">
+    <div class="cp-hero">
+      <div class="cp-heading">
+        <div class="cp-heading-icon"><i class="fa-solid fa-route" aria-hidden="true"></i></div>
+        <div class="cp-heading-copy"><h2>Cek Paket</h2><p>Status dan masa aktif paket Rekapinyu Anda</p></div>
+      </div>
+      <div class="cp-summary">
+        <div class="cp-summary-card"><div class="cp-eyebrow">PAKET ANDA</div><div id="cek-paket-nama">Memuat data paket…</div></div>
+        <div class="cp-summary-card"><div class="cp-eyebrow">STATUS PAKET</div><div id="cek-paket-status">Memeriksa…</div></div>
+      </div>
     </div>
-    <div class="space-y-5 p-5 sm:p-7">
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3"><div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="text-sm text-slate-500">Sisa masa aktif</div><div class="mt-1 flex items-baseline gap-2"><span id="cek-paket-sisa" class="text-3xl font-black text-slate-800">—</span><span id="cek-paket-satuan" class="text-sm font-semibold text-slate-500">hari</span></div><p id="cek-paket-keterangan-sisa" class="mt-1 text-xs text-slate-500">Mengambil data dari akun Anda</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Tanggal berakhir</div><div id="cek-paket-berakhir" class="mt-2 text-base font-bold text-slate-800">—</div><p id="cek-paket-keterangan-berakhir" class="mt-1 text-xs text-slate-500">Dihitung sejak tanggal mulai masa aktif</p></div><div class="rounded-xl border border-slate-200 p-4"><div class="text-sm text-slate-500">Nama toko</div><div id="cek-paket-toko" class="mt-2 break-words text-base font-bold text-slate-800">—</div><p class="mt-1 text-xs text-slate-500">Akun yang sedang masuk</p></div></div>
-      <div><div class="mb-2 flex items-center justify-between gap-3"><span class="text-sm font-bold text-slate-700">Masa aktif paket</span><span id="cek-paket-progress-label" class="text-xs font-semibold text-slate-500">—</span></div><div class="h-3 overflow-hidden rounded-full bg-slate-100"><div id="cek-paket-progress" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width:0%"></div></div><p id="cek-paket-info" class="mt-3 text-sm text-slate-600">Status paket akan diperbarui otomatis dari data akun.</p></div>
-      <div class="flex flex-col gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 sm:flex-row sm:items-center sm:justify-between"><div><div class="font-bold text-slate-800">Butuh perpanjangan paket?</div><p class="mt-1 text-sm text-slate-600">Hubungi admin Rekapinyu untuk mengaktifkan atau memperpanjang paket Anda.</p></div><a id="cek-paket-wa" href="https://wa.me/message/FCDFMUUH7KDWC1" target="_blank" rel="noopener noreferrer" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-green-700"><i class="fa-brands fa-whatsapp text-lg"></i> Hubungi Admin</a></div>
-      <p class="text-xs text-slate-400"><i class="fa-solid fa-rotate mr-1"></i>Data diperbarui otomatis saat status paket pada akun berubah.</p>
+    <div class="cp-content">
+      <div class="cp-stats">
+        <div class="cp-stat cp-stat-muted"><div class="cp-stat-label">Sisa masa aktif</div><div class="cp-days"><span id="cek-paket-sisa">—</span><span id="cek-paket-satuan">hari</span></div><p id="cek-paket-keterangan-sisa">Mengambil data dari akun Anda</p></div>
+        <div class="cp-stat"><div class="cp-stat-label">Tanggal berakhir</div><div id="cek-paket-berakhir">—</div><p id="cek-paket-keterangan-berakhir">Dihitung sejak tanggal mulai masa aktif</p></div>
+        <div class="cp-stat"><div class="cp-stat-label">Nama toko</div><div id="cek-paket-toko">—</div><p>Akun yang sedang masuk</p></div>
+      </div>
+      <div class="cp-progress-section">
+        <div class="cp-progress-heading"><span>Masa aktif paket</span><span id="cek-paket-progress-label">—</span></div>
+        <div class="cp-progress-track"><div id="cek-paket-progress" style="width:0%"></div></div>
+        <p id="cek-paket-info">Status paket akan diperbarui otomatis dari data akun.</p>
+      </div>
+      <div class="cp-renewal">
+        <div class="cp-renewal-copy"><div>Butuh perpanjangan paket?</div><p>Hubungi admin Rekapinyu untuk mengaktifkan atau memperpanjang paket Anda.</p></div>
+        <a id="cek-paket-wa" href="https://wa.me/message/FCDFMUUH7KDWC1" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i><span>Hubungi Admin</span></a>
+      </div>
+      <p class="cp-footnote"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Data diperbarui otomatis saat status paket pada akun berubah.</p>
     </div>
   </div>
 </section>
