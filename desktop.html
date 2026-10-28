@@ -1470,128 +1470,99 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 </style>
 
 
-<style id="cek-paket-reference-layout-only">
-/* Perbaikan khusus isi menu Cek Paket mengikuti gambar referensi.
-   Tidak mengubah fungsi, data akun, sidebar, atau menu lain. */
-#view-cek-paket{
-  width:100%!important;
-  max-width:none!important;
-  box-sizing:border-box!important;
-  color:#172033!important;
+
+<style id="cek-paket-single-layout">
+/* CEK PAKET — implementasi tunggal. CSS hanya untuk #view-cek-paket. */
+#view-cek-paket{width:100%;max-width:none;box-sizing:border-box;color:#172033}
+#view-cek-paket>.overflow-hidden{
+  width:100%;max-width:none;margin:0;overflow:hidden;
+  border:1px solid #e5eaf0;border-radius:16px;background:#fff;box-shadow:none
 }
-#view-cek-paket > div{
-  width:100%!important;
-  max-width:none!important;
-  margin:0!important;
-  overflow:hidden!important;
-  border:1px solid #e5eaf0!important;
-  border-radius:16px!important;
-  background:#fff!important;
-  box-shadow:none!important;
+#view-cek-paket>.overflow-hidden>div:first-child{
+  padding:28px 30px;color:#fff;
+  background:linear-gradient(112deg,#079b70 0%,#10b5a8 100%)
 }
-#view-cek-paket > div > div:first-child{
-  padding:28px 30px!important;
-  color:#fff!important;
-  background:linear-gradient(112deg,#079b70 0%,#10b5a8 100%)!important;
+#view-cek-paket>.overflow-hidden>div:first-child>.flex:first-child{
+  display:flex;align-items:center;gap:14px
 }
-#view-cek-paket > div > div:first-child > div:first-child{
-  display:flex!important;
-  align-items:center!important;
-  gap:14px!important;
+#view-cek-paket>.overflow-hidden>div:first-child>.flex:first-child>div:first-child{
+  width:52px;height:52px;flex:0 0 52px;display:flex;align-items:center;justify-content:center;
+  border-radius:13px;background:rgba(255,255,255,.2)
 }
-#view-cek-paket > div > div:first-child > div:first-child > div:first-child{
-  width:52px!important;height:52px!important;flex:0 0 52px!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  border-radius:13px!important;background:rgba(255,255,255,.2)!important;
+#view-cek-paket>.overflow-hidden>div:first-child h2{
+  margin:0;font-size:21px;line-height:1.35;font-weight:800;color:#fff
 }
-#view-cek-paket h2{
-  margin:0!important;font-size:21px!important;font-weight:800!important;line-height:1.35!important;
+#view-cek-paket>.overflow-hidden>div:first-child p{
+  margin-top:5px;font-size:14px;line-height:1.5;color:rgba(255,255,255,.92)
 }
-#view-cek-paket > div > div:first-child p{
-  margin-top:5px!important;font-size:14px!important;line-height:1.5!important;
+#view-cek-paket>.overflow-hidden>div:first-child>.grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:26px
 }
-#view-cek-paket > div > div:first-child > div:nth-child(2){
-  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:13px!important;margin-top:26px!important;
+#view-cek-paket>.overflow-hidden>div:first-child>.grid>div{
+  min-width:0;padding:17px 18px;border-radius:13px;background:rgba(255,255,255,.17)
 }
-#view-cek-paket > div > div:first-child > div:nth-child(2) > div{
-  min-width:0!important;padding:17px 18px!important;border-radius:13px!important;
-  background:rgba(255,255,255,.17)!important;
-}
-#view-cek-paket > div > div:first-child > div:nth-child(2) > div > div:first-child{
-  font-size:12px!important;font-weight:700!important;letter-spacing:.025em!important;
-  color:rgba(255,255,255,.88)!important;
+#view-cek-paket>.overflow-hidden>div:first-child>.grid>div>div:first-child{
+  color:rgba(255,255,255,.88);font-size:12px;font-weight:700;letter-spacing:.025em
 }
 #view-cek-paket #cek-paket-nama,#view-cek-paket #cek-paket-status{
-  margin-top:5px!important;font-size:22px!important;font-weight:850!important;
-  line-height:1.35!important;color:#fff!important;overflow-wrap:anywhere!important;
+  margin-top:5px;font-size:22px;line-height:1.35;font-weight:850;color:#fff;overflow-wrap:anywhere
 }
-#view-cek-paket > div > div:nth-child(2){
-  display:flex!important;flex-direction:column!important;gap:22px!important;
-  padding:30px!important;background:#fff!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2){
+  display:flex;flex-direction:column;gap:22px;padding:30px;background:#fff
 }
-#view-cek-paket > div > div:nth-child(2) > div:first-child{
-  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:13px!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px
 }
-#view-cek-paket > div > div:nth-child(2) > div:first-child > div{
-  min-width:0!important;padding:17px 18px!important;border:1px solid #dce5ef!important;
-  border-radius:13px!important;background:#fff!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div{
+  min-width:0;padding:17px 18px;border:1px solid #dce5ef;border-radius:13px;background:#fff
 }
-#view-cek-paket > div > div:nth-child(2) > div:first-child > div:first-child{
-  background:#f8fafc!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div:first-child{background:#f8fafc}
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div>div:first-child{
+  color:#7b8798;font-size:14px
 }
-#view-cek-paket > div > div:nth-child(2) > div:first-child > div > div:first-child{
-  color:#7b8798!important;font-size:14px!important;
-}
-#view-cek-paket #cek-paket-sisa{
-  color:#172033!important;font-size:32px!important;font-weight:850!important;
-}
+#view-cek-paket #cek-paket-sisa{color:#172033;font-size:32px;line-height:1.2;font-weight:850}
 #view-cek-paket #cek-paket-berakhir,#view-cek-paket #cek-paket-toko{
-  margin-top:10px!important;color:#172033!important;font-size:16px!important;font-weight:800!important;
+  margin-top:10px;color:#172033;font-size:16px;line-height:1.4;font-weight:800;overflow-wrap:anywhere
 }
-#view-cek-paket > div > div:nth-child(2) > div:first-child p{
-  margin-top:6px!important;color:#718096!important;font-size:12px!important;line-height:1.5!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div>p{
+  margin-top:6px;color:#718096;font-size:12px;line-height:1.5
 }
-#view-cek-paket > div > div:nth-child(2) > div:nth-child(2) > div:first-child{
-  margin-bottom:9px!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>div:nth-child(2)>.flex{
+  margin-bottom:9px
 }
 #view-cek-paket #cek-paket-progress{
-  background:#10b981!important;border-radius:999px!important;
+  background:#10b981;border-radius:999px;transition:width .5s ease
 }
-#view-cek-paket > div > div:nth-child(2) > div:nth-child(3){
-  display:flex!important;flex-direction:row!important;align-items:center!important;
-  justify-content:space-between!important;gap:20px!important;padding:18px!important;
-  border:1px solid #bbf7d0!important;border-radius:13px!important;background:#ecfdf5!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>div:nth-child(3){
+  display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:20px;
+  padding:18px;border:1px solid #bbf7d0;border-radius:13px;background:#ecfdf5
 }
-#view-cek-paket > div > div:nth-child(2) > div:nth-child(3) > div:first-child{
-  min-width:0!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>div:nth-child(3)>div:first-child{min-width:0}
+#view-cek-paket #cek-paket-wa{
+  flex:0 0 auto;min-height:54px;padding:13px 18px;border-radius:10px;
+  background:#12a34a;color:#fff;text-decoration:none
 }
-#view-cek-paket > div > div:nth-child(2) > div:nth-child(3) > a{
-  flex:0 0 auto!important;min-height:54px!important;padding:13px 18px!important;
-  border-radius:10px!important;background:#12a34a!important;text-decoration:none!important;
-}
-#view-cek-paket > div > div:nth-child(2) > p:last-child{
-  margin:0!important;color:#94a3b8!important;font-size:12px!important;
+#view-cek-paket>.overflow-hidden>div:nth-child(2)>p:last-child{
+  margin:0;color:#94a3b8;font-size:12px;line-height:1.5
 }
 @media(max-width:767px){
-  #view-cek-paket > div{border-radius:14px!important}
-  #view-cek-paket > div > div:first-child{padding:19px 16px!important}
-  #view-cek-paket h2{font-size:19px!important}
-  #view-cek-paket > div > div:first-child > div:nth-child(2){
-    grid-template-columns:minmax(0,1fr)!important;gap:9px!important;margin-top:19px!important;
+  #view-cek-paket>.overflow-hidden{border-radius:14px}
+  #view-cek-paket>.overflow-hidden>div:first-child{padding:19px 16px}
+  #view-cek-paket>.overflow-hidden>div:first-child h2{font-size:19px}
+  #view-cek-paket>.overflow-hidden>div:first-child>.grid{
+    grid-template-columns:minmax(0,1fr);gap:9px;margin-top:19px
   }
-  #view-cek-paket > div > div:first-child > div:nth-child(2) > div{padding:13px 14px!important}
-  #view-cek-paket #cek-paket-nama,#view-cek-paket #cek-paket-status{font-size:19px!important}
-  #view-cek-paket > div > div:nth-child(2){gap:18px!important;padding:16px!important}
-  #view-cek-paket > div > div:nth-child(2) > div:first-child{
-    grid-template-columns:minmax(0,1fr)!important;gap:9px!important;
+  #view-cek-paket>.overflow-hidden>div:first-child>.grid>div{padding:13px 14px}
+  #view-cek-paket #cek-paket-nama,#view-cek-paket #cek-paket-status{font-size:19px}
+  #view-cek-paket>.overflow-hidden>div:nth-child(2){gap:18px;padding:16px}
+  #view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid{
+    grid-template-columns:minmax(0,1fr);gap:9px
   }
-  #view-cek-paket > div > div:nth-child(2) > div:first-child > div{padding:14px!important}
-  #view-cek-paket > div > div:nth-child(2) > div:nth-child(3){
-    flex-direction:column!important;align-items:stretch!important;gap:13px!important;padding:14px!important;
+  #view-cek-paket>.overflow-hidden>div:nth-child(2)>.grid>div{padding:14px}
+  #view-cek-paket>.overflow-hidden>div:nth-child(2)>div:nth-child(3){
+    flex-direction:column;align-items:stretch;gap:13px;padding:14px
   }
-  #view-cek-paket > div > div:nth-child(2) > div:nth-child(3) > a{width:100%!important}
+  #view-cek-paket #cek-paket-wa{width:100%;box-sizing:border-box}
 }
 </style>
 
