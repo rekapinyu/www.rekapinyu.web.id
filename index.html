@@ -6,42 +6,19 @@
   <meta name="theme-color" content="#ffffff">
   <meta name="robots" content="noindex,follow">
   <title>Rekapinyu</title>
-  <script>
-  (function () {
-    "use strict";
-
-    var APP_SESSION_KEY = "finance_active_session";
-    var LOGIN_URL = "/login";
-    var DESKTOP_URL = "/desktop.html";
-    var MOBILE_URL = "/mobile.html";
-
-    function isMobileDevice() {
-      return window.matchMedia("(max-width: 760px)").matches;
-    }
-
-    function hasValidLocalSession() {
-      try {
-        var raw = window.localStorage.getItem(APP_SESSION_KEY);
-        if (!raw) return false;
-        var session = JSON.parse(raw);
-        return !!(session && typeof session === "object" && (session.uid || session.phone));
-      } catch (_) {
-        return false;
-      }
-    }
-
-    var destination = hasValidLocalSession()
-      ? (isMobileDevice() ? MOBILE_URL : DESKTOP_URL)
-      : LOGIN_URL;
-
-    window.location.replace(destination);
-  })();
-  </script>
+  <style>
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#fff}
+    #appFrame{display:block;width:100%;height:100%;height:100dvh;border:0;margin:0;padding:0;background:#fff}
+  </style>
 </head>
 <body>
-  <noscript>
-    <p>Rekapinyu memerlukan JavaScript untuk mengarahkan Anda ke halaman yang sesuai.</p>
-    <p><a href="/login">Buka halaman login Rekapinyu</a></p>
-  </noscript>
+  <iframe
+    id="appFrame"
+    title="Rekapinyu"
+    src="/login.html"
+    allow="camera; microphone; geolocation; clipboard-read; clipboard-write"
+    allowfullscreen>
+  </iframe>
 </body>
 </html>
