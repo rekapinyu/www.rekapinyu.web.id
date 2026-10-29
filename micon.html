@@ -346,6 +346,19 @@
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
+/* Reliable video file picker activation */
+const videoPicker = document.getElementById('videoFile');
+const videoDropZone = document.getElementById('dropZone');
+if (videoPicker && videoDropZone) {
+  videoDropZone.addEventListener('click', (event) => {
+    // Keep the label's native activation; this fallback covers browsers that ignore hidden inputs.
+    if (event.target === videoDropZone || event.target.closest('.uploadIcon, strong, small')) {
+      if (videoPicker.disabled) return;
+      videoPicker.click();
+    }
+  });
+}
+
 let file=null,url=null,video=null,ctx=null,source=null,effect=null,playing=false,ownsContext=false,engine='none';
 let hqConstructorPromise=null,mobileConstructorPromise=null;
 const HQ_MODULE='https://esm.sh/@soundtouchjs/formant-correction-worklet@2.1.1?bundle';
@@ -1036,9 +1049,6 @@ html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.act
   #dropZone small{display:none!important}
 }
 @media(min-width:761px){#hide-mp4-helper-text{display:none!important}}
-
-/* Mobile-only: hide the three pitch scale texts under the slider */
-@media (max-width: 760px) { #transposeSection .rangeLabels { display: none !important; } }
 </style>
 
 </body>
