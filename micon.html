@@ -271,7 +271,7 @@
   </select>
 </label>
 <div class="noteBox"><small>Nada relatif</small><div class="note" id="noteName">Original</div><div class="mini" id="noteDesc">0 semitone · nada asli</div></div>
-
+<div class="stepper"><button class="step" id="downBtn" aria-label="Turunkan nada" disabled>−</button><input class="range" id="pitchRange" type="range" min="-6" max="6" step="1" value="0" disabled><button class="step" id="upBtn" aria-label="Naikkan nada" disabled>+</button></div>
 <div class="rangeLabels"><span>−6 semitone</span><span>0</span><span>+6 semitone</span></div>
 <div class="row" style="margin-top:14px"><button class="btn secondary" id="clearBtn" disabled>Hapus video</button></div>
 <div id="alert" class="alert"></div>
@@ -1083,10 +1083,3 @@ html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.act
 
 </body>
 </html>
-
-<style>
-/* Stepper removed as requested */
-#transposeSection .stepper,
-#transposeSection #downBtn,
-#transposeSection #upBtn { display: none !important; }
-</style>
