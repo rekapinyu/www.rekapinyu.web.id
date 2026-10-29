@@ -941,5 +941,69 @@ html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.act
  if(profile)profile.addEventListener('click',()=>{const alert=document.getElementById('alert');if(alert){alert.textContent='Menu Profil belum tersedia.';alert.className='alert show ok';}});
 })();
 </script>
+
+<style id="mobile-original-row-alignment-fix">
+/* Perbaikan khusus mobile: Original, angka 0, +, dan − sejajar dalam satu baris seperti referensi. */
+@media (max-width:760px){
+  #transposeSection .pitch-compact-row{
+    display:grid!important;
+    grid-template-columns:minmax(0,1.65fr) minmax(0,.75fr) minmax(0,.75fr) minmax(0,.75fr)!important;
+    align-items:stretch!important;
+    justify-content:stretch!important;
+    gap:9px!important;
+    width:calc(100% - 24px)!important;
+    margin:0 12px 13px!important;
+    padding:0!important;
+  }
+  #transposeSection .pitch-compact-row > .noteBox,
+  #transposeSection .pitch-compact-row > .semitone,
+  #transposeSection .pitch-compact-row > #upBtn,
+  #transposeSection .pitch-compact-row > #downBtn{
+    box-sizing:border-box!important;
+    position:static!important;
+    align-self:stretch!important;
+    justify-self:stretch!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:40px!important;
+    min-height:40px!important;
+    max-height:40px!important;
+    margin:0!important;
+    border-radius:12px!important;
+  }
+  #transposeSection .pitch-compact-row > .noteBox{
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:center!important;
+    padding:0 8px!important;
+  }
+  #transposeSection .pitch-compact-row > .noteBox .note{
+    display:block!important;
+    margin:0!important;
+    font-size:16px!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+  }
+  #transposeSection .pitch-compact-row > .semitone{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    padding:0!important;
+    font-size:16px!important;
+    line-height:1!important;
+  }
+  #transposeSection .pitch-compact-row > #upBtn,
+  #transposeSection .pitch-compact-row > #downBtn{
+    display:block!important;
+    padding:0!important;
+    line-height:1!important;
+    font-size:21px!important;
+  }
+}
+@media(min-width:761px){#mobile-original-row-alignment-fix{display:none!important}}
+</style>
+
 </body>
 </html>
