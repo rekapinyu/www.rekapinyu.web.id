@@ -250,7 +250,7 @@
 <div class="grid">
 <section class="card" id="importSection"><h3>01 · Import musik</h3><p class="sub">Pilih video MP4 dari perangkat kamu.</p>
 <div id="videoStage" class="videoStage"></div><section class="mobile-fill" aria-label="Tips karaoke"><div class="mobile-tip"><span>✦</span><div><b>Tips vokal</b><p>Atur nada sedikit demi sedikit sampai lagu terasa pas dengan jangkauan suaramu.</p></div></div></section>
-<div class="filemeta"><div class="fileIcon">♫</div><div class="filetext"><b id="fileName">Belum ada lagu dipilih</b><small id="fileSize">File audio akan tampil di sini</small><div class="status" id="fileStatus">Menunggu file</div></div></div>
+<div class="filemeta"><div class="fileIcon" aria-hidden="true">♫</div><div class="filetext"><b id="fileName">Belum ada lagu dipilih</b><small id="fileSize">File audio akan tampil di sini</small><div class="status" id="fileStatus">Menunggu file</div></div></div>
 </section>
 <section class="card transposeCard" id="transposeSection"><label class="drop" id="dropZone" for="videoFile"><div><div class="uploadIcon">⬆</div><strong>Tekan untuk pilih video MP4</strong><small>MP4 · pilih video baru untuk mengganti video</small></div></label><input id="videoFile" type="file" accept="video/mp4,video/*,.mp4" hidden><h3>02 · Transpose nada video</h3><p class="sub">Ubah nada audio video saat diputar.</p>
 <label class="keySelectWrap" aria-label="Pilih Tangga Nada">
@@ -1012,6 +1012,20 @@ html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.act
   #importSection .fileIcon .music-file-icon{display:block!important;width:25px!important;height:25px!important;stroke:currentColor!important}
 }
 @media(min-width:761px){#mobile-music-square-icon-fix{display:none!important}}
+</style>
+
+
+<style id="music-glyph-only">
+@media(max-width:760px){
+  #importSection .fileIcon{
+    width:auto!important;height:auto!important;min-width:0!important;flex:none!important;
+    padding:0!important;margin:0 2px 0 0!important;border:0!important;border-radius:0!important;
+    background:transparent!important;box-shadow:none!important;
+    display:grid!important;place-items:center!important;
+    font-size:23px!important;line-height:1!important;color:#f5f5f5!important;
+  }
+}
+@media(min-width:761px){#music-glyph-only{display:none!important}}
 </style>
 
 </body>
