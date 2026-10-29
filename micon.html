@@ -931,7 +931,7 @@ html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.act
    compact.append(trans.querySelector('#upBtn'),trans.querySelector('#downBtn'));
  }
  const fileIcon=document.querySelector('#importSection .fileIcon');
- if(fileIcon)fileIcon.textContent='icon music';
+ if(fileIcon)fileIcon.innerHTML='<svg class="music-file-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14.8 7.2v7.1a2.1 2.1 0 1 1-1.7-2.05V9l4.1-.9v4.8a2.1 2.1 0 1 1-1.7-2.05V6.5z" fill="currentColor"/></svg>';
  const banner=document.createElement('div');banner.className='mobile-ad-banner';banner.textContent='Banner Iklan Gif , Jpg, png (dikontrol dari superadmin)';
  const footer=document.querySelector('.home-scroll-column .foot');
  if(footer){footer.parentNode.insertBefore(banner,footer);const titles=footer.querySelectorAll('.foot-title');if(titles[0])titles[0].textContent='Tentang';if(titles[1])titles[1].textContent='Panduan';}
@@ -1003,6 +1003,15 @@ html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.act
   }
 }
 @media(min-width:761px){#mobile-original-row-alignment-fix{display:none!important}}
+</style>
+
+
+<style id="mobile-music-square-icon-fix">
+@media(max-width:760px){
+  #importSection .fileIcon{display:grid!important;place-items:center!important;width:34px!important;height:28px!important;min-width:34px!important;padding:0!important;background:transparent!important;color:#f5f5f5!important;border-radius:0!important;font-size:initial!important}
+  #importSection .fileIcon .music-file-icon{display:block!important;width:25px!important;height:25px!important;stroke:currentColor!important}
+}
+@media(min-width:761px){#mobile-music-square-icon-fix{display:none!important}}
 </style>
 
 </body>
