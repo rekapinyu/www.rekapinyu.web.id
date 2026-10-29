@@ -297,16 +297,19 @@
 </main>
 <nav class="mobile-bottom-nav" id="mobilePageNav" aria-label="Navigasi mobile">
   <button type="button" data-mobile-page="karaokePage" aria-label="Karaoke">
-    <span class="dock-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span>
-    <span class="dock-nav-label">Karaoke</span>
+    <span class="dock-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span><span class="dock-nav-label">Karaoke</span>
   </button>
-  <button type="button" data-mobile-page="youtubePage" aria-label="Download Video YouTube">
-    <span class="dock-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></span>
-    <span class="dock-nav-label">Download Video YouTube</span>
+  <button type="button" data-mobile-page="youtubePage" aria-label="Download">
+    <span class="dock-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></span><span class="dock-nav-label">Download</span>
+  </button>
+  <button type="button" class="upload-dock" data-upload-video="true" aria-label="Upload video">
+    <span class="dock-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 14v5h14v-5"/></svg></span><span class="dock-nav-label">Upload</span>
   </button>
   <button type="button" data-mobile-page="packagePage" aria-label="Paket">
-    <span class="dock-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4.5 7.8 7.5 4.4 7.5-4.4M12 12.2V21"/></svg></span>
-    <span class="dock-nav-label">Paket</span>
+    <span class="dock-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4.5 7.8 7.5 4.4 7.5-4.4M12 12.2V21"/></svg></span><span class="dock-nav-label">Paket</span>
+  </button>
+  <button type="button" class="profile-dock" aria-label="Profil">
+    <span class="dock-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span class="dock-nav-label">Profil</span>
   </button>
 </nav>
 <nav class="mobile-dock" id="mobileDock" aria-label="Menu utama mobile">
@@ -872,5 +875,71 @@ html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.act
 }
 @media(min-width:761px){#mobile-layout-single-fix{display:none!important}}
 </style>
+
+<style id="mobile-reference-design">
+@media(max-width:760px){
+  html,body{background:#171717!important;color:#f5f5f5!important}
+  .home-preview-column #videoStage,#videoStage,.home-preview-column #videoStage:empty,#videoStage:empty{aspect-ratio:16/9!important;height:auto!important;max-height:none!important;width:100%!important;background:#080808!important}
+  .home-preview-column #karaokeVideo,#karaokeVideo{height:100%!important;max-height:none!important;aspect-ratio:16/9!important;object-fit:contain!important}
+  #importSection .filemeta{order:0!important;margin:11px 11px 10px!important;width:calc(100% - 22px)!important;min-height:40px!important;height:40px!important;padding:6px 10px!important;border-radius:13px!important;background:#242424!important;border:1px solid #383838!important;gap:9px!important}
+  #importSection .fileIcon{width:34px!important;height:28px!important;min-width:34px!important;background:transparent!important;color:#fff!important;border-radius:0!important;font-size:10px!important;font-weight:800!important}
+  #importSection .filetext b{font-size:10px!important;line-height:1.15!important}
+  #importSection .filetext small{font-size:8px!important;line-height:1.1!important}
+  #importSection .status{display:none!important}
+  #dropZone,.home-scroll-column #dropZone{order:1!important;margin:0 11px 10px!important;width:calc(100% - 22px)!important;height:40px!important;min-height:40px!important;border-radius:12px!important}
+  #dropZone strong{font-size:10px!important}
+  #transposeSection .keySelectWrap,#transposeSection .rangeLabels,#transposeSection .range,#transposeSection .semitone small,#transposeSection .noteBox small,#transposeSection #noteDesc{display:none!important}
+  #transposeSection .pitch-compact-row{display:grid!important;grid-template-columns:1.65fr .75fr .75fr .75fr!important;gap:8px!important;width:calc(100% - 24px)!important;margin:0 12px 13px!important;align-items:stretch!important}
+  #transposeSection .noteBox{grid-column:auto!important;order:initial!important;width:100%!important;min-width:0!important;height:40px!important;min-height:40px!important;margin:0!important;padding:0 8px!important;border-radius:12px!important;background:#242424!important;border:1px solid #3b3b3b!important}
+  #transposeSection .note{font-size:16px!important;font-weight:750!important;color:#baff00!important;line-height:1!important}
+  #transposeSection .semitone{display:flex!important;grid-column:auto!important;order:initial!important;justify-content:center!important;align-items:center!important;margin:0!important;min-width:0!important;height:40px!important;border:1px solid #3b3b3b!important;border-radius:12px!important;background:#242424!important;font-size:16px!important;color:#baff00!important}
+  #transposeSection .stepper{display:contents!important}
+  #transposeSection .step{width:100%!important;min-width:0!important;height:40px!important;border-radius:12px!important;background:#242424!important;border:1px solid #3b3b3b!important;color:#baff00!important;font-size:21px!important;font-weight:800!important}
+  #transposeSection #upBtn{grid-column:3!important}
+  #transposeSection #downBtn{grid-column:4!important}
+  #transposeSection .row{display:none!important}
+  #transposeSection .alert{margin-bottom:10px!important}
+  .mobile-fill{display:none!important}
+  .mobile-ad-banner{display:flex!important;align-items:center;justify-content:center;text-align:center;width:calc(100% - 24px)!important;min-height:66px!important;margin:0 12px 13px!important;padding:12px!important;border:1px solid #393939!important;border-radius:17px!important;background:#242424!important;color:#baff00!important;font-size:12px!important;font-weight:800!important;line-height:1.35!important}
+  .home-scroll-column .foot,#mainContent>.foot,.foot{display:grid!important;grid-template-columns:1fr 1fr!important;gap:0!important;width:100%!important;margin:0!important;padding:0!important;border-top:1px solid #383838!important;border-bottom:0!important}
+  .foot-section{display:flex!important;align-items:flex-start!important;justify-content:center!important;min-height:42px!important;margin:0!important;padding:10px 4px!important;border:0!important}
+  .foot-title{font-size:10px!important;font-weight:500!important;color:#f5f5f5!important;margin:0!important}
+  .foot p,.foot ul{display:none!important}
+  .mobile-bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))!important;height:calc(66px + env(safe-area-inset-bottom))!important;min-height:66px!important;padding:3px 8px calc(3px + env(safe-area-inset-bottom))!important;background:#222!important;border-top:2px solid #383838!important;border-radius:0!important;box-shadow:none!important}
+  .mobile-bottom-nav button{gap:3px!important;padding:2px!important;color:#c8c8c8!important}
+  .mobile-bottom-nav .dock-nav-icon{width:25px!important;height:25px!important}
+  .mobile-bottom-nav .dock-nav-icon svg{width:22px!important;height:22px!important}
+  .mobile-bottom-nav .dock-nav-label{font-size:9px!important;font-weight:700!important;white-space:nowrap!important}
+  .mobile-bottom-nav .upload-dock{position:relative!important;transform:translateY(-1px)!important;overflow:visible!important}
+  .mobile-bottom-nav .upload-dock .dock-nav-icon{width:49px!important;height:49px!important;border:5px solid #f5f5f5!important;border-radius:50%!important;background:#222!important;margin-top:-17px!important;box-shadow:0 0 0 3px #222!important}
+  .mobile-bottom-nav .upload-dock .dock-nav-icon svg{width:20px!important;height:20px!important}
+  .mobile-bottom-nav .upload-dock .dock-nav-label{margin-top:0!important}
+}
+@media(min-width:761px){#mobile-reference-design{display:none!important}}
+</style>
+<script id="mobile-reference-layout">
+(function(){
+ if(!window.matchMedia('(max-width:760px)').matches)return;
+ const trans=document.getElementById('transposeSection');
+ const note=trans&&trans.querySelector('.noteBox');
+ const semi=trans&&trans.querySelector('.semitone');
+ const stepper=trans&&trans.querySelector('.stepper');
+ if(trans&&note&&semi&&stepper){
+   const compact=document.createElement('div');compact.className='pitch-compact-row';
+   trans.insertBefore(compact,trans.querySelector('.keySelectWrap'));
+   compact.append(note,semi);
+   compact.append(trans.querySelector('#upBtn'),trans.querySelector('#downBtn'));
+ }
+ const fileIcon=document.querySelector('#importSection .fileIcon');
+ if(fileIcon)fileIcon.textContent='icon music';
+ const banner=document.createElement('div');banner.className='mobile-ad-banner';banner.textContent='Banner Iklan Gif , Jpg, png (dikontrol dari superadmin)';
+ const footer=document.querySelector('.home-scroll-column .foot');
+ if(footer){footer.parentNode.insertBefore(banner,footer);const titles=footer.querySelectorAll('.foot-title');if(titles[0])titles[0].textContent='Tentang';if(titles[1])titles[1].textContent='Panduan';}
+ const upload=document.querySelector('[data-upload-video]');
+ if(upload)upload.addEventListener('click',()=>document.getElementById('videoFile')?.click());
+ const profile=document.querySelector('.profile-dock');
+ if(profile)profile.addEventListener('click',()=>{const alert=document.getElementById('alert');if(alert){alert.textContent='Menu Profil belum tersedia.';alert.className='alert show ok';}});
+})();
+</script>
 </body>
 </html>
