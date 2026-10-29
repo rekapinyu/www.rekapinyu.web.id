@@ -252,7 +252,7 @@
 <div id="videoStage" class="videoStage"></div><section class="mobile-fill" aria-label="Tips karaoke"><div class="mobile-tip"><span>✦</span><div><b>Tips vokal</b><p>Atur nada sedikit demi sedikit sampai lagu terasa pas dengan jangkauan suaramu.</p></div></div></section>
 <div class="filemeta"><div class="fileIcon" aria-hidden="true">♫</div><div class="filetext"><b id="fileName">Belum ada lagu dipilih</b><small id="fileSize">File audio akan tampil di sini</small><div class="status" id="fileStatus">Menunggu file</div></div></div>
 </section>
-<section class="card transposeCard" id="transposeSection"><label class="drop" id="dropZone" for="videoFile"><div><div class="uploadIcon">⬆</div><strong>Tekan untuk pilih video MP4</strong><small>MP4 · pilih video baru untuk mengganti video</small></div></label><input id="videoFile" type="file" accept="video/mp4,video/*,.mp4" hidden><h3>02 · Transpose nada video</h3><p class="sub">Ubah nada audio video saat diputar.</p>
+<section class="card transposeCard" id="transposeSection"><label class="drop" id="dropZone" role="button" tabindex="0" aria-label="Pilih video MP4"><div><div class="uploadIcon">⬆</div><strong>Tekan untuk pilih video MP4</strong><small>MP4 · pilih video baru untuk mengganti video</small></div></label><input id="videoFile" type="file" accept="video/mp4,video/*,.mp4" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip-path:inset(50%);"><h3>02 · Transpose nada video</h3><p class="sub">Ubah nada audio video saat diputar.</p>
 <label class="keySelectWrap" aria-label="Pilih Tangga Nada">
   <select id="keySelect" class="keySelect">
     <option value="">Pilih Tangga Nada</option>
@@ -445,7 +445,45 @@ async function setupAudio(){
 }
 async function clearAudioGraph(){if(video){try{video.pause()}catch(_){}}if(source){try{source.disconnect()}catch(_){}source=null;}if(effect){try{effect.disconnect()}catch(_){}try{effect.dispose?.()}catch(_){}effect=null;}const oldCtx=ctx;ctx=null;if(ownsContext&&oldCtx&&oldCtx.state!=='closed'){try{await oldCtx.close()}catch(_){}}ownsContext=false;engine='none';}
 async function clearVideo(){await clearAudioGraph();if(video){video.removeAttribute('src');video.load();video.remove();video=null;}if(url){URL.revokeObjectURL(url);url=null;}file=null;playing=false;$('videoFile').value='';$('fileName').textContent='Belum ada video dipilih';$('fileSize').textContent='Pilih file MP4 dari perangkat';$('fileStatus').textContent='Menunggu video';$('clearBtn').disabled=true;$('playBtn').disabled=true;$('playBtn').textContent='▶ Putar video';$('pitchRange').disabled=true;$('downBtn').disabled=true;$('upBtn').disabled=true;$('pitchRange').value=0;if($('keySelect'))$('keySelect').value='';$('duration').textContent='00:00';$('currentTime').textContent='00:00';$('progressBar').style.width='0%';$('alert').className='alert';updatePitch();}
-$('videoFile').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;if(!(/\.mp4$/i.test(f.name)||f.type==='video/mp4')){msg('Pilih file video MP4.',true);return;}await clearVideo();file=f;url=URL.createObjectURL(file);$('fileName').textContent=file.name;$('fileSize').textContent=(file.size/1048576).toFixed(2)+' MB · video/mp4';$('fileStatus').textContent='Memuat video…';$('clearBtn').disabled=false;$('pitchRange').value=0;setupVideo();updatePitch();video.addEventListener('loadedmetadata',()=>{setupAudio().catch(e=>msg('Video siap, tetapi transpose belum aktif: '+(e.message||e),true));},{once:true});});
+const filePicker=$('videoFile');
+const dropZone=$('dropZone');
+if(dropZone&&filePicker){
+  dropZone.addEventListener('click',ev=>{ev.preventDefault();filePicker.click();});
+  dropZone.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();filePicker.click();}});
+}
+const uploadButton=document.querySelector('[data-upload-video]');
+if(uploadButton&&filePicker)uploadButton.addEventListener('click',()=>filePicker.click());
+$('videoFile').addEventListener('change',async e=>{
+  const input=e.currentTarget;
+  const f=input.files&&input.files[0];
+  if(!f)return;
+  if(!(/\\.mp4$/i.test(f.name)||f.type==='video/mp4'||f.type==='application/mp4')){
+    msg('Pilih file video MP4.',true);input.value='';return;
+  }
+  try{
+    await clearVideo();
+    file=f;
+    url=URL.createObjectURL(f);
+    $('fileName').textContent=f.name;
+    $('fileSize').textContent=(f.size/1048576).toFixed(2)+' MB · '+(f.type||'video/mp4');
+    $('fileStatus').textContent='Memuat video…';
+    $('clearBtn').disabled=false;
+    $('pitchRange').value=0;
+    setupVideo();
+    updatePitch();
+    const activeVideo=video;
+    activeVideo.addEventListener('loadedmetadata',()=>{
+      if(activeVideo!==video)return;
+      setupAudio().catch(err=>msg('Video berhasil diimpor, tetapi transpose belum aktif: '+(err.message||err),true));
+    },{once:true});
+    activeVideo.addEventListener('error',()=>{
+      msg('Video tidak dapat dibaca browser. Coba MP4 dengan codec H.264 dan audio AAC.',true);
+    },{once:true});
+    activeVideo.load();
+  }catch(err){
+    msg('Gagal mengimpor video: '+(err.message||err),true);
+  }
+});
 $('playBtn').addEventListener('click',async()=>{if(!video)return;try{await setupAudio();if(video.paused){video.defaultPlaybackRate=1;video.playbackRate=1;await video.play();}else video.pause();}catch(e){msg('Gagal memutar video/audio: '+(e.message||e),true);}});
 const keySelect=$('keySelect');
   if(keySelect)keySelect.addEventListener('change',()=>{
@@ -937,8 +975,6 @@ html:has(#youtubeSection.active)::-webkit-scrollbar,body:has(#youtubeSection.act
  const banner=document.createElement('div');banner.className='mobile-ad-banner';banner.textContent='Banner Iklan Gif , Jpg, png (dikontrol dari superadmin)';
  const footer=document.querySelector('.home-scroll-column .foot');
  if(footer){footer.parentNode.insertBefore(banner,footer);const titles=footer.querySelectorAll('.foot-title');if(titles[0])titles[0].textContent='Tentang';if(titles[1])titles[1].textContent='Panduan';}
- const upload=document.querySelector('[data-upload-video]');
- if(upload)upload.addEventListener('click',()=>document.getElementById('videoFile')?.click());
  const profile=document.querySelector('.profile-dock');
  if(profile)profile.addEventListener('click',()=>{const alert=document.getElementById('alert');if(alert){alert.textContent='Menu Profil belum tersedia.';alert.className='alert show ok';}});
 })();
