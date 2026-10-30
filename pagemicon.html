@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07152f">
+  <title>micOn — Atur Nada, Temukan Suara Terbaikmu</title>
+  <meta name="description" content="micOn membantu kamu menyesuaikan pitch dan nada audio dengan mudah. Atur semitone, dengarkan hasilnya, dan temukan nada yang paling nyaman untuk suaramu.">
+  <meta property="og:title" content="micOn — Atur Nada, Temukan Suara Terbaikmu">
+  <meta property="og:description" content="Cara praktis menyesuaikan pitch audio. Coba micOn dan temukan nada yang pas untukmu.">
+  <meta property="og:type" content="website">
+  <style>
+    :root{--bg:#07152f;--bg2:#0b1e42;--panel:rgba(17,39,78,.72);--line:rgba(255,255,255,.12);--text:#f7f9ff;--muted:#aab8d5;--blue:#4b8dff;--cyan:#5de1ef;--purple:#8d70ff}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(ellipse at 75% 5%,rgba(59,115,255,.2),transparent 32%),radial-gradient(ellipse at 10% 45%,rgba(93,225,239,.09),transparent 30%),var(--bg);line-height:1.6}
+    a{color:inherit;text-decoration:none}
+    .wrap{width:min(1160px,calc(100% - 40px));margin:auto}
+    .nav{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:1.45rem;letter-spacing:-.06em}
+    .logo{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--blue) 58%,var(--purple));box-shadow:0 7px 25px #397eff45}
+    .logo svg{width:23px;height:23px}
+    .navlinks{display:flex;align-items:center;gap:28px;color:#c2cde3;font-size:.93rem}
+    .navlinks a:hover{color:#fff}
+    .btn{display:inline-flex;justify-content:center;align-items:center;gap:9px;border:1px solid transparent;border-radius:14px;padding:13px 19px;font-weight:750;font-size:.95rem;transition:transform .2s,box-shadow .2s,background .2s;cursor:pointer}
+    .btn:hover{transform:translateY(-2px)}
+    .primary{background:linear-gradient(115deg,#62e5ef,#4a8cff 65%,#8b72ff);color:#07152f;box-shadow:0 10px 32px #4b8dff35}
+    .secondary{border-color:var(--line);background:#ffffff08;color:#f7f9ff}
+    .hero{display:block;width:min(1000px,calc(100% - 40px));max-width:1000px;margin:0 auto;padding:80px 0 90px;min-height:0}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid #6da9ff42;background:#4b8dff12;color:#a8dfff;padding:7px 12px;border-radius:99px;font-size:.8rem;font-weight:750;letter-spacing:.03em}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+    h1{font-size:clamp(2.8rem,6vw,5.2rem);line-height:1.02;letter-spacing:-.065em;margin:22px 0 20px;max-width:none}
+    .gradient{background:linear-gradient(100deg,#f9fbff 4%,#8cecff 46%,#8d8bff 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{font-size:1.12rem;color:var(--muted);max-width:920px;width:100%;line-height:1.8;margin:0 0 29px}
+    .actions{display:flex;flex-wrap:wrap;gap:12px}
+    .microcopy{font-size:.82rem;color:#8294b7;margin-top:17px}
+    .app-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+    .app-title{font-size:.9rem;font-weight:800;display:flex;align-items:center;gap:9px}
+    .wave i{display:block;width:4px;max-width:4px;border-radius:8px;background:linear-gradient(180deg,var(--cyan),#538cff 65%,#8d70ff);opacity:.92}
+    .track strong{display:block;font-size:.96rem}.track small{color:#8fa2c5}
+    .pitch-value span{font-size:.85rem;color:#9aadd0;font-weight:600;letter-spacing:0}
+    .mini-actions button{flex:1;padding:10px 8px;border-radius:10px;border:1px solid #ffffff16;background:#ffffff08;color:#dce8ff;font-weight:700}
+    .mini-actions button:last-child{background:#4b8dff;color:white;border-color:#4b8dff}
+    .float-tag span{color:var(--cyan)}
+    .section{padding:75px 0}
+    .section-head{text-align:center;max-width:680px;margin:0 auto 42px}
+    .section-head h2{font-size:clamp(2rem,4vw,3.1rem);line-height:1.12;letter-spacing:-.05em;margin:14px 0}
+    .section-head p{color:var(--muted);margin:0}
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+    .feature{padding:25px;border:1px solid var(--line);border-radius:21px;background:linear-gradient(145deg,#ffffff0b,#ffffff03)}
+    .feature-icon{width:45px;height:45px;display:grid;place-items:center;border-radius:14px;background:#4b8dff1c;color:#8de8ff;font-size:1.3rem;margin-bottom:18px}
+    .feature h3{font-size:1.08rem;margin:0 0 8px}.feature p{color:var(--muted);font-size:.93rem;margin:0}
+    .how{display:grid;grid-template-columns:.8fr 1.2fr;gap:55px;align-items:center}
+    .how h2{font-size:clamp(2rem,4vw,3rem);letter-spacing:-.05em;line-height:1.12;margin:15px 0}
+    .how p{color:var(--muted)}
+    .steps{display:grid;gap:13px}
+    .step{display:flex;gap:17px;align-items:flex-start;padding:19px;border:1px solid var(--line);border-radius:17px;background:#ffffff06}
+    .num{width:36px;height:36px;flex:0 0 auto;border-radius:11px;display:grid;place-items:center;background:#4b8dff24;color:#9deaff;font-weight:850}
+    .step h3{font-size:1rem;margin:0 0 4px}.step p{font-size:.9rem;margin:0}
+    .cta{position:relative;overflow:hidden;text-align:center;padding:55px 25px;border:1px solid #79c5ff2b;border-radius:28px;background:radial-gradient(ellipse at 50% 0%,#4b8dff28,transparent 65%),linear-gradient(135deg,#11264b,#0b1935)}
+    .cta h2{font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;letter-spacing:-.05em;margin:0 0 14px}
+    .cta p{color:var(--muted);margin:0 auto 25px;max-width:580px}
+    footer{padding:30px 0 38px;color:#8799bb;font-size:.84rem}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-top:25px}
+    .footer-brand{display:flex;align-items:center;gap:9px;color:#f7f9ff;font-weight:850}
+
+    .photo-slider{position:relative;width:min(1160px,calc(100% - 40px));margin:0 auto 12px;overflow:hidden;border:1px solid #ffffff20;border-radius:25px;background:#0b1b38;box-shadow:0 22px 60px #0004}
+    .slides{display:flex;transition:transform .55s cubic-bezier(.2,.75,.25,1);touch-action:pan-y}
+    .slide{position:relative;flex:0 0 100%;height:clamp(220px,34vw,390px);overflow:hidden;background:#10264a}
+    .slide img{width:100%;height:100%;display:block;object-fit:cover;filter:saturate(.88);}
+    .slide:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,13,32,.88),rgba(4,13,32,.44) 48%,rgba(4,13,32,.08)),linear-gradient(0deg,rgba(4,13,32,.35),transparent 50%)}
+    .slide-copy{position:absolute;z-index:1;left:clamp(20px,5vw,58px);top:50%;transform:translateY(-50%);max-width:520px;padding-right:20px}
+    .slide-kicker{display:inline-flex;align-items:center;gap:7px;color:#9ceeff;font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .slide-copy h2{font-size:clamp(1.8rem,4.5vw,3.5rem);line-height:1.05;letter-spacing:-.055em;margin:12px 0;color:#fff}
+    .slide-copy p{font-size:clamp(.88rem,1.6vw,1.04rem);color:#d2def3;max-width:430px;margin:0}
+    .slider-controls{position:absolute;z-index:2;left:0;right:0;bottom:17px;display:flex;align-items:center;justify-content:center;gap:12px}
+    .slider-arrow{position:absolute;z-index:3;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:1px solid #ffffff50;background:#07152fbf;color:#fff;font-size:1.35rem;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(8px)}
+    .slider-arrow:hover{background:#326de2}.slider-prev{left:14px}.slider-next{right:14px}
+    .slider-dot{width:8px;height:8px;border:0;border-radius:99px;padding:0;background:#ffffff7a;cursor:pointer;transition:width .2s,background .2s}.slider-dot.active{width:25px;background:#8deaff}
+    .slider-count{position:absolute;right:20px;bottom:19px;z-index:2;color:#fff;font-size:.75rem;font-weight:700;background:#07152f9c;border:1px solid #ffffff24;border-radius:99px;padding:5px 9px}
+    @media(max-width:560px){.photo-slider{width:calc(100% - 30px);border-radius:19px;margin-bottom:0}.slide{height:245px}.slide img{object-position:center}.slide-copy{left:19px;top:46%;max-width:85%}.slide-copy h2{font-size:1.75rem;margin:8px 0}.slide-copy p{font-size:.82rem;line-height:1.5}.slide-kicker{font-size:.66rem}.slider-arrow{width:34px;height:34px;font-size:1.1rem}.slider-prev{left:9px}.slider-next{right:9px}.slider-controls{bottom:13px}.slider-count{right:12px;bottom:12px;font-size:.68rem}}
+
+    @media(max-width:850px){.navlinks{gap:15px}.hero{grid-template-columns:1fr;gap:42px;padding:48px 0 65px;min-height:0}.hero-copy{width:100%;text-align:center}.hero-copy .lead{margin-left:auto;margin-right:auto}.actions{justify-content:center}.features{grid-template-columns:1fr 1fr}.how{grid-template-columns:1fr;gap:28px}.how-copy{text-align:center}}
+    @media(max-width:560px){.wrap{width:min(100% - 30px,1160px)}.nav{height:68px}.navlinks a:not(.nav-cta){display:none}.navlinks{gap:0}.nav-cta{padding:10px 13px;font-size:.85rem}.brand{font-size:1.3rem}.logo{width:35px;height:35px}.hero{width:calc(100% - 30px);padding:48px 0 52px;gap:35px}h1{font-size:clamp(2.65rem,13vw,4rem)}.lead{font-size:1rem}.btn{padding:12px 15px}.wave i{width:3px}.section{padding:54px 0}.section-head{margin-bottom:27px}.features{grid-template-columns:1fr}.feature{padding:21px}.cta{padding:40px 20px;border-radius:22px}.footer-inner{align-items:flex-start;flex-direction:column}.microcopy{line-height:1.6}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="wrap nav">
+    <a class="brand" href="#" aria-label="micOn beranda">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M7.5 7v10M3.5 10v4M16.5 6v12M20.5 9v6" stroke="#06152d" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+      <span>mic<span class="gradient">On</span></span>
+    </a>
+    <nav class="navlinks" aria-label="Navigasi utama">
+      <a href="#fitur">Fitur</a><a href="#cara-kerja">Cara kerja</a><a class="btn primary nav-cta" href="#mulai">Mulai sekarang <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+
+  <section class="photo-slider" aria-label="Galeri micOn">
+    <div class="slides" id="photoSlides">
+      <article class="slide">
+        <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1800&q=85" alt="Penyanyi sedang tampil menggunakan mikrofon" fetchpriority="high">
+        <div class="slide-copy"><span class="slide-kicker"><span class="dot"></span> SUARA ADA DI TANGANMU</span><h2>Temukan nada yang paling nyaman.</h2><p>Eksplorasi pitch dan rasakan pengalaman audio yang lebih sesuai dengan gayamu.</p></div>
+      </article>
+      <article class="slide">
+        <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1800&q=85" alt="Studio musik dengan peralatan rekaman" loading="lazy">
+        <div class="slide-copy"><span class="slide-kicker"><span class="dot"></span> KONTROL YANG SIMPEL</span><h2>Lebih banyak cara menikmati musik.</h2><p>Atur nada dengan kontrol praktis, dari perangkat mobile sampai desktop.</p></div>
+      </article>
+      <article class="slide">
+        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1800&q=85" alt="Perangkat audio dan instrumen di ruang produksi musik" loading="lazy">
+        <div class="slide-copy"><span class="slide-kicker"><span class="dot"></span> WAKTUNYA BEREKSPERIMEN</span><h2>Musikmu, caramu sendiri.</h2><p>Coba variasi nada dan temukan karakter suara yang terasa pas untukmu.</p></div>
+      </article>
+    </div>
+    <button class="slider-arrow slider-prev" id="slidePrev" type="button" aria-label="Foto sebelumnya">‹</button>
+    <button class="slider-arrow slider-next" id="slideNext" type="button" aria-label="Foto berikutnya">›</button>
+    <div class="slider-controls" id="sliderDots" aria-label="Pilih foto"></div>
+    <span class="slider-count" id="slideCount" aria-live="polite">01 / 03</span>
+  </section>
+
+  <main>
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="dot"></span> TEMUKAN NADA YANG PAS</div>
+        <h1>Suaramu. <span class="gradient">Nada kamu.</span> Cara kamu.</h1>
+        <p class="lead">Sesuaikan pitch audio dengan mudah. Naikkan atau turunkan nada untuk menemukan suara yang nyaman, berlatih menyanyi, dan menikmati musik dengan caramu sendiri.</p>
+        <div class="actions">
+          <a class="btn primary" href="#mulai">Coba micOn <span aria-hidden="true">→</span></a>
+          <a class="btn secondary" href="#fitur">Jelajahi fitur</a>
+        </div>
+        <p class="microcopy">Dibuat untuk pengalaman yang praktis di HP maupun desktop.</p>
+      </div>
+    </section>
+
+    <section class="section wrap" id="fitur">
+      <div class="section-head">
+        <div class="eyebrow"><span class="dot"></span> FITUR MICON</div>
+        <h2>Kontrol nada, <span class="gradient">tanpa ribet.</span></h2>
+        <p>Pengalaman yang dirancang agar kamu bisa fokus pada musik, bukan pada pengaturan yang rumit.</p>
+      </div>
+      <div class="features">
+        <article class="feature"><div class="feature-icon" aria-hidden="true">♫</div><h3>Atur pitch dengan mudah</h3><p>Naikkan atau turunkan nada untuk mencari key yang cocok dengan jangkauan suaramu.</p></article>
+        <article class="feature"><div class="feature-icon" aria-hidden="true">⌁</div><h3>Rentang nada fleksibel</h3><p>Kontrol semitone dari −24 sampai +24 untuk mencoba berbagai variasi nada.</p></article>
+        <article class="feature"><div class="feature-icon" aria-hidden="true">▣</div><h3>Nyaman di berbagai layar</h3><p>Tampilan responsif yang dirancang untuk HP, tablet, dan komputer desktop.</p></article>
+      </div>
+    </section>
+
+    <section class="section wrap" id="cara-kerja">
+      <div class="how">
+        <div class="how-copy"><div class="eyebrow"><span class="dot"></span> MULAI DALAM 3 LANGKAH</div><h2>Dari dengar, <span class="gradient">atur, lalu nikmati.</span></h2><p>Gunakan micOn sebagai teman untuk bereksperimen dengan nada dan menemukan pengaturan yang terasa paling pas.</p></div>
+        <div class="steps">
+          <article class="step"><div class="num">01</div><div><h3>Pilih audio</h3><p>Mulai dari sumber audio yang tersedia di aplikasi micOn.</p></div></article>
+          <article class="step"><div class="num">02</div><div><h3>Sesuaikan nada</h3><p>Geser kontrol pitch ke atas atau ke bawah sesuai kebutuhanmu.</p></div></article>
+          <article class="step"><div class="num">03</div><div><h3>Dengarkan hasilnya</h3><p>Coba beberapa pengaturan sampai menemukan nada yang paling nyaman.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="mulai">
+      <div class="cta">
+        <div class="eyebrow"><span class="dot"></span> SIAP MENCOBA?</div>
+        <h2>Temukan nada <span class="gradient">versi kamu.</span></h2>
+        <p>Buka micOn dan mulai eksplorasi pitch audio dengan pengalaman yang simpel dan responsif.</p>
+        <!-- Ganti href di bawah dengan URL aplikasi micOn yang sebenarnya. -->
+        <a class="btn primary" href="#top" id="launchBtn">Buka aplikasi micOn <span aria-hidden="true">↗</span></a>
+        <p class="microcopy" style="margin-bottom:0">Tombol ini perlu diarahkan ke URL aplikasi micOn sebelum dipublikasikan.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap"><div class="footer-inner"><a class="footer-brand" href="#"><span class="logo" style="width:29px;height:29px;border-radius:9px"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M7.5 7v10M3.5 10v4M16.5 6v12M20.5 9v6" stroke="#06152d" stroke-width="2.4" stroke-linecap="round"/></svg></span> micOn</a><span>© <span id="year"></span> micOn. Dibuat untuk pecinta musik.</span><a href="#fitur">Kembali ke atas ↑</a></div></footer>
+
+  <script>
+
+    const slidesTrack=document.getElementById('photoSlides');
+    const slideItems=Array.from(slidesTrack.querySelectorAll('.slide'));
+    const dotsWrap=document.getElementById('sliderDots');
+    const slideCount=document.getElementById('slideCount');
+    let currentSlide=0,slideTimer;
+    slideItems.forEach((_,i)=>{const dot=document.createElement('button');dot.type='button';dot.className='slider-dot'+(i===0?' active':'');dot.setAttribute('aria-label','Tampilkan foto '+(i+1));dot.addEventListener('click',()=>goToSlide(i));dotsWrap.appendChild(dot)});
+    function goToSlide(index){currentSlide=(index+slideItems.length)%slideItems.length;slidesTrack.style.transform=`translateX(-${currentSlide*100}%)`;Array.from(dotsWrap.children).forEach((d,i)=>{d.classList.toggle('active',i===currentSlide);d.setAttribute('aria-current',i===currentSlide?'true':'false')});slideCount.textContent=String(currentSlide+1).padStart(2,'0')+' / '+String(slideItems.length).padStart(2,'0');resetSlideTimer()}
+    function resetSlideTimer(){clearInterval(slideTimer);if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)slideTimer=setInterval(()=>goToSlide(currentSlide+1),5000)}
+    document.getElementById('slidePrev').addEventListener('click',()=>goToSlide(currentSlide-1));
+    document.getElementById('slideNext').addEventListener('click',()=>goToSlide(currentSlide+1));
+    let touchStartX=0;
+    slidesTrack.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX},{passive:true});
+    slidesTrack.addEventListener('touchend',e=>{const dx=e.changedTouches[0].screenX-touchStartX;if(Math.abs(dx)>45)goToSlide(currentSlide+(dx<0?1:-1))},{passive:true});
+    document.querySelector('.photo-slider').addEventListener('mouseenter',()=>clearInterval(slideTimer));
+    document.querySelector('.photo-slider').addEventListener('mouseleave',resetSlideTimer);
+    resetSlideTimer();
+
+    document.getElementById('year').textContent=new Date().getFullYear();
+    document.getElementById('launchBtn').addEventListener('click',function(e){if(this.getAttribute('href')==='#top'){e.preventDefault();alert('Ganti tautan tombol ini dengan URL aplikasi micOn sebelum dipublikasikan.')}})
+  </script>
+</body>
+</html>
