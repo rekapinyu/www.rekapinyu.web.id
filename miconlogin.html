@@ -100,7 +100,7 @@ button,input{font:inherit}
       <div class="auth-heading">
         <div class="eyebrow" id="headingEyebrow">AKUN MICON</div>
         <h2 id="headingTitle">Selamat datang kembali</h2>
-        <p id="headingDesc">Masuk menggunakan email dan kata sandi akun MicOn kamu.</p>
+        <p id="headingDesc">Masuk menggunakan nomor HP dan kata sandi akun MicOn kamu.</p>
       </div>
 
       <div class="tabs" role="tablist" aria-label="Pilih masuk atau daftar">
@@ -111,59 +111,218 @@ button,input{font:inherit}
       <div class="notice" id="notice" role="status" aria-live="polite"></div>
 
       <form class="form active" id="loginForm" novalidate>
-        <div class="field"><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" placeholder="nama@email.com" required></div>
-        <div class="field"><label for="loginPassword">Kata sandi</label><div class="input-wrap"><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Masukkan kata sandi" required><button class="toggle-pass" type="button" data-toggle="loginPassword">Lihat</button></div></div>
-        <div class="forgot-row"><button class="text-action" type="button" id="forgotBtn">Lupa kata sandi?</button></div>
+        <div class="field">
+          <label for="loginPhone">Nomor HP</label>
+          <input id="loginPhone" type="tel" inputmode="tel" autocomplete="tel"
+                 placeholder="Masukkan nomor HP" required>
+        </div>
+        <div class="field">
+          <label for="loginPassword">Kata sandi</label>
+          <div class="input-wrap">
+            <input id="loginPassword" type="password" autocomplete="current-password"
+                   placeholder="Masukkan kata sandi" required>
+            <button class="toggle-pass" type="button" data-toggle="loginPassword">Lihat</button>
+          </div>
+        </div>
+        <div class="forgot-row">
+          <button class="text-action" type="button" id="forgotBtn">Lupa kata sandi?</button>
+        </div>
         <button class="submit" type="submit">MASUK KE MICON <span aria-hidden="true">→</span></button>
-        <p class="terms">Dengan masuk, kamu menyetujui ketentuan penggunaan dan kebijakan privasi MicOn.</p>
+        <p class="terms">Masuk menggunakan nomor HP dan kata sandi akun MicOn kamu.</p>
       </form>
 
       <form class="form" id="registerForm" novalidate>
-        <div class="field"><label for="registerName">Nama lengkap</label><input id="registerName" type="text" autocomplete="name" placeholder="Nama kamu" required></div>
-        <div class="field"><label for="registerEmail">Email</label><input id="registerEmail" type="email" autocomplete="email" placeholder="nama@email.com" required></div>
-        <div class="field"><label for="registerPassword">Buat kata sandi</label><div class="input-wrap"><input id="registerPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Minimal 8 karakter" required><button class="toggle-pass" type="button" data-toggle="registerPassword">Lihat</button></div><div class="password-help">Gunakan minimal 8 karakter.</div></div>
-        <div class="field"><label for="registerConfirm">Ulangi kata sandi</label><div class="input-wrap"><input id="registerConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Ulangi kata sandi" required><button class="toggle-pass" type="button" data-toggle="registerConfirm">Lihat</button></div></div>
+        <div class="field">
+          <label for="registerName">Nama lengkap</label>
+          <input id="registerName" type="text" autocomplete="name" placeholder="Nama kamu" required>
+        </div>
+        <div class="field">
+          <label for="registerPhone">Nomor HP</label>
+          <input id="registerPhone" type="tel" inputmode="tel" autocomplete="tel"
+                 placeholder="Masukkan nomor HP" required>
+        </div>
+        <div class="field">
+          <label for="registerPassword">Buat kata sandi</label>
+          <div class="input-wrap">
+            <input id="registerPassword" type="password" autocomplete="new-password"
+                   minlength="6" placeholder="Minimal 6 karakter" required>
+            <button class="toggle-pass" type="button" data-toggle="registerPassword">Lihat</button>
+          </div>
+          <div class="password-help">Gunakan minimal 6 karakter.</div>
+        </div>
+        <div class="field">
+          <label for="registerConfirm">Ulangi kata sandi</label>
+          <div class="input-wrap">
+            <input id="registerConfirm" type="password" autocomplete="new-password"
+                   minlength="6" placeholder="Ulangi kata sandi" required>
+            <button class="toggle-pass" type="button" data-toggle="registerConfirm">Lihat</button>
+          </div>
+        </div>
         <button class="submit" type="submit">BUAT AKUN MICON <span aria-hidden="true">→</span></button>
-        <p class="terms">Dengan mendaftar, kamu menyetujui <a href="#" onclick="return false">ketentuan penggunaan</a> dan <a href="#" onclick="return false">kebijakan privasi</a> MicOn.</p>
+        <p class="terms">Daftar menggunakan nomor HP. Email akun dikelola otomatis oleh sistem MicOn.</p>
       </form>
     </div>
   </main>
 </div>
-<script>
-const $=id=>document.getElementById(id);
-$('year').textContent=new Date().getFullYear();
-function showNotice(message,type='info'){const n=$('notice');n.textContent=message;n.className='notice show '+type}
-function clearNotice(){const n=$('notice');n.textContent='';n.className='notice'}
-function switchMode(mode){
-  const login=mode==='login';
-  $('loginTab').classList.toggle('active',login);
-  $('registerTab').classList.toggle('active',!login);
-  $('loginTab').setAttribute('aria-selected',String(login));
-  $('registerTab').setAttribute('aria-selected',String(!login));
-  $('loginForm').classList.toggle('active',login);
-  $('registerForm').classList.toggle('active',!login);
-  $('headingEyebrow').textContent=login?'AKUN MICON':'GABUNG BERSAMA MICON';
-  $('headingTitle').textContent=login?'Selamat datang kembali':'Buat akun MicOn';
-  $('headingDesc').textContent=login?'Masuk menggunakan email dan kata sandi akun MicOn kamu.':'Daftar untuk mulai menggunakan pengalaman MicOn.';
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDsoHofWuEfD2gwMNgfsad0KXxYlMMxw0w",
+  authDomain: "rekapinyu-storage.firebaseapp.com",
+  projectId: "rekapinyu-storage",
+  storageBucket: "rekapinyu-storage.firebasestorage.app",
+  messagingSenderId: "396909995779",
+  appId: "1:396909995779:web:de7803dcf31ede1c41ab36",
+  measurementId: "G-0E765CTGQT"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const $ = id => document.getElementById(id);
+$("year").textContent = new Date().getFullYear();
+
+// Samakan nilai ini pada semua halaman MicOn yang menggunakan login nomor HP.
+const INTERNAL_EMAIL_DOMAIN = "login.micon-account.com";
+const APP_URL = "./micon(10).html";
+
+function showNotice(message, type = "info") {
+  const n = $("notice");
+  n.textContent = message;
+  n.className = "notice show " + type;
+}
+function clearNotice() {
+  const n = $("notice");
+  n.textContent = "";
+  n.className = "notice";
+}
+function switchMode(mode) {
+  const login = mode === "login";
+  $("loginTab").classList.toggle("active", login);
+  $("registerTab").classList.toggle("active", !login);
+  $("loginTab").setAttribute("aria-selected", String(login));
+  $("registerTab").setAttribute("aria-selected", String(!login));
+  $("loginForm").classList.toggle("active", login);
+  $("registerForm").classList.toggle("active", !login);
+  $("headingEyebrow").textContent = login ? "AKUN MICON" : "GABUNG BERSAMA MICON";
+  $("headingTitle").textContent = login ? "Selamat datang kembali" : "Buat akun MicOn";
+  $("headingDesc").textContent = login
+    ? "Masuk menggunakan nomor HP dan kata sandi akun MicOn kamu."
+    : "Daftar menggunakan nomor HP untuk mulai menggunakan MicOn.";
   clearNotice();
 }
-$('loginTab').addEventListener('click',()=>switchMode('login'));
-$('registerTab').addEventListener('click',()=>switchMode('register'));
-document.querySelectorAll('[data-toggle]').forEach(btn=>btn.addEventListener('click',()=>{
-  const input=$(btn.dataset.toggle);const reveal=input.type==='password';input.type=reveal?'text':'password';btn.textContent=reveal?'Sembunyikan':'Lihat';
-}));
-$('loginForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  if(!$('loginForm').reportValidity())return;
-  showNotice('Tampilan login sudah siap. Hubungkan halaman ini ke layanan autentikasi MicOn agar akun dapat diverifikasi.','info');
+$("loginTab").addEventListener("click", () => switchMode("login"));
+$("registerTab").addEventListener("click", () => switchMode("register"));
+
+document.querySelectorAll("[data-toggle]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const input = $(btn.dataset.toggle);
+    const reveal = input.type === "password";
+    input.type = reveal ? "text" : "password";
+    btn.textContent = reveal ? "Sembunyikan" : "Lihat";
+  });
 });
-$('registerForm').addEventListener('submit',e=>{
+
+function normalizePhone(value) {
+  let phone = value.trim().replace(/[^\d+]/g, "");
+  if (phone.startsWith("08")) phone = "62" + phone.slice(1);
+  else if (phone.startsWith("8")) phone = "62" + phone;
+  else if (phone.startsWith("+62")) phone = phone.slice(1);
+  else if (phone.startsWith("+")) phone = phone.slice(1);
+  if (!/^62\d{8,13}$/.test(phone)) {
+    throw new Error("Nomor HP tidak valid. Gunakan nomor Indonesia, contoh 081234567890.");
+  }
+  return phone;
+}
+
+// Email internal hanya untuk Firebase Auth; tidak ditampilkan atau diminta dari pengguna.
+function phoneToInternalEmail(phone) {
+  return phone + "@" + INTERNAL_EMAIL_DOMAIN;
+}
+
+function friendlyError(error) {
+  const code = error?.code || "";
+  const messages = {
+    "auth/invalid-email": "Format identitas akun tidak valid.",
+    "auth/user-not-found": "Nomor HP belum terdaftar. Silakan daftar terlebih dahulu.",
+    "auth/wrong-password": "Kata sandi salah. Periksa kembali kata sandi kamu.",
+    "auth/invalid-credential": "Nomor HP atau kata sandi salah.",
+    "auth/email-already-in-use": "Nomor HP ini sudah terdaftar. Silakan masuk.",
+    "auth/weak-password": "Kata sandi terlalu lemah. Gunakan minimal 6 karakter.",
+    "auth/too-many-requests": "Terlalu banyak percobaan. Coba lagi beberapa saat.",
+    "auth/network-request-failed": "Koneksi internet bermasalah. Periksa jaringan lalu coba lagi.",
+    "auth/operation-not-allowed": "Aktifkan Email/Password di Firebase Authentication > Sign-in method."
+  };
+  return messages[code] || error?.message || "Terjadi kesalahan. Silakan coba lagi.";
+}
+
+$("loginForm").addEventListener("submit", async e => {
   e.preventDefault();
-  if(!$('registerForm').reportValidity())return;
-  if($('registerPassword').value!==$('registerConfirm').value){showNotice('Konfirmasi kata sandi belum sama. Periksa kembali.','error');$('registerConfirm').focus();return;}
-  showNotice('Tampilan pendaftaran sudah siap. Hubungkan halaman ini ke layanan autentikasi MicOn agar akun dapat dibuat.','info');
+  if (!$("loginForm").reportValidity()) return;
+  const button = $("loginForm").querySelector(".submit");
+  button.disabled = true;
+  button.textContent = "MEMERIKSA AKUN...";
+  try {
+    const phone = normalizePhone($("loginPhone").value);
+    const email = phoneToInternalEmail(phone);
+    await signInWithEmailAndPassword(auth, email, $("loginPassword").value);
+    showNotice("Login berhasil. Membuka MicOn...", "info");
+    window.location.replace(APP_URL);
+  } catch (error) {
+    showNotice(error instanceof Error && !error.code ? error.message : friendlyError(error), "error");
+  } finally {
+    button.disabled = false;
+    button.innerHTML = 'MASUK KE MICON <span aria-hidden="true">→</span>';
+  }
 });
-$('forgotBtn').addEventListener('click',()=>showNotice('Fitur reset kata sandi perlu dihubungkan ke layanan autentikasi MicOn.','info'));
+
+$("registerForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!$("registerForm").reportValidity()) return;
+  const name = $("registerName").value.trim();
+  const password = $("registerPassword").value;
+  const confirm = $("registerConfirm").value;
+  if (!name) {
+    showNotice("Masukkan nama lengkap terlebih dahulu.", "error");
+    $("registerName").focus();
+    return;
+  }
+  if (password !== confirm) {
+    showNotice("Konfirmasi kata sandi belum sama. Periksa kembali.", "error");
+    $("registerConfirm").focus();
+    return;
+  }
+  const button = $("registerForm").querySelector(".submit");
+  button.disabled = true;
+  button.textContent = "MEMBUAT AKUN...";
+  try {
+    const phone = normalizePhone($("registerPhone").value);
+    const email = phoneToInternalEmail(phone);
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(credential.user, { displayName: name });
+    showNotice("Akun berhasil dibuat. Membuka MicOn...", "info");
+    window.location.replace(APP_URL);
+  } catch (error) {
+    showNotice(error instanceof Error && !error.code ? error.message : friendlyError(error), "error");
+  } finally {
+    button.disabled = false;
+    button.innerHTML = 'BUAT AKUN MICON <span aria-hidden="true">→</span>';
+  }
+});
+
+$("forgotBtn").addEventListener("click", () => {
+  showNotice(
+    "Pemulihan kata sandi melalui nomor HP belum tersedia karena Firebase menggunakan Email/Password internal. Hubungi admin MicOn untuk bantuan reset akun.",
+    "info"
+  );
+});
 </script>
 </body>
 </html>
