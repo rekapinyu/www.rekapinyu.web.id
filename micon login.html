@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Masuk / Daftar — MicOn</title>
+<meta name="description" content="Masuk atau buat akun MicOn untuk menikmati pengalaman musik dan pengaturan nada.">
+<style>
+:root{
+  --ink:#172033;--muted:#68758a;--line:#e2e8f0;--soft:#f7fafc;
+  --teal:#0d9488;--green:#10a77b;--blue:#5287ff;--purple:#8a5cff;
+  --shadow:0 24px 70px rgba(20,42,75,.11)
+}
+*{box-sizing:border-box}
+html,body{min-height:100%;margin:0}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#f7fafc}
+button,input{font:inherit}
+.page{min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(430px,.95fr)}
+.visual{
+  position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;
+  padding:42px clamp(28px,5vw,76px);color:#fff;
+  background:radial-gradient(circle at 78% 22%,rgba(83,224,205,.27),transparent 27%),
+  radial-gradient(circle at 18% 82%,rgba(83,135,255,.35),transparent 34%),
+  linear-gradient(145deg,#092f43 0%,#0c4a52 48%,#102b4b 100%)
+}
+.visual:before,.visual:after{content:"";position:absolute;border:1px solid #ffffff18;border-radius:50%;pointer-events:none}
+.visual:before{width:520px;height:520px;right:-190px;top:15%}
+.visual:after{width:360px;height:360px;right:-110px;top:25%}
+.brand{position:relative;z-index:1;display:inline-flex;align-items:center;gap:12px;width:max-content;text-decoration:none;color:inherit}
+.brand-mark{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#55e0d1,#5287ff 65%,#8a5cff);box-shadow:0 9px 26px #001b3640}
+.brand-mark svg{width:25px;height:25px}
+.brand-name{font-size:27px;font-weight:850;letter-spacing:-1.4px}
+.brand-name .mic{color:#fff}.brand-name .on{color:#73e5d7}
+.visual-copy{position:relative;z-index:1;max-width:610px;margin:60px 0}
+.kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid #b5fff044;background:#ffffff0d;color:#a9fff0;padding:8px 13px;border-radius:99px;font-size:11px;font-weight:800;letter-spacing:.11em}
+.kicker i{width:7px;height:7px;border-radius:50%;background:#68ead7;box-shadow:0 0 12px #68ead7}
+.visual h1{font-size:clamp(42px,5vw,68px);line-height:1.04;letter-spacing:-.065em;margin:22px 0 18px}
+.visual h1 span{background:linear-gradient(90deg,#8ff5e5,#8dbaff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.visual-copy p{max-width:490px;color:#d0e4e9;font-size:16px;line-height:1.8;margin:0}
+.visual-foot{position:relative;z-index:1;color:#b5d0d8;font-size:12px}
+.visual-foot strong{color:#fff}
+.auth-side{display:flex;align-items:center;justify-content:center;padding:36px clamp(20px,4vw,64px);background:#fff}
+.auth-wrap{width:min(100%,440px)}
+.mobile-brand{display:none}
+.auth-heading{margin-bottom:26px}
+.auth-heading .eyebrow{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--teal);text-transform:uppercase}
+.auth-heading h2{font-size:34px;letter-spacing:-1.3px;line-height:1.15;margin:10px 0 9px}
+.auth-heading p{color:var(--muted);font-size:14px;line-height:1.65;margin:0}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border:1px solid var(--line);border-radius:14px;background:#f4f7fa;margin-bottom:24px}
+.tab{border:0;border-radius:10px;padding:11px 12px;background:transparent;color:#66758a;font-size:14px;font-weight:750;cursor:pointer;transition:.2s}
+.tab.active{background:#fff;color:#087f75;box-shadow:0 2px 8px #17203312}
+.form{display:none}.form.active{display:block}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:700;margin:0 0 7px;color:#29364b}
+.input-wrap{position:relative}
+.field input{display:block;width:100%;height:49px;padding:0 14px;border:1px solid #d8e1eb;border-radius:12px;background:#fff;color:var(--ink);outline:none;transition:border .18s,box-shadow .18s}
+.field input::placeholder{color:#a0aaba}
+.field input:focus{border-color:#13a899;box-shadow:0 0 0 3px #0d94881a}
+.toggle-pass{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#718096;font-size:12px;font-weight:700;padding:7px;cursor:pointer}
+.forgot-row{display:flex;justify-content:flex-end;margin:-4px 0 18px}
+.text-action{border:0;background:transparent;padding:0;color:#0b8f83;font-size:12px;font-weight:750;cursor:pointer}
+.submit{width:100%;height:50px;border:0;border-radius:12px;background:linear-gradient(105deg,#0e9c8d,#18b47d);color:#fff;font-weight:800;letter-spacing:.01em;box-shadow:0 9px 22px #0e9c8d30;cursor:pointer;transition:transform .18s,filter .18s}
+.submit:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.submit:active{transform:scale(.99)}
+.divider{display:flex;align-items:center;gap:12px;margin:22px 0;color:#9aa5b4;font-size:11px}
+.divider:before,.divider:after{content:"";height:1px;flex:1;background:#e8edf2}
+.terms{font-size:11px;line-height:1.65;color:#8994a4;text-align:center;margin:18px 0 0}
+.terms a{color:#0b8f83;text-decoration:none;font-weight:700}
+.notice{display:none;padding:11px 13px;border-radius:11px;margin:0 0 16px;font-size:12px;line-height:1.5}
+.notice.show{display:block}.notice.info{background:#effaf8;color:#087f75;border:1px solid #c8eee7}
+.notice.error{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+.password-help{font-size:11px;color:#8994a4;margin-top:6px}
+@media(max-width:900px){.page{grid-template-columns:1fr}.visual{display:none}.auth-side{min-height:100vh;padding:28px 20px}.mobile-brand{display:flex;margin-bottom:34px}.auth-wrap{max-width:430px}}
+@media(max-width:480px){.auth-side{align-items:flex-start;padding:25px 20px calc(25px + env(safe-area-inset-bottom))}.auth-wrap{margin:auto 0}.mobile-brand{margin-bottom:35px}.auth-heading h2{font-size:31px}.auth-heading{margin-bottom:23px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <aside class="visual" aria-label="Informasi MicOn">
+    <a class="brand" href="#" aria-label="MicOn">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M7.5 7v10M3.5 10v4M16.5 6v12M20.5 9v6" stroke="#092d42" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+      <span class="brand-name"><span class="mic">Mic</span><span class="on">On</span></span>
+    </a>
+    <div class="visual-copy">
+      <div class="kicker"><i></i> SELAMAT DATANG DI MICON</div>
+      <h1>Nada yang pas,<br><span>pengalaman yang nyaman.</span></h1>
+      <p>Masuk ke akun MicOn untuk melanjutkan perjalanan musikmu. Atur nada, eksplorasi audio, dan nikmati pengalaman yang lebih personal.</p>
+    </div>
+    <div class="visual-foot">© <span id="year"></span> <strong>MicOn</strong> · Nyamankan suaramu.</div>
+  </aside>
+
+  <main class="auth-side">
+    <div class="auth-wrap">
+      <a class="brand mobile-brand" href="#" aria-label="MicOn">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M7.5 7v10M3.5 10v4M16.5 6v12M20.5 9v6" stroke="#092d42" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+        <span class="brand-name"><span style="color:#ef4444">Mic</span><span style="color:#079ed0">On</span></span>
+      </a>
+
+      <div class="auth-heading">
+        <div class="eyebrow" id="headingEyebrow">AKUN MICON</div>
+        <h2 id="headingTitle">Selamat datang kembali</h2>
+        <p id="headingDesc">Masuk menggunakan email dan kata sandi akun MicOn kamu.</p>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Pilih masuk atau daftar">
+        <button class="tab active" id="loginTab" type="button" role="tab" aria-selected="true">Masuk</button>
+        <button class="tab" id="registerTab" type="button" role="tab" aria-selected="false">Daftar</button>
+      </div>
+
+      <div class="notice" id="notice" role="status" aria-live="polite"></div>
+
+      <form class="form active" id="loginForm" novalidate>
+        <div class="field"><label for="loginEmail">Email</label><input id="loginEmail" type="email" autocomplete="email" placeholder="nama@email.com" required></div>
+        <div class="field"><label for="loginPassword">Kata sandi</label><div class="input-wrap"><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Masukkan kata sandi" required><button class="toggle-pass" type="button" data-toggle="loginPassword">Lihat</button></div></div>
+        <div class="forgot-row"><button class="text-action" type="button" id="forgotBtn">Lupa kata sandi?</button></div>
+        <button class="submit" type="submit">MASUK KE MICON <span aria-hidden="true">→</span></button>
+        <p class="terms">Dengan masuk, kamu menyetujui ketentuan penggunaan dan kebijakan privasi MicOn.</p>
+      </form>
+
+      <form class="form" id="registerForm" novalidate>
+        <div class="field"><label for="registerName">Nama lengkap</label><input id="registerName" type="text" autocomplete="name" placeholder="Nama kamu" required></div>
+        <div class="field"><label for="registerEmail">Email</label><input id="registerEmail" type="email" autocomplete="email" placeholder="nama@email.com" required></div>
+        <div class="field"><label for="registerPassword">Buat kata sandi</label><div class="input-wrap"><input id="registerPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Minimal 8 karakter" required><button class="toggle-pass" type="button" data-toggle="registerPassword">Lihat</button></div><div class="password-help">Gunakan minimal 8 karakter.</div></div>
+        <div class="field"><label for="registerConfirm">Ulangi kata sandi</label><div class="input-wrap"><input id="registerConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Ulangi kata sandi" required><button class="toggle-pass" type="button" data-toggle="registerConfirm">Lihat</button></div></div>
+        <button class="submit" type="submit">BUAT AKUN MICON <span aria-hidden="true">→</span></button>
+        <p class="terms">Dengan mendaftar, kamu menyetujui <a href="#" onclick="return false">ketentuan penggunaan</a> dan <a href="#" onclick="return false">kebijakan privasi</a> MicOn.</p>
+      </form>
+    </div>
+  </main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+$('year').textContent=new Date().getFullYear();
+function showNotice(message,type='info'){const n=$('notice');n.textContent=message;n.className='notice show '+type}
+function clearNotice(){const n=$('notice');n.textContent='';n.className='notice'}
+function switchMode(mode){
+  const login=mode==='login';
+  $('loginTab').classList.toggle('active',login);
+  $('registerTab').classList.toggle('active',!login);
+  $('loginTab').setAttribute('aria-selected',String(login));
+  $('registerTab').setAttribute('aria-selected',String(!login));
+  $('loginForm').classList.toggle('active',login);
+  $('registerForm').classList.toggle('active',!login);
+  $('headingEyebrow').textContent=login?'AKUN MICON':'GABUNG BERSAMA MICON';
+  $('headingTitle').textContent=login?'Selamat datang kembali':'Buat akun MicOn';
+  $('headingDesc').textContent=login?'Masuk menggunakan email dan kata sandi akun MicOn kamu.':'Daftar untuk mulai menggunakan pengalaman MicOn.';
+  clearNotice();
+}
+$('loginTab').addEventListener('click',()=>switchMode('login'));
+$('registerTab').addEventListener('click',()=>switchMode('register'));
+document.querySelectorAll('[data-toggle]').forEach(btn=>btn.addEventListener('click',()=>{
+  const input=$(btn.dataset.toggle);const reveal=input.type==='password';input.type=reveal?'text':'password';btn.textContent=reveal?'Sembunyikan':'Lihat';
+}));
+$('loginForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  if(!$('loginForm').reportValidity())return;
+  showNotice('Tampilan login sudah siap. Hubungkan halaman ini ke layanan autentikasi MicOn agar akun dapat diverifikasi.','info');
+});
+$('registerForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  if(!$('registerForm').reportValidity())return;
+  if($('registerPassword').value!==$('registerConfirm').value){showNotice('Konfirmasi kata sandi belum sama. Periksa kembali.','error');$('registerConfirm').focus();return;}
+  showNotice('Tampilan pendaftaran sudah siap. Hubungkan halaman ini ke layanan autentikasi MicOn agar akun dapat dibuat.','info');
+});
+$('forgotBtn').addEventListener('click',()=>showNotice('Fitur reset kata sandi perlu dihubungkan ke layanan autentikasi MicOn.','info'));
+</script>
+</body>
+</html>
