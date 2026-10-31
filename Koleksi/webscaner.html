@@ -30,12 +30,6 @@
  <form id="scanForm"><label class="label" for="url">URL WEBSITE</label><div class="urlrow"><span>⌕</span><input id="url" type="text" placeholder="https://domain-anda.com" required><button id="scanBtn" class="btn primary">Mulai pemindaian →</button></div>
  <label class="consent"><input id="authorized" type="checkbox"><span>Saya menyatakan bahwa saya pemilik website ini atau memiliki izin tertulis untuk melakukan pengujian keamanan.</span></label>
  <div class="notice">Pengujian eksploitasi hanya boleh dilakukan pada target yang diizinkan. Mode bawaan dirancang aman: tidak melakukan penghapusan data, perubahan akun, pengambilan isi database, atau serangan penolakan layanan.</div></form></div>
- <div class="panel" style="margin-top:14px">
- <div class="panelhead"><div><h3>Pengaturan mesin pemindaian</h3><p class="sub">Masukkan alamat server backend WSS yang sudah dipasang. GitHub Pages tidak menyediakan endpoint API.</p></div><span class="badge">KONEKSI BACKEND</span></div>
- <label class="label" for="backendUrl">ALAMAT SERVER BACKEND</label>
- <div class="urlrow"><span>⌘</span><input id="backendUrl" type="text" placeholder="https://server-wss-anda.example.com"><button type="button" class="btn secondary" id="saveBackend">Simpan alamat</button></div>
- <p class="hint" id="backendHint">Backend belum dikonfigurasi. Pemindaian belum dapat dimulai sebelum server backend tersedia.</p>
- </div>
  <div id="progress" class="panel progress hidden"><b>Pemeriksaan sedang berjalan</b><div class="bar"><span></span></div><p id="progressText" class="sub">Menghubungkan ke mesin pemindaian...</p></div>
  <div id="report" class="hidden"></div>
  <div class="tiles"><div class="tile"><i>⌘</i><b>Injeksi SQL</b><small>Indikasi input dan query database</small></div><div class="tile"><i>◇</i><b>Skrip lintas situs</b><small>Risiko XSS dan output tidak aman</small></div><div class="tile"><i>▣</i><b>Eksposur data</b><small>File, konfigurasi, dan informasi publik</small></div><div class="tile"><i>⌑</i><b>Konfigurasi keamanan</b><small>HTTPS, header, cookie, dan CORS</small></div></div>
@@ -60,10 +54,8 @@ document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{document.querySelect
 function toast(message){alert(message)}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function target(v){let u;try{u=new URL(v.includes("://")?v:"https://"+v)}catch{throw Error("URL tidak valid.")}if(!["http:","https:"].includes(u.protocol)||u.username||u.password)throw Error("Gunakan URL HTTP/HTTPS yang valid.");return u}
-const backendInput=$("#backendUrl");
-backendInput.value=localStorage.getItem("wss_backend_url")||"";
-function backendBase(){const raw=backendInput.value.trim();if(!raw)throw Error("Alamat backend belum diisi. Pasang backend WSS pada server terlebih dahulu.");let u;try{u=new URL(raw)}catch{throw Error("Alamat backend tidak valid.")}if(!["https:","http:"].includes(u.protocol))throw Error("Backend harus menggunakan HTTP atau HTTPS.");return u.origin}
-$("#saveBackend").onclick=()=>{try{const b=backendBase();localStorage.setItem("wss_backend_url",b);$("#backendHint").textContent="Alamat backend tersimpan: "+b;toast("Alamat backend berhasil disimpan di browser ini.")}catch(e){toast(e.message)}};
+// Alamat mesin pemindaian ditetapkan di dalam aplikasi; pengguna tidak perlu mengisi alamat server.
+const API_BASE = location.origin;
 async function apiJson(url,body){
  const response=await fetch(url,{method:body?"POST":"GET",headers:body?{"Content-Type":"application/json"}:{},body:body?JSON.stringify(body):undefined});
  const raw=await response.text();let data;
@@ -74,8 +66,8 @@ async function apiJson(url,body){
 $("#scanForm").onsubmit=async e=>{
  e.preventDefault();
  if(!$("#authorized").checked)return alert("Konfirmasi kepemilikan atau izin terlebih dahulu.");
- let u,b;try{u=target($("#url").value.trim());b=backendBase()}catch(x){return alert(x.message)}
- localStorage.setItem("wss_backend_url",b);$("#backendHint").textContent="Backend tersimpan: "+b;
+ let u;try{u=target($("#url").value.trim())}catch(x){return alert(x.message)}
+ const b=API_BASE;
  $("#scanBtn").disabled=true;$("#progress").classList.remove("hidden");$("#report").classList.add("hidden");
  $("#progressText").textContent="Meminta token verifikasi kepemilikan domain...";
  try{
@@ -88,7 +80,7 @@ $("#scanForm").onsubmit=async e=>{
    const data=await apiJson(b+"/api/scan",{url:u.href});
    latest=data;render(data);
    let h=JSON.parse(localStorage.getItem("wss_ui_history")||"[]");h.unshift(data);localStorage.setItem("wss_ui_history",JSON.stringify(h.slice(0,30)));
- }catch(x){alert("Pemindaian belum dapat dijalankan:\n\n"+x.message+"\n\nPastikan backend WSS aktif, alamat server benar, CORS mengizinkan domain ini, dan DNS TXT sudah terpasang.");}
+ }catch(x){alert("Pemindaian belum dapat dijalankan:\n\n"+x.message+"\n\nMesin pemindaian belum tersedia pada hosting ini. GitHub Pages hanya melayani file statis; backend WSS harus dipasang pada server aplikasi agar pemindaian dapat berjalan.");}
  finally{$("#scanBtn").disabled=false;$("#progress").classList.add("hidden")}
 };
 function render(r){const findings=r.findings||r.vulnerabilities||[];const list=findings.length?findings.map(f=>`<div class="finding"><div class="findingtop"><b>${esc(f.title||f.name||f.type||"Temuan keamanan")}</b><span class="pill ${esc(f.level||f.severity||"Sedang")}">${esc(f.level||f.severity||"Belum diklasifikasikan")}</span></div><p><b>Bukti:</b> ${esc(f.evidence||f.detail||"Tidak ada bukti terperinci yang diberikan mesin pemindaian.")}</p><p><b>Dampak:</b> ${esc(f.impact||"Lihat analisis mesin pemindaian.")}</p><p><b>Rekomendasi:</b> ${esc(f.fix||f.remediation||"Tinjau konfigurasi dan lakukan perbaikan sesuai dokumentasi teknologi.")}</p></div>`).join(""):'<p class="sub">Belum ada temuan yang dilaporkan oleh mesin pemindaian.</p>';
