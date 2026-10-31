@@ -7255,11 +7255,18 @@ function updateUserAvatarUI() {
      membuat folder baru dan tidak meminta folder lain. */
   async function getHistoryTargetDir(){
     try{
-      if(typeof window.__rekapinyuGetProdukKasirSelectedFolder!=='function')return null;
-      const selectedRoot=await window.__rekapinyuGetProdukKasirSelectedFolder();
-      if(!selectedRoot)return null;
-      try{return await selectedRoot.getDirectoryHandle('Input Data',{create:false});}
-      catch(_){return null;}
+      /* Gunakan resolver folder resmi yang sama dengan menu lain.
+         Resolver ini hanya membuka subfolder yang sudah ada (create:false). */
+      if(typeof window.__rekapinyuGetDataSubdirectory==='function'){
+        const inputDir=await window.__rekapinyuGetDataSubdirectory('Input Data');
+        if(inputDir)return inputDir;
+      }
+      /* Fallback kompatibilitas untuk sesi/folder yang sudah tersimpan versi lama. */
+      if(typeof window.__rekapinyuGetProdukKasirSelectedFolder==='function'){
+        const selectedRoot=await window.__rekapinyuGetProdukKasirSelectedFolder();
+        if(selectedRoot)return await selectedRoot.getDirectoryHandle('Input Data',{create:false});
+      }
+      return null;
     }catch(_){
       return null;
     }
@@ -7345,20 +7352,25 @@ function updateUserAvatarUI() {
         for(const entry of historyFiles){
           try{
             const name=String(entry?.name||'');
-            if(!/^InputData_.+\.json$/i.test(name))continue;
-            /* File yang tidak dapat dibaca bukan sumber lokal yang valid:
-               jangan menonaktifkan fallback Firestore hanya karena nama file ada. */
+            /* Baca file JSON hasil Input Data di subfolder Input Data.
+               Nama file InputData_ tetap didukung, tetapi file JSON dengan
+               nama lain juga dibaca bila memiliki properti InputData. */
             const data=await readJsonHandle(entry.handle);
             if(!data || typeof data!=='object' || Array.isArray(data)){
               throw new Error('Struktur file JSON History tidak valid.');
             }
+            const isNamedInputFile=/^InputData_.+\.json$/i.test(name);
+            const inputRows=Array.isArray(data?.InputData)
+              ?data.InputData
+              :(Array.isArray(data?.inputData)?data.inputData:null);
+            if(!isNamedInputFile&&!inputRows)continue;
             /* File harus berisi record agar dianggap sebagai sumber lokal yang valid. */
             const fileInfo=fileInfoFromData(data,name);
             if(fileInfo?.dateKey){
               window.__rekapinyuLocalHistoryFileKeys.add(String(fileInfo.dateKey).toLowerCase());
             }
 
-            const rows=toHistoryRows(data?.InputData);
+            const rows=toHistoryRows(inputRows);
             rows.forEach((item,index)=>{
               if(!item||typeof item!=='object')return;
               const aligned={...item};
