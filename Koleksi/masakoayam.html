@@ -3813,6 +3813,26 @@ const USERS="rekapinyu_users", DATA="rekapinyu_data", MAX=850000;
 const phoneOf=v=>String(v||"").replace(/\D/g,"");
 const emailOf=p=>`${phoneOf(p)}@rekapinyu.app`;
 const uref=uid=>doc(db,USERS,uid), dref=uid=>doc(db,DATA,uid);
+// Sinkronkan status ke dokumen Pengguna yang benar-benar dipakai Dashboard.
+// ID dokumen Pengguna tidak selalu sama dengan UID Firebase, jadi cocokkan juga nomor HP.
+async function syncDashboardPresence(uid,phone,presence){
+ const normalizedPhone=phoneOf(phone);
+ const targets=new Map();
+ try{
+  const snap=await getDocs(collection(db,"Pengguna"));
+  snap.forEach(item=>{
+   const d=item.data()||{};
+   const docUid=String(d.uid||d.userId||d.userUid||d.ownerUid||d.pemilikUid||item.id);
+   const docPhone=phoneOf(d.phone||d.nomorHp||d.NomorHp||d.nomorHP||d.noHp||d.NoHp);
+   if(docUid===String(uid)|| (normalizedPhone&&docPhone===normalizedPhone))targets.set(item.ref.path,item.ref);
+  });
+ }catch(readErr){console.warn("Pencarian dokumen Pengguna untuk status aktif gagal:",readErr)}
+ if(!targets.size)targets.set(doc(db,"Pengguna",String(uid)).path,doc(db,"Pengguna",String(uid)));
+ const results=await Promise.allSettled([...targets.values()].map(ref=>setDoc(ref,{...presence,uid:String(uid)},{merge:true})));
+ const failed=results.find(x=>x.status==="rejected");
+ if(failed)throw failed.reason;
+ return targets.size;
+}
 const nativeSet=Storage.prototype.setItem, nativeRemove=Storage.prototype.removeItem;
 const safe=(v,d)=>{try{return JSON.parse(v)}catch{return d}};
 function cloudUid(){return auth.currentUser?.uid||null;}
@@ -4089,7 +4109,7 @@ async function firebaseLogin(){
     }catch(dbErr){console.warn("Rekapinyu: profil Firestore belum dapat dibaca.",dbErr)}
 
     // Status online hanya berubah saat autentikasi berhasil.
-    try{const presence={isOnline:true,statusAktif:'aktif',lastLoginAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(uref(credential.user.uid),presence,{merge:true});await setDoc(doc(db,"Pengguna",credential.user.uid),presence,{merge:true})}catch(presenceErr){console.warn("Status login belum tersimpan ke Firestore Pengguna:",presenceErr)}
+    try{const presence={isOnline:true,statusAktif:'aktif',lastLoginAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(uref(credential.user.uid),presence,{merge:true});await syncDashboardPresence(credential.user.uid,phone||user.phone,presence)}catch(presenceErr){console.warn("Status login belum tersimpan ke Firestore Pengguna:",presenceErr)}
     localSession({...user,uid:credential.user.uid,phone:phoneOf(user.phone||phone),email:credential.user.email});
     try{await hydrate(credential.user.uid)}catch(hydrateErr){console.warn("Rekapinyu: data Firestore belum dapat dimuat; cache lokal dipakai.",hydrateErr)}
     checkAuth();
@@ -4109,7 +4129,7 @@ async function firebaseLogin(){
           let shop=localStorage.getItem(`finance_shop_cover_${phone}`)||"";if(shop.length>MAX)shop="";
           await setDoc(dref(credential.user.uid),{kasirTransactions:safe(localStorage.getItem(`finance_kasir_transactions_${phone}`),[]),LaporanKasir:safe(localStorage.getItem(`finance_kasir_transactions_${phone}`),[]),activityData:safe(localStorage.getItem(`finance_activity_desktop_${phone}`),[]),InputData:safe(localStorage.getItem(`finance_history_desktop_${phone}`),[]),historyData:safe(localStorage.getItem(`finance_history_desktop_${phone}`),[]),LaporanBulanan:[],pengeluaranData:safe(localStorage.getItem(`finance_pengeluaran_desktop_${phone}`),[]),kasbonData:safe(localStorage.getItem(`finance_kasbon_desktop_${phone}`),[]),backupOtomatisData:safe(localStorage.getItem(`finance_backup_desktop_${phone}`),[]),shopCover:shop,migratedFromLegacy:true,updatedAt:serverTimestamp()});
         }catch(migrateCloudErr){console.warn("Rekapinyu: migrasi Firestore ditunda karena Rules.",migrateCloudErr)}
-        try{const presence={isOnline:true,statusAktif:'aktif',lastLoginAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(uref(credential.user.uid),presence,{merge:true});await setDoc(doc(db,"Pengguna",credential.user.uid),presence,{merge:true})}catch(presenceErr){console.warn("Status login akun lama belum tersimpan:",presenceErr)}
+        try{const presence={isOnline:true,statusAktif:'aktif',lastLoginAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(uref(credential.user.uid),presence,{merge:true});await syncDashboardPresence(credential.user.uid,phone||user.phone,presence)}catch(presenceErr){console.warn("Status login akun lama belum tersimpan:",presenceErr)}
         localSession({uid:credential.user.uid,name:legacy.name||"",phone,photo:legacy.photo||"",email:credential.user.email});
         try{await hydrate(credential.user.uid)}catch{}
         checkAuth();openDashboardAfterLogin();form.reset();
@@ -4133,7 +4153,7 @@ if(lf)lf.addEventListener("submit",e=>{e.preventDefault();e.stopImmediatePropaga
 window.handleLogout=async()=>{
   try{await saveCloudData()}catch{}
   const logoutUid=auth.currentUser?.uid||currentSessionUser?.uid;
-  if(logoutUid){try{const presence={isOnline:false,statusAktif:'tidak aktif',lastLogoutAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(uref(logoutUid),presence,{merge:true});await setDoc(doc(db,"Pengguna",logoutUid),presence,{merge:true})}catch(presenceErr){console.warn("Status logout belum tersimpan ke Firestore Pengguna:",presenceErr)}}
+  if(logoutUid){try{const presence={isOnline:false,statusAktif:'tidak aktif',lastLogoutAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(uref(logoutUid),presence,{merge:true});await syncDashboardPresence(logoutUid,currentSessionUser?.phone,presence)}catch(presenceErr){console.warn("Status logout belum tersimpan ke Firestore Pengguna:",presenceErr)}}
   try{await signOut(auth)}catch(e){console.warn("Firebase logout:",e)}
   currentSessionUser=null;
   nativeRemove.call(localStorage,"finance_active_session");
@@ -4436,7 +4456,7 @@ onAuthStateChanged(auth,async u=>{
   }
 
   try{
-    try{const presence={isOnline:true,statusAktif:'aktif',lastLoginAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(uref(u.uid),presence,{merge:true});await setDoc(doc(db,"Pengguna",u.uid),presence,{merge:true})}catch(presenceErr){console.warn("Status sesi Firebase belum tersimpan:",presenceErr)}
+    try{const presence={isOnline:true,statusAktif:'aktif',lastLoginAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(uref(u.uid),presence,{merge:true});await syncDashboardPresence(u.uid,currentSessionUser?.phone,presence)}catch(presenceErr){console.warn("Status sesi Firebase belum tersimpan:",presenceErr)}
     await hydrate(u.uid);
     realtime(u);
     window.__rekapinyuLandingHandoffActive=false;
