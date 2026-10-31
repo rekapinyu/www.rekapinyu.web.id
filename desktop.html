@@ -1732,10 +1732,17 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
 #activity-main-container .rk-activity-list-empty{padding:24px 16px;text-align:center;color:#94a3b8;font-size:11px}
 @media(max-width:900px){#activity-main-container .rk-activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:901px){
-  /* Aktifitas desktop: filter di atas dan grid kartu memenuhi area kerja seperti referensi. */
+  /* Aktifitas desktop: area kartu mengisi sisa ruang sampai batas bawah konten. */
+  main:has(#activity-main-container:not(.hidden)){
+    overflow:hidden!important;
+    padding-bottom:24px!important;
+  }
   #activity-main-container{
     width:100%!important;
     max-width:900px!important;
+    height:100%!important;
+    min-height:0!important;
+    flex:1 1 auto!important;
     margin:6px auto 0!important;
     gap:16px!important;
   }
@@ -1772,13 +1779,21 @@ main:has(#view-kasir:not(.hidden)) #view-kasir .kasir-shell{flex:1 1 auto!import
     grid-template-rows:none!important;
     align-content:start!important;
     gap:10px!important;
-    height:calc(100vh - 285px)!important;
-    min-height:300px!important;
+    flex:1 1 0%!important;
+    height:auto!important;
+    min-height:0!important;
     max-height:none!important;
     overflow-y:auto!important;
     overflow-x:hidden!important;
-    padding:2px!important;
+    scrollbar-width:none!important;
+    -ms-overflow-style:none!important;
+    padding:2px 2px 12px!important;
     box-sizing:border-box!important;
+  }
+  #activity-main-container .rk-activity-grid::-webkit-scrollbar{
+    display:none!important;
+    width:0!important;
+    height:0!important;
   }
   #activity-main-container .rk-activity-24h-card{
     height:72px!important;
