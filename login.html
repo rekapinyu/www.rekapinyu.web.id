@@ -85,15 +85,18 @@ html,body{
   object-position:left center!important;
   margin:0!important;
 }
-/* Aturan tunggal tagline: kotaknya dimulai tepat di bawah huruf R,
-   bukan berada di tengah lebar gambar/logo. */
+/* Satu aturan posisi tagline: titik awal dikunci 16.2% dari sisi kiri
+   area logo, sejajar dengan awal huruf R pada gambar logo. */
+.login-brand-header{position:relative!important;}
 .login-brand-tagline{
   display:block!important;
+  position:relative!important;
+  left:16.2%!important;
   width:83.8%!important;
   max-width:83.8%!important;
   box-sizing:border-box!important;
   padding:0!important;
-  margin:2px 0 0 16.2%!important;
+  margin:2px 0 0 0!important;
   font-size:11px!important;
   line-height:1.4!important;
   text-align:left!important;
