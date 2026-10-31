@@ -3803,7 +3803,7 @@ function updateUserAvatarUI() {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, updateProfile, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, collectionGroup, query, where, getDocs, onSnapshot, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 const firebaseConfig={apiKey:"AIzaSyAyzAV68m4BRtwmn0iu2vDplZaJ9r_uQVk",authDomain:"rekapinyu.firebaseapp.com",projectId:"rekapinyu",storageBucket:"rekapinyu.firebasestorage.app",messagingSenderId:"835450919713",appId:"1:835450919713:web:818f9f48c5b05330d67c60",measurementId:"G-4KSJC9ENH8"};
@@ -6209,7 +6209,65 @@ const boot=()=>{
  async function resolveSuperAdmin(au){try{if(!au){state.superadmin=false;return false}const snap=await getDoc(doc(db,USERS,au.uid));const d=snap.exists()?snap.data():{};state.superadmin=String(d.role||d.peran||'').trim().toLowerCase()==='superadmin'||d.isSuperAdmin===true;return state.superadmin}catch(e){state.superadmin=false;console.error('Superadmin role check:',e);return false}}
  async function editUser(uid){if(!isSuperAdmin())return;const u=state.users.find(x=>String(x.uid||x.id)===String(uid));if(!u)return;const k=state.kasir.get(uid)||{},r=state.rekap.get(uid)||{},expires=packageExpiryFor(u),expireText=expires?(()=>{const d=new Date(expires);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`})():'';const name=u.NamaPengguna||u.namaPengguna||u.nama||u.name||'',phone=u.NomorHp||u.nomorHp||u.nomorHP||u.noHp||u.phone||'',store=shopName(u,k,r),pack=packageNameFor(u);$('sa-user-modal-title').textContent='Edit Pengguna';$('sa-user-modal-body').innerHTML=`<form id="sa-user-edit-form" class="sa-users-edit-form"><label>Nama Pengguna<input name="name" required value="${esc(name)}"></label><label>Nama Toko<input name="storeName" required value="${esc(store)}"></label><label>Nomor HP<input name="phone" inputmode="numeric" value="${esc(phone)}"></label><label>Nama Paket<input name="packageName" value="${esc(pack==='Paket belum diatur'?'':pack)}"></label><label>Tanggal Akhir Paket<input name="packageExpiry" type="date" value="${esc(expireText)}"></label><div class="sa-note">Kata sandi tidak ditampilkan atau disimpan dalam formulir ini. Kredensial dikelola melalui Firebase Authentication dan tidak dapat dibaca oleh Super Admin.</div><div class="sa-users-edit-actions"><button type="button" class="sa-btn" id="sa-user-edit-cancel">Batal</button><button type="submit" class="sa-btn">Simpan Perubahan</button></div></form>`;$('sa-user-modal').classList.add('is-open');$('sa-user-modal').setAttribute('aria-hidden','false');const form=$('sa-user-edit-form');form?.addEventListener('submit',async e=>{e.preventDefault();if(!isSuperAdmin())return;const submit=form.querySelector('button[type="submit"]');if(submit?.dataset.busy==='1')return;if(submit){submit.dataset.busy='1';submit.disabled=true}try{const fd=new FormData(form),newName=String(fd.get('name')||'').trim(),newStore=String(fd.get('storeName')||'').trim(),newPhone=String(fd.get('phone')||'').trim(),newPack=String(fd.get('packageName')||'').trim(),newExpiry=String(fd.get('packageExpiry')||'').trim();if(!newName){alert('Nama pengguna wajib diisi.');return}const nameKey=existingKey(u,['NamaPengguna','namaPengguna','nama','name'],'name'),phoneKey=existingKey(u,['NomorHp','nomorHp','nomorHP','noHp','NoHp','phone'],'phone'),packKey=existingKey(u,['NamaPaket','namaPaket','packageName','paketNama','namaLangganan'],'namaPaket'),expiryKey=existingKey(u,packageExpiryKeys,'packageExpiresAt');const changes={[nameKey]:newName,[phoneKey]:newPhone,[packKey]:newPack||null,[expiryKey]:newExpiry?newExpiry+'T23:59:59':null,updatedAt:serverTimestamp()};const shopRecord=Object.keys(k).length?k:(Object.keys(r).length?r:null);if(!shopRecord||!shopRecord.__docId)changes[existingKey(u,['NamaToko','namaToko','storeName','shopName'],'namaToko')]=newStore;await updateDoc(doc(db,USERS,String(u.uid||u.id)),changes);if(shopRecord&&shopRecord.__docId){const coll=Object.keys(k).length?KASIR:REKAP,shopField=shopRecord.receiptSettings&&typeof shopRecord.receiptSettings==='object'?'receiptSettings.name':existingKey(shopRecord,['NamaToko','namaToko','storeName','shopName'],'namaToko');await updateDoc(doc(db,coll,String(shopRecord.__docId)),{[shopField]:newStore,updatedAt:serverTimestamp()})}$('sa-user-modal').classList.remove('is-open');$('sa-user-modal').setAttribute('aria-hidden','true');alert('Data pengguna berhasil diperbarui.')}catch(err){console.error('Edit pengguna Super Admin:',err);alert('Gagal menyimpan perubahan pengguna. Periksa izin Firebase Rules dan dokumen pengguna.')}finally{if(submit){delete submit.dataset.busy;submit.disabled=false}}});$('sa-user-edit-cancel')?.addEventListener('click',()=>{$('sa-user-modal').classList.remove('is-open');$('sa-user-modal').setAttribute('aria-hidden','true')})}
  async function detail(uid){const u=state.users.find(x=>(x.uid||x.id)===uid);if(!u)return;const k=state.kasir.get(uid)||{},r=state.rekap.get(uid)||{};$('sa-user-modal-title').textContent='Detail Pengguna';$('sa-user-modal-body').innerHTML=`<div class="sa-panel" style="margin-top:0"><div><strong>${esc(u.name||u.nama||'-')}</strong></div><div style="font-size:10px;color:#64748b;margin-top:6px">${esc(u.phone||u.nomorHp||'-')} · ${esc(u.email||'-')}</div><div style="font-size:10px;color:#64748b;margin-top:10px">Toko: <strong>${esc(shopName(u,k,r))}</strong></div><div class="sa-note" style="margin-top:12px">Data Super Admin dibaca realtime dari Firestore: Pengguna, Kasir, dan Rekap.</div></div>`;$('sa-user-modal').classList.add('is-open');}
- async function delUser(uid){if(!isSuperAdmin())return;const u=state.users.find(x=>(x.uid||x.id)===uid);if(!u)return;if(!confirm(`Hapus data profil pengguna ${u.name||u.nama||u.phone||uid}?`))return;try{await deleteDoc(doc(db,USERS,uid));alert('Profil pengguna berhasil dihapus dari Firestore.');}catch(e){alert('Gagal menghapus pengguna. Periksa Firebase Rules.');console.error(e)}}
+ async function delUser(uid){
+  if(!isSuperAdmin())return;
+  uid=String(uid||'').trim();
+  const u=state.users.find(x=>String(x.uid||x.id)===uid);
+  if(!u||!uid)return;
+  const k=state.kasir.get(uid)||{},r=state.rekap.get(uid)||{},shop=shopName(u,k,r);
+  if(!confirm(`Hapus toko "${shop}" beserta seluruh data pengguna dan data aplikasinya dari Firestore? Tindakan ini tidak dapat dibatalkan.`))return;
+  const button=$('sa-shops-body')?.querySelector(`[data-shop-delete="${uid.replace(/"/g,'')}"]`);
+  if(button){button.disabled=true;button.dataset.deleting='1'}
+  try{
+   const jobs=new Map();
+   const addDoc=(path)=>{if(path)jobs.set(path,deleteDoc(doc(db,...path.split('/'))))};
+   // Dokumen utama akun dan seluruh dokumen data toko.
+   addDoc(`${USERS}/${uid}`);
+   addDoc(`rekapinyu_users/${uid}`);
+   addDoc(`${DATA}/${uid}`);
+   const rootGroups=[
+    [state.kasirRecords,KASIR],
+    [state.rekapRecords,REKAP],
+    [state.activityRecords,ACTIVITIES],
+    [state.communityIdentityRecords,COMMUNITY_IDENTITIES],
+    [state.communityRecords,COMMUNITY]
+   ];
+   rootGroups.forEach(([records,collectionName])=>{
+    (records||[]).forEach(record=>{
+     if(recordMatchesUser(record,u))addDoc(`${collectionName}/${record.id}`);
+    });
+   });
+   // Dokumen turunan milik toko: transaksi, laporan, produk, stok, dan postingan.
+   ['nestedTransactions','nestedReports','nestedProducts','nestedStocks','nestedPosts'].forEach(key=>{
+    (state[key]||[]).forEach(record=>{
+     if(String(record.__uid||'')===uid&&record.__nestedPath)addDoc(record.__nestedPath);
+    });
+   });
+   await Promise.all([...jobs.values()]);
+   // Bersihkan cache lokal lama agar akun yang dihapus tidak muncul kembali di perangkat ini.
+   try{
+    const registered=safe(localStorage.getItem('finance_registered_users'),[]);
+    if(Array.isArray(registered)){
+     const kept=registered.filter(item=>String(item.uid||'')!==uid&&phoneOf(item)!==phoneOf(u));
+     nativeSet.call(localStorage,'finance_registered_users',JSON.stringify(kept));
+    }
+    const active=safe(localStorage.getItem('finance_active_session'),null);
+    if(active&&(String(active.uid||'')===uid||(phoneOf(active)&&phoneOf(active)===phoneOf(u)))){
+     nativeRemove.call(localStorage,'finance_active_session');
+    }
+   }catch(cacheError){console.warn('Pembersihan cache toko:',cacheError)}
+   state.userSources.legacy=state.userSources.legacy.filter(x=>String(x.uid||x.id||'')!==uid);
+   state.users=state.users.filter(x=>String(x.uid||x.id||'')!==uid);
+   state.kasir.delete(uid);state.rekap.delete(uid);
+   renderAll();
+   alert(`Toko "${shop}" dan ${jobs.size} dokumen Firestore terkait berhasil dihapus.`);
+  }catch(e){
+   console.error('Hapus toko dan seluruh data:',e);
+   alert('Toko belum berhasil dihapus seluruhnya. Periksa Firebase Rules/koneksi Firestore. Tidak ada konfirmasi berhasil yang ditampilkan.');
+  }finally{
+   if(button){button.disabled=false;delete button.dataset.deleting}
+  }
+ }
  function open(tab){if(!guard())return false;const map={'superadmin-dashboard':'sa-dashboard-page','superadmin-pengguna':'sa-users-page','superadmin-toko':'sa-shops-page','superadmin-paket':'sa-package-page','superadmin-pengaturan':'sa-settings-page'};const page=map[tab];if(!page)return false;showOnly(page);const title={'superadmin-dashboard':['Dashboard Super Admin','Ringkasan pengguna dan toko terdaftar.'],'superadmin-pengguna':['Pengguna','Management pengguna dan pendaftaran baru.'],'superadmin-toko':['Toko','Seluruh toko terdaftar.'],'superadmin-paket':['Paket','Atur dan aktifkan paket untuk setiap toko.'],'superadmin-pengaturan':['Pengaturan','Pengaturan super admin.']}[tab]||['Super Admin',''];if($('page-title-header'))$('page-title-header').textContent=title[0];if($('page-subtitle-header'))$('page-subtitle-header').textContent=title[1];document.querySelectorAll('#sidebar nav > button').forEach(b=>b.classList.remove('active'));const ids={'superadmin-dashboard':'sa-nav-dashboard','superadmin-pengguna':'sa-nav-users','superadmin-toko':'sa-nav-shops','superadmin-paket':'sa-nav-packages','superadmin-pengaturan':'sa-nav-settings'};$(ids[tab])?.classList.add('active');if(tab==='superadmin-dashboard')openUserList('all');startListeners();return true;}
  $('sa-dashboard-page')?.addEventListener('click',e=>{const card=e.target.closest('[data-sa-user-list]');if(card)openUserList(card.dataset.saUserList)});
  $('sa-dashboard-page')?.addEventListener('keydown',e=>{const card=e.target.closest('[data-sa-user-list]');if(card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openUserList(card.dataset.saUserList)}});
