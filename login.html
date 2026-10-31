@@ -32,7 +32,7 @@ html,body{
   justify-content:flex-start!important;
   padding:0!important;
   overflow:hidden!important;
-  background:#fff!important;
+  background:linear-gradient(135deg,#f4f8ff 0%,#eaf7ff 52%,#f2fbff 100%)!important;
   z-index:50!important;
 }
 #login-card,#register-card{
@@ -49,7 +49,7 @@ html,body{
   display:flex!important;
   flex-direction:column!important;
   justify-content:center!important;
-  background:#fff!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f8fbff 58%,#effaff 100%)!important;
   box-shadow:none!important;
   border:0!important;
 }
@@ -79,15 +79,9 @@ html,body{
   max-width:100%!important;
   height:auto!important;
   max-height:none!important;
+  object-fit:contain!important;
+  object-position:left center!important;
   margin:0 0 10px!important;
-  color:#109f91!important;
-  font-family:Arial,Helvetica,sans-serif!important;
-  font-size:30px!important;
-  font-weight:900!important;
-  line-height:1.2!important;
-  letter-spacing:2.5px!important;
-  text-align:left!important;
-  white-space:nowrap!important;
 }
 .login-brand-tagline{
   width:auto!important;
@@ -108,7 +102,7 @@ html,body{
   margin-bottom:18px;
 }
 #login-form label,#register-form label{
-  color:#52637d!important;
+  color:#29436f!important;
   font-size:12px!important;
   margin-bottom:7px!important;
 }
@@ -118,26 +112,29 @@ html,body{
   height:54px!important;
   padding-top:0!important;
   padding-bottom:0!important;
-  background:#f8fafc!important;
-  border:1px solid #d9e2ef!important;
+  background:#f7faff!important;
+  border:1px solid #d5e3f8!important;
   border-radius:14px!important;
   color:#26364f!important;
   font-size:14px!important;
 }
 #login-form input:focus,#register-form input:focus{
-  border-color:#10a37f!important;
-  box-shadow:0 0 0 3px rgba(16,163,127,.10)!important;
+  border-color:#168cf2!important;
+  box-shadow:0 0 0 3px rgba(0,153,245,.13)!important;
 }
 #login-form button[type="submit"],#register-form button[type="submit"]{
   width:100%!important;
   height:54px!important;
   margin-top:2px!important;
-  background:#079b70!important;
+  background:linear-gradient(105deg,#123fce 0%,#087de9 48%,#00c8ee 100%)!important;
+  border:0!important;
   border-radius:14px!important;
-  box-shadow:0 12px 24px rgba(7,155,112,.18)!important;
+  box-shadow:0 12px 24px rgba(0,112,220,.22)!important;
+  transition:filter .2s ease,transform .2s ease!important;
 }
 #login-form button[type="submit"]:hover,#register-form button[type="submit"]:hover{
-  background:#078d67!important;
+  background:linear-gradient(105deg,#0d32b2 0%,#066bd0 48%,#00acd4 100%)!important;
+  filter:brightness(1.04)!important;
 }
 #login-card > div:last-child,#register-card > div:last-child{
   margin-top:24px!important;
@@ -146,7 +143,7 @@ html,body{
   color:#7b8ba6!important;
 }
 #login-card > div:last-child button,#register-card > div:last-child button{
-  color:#009f75!important;
+  color:#087de9!important;
 }
 @media (max-width: 800px){
   #auth-container{
@@ -172,7 +169,7 @@ html,body{
 <!-- CARD LOGIN -->
 <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-100 transition-all" id="login-card">
 <div class="text-center mb-6 login-brand-header">
-<div class="login-brand-logo" role="img" aria-label="REKAPINYU">REKAPINYU</div>
+<img class="login-brand-logo" src="https://raw.githubusercontent.com/rekapinyu/www.rekapinyu.web.id/main/Galery/LogoLogin.png" alt="Logo Rekapinyu" loading="eager" decoding="async">
 <p class="login-brand-tagline">Kelola Keuangan Anda Dengan Mudah</p>
 </div>
 <form class="space-y-4" id="login-form">
@@ -205,7 +202,7 @@ html,body{
 <!-- CARD REGISTER -->
 <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-100 hidden transition-all" id="register-card">
 <div class="text-center mb-6 login-brand-header">
-<div class="login-brand-logo" role="img" aria-label="REKAPINYU">REKAPINYU</div>
+<img class="login-brand-logo" src="https://raw.githubusercontent.com/rekapinyu/www.rekapinyu.web.id/main/Galery/LogoDaftar.png" alt="Logo Rekapinyu Daftar" loading="eager" decoding="async">
 <p class="login-brand-tagline">Kelola Keuangan Anda Dengan Mudah</p>
 </div>
 <form class="space-y-4" id="register-form">
