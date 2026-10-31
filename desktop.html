@@ -7759,7 +7759,7 @@ const log=(...a)=>console.warn("Rekapinyu Firebase:",...a);
    Kasir     -> NamaToko, NomorHp, TotalOmsetKasir, TotalProfitKasir, Seting
    Aktifitas -> Aktifitas, NamaToko, NomorHp
    ================================================================ */
-const PENGGUNA_EMPTY={NamaPengguna:"",NomorHp:"",Pasword:"",role:"Pengguna"};
+const PENGGUNA_EMPTY={NamaPengguna:"",NomorHp:"",Pasword:"",role:"Pengguna",isOnline:false,statusAktif:"tidak aktif",lastLoginAt:null,lastLogoutAt:null};
 const REKAP_EMPTY={NamaToko:"",NomorHp:"",InputData:[],Pengeluaran:[],Kasbon:[]};
 const KASIR_EMPTY={NamaToko:"",NomorHp:"",TotalOmsetKasir:0,TotalProfitKasir:0,Seting:{}};
 const AKTIFITAS_EMPTY={Aktifitas:[],NamaToko:"",NomorHp:""};
@@ -7788,6 +7788,22 @@ function directRef(name,uid){
   return doc(db,name,uid);
 }
 function getPenggunaRef(uid,p){if(refs.pengguna?.id===uid)return refs.pengguna;refs.pengguna=directRef(COLLECTION.PENGGUNA,uid);return refs.pengguna;}
+/* STATUS SESI — satu-satunya penulis status online/offline, langsung ke Pengguna/{UID}.
+   Firebase Authentication tetap mengelola token/kredensial; Firestore menyimpan status kehadiran. */
+async function setPenggunaPresence(uid,isOnline){
+  if(!uid)throw new Error("UID Firebase tidak tersedia untuk memperbarui status sesi.");
+  const refPengguna=getPenggunaRef(uid,currentPhone());
+  const timestamp=serverTimestamp();
+  const presence={
+    uid:String(uid),
+    isOnline:!!isOnline,
+    statusAktif:isOnline?"aktif":"tidak aktif",
+    updatedAt:timestamp,
+    ...(isOnline?{lastLoginAt:timestamp}:{lastLogoutAt:timestamp})
+  };
+  await setDoc(refPengguna,presence,{merge:true});
+  return presence;
+}
 function getKasirRef(uid,p){if(refs.kasir?.id===uid)return refs.kasir;refs.kasir=directRef(COLLECTION.KASIR,uid);return refs.kasir;}
 function getRekapRef(uid,p){if(refs.rekap?.id===uid)return refs.rekap;refs.rekap=directRef(COLLECTION.REKAP,uid);return refs.rekap;}
 function getAktifitasRef(uid,p){if(refs.aktifitas?.id===uid)return refs.aktifitas;refs.aktifitas=directRef(COLLECTION.AKTIFITAS,uid);return refs.aktifitas;}
@@ -8069,7 +8085,7 @@ async function writeBaseSchema(uid,p,name,initialPackage={}){
   const [pr,kr,rr,ar]=[getPenggunaRef(uid,pClean),getKasirRef(uid,pClean),getRekapRef(uid,pClean),getAktifitasRef(uid,pClean)];
   const setting=normalizeSetting(SETTING_DEFAULTS);
   await Promise.all([
-    setDoc(pr,{NamaPengguna:nameClean,NomorHp:pClean,Pasword:String(currentSessionUser?.password||""),role:String(currentSessionUser?.role||"Pengguna"),...(initialPackage&&typeof initialPackage==="object"?initialPackage:{})},{merge:true}),
+    setDoc(pr,{NamaPengguna:nameClean,NomorHp:pClean,Pasword:String(currentSessionUser?.password||""),role:String(currentSessionUser?.role||"Pengguna"),isOnline:false,statusAktif:"tidak aktif",lastLoginAt:null,lastLogoutAt:serverTimestamp(),...(initialPackage&&typeof initialPackage==="object"?initialPackage:{})},{merge:true}),
     setDoc(kr,{NamaToko:shopName,NomorHp:pClean,TotalOmsetKasir:0,TotalProfitKasir:0,Seting:setting}),
     setDoc(rr,{NamaToko:shopName,NomorHp:pClean,InputData:[],Pengeluaran:[],Kasbon:[]}),
     setDoc(ar,{Aktifitas:[],NamaToko:shopName,NomorHp:pClean})
@@ -8357,6 +8373,7 @@ const rekapinyuAuth={busy:false,activeForm(){const l=document.getElementById("lo
       log("profil Pengguna saat login tidak dapat dibaca; lanjut dengan data Auth/local",e);
     }
     localSession({uid:c.user.uid,name:String(d.NamaPengguna||c.user.displayName||""),shopName:"",phone:phoneOf(d.NomorHp||p),email:c.user.email,password:String(d.Pasword||password),role:d.role||"Pengguna"});
+    try{await setPenggunaPresence(c.user.uid,true)}catch(presenceError){log("status login gagal ditulis ke koleksi Pengguna",presenceError);notify("Status Login","Login berhasil, tetapi status aktif gagal disimpan ke Firestore Pengguna. Periksa izin baca/tulis koleksi Pengguna.","fa-solid fa-triangle-exclamation text-amber-600")}
     try{await hydrate(c.user.uid)}catch(e){log("sinkronisasi Firestore setelah login gagal; login tetap dilanjutkan",e)}
     try{await updateMeta()}catch(e){log("update metadata setelah login gagal; login tetap dilanjutkan",e)}
     renderDashboardSession();openDashboardAfterLogin();form.reset();notify("Masuk Berhasil",`Selamat datang kembali, ${currentSessionUser.name||nameFromPhone(p)}!`,"fa-solid fa-circle-check text-emerald-600");
@@ -8386,6 +8403,11 @@ window.handleLogout=async()=>{
     showModal("Keluar","Sedang menyimpan data dan mengakhiri sesi...","fa-solid fa-spinner fa-spin text-emerald-600");
     await window.__rekapinyuSaveLocalRekap?.();
     await window.__rekapinyuSaveCloudData?.();
+    const logoutUid=auth.currentUser?.uid||currentSessionUser?.uid;
+    if(logoutUid){
+      try{await setPenggunaPresence(logoutUid,false)}
+      catch(presenceError){log("status logout gagal ditulis ke koleksi Pengguna",presenceError);notify("Status Logout","Sesi akan diakhiri, tetapi status tidak aktif gagal disimpan ke Firestore Pengguna. Periksa izin tulis koleksi Pengguna.","fa-solid fa-triangle-exclamation text-amber-600")}
+    }
     await signOut(auth);
   }catch(e){
     log("logout",e);
@@ -8547,12 +8569,12 @@ function realtime(uid){
   },e=>log("realtime Aktifitas gagal",e)));
 }
 
-async function consumeLandingLogin(){try{await authReadyPromise;const hash=window.location.hash||"",m=hash.match(/^#rekapinyu_login=([^&]+)$/);if(!m)return false;const raw=m[1].replace(/-/g,"+").replace(/_/g,"/"),padded=raw+"=".repeat((4-raw.length%4)%4);const bin=atob(padded);const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);const data=JSON.parse(new TextDecoder().decode(bytes));history.replaceState(null,document.title,window.location.pathname+window.location.search);if(!data?.phone||!data?.password)throw new Error("Data login dari Landing Page tidak lengkap.");const landingPhone=strictRekapinyuPhone(data.phone);if(!landingPhone)throw new Error("Nomor HP login tidak valid. Gunakan 12–13 digit dan wajib diawali 08.");const c=await signInWithEmailAndPassword(auth,emailOf(landingPhone),data.password);refs.pengguna=refs.kasir=refs.rekap=refs.aktifitas=null;refCache.clear();const pr=await getPenggunaRef(c.user.uid,data.phone),s=await getDoc(pr),d=s.exists()?s.data()||{}:{};localSession({uid:c.user.uid,name:d.NamaPengguna||c.user.displayName||"",phone:phoneOf(d.NomorHp||data.phone),email:c.user.email,password:String(d.Pasword||data.password),role:d.role||"Pengguna"});window.__rekapinyuLandingHandoffActive=true;await hydrate(c.user.uid);return true}catch(e){log("landing login gagal",e);window.__rekapinyuLandingHandoffActive=false;try{history.replaceState(null,document.title,window.location.pathname+window.location.search)}catch{}notify("Login Gagal","Sesi dari Landing Page tidak dapat diproses. Silakan login kembali melalui aplikasi.","fa-solid fa-circle-xmark text-rose-600");return false}}
+async function consumeLandingLogin(){try{await authReadyPromise;const hash=window.location.hash||"",m=hash.match(/^#rekapinyu_login=([^&]+)$/);if(!m)return false;const raw=m[1].replace(/-/g,"+").replace(/_/g,"/"),padded=raw+"=".repeat((4-raw.length%4)%4);const bin=atob(padded);const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);const data=JSON.parse(new TextDecoder().decode(bytes));history.replaceState(null,document.title,window.location.pathname+window.location.search);if(!data?.phone||!data?.password)throw new Error("Data login dari Landing Page tidak lengkap.");const landingPhone=strictRekapinyuPhone(data.phone);if(!landingPhone)throw new Error("Nomor HP login tidak valid. Gunakan 12–13 digit dan wajib diawali 08.");const c=await signInWithEmailAndPassword(auth,emailOf(landingPhone),data.password);refs.pengguna=refs.kasir=refs.rekap=refs.aktifitas=null;refCache.clear();const pr=await getPenggunaRef(c.user.uid,data.phone),s=await getDoc(pr),d=s.exists()?s.data()||{}:{};localSession({uid:c.user.uid,name:d.NamaPengguna||c.user.displayName||"",phone:phoneOf(d.NomorHp||data.phone),email:c.user.email,password:String(d.Pasword||data.password),role:d.role||"Pengguna"});await setPenggunaPresence(c.user.uid,true);window.__rekapinyuLandingHandoffActive=true;await hydrate(c.user.uid);return true}catch(e){log("landing login gagal",e);window.__rekapinyuLandingHandoffActive=false;try{history.replaceState(null,document.title,window.location.pathname+window.location.search)}catch{}notify("Login Gagal","Sesi dari Landing Page tidak dapat diproses. Silakan login kembali melalui aplikasi.","fa-solid fa-circle-xmark text-rose-600");return false}}
 const landingHandoffPromise=consumeLandingLogin();
 
 window.RekapinyuFirebase={app,auth,db,storage,ready:false,uid:null,refs, schema:COLLECTION, firestoreApi:{collection,query,where,limit,getDocs,doc,getDoc,setDoc,onSnapshot,serverTimestamp,orderBy,startAfter,getKasirRef:async()=>getKasirRef(cloudUid(),currentPhone())},storageApi:{ref,uploadBytes,getDownloadURL}};
 
-onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPromise;window.RekapinyuFirebase.ready=true;window.RekapinyuFirebase.uid=u?.uid||null;if(!u){firestoreDataHydrated=false;currentSessionUser=null;try{nativeRemove.call(localStorage,"finance_active_session")}catch{}window.location.replace("https://www.rekapinyu.web.id/login");return}try{if(!currentSessionUser){const p=phoneOf(u.email?.split("@")[0]||"");const pr=await getPenggunaRef(u.uid,p),s=await getDoc(pr),d=s.exists()?s.data()||{}:{};localSession({uid:u.uid,name:d.NamaPengguna||u.displayName||"",phone:phoneOf(d.NomorHp||p),email:u.email,password:d.Pasword||"",role:d.role||"Pengguna"})}firestoreDataHydrated=false;await hydrate(u.uid);try{await window.__rekapinyuLoadLocalRekap?.()}catch{}realtime(u.uid);renderDashboardSession();try{redraw()}catch{}}catch(e){console.error("Firebase schema final:",e);log("sinkronisasi sesi Auth/Firestore gagal; sesi login tetap dipertahankan",e);renderDashboardSession()}});
+onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPromise;window.RekapinyuFirebase.ready=true;window.RekapinyuFirebase.uid=u?.uid||null;if(!u){firestoreDataHydrated=false;currentSessionUser=null;try{nativeRemove.call(localStorage,"finance_active_session")}catch{}window.location.replace("https://www.rekapinyu.web.id/login");return}try{if(!currentSessionUser){const p=phoneOf(u.email?.split("@")[0]||"");const pr=await getPenggunaRef(u.uid,p),s=await getDoc(pr),d=s.exists()?s.data()||{}:{};localSession({uid:u.uid,name:d.NamaPengguna||u.displayName||"",phone:phoneOf(d.NomorHp||p),email:u.email,password:d.Pasword||"",role:d.role||"Pengguna"})}try{await setPenggunaPresence(u.uid,true)}catch(presenceError){log("status sesi Firebase gagal ditulis ke koleksi Pengguna",presenceError)}firestoreDataHydrated=false;await hydrate(u.uid);try{await window.__rekapinyuLoadLocalRekap?.()}catch{}realtime(u.uid);renderDashboardSession();try{redraw()}catch{}}catch(e){console.error("Firebase schema final:",e);log("sinkronisasi sesi Auth/Firestore gagal; sesi login tetap dipertahankan",e);renderDashboardSession()}});
 
 (function(){function redrawOnFocus(){try{redraw?.()}catch{}}window.addEventListener("focus",redrawOnFocus);window.addEventListener("pageshow",redrawOnFocus);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")redrawOnFocus()})})();
 
