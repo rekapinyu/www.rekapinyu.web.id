@@ -6241,8 +6241,14 @@ const boot=()=>{
 
   function renderPackages(){
  const q=String($('sa-package-search')?.value||'').toLowerCase().trim();
- const ids=new Set([...state.kasir.keys(),...state.rekap.keys(),...state.users.map(u=>u.uid),...state.nestedTransactions.map(t=>t.__uid),...state.nestedReports.map(t=>t.__uid)]);
- const rows=[...ids].map(uid=>{const u=state.users.find(x=>String(x.uid)===String(uid)||String(x.id)===String(uid))||{},k=state.kasir.get(uid)||{},r=state.rekap.get(uid)||{};return{uid:String(uid),u,k,r}})
+ // Menu Paket hanya menampilkan akun yang benar-benar berasal dari listener Firestore koleksi Pengguna.
+ // Data Kasir, Rekap, dan subkoleksi hanya melengkapi informasi; tidak boleh membuat akun/toko baru.
+ const rows=state.users.map(u=>{
+  const uid=String(u?.uid||u?.id||'').trim();
+  if(!uid)return null;
+  const k=state.kasir.get(uid)||{},r=state.rekap.get(uid)||{};
+  return{uid,u,k,r};
+ }).filter(Boolean)
  .filter(x=>`${shopName(x.u,x.k,x.r)} ${x.u.phone||x.u.nomorHp||x.u.NomorHp||x.u.noHp||x.u.NoHp||''}`.toLowerCase().includes(q));
  const rupiah=n=>'Rp '+(Number(n)||0).toLocaleString('id-ID');
  const root=$('sa-packages-body');if(!root)return;
