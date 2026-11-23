@@ -6119,7 +6119,7 @@ function updateUserAvatarUI() {
             historyData.unshift(newEntry);
             let inputDataSaved=false;
             if (currentSessionUser && currentSessionUser.phone) {
-                inputDataSaved=await window.__rekapinyuSaveLocalRekap?.();
+                inputDataSaved=await window.__rekapinyuSaveInputDataFast?.(newEntry);
             }
             if(!inputDataSaved){
                 historyData.shift();
@@ -7519,6 +7519,73 @@ function updateUserAvatarUI() {
     finally{await writer.close();}
   }
 
+  /* SIMPAN CEPAT KHUSUS FORM INPUT DATA.
+     Hanya membuka dan memperbarui satu file JSON sesuai tanggal input.
+     Tidak memindai seluruh folder dan tidak menunggu sinkronisasi cloud. */
+  let inputDataWriteChain=Promise.resolve();
+  async function saveInputDataFast(entry){
+    if(!entry || typeof entry!=='object')return false;
+    const task=inputDataWriteChain.then(async()=>{
+      const dir=await getHistoryTargetDir();
+      if(!dir)throw new Error('Subfolder Input Data tidak tersedia atau belum diberi izin akses.');
+      const info=itemDateInfo(entry);
+      const targetName=fileName(info);
+      let handle=null;
+      let payload={
+        Rekap_hari:info.day,
+        Tanggal:info.date,
+        Bulan:info.month,
+        Tahun:info.year,
+        InputData:[]
+      };
+      try{
+        handle=await dir.getFileHandle(targetName,{create:false});
+        const existing=await readJsonHandle(handle);
+        if(existing && typeof existing==='object' && !Array.isArray(existing)){
+          payload={...existing};
+          payload.Rekap_hari=info.day;
+          payload.Tanggal=info.date;
+          payload.Bulan=info.month;
+          payload.Tahun=info.year;
+          payload.InputData=normalizeLoadedArray(existing.InputData||existing.inputData);
+        }
+      }catch(err){
+        if(err?.name!=='NotFoundError')throw err;
+        handle=await dir.getFileHandle(targetName,{create:true});
+      }
+      const rows=mergeUnique(payload.InputData,[entry]);
+      payload.InputData=rows;
+      if(!handle)handle=await dir.getFileHandle(targetName,{create:true});
+      await writeJson(handle,payload);
+
+      window.__rekapinyuDataLaporanBulanan=
+        typeof window.__rekapinyuBuildLaporanBulanan==='function'
+          ?window.__rekapinyuBuildLaporanBulanan(Array.isArray(historyData)?historyData:[]):[];
+
+      const cloudPayload={
+        NamaToko:String(currentSessionUser?.shopName||''),
+        NomorHp:String(currentSessionUser?.phone||''),
+        InputData:Array.isArray(historyData)?historyData:[],
+        Pengeluaran:Array.isArray(pengeluaranData)?pengeluaranData:[],
+        Kasbon:Array.isArray(kasbonData)?kasbonData:[]
+      };
+      window.__rekapinyuLocalRekapData=cloudPayload;
+      try{
+        const cloudSave=window.__rekapinyuSaveRekapCloud;
+        if(typeof cloudSave==='function'){
+          Promise.resolve(cloudSave(cloudPayload)).catch(err=>
+            console.warn('Rekapinyu: sinkronisasi cloud Input Data gagal.',err)
+          );
+        }
+      }catch(err){
+        console.warn('Rekapinyu: sinkronisasi cloud Input Data gagal.',err);
+      }
+      return true;
+    });
+    inputDataWriteChain=task.catch(()=>false);
+    return task;
+  }
+
   async function save(){
     /* SIMPAN OTOMATIS DATA SIDEBAR KE SUBFOLDER MASING-MASING.
        Folder harus sudah dibuat saat pemilihan folder toko; file JSON harian
@@ -7622,6 +7689,7 @@ function updateUserAvatarUI() {
 
   window.__rekapinyuLoadLocalRekap=load;
   window.__rekapinyuSaveLocalRekap=save;
+  window.__rekapinyuSaveInputDataFast=saveInputDataFast;
   window.__rekapinyuLocalRekapLoaded=()=>loaded;
   window.__rekapinyuSaveHistoryCloud=save;
   window.__rekapinyuSavePengeluaranCloud=save;
