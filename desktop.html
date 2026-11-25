@@ -6593,10 +6593,18 @@ function updateUserAvatarUI() {
 
             container.innerHTML = sortedGroups.map(group => {
                 const items = group.items;
-                const totalIncome = items.reduce((s, i) => s + (Number(i.income) || 0), 0);
+                const totalIncome = items.reduce((s, i) => s + (Number(i.income ?? i.Income ?? i.Pendapatan ?? i.pendapatan ?? i.totalPendapatan) || 0), 0);
                 const totalExpense = items.reduce((s, i) => s + (Number(i.expense ?? i.Expense ?? i['Total Belanja'] ?? i.Belanja ?? i.totalBelanja ?? i.belanja ?? i.modal ?? i.Hpp) || 0), 0);
-                const totalCashout = items.reduce((s, i) => s + (Number(i.cashout) || 0), 0);
-                const totalProfit = items.reduce((s, i) => { const income=Number(i.income ?? i.Income ?? i.Pendapatan ?? i.pendapatan ?? i.totalPendapatan)||0; const pctRaw=Number(i.profitPercentage ?? i['Profit Persen'] ?? i['Profit %'] ?? i.profitPersen ?? i.persenProfit ?? i['Set Profit Persen (%)']); const pct=Number.isFinite(pctRaw)&&pctRaw>=0?pctRaw:10; const cashout=Number(i.cashout ?? i.Cashout ?? i.Pengeluaran ?? i.pengeluaran ?? i.nominalPengeluaran ?? i.totalCashout)||0; return s+(income*pct/100)-cashout; }, 0);
+                const totalCashout = items.reduce((s, i) => s + (Number(i.cashout ?? i.Cashout ?? i.Pengeluaran ?? i.pengeluaran ?? i.nominalPengeluaran ?? i.totalCashout) || 0), 0);
+                // Rumus nomor 2: pendapatan x persentase profit yang tersimpan - pengeluaran.
+                // Total Belanja tetap dihitung dan ditampilkan terpisah, tidak dikurangkan dari profit.
+                const totalProfit = items.reduce((s, i) => {
+                    const income = Number(i.income ?? i.Income ?? i.Pendapatan ?? i.pendapatan ?? i.totalPendapatan) || 0;
+                    const pctRaw = Number(i.profitPercentage ?? i['Profit Persen'] ?? i['Profit %'] ?? i.profitPersen ?? i.persenProfit ?? i['Set Profit Persen (%)']);
+                    const pct = Number.isFinite(pctRaw) && pctRaw >= 0 ? pctRaw : 10;
+                    const cashout = Number(i.cashout ?? i.Cashout ?? i.Pengeluaran ?? i.pengeluaran ?? i.nominalPengeluaran ?? i.totalCashout) || 0;
+                    return s + (income * pct / 100) - cashout;
+                }, 0);
 
                 const safeMonth = String(group.month).replace(/'/g, "\\'");
                 const safeYear = String(group.year).replace(/'/g, "\\'");
