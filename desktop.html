@@ -4850,11 +4850,10 @@ function updateUserAvatarUI() {
         }
 
         function updateLiveProfit() {
-            const val = parseNum(document.getElementById('income').value);
-            const cashoutVal = parseNum(document.getElementById('cashout').value);
-            const profitPct = parseFloat(document.getElementById('profit-percentage').value) || 0;
-            const profit = (val - cashoutVal) * (profitPct / 100);
-            profitDisplay.innerText = formatRupiah(profit > 0 ? profit : 0);
+            const income = parseNum(document.getElementById('income').value);
+            const cashout = parseNum(document.getElementById('cashout').value);
+            const profit = (income * 0.10) - cashout;
+            profitDisplay.innerText = formatRupiah(profit);
         }
 
         document.addEventListener('input', (event) => {
@@ -6068,9 +6067,8 @@ function updateUserAvatarUI() {
             const income = parseNum(document.getElementById('income').value);
             const expense = parseNum(document.getElementById('expense').value);
             const cashout = parseNum(document.getElementById('cashout').value);
-            const profitPercentage = parseFloat(document.getElementById('profit-percentage').value) || 0;
-            
-            const profit = (income - cashout) * (profitPercentage / 100);
+            const profitPercentage = 10;
+            const profit = (income * 0.10) - cashout;
 
             const now = new Date();
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -6113,7 +6111,7 @@ function updateUserAvatarUI() {
                 expense: expense,
                 cashout: cashout,
                 profitPercentage: profitPercentage,
-                profit: profit > 0 ? profit : 0
+                profit: profit
             };
 
             historyData.unshift(newEntry);
@@ -6285,9 +6283,8 @@ function updateUserAvatarUI() {
                 const income = money(pick(item, ['income','Income','Pendapatan','pendapatan','pemasukan','Pemasukan','totalPendapatan','jumlahPendapatan','omzet','Omzet'], 0));
                 const expense = money(pick(item, ['expense','Expense','Total Belanja','Belanja','totalBelanja','belanja','modal','Hpp'], 0));
                 const cashout = money(pick(item, ['cashout','Cashout','Pengeluaran','pengeluaran','nominalPengeluaran','pengeluaranLain','totalCashout'], 0));
-                const pctRaw = pick(item, ['profitPercentage','Profit Persen','Profit 10%','profitPersen','persenProfit','Set Profit Persen (%)','setProfitPersen'], 10);
-                const pct = money(pctRaw);
-                const profit = money(pick(item, ['profit','Profit','Keuntungan','keuntungan','totalProfit','laba'], Math.max((income - cashout) * pct / 100, 0)));
+                const pct = 10;
+                const profit = (income * 0.10) - cashout;
                 const id = pick(item, ['id','ID','uid','key'], index + 1);
                 const time = pick(item, ['time','Waktu','waktu','jam','Jam'], '');
                 const haystack = `${d.dayName} ${d.dateLabel} ${d.month} ${d.year} ${id} ${time}`.toLowerCase();
@@ -6339,15 +6336,15 @@ function updateUserAvatarUI() {
             const fMonth = fMonthEl ? fMonthEl.value : "";
             const fYear = fYearEl ? fYearEl.value : "";
 
-            // Pastikan profit History selalu mengikuti rumus pada Form Input Data Harian.
+            // History lama dan baru dihitung ulang dengan rumus Input Data yang sama.
             const displayHistoryData = getHistoryForDisplay();
 
             displayHistoryData.forEach(item => {
                 const income = Number(item.income) || 0;
+                const expense = Number(item.expense) || 0;
                 const cashout = Number(item.cashout) || 0;
-                const pct = item.profitPercentage !== undefined ? (parseFloat(item.profitPercentage) || 0) : 10;
-                item.profitPercentage = pct;
-                item.profit = Math.max((income - cashout) * (pct / 100), 0);
+                item.profitPercentage = 10;
+                item.profit = (income * 0.10) - cashout;
             });
 
             let filtered = displayHistoryData.filter(item => {
@@ -6427,7 +6424,7 @@ function updateUserAvatarUI() {
                             <!-- Profit Keuntungan -->
                             <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
                                 <div class="flex items-center gap-1.5 text-[11px] text-slate-500 font-semibold mb-1">
-                                    <i class="fa-solid fa-wallet text-amber-600"></i> Profit/Keuntungan (${item.profitPercentage !== undefined ? item.profitPercentage : 10}%)
+                                    <i class="fa-solid fa-wallet text-amber-600"></i> Profit Bersih (10%)
                                 </div>
                                 <div class="text-sm font-extrabold text-amber-600">${formatRupiah(item.profit || 0)}</div>
                             </div>
@@ -8949,8 +8946,8 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
             const income = parseExcelNumber(rowValue(row, ['Pendapatan']));
             const cashout = parseExcelNumber(rowValue(row, ['Pengeluaran']));
             const expense = parseExcelNumber(rowValue(row, ['Total Belanja', 'Belanja']));
-            const profitPercentage = parseExcelNumber(rowValue(row, ['Profit 10%', 'Profit Persen']));
-            const profit = Math.max((income - cashout) * (profitPercentage / 100), 0);
+            const profitPercentage = 10;
+            const profit = (income * 0.10) - cashout;
             return {
                 id: Date.now() + index,
                 day: dayNames[date.getDay()],
@@ -9004,7 +9001,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
         const income = toNumber(rawIncome);
         const expense = toNumber(rawExpense);
         const cashout = toNumber(rawCashout);
-        const profitPercentage = rawPercentage === undefined ? 10 : toNumber(rawPercentage);
+        const profitPercentage = 10;
         const result = {
             id,
             day: String(pick('day', 'Rekap_hari', 'Hari', 'hari') || dayNames[new Date(year, monthIndex, date).getDay()]),
@@ -9017,7 +9014,7 @@ onAuthStateChanged(auth,async u=>{await authReadyPromise;await landingHandoffPro
             expense,
             cashout,
             profitPercentage,
-            profit: rawProfit !== undefined ? toNumber(rawProfit) : Math.max((income - cashout) * (profitPercentage / 100), 0)
+            profit: (income * 0.10) - cashout
         };
         return (result.income || result.expense || result.cashout || result.profitPercentage || result.profit || toNumber(pick('nominal', 'Nominal', 'jumlah', 'Jumlah'))) ? {...result, income: result.income || toNumber(pick('nominal', 'Nominal', 'jumlah', 'Jumlah'))} : null;
     }
