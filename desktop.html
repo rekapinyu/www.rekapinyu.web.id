@@ -6596,7 +6596,7 @@ function updateUserAvatarUI() {
                 const totalIncome = items.reduce((s, i) => s + (Number(i.income) || 0), 0);
                 const totalExpense = items.reduce((s, i) => s + (Number(i.expense ?? i.Expense ?? i['Total Belanja'] ?? i.Belanja ?? i.totalBelanja ?? i.belanja ?? i.modal ?? i.Hpp) || 0), 0);
                 const totalCashout = items.reduce((s, i) => s + (Number(i.cashout) || 0), 0);
-                const totalProfit = items.reduce((s, i) => s + (Number(i.profit) || 0), 0);
+                const totalProfit = items.reduce((s, i) => { const income=Number(i.income ?? i.Income ?? i.Pendapatan ?? i.pendapatan ?? i.totalPendapatan)||0; const pctRaw=Number(i.profitPercentage ?? i['Profit Persen'] ?? i['Profit %'] ?? i.profitPersen ?? i.persenProfit ?? i['Set Profit Persen (%)']); const pct=Number.isFinite(pctRaw)&&pctRaw>=0?pctRaw:10; const cashout=Number(i.cashout ?? i.Cashout ?? i.Pengeluaran ?? i.pengeluaran ?? i.nominalPengeluaran ?? i.totalCashout)||0; return s+(income*pct/100)-cashout; }, 0);
 
                 const safeMonth = String(group.month).replace(/'/g, "\\'");
                 const safeYear = String(group.year).replace(/'/g, "\\'");
@@ -7910,7 +7910,11 @@ function buildLaporanBulanan(rows){
     g.pendapatan+=Number(r?.income ?? r?.Income ?? r?.Pendapatan ?? r?.pendapatan ?? r?.totalPendapatan)||0;
     g.totalBelanja+=Number(r?.expense ?? r?.Expense ?? r?.['Total Belanja'] ?? r?.Belanja ?? r?.totalBelanja ?? r?.belanja ?? r?.modal ?? r?.Hpp)||0;
     g.pengeluaran+=Number(r?.cashout ?? r?.Cashout ?? r?.Pengeluaran ?? r?.pengeluaran ?? r?.nominalPengeluaran ?? r?.totalCashout)||0;
-    g.profit+=Number(r?.profit ?? r?.Profit ?? r?.Keuntungan ?? r?.keuntungan ?? r?.totalProfit)||0;
+    const rowIncome=Number(r?.income ?? r?.Income ?? r?.Pendapatan ?? r?.pendapatan ?? r?.totalPendapatan)||0;
+    const profitPctRaw=Number(r?.profitPercentage ?? r?.['Profit Persen'] ?? r?.['Profit %'] ?? r?.profitPersen ?? r?.persenProfit ?? r?.['Set Profit Persen (%)']);
+    const profitPct=Number.isFinite(profitPctRaw)&&profitPctRaw>=0?profitPctRaw:10;
+    const rowCashout=Number(r?.cashout ?? r?.Cashout ?? r?.Pengeluaran ?? r?.pengeluaran ?? r?.nominalPengeluaran ?? r?.totalCashout)||0;
+    g.profit+=(rowIncome*profitPct/100)-rowCashout;
     g.jumlahData++;
   });
   return [...groups.values()].sort((a,b)=>b.year-a.year||b.monthIndex-a.monthIndex);
